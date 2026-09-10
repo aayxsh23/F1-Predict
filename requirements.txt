@@ -1,0 +1,18 @@
+# Phase 1 — data
+fastf1
+pandas
+requests
+
+# Phase 2-3 — predictor
+xgboost
+scikit-learn
+shap
+
+# Phase 4-5 — RAG + agent
+langchain
+langgraph
+chromadb
+
+# Phase 6 — backend
+fastapi
+uvicorn

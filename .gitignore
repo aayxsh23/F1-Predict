@@ -1,0 +1,68 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
+# FastF1 and general data cache
+fastf1_cache/
+.fastf1/
+cache/
+data/cache/
+*.ff1pkl
+
+# Data pipeline (raw/processed data regenerated, not committed)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Trained models & serialized artifacts
+models/saved/
+*.joblib
+*.pkl
+*.pickle
+*.model
+
+# Vector store (Phase 4 RAG)
+chroma_db/
+.chroma/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Testing & quality
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Build & packaging
+build/
+dist/
+*.egg-info/
+
+# Operating System & IDE
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs
+*.log
+logs/
