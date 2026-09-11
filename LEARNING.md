@@ -10,6 +10,38 @@ Agents: update this file per AGENTS.md's "Multi-agent coordination" section — 
 
 ---
 
+## Interlude — why a venv, specifically
+
+Every `pip install` run this session (both mine and a manual `pip install -r requirements.txt` from the user) had been going into the **global** Python interpreter, because no virtual environment had been created yet. This is a bigger deal than "it works either way, one's just tidier":
+
+- **No isolation between projects.** Your global Python is shared by every script and tool on the machine. If this project needs `pandas 2.3` and some other project on your machine needs `pandas 1.5`, installing globally means whichever installs last wins — and the other project silently breaks the next time you run it, often with no obvious error pointing at the real cause (it just imports the wrong version).
+- **No reproducibility.** `requirements.txt` is supposed to be *the* complete list of what this project needs. If you've been installing globally, it's easy to end up relying on some other package that happens to already be on your machine for unrelated reasons — the project *looks* like it works for you, but `requirements.txt` doesn't actually capture everything it depends on, and it breaks for anyone else (or you, on a fresh machine) who installs only from that file.
+- **Cleanup is much harder after the fact.** Once packages are in the global interpreter, "uninstall everything this project needed" means manually working out which packages were project-specific vs. already there for some other reason — exactly the cleanup we just did (`pip uninstall -y -r requirements.txt` plus one stray dependency, `optuna`, that wasn't even tracked in `requirements.txt`). A venv sidesteps the whole problem: it's just a directory, and "clean slate" is `rm -rf .venv && python -m venv .venv`.
+
+One extra gotcha worth remembering because it cost real time here: `python -m venv <dir>` does **not** wipe an existing directory — if `<dir>` already has files in it (say, from an earlier half-finished attempt, or an IDE auto-creating one), running `venv` again just layers the venv structure on top without clearing what's there. The symptom is confusing: a "freshly created" venv that already has unrelated packages installed. The fix is to actually delete the directory first if you're not sure of its history, then recreate and verify with `pip list` that it's genuinely empty before trusting it.
+
+## Phase 2.5 (unplanned) — from backtesting to a real live prediction
+
+### Backtesting vs. forecasting — a distinction worth being precise about
+
+Everything through Phase 2 answers one question: *"if this model had existed before a race that already happened, using only pre-race information, would it have called that race correctly?"* That's what time-based CV measures, and it's the right way to prove a model has real skill before trusting it on anything. But it's a fundamentally different question from *"what will happen in a race that hasn't been run yet?"* — the second one needs current data (not just a fixed historical window) and a way to assemble a feature row for a race with no known outcome, which nothing in Phase 1-2 actually built. Recognizing that distinction is what "when can I predict Madrid" surfaced — the model itself was always capable of it, the *plumbing* to feed it a live row wasn't there yet.
+
+### Why `live_predict.py` doesn't reimplement anything
+
+The tempting-but-wrong approach here would be writing a parallel "live feature builder" that recomputes driver form, team form, etc. from scratch for one race. That's a trap: any subtle difference between that logic and the training-time feature layers (`driver_features.py`, `team_features.py`, ...) would silently make live predictions inconsistent with what the model was actually trained on — a live prediction that "looks like" a training row but isn't quite.
+
+The fix: [src/features/build_dataset.py](src/features/build_dataset.py)'s `build()` was refactored to accept an already-assembled raw table instead of hardcoding `load_raw()`. `live_predict.py` then does the minimal possible new work — build a real-world raw row for the upcoming race in the exact shape `ingest_race()` produces for a historical one — and appends it to the historical table before calling the *identical* `build()` pipeline. Every rolling/historical feature (`recent_form`, `track_form`, `team_track_type_form`, etc.) is now computed by the literal same function calls used in training, on a table that happens to have one extra row at the end. There's no way for training and live prediction to drift apart, because there's only one implementation.
+
+This also means the "3-stage" mental model (post-practice / post-quali / pre-race) from Phase 2's `mask_for_stage()` doesn't actually need to be built as a rigid stage system for real live use — it was a *simulation* of partial information for testing on a historical row. For a genuinely upcoming race, you don't need to simulate "pretend this isn't known yet," because it actually isn't known yet: attempting to load FP2 before FP2 has run just fails naturally (`fastf1.exceptions`/`DataNotLoadedError`), gets caught, and the column stays `NaN` — the real world does the masking for you. The staged framing was the right way to *think* about and *test* the mechanism; the live implementation is simpler than that framing suggests, because reality is already discrete about what it does and doesn't know yet.
+
+### Two columns that resist "just pull whatever's available"
+
+`grid_position` and `starting_tire_compound` are structurally different from `practice_pace`/`quali_gap_to_pole`: even with perfect real-time data access, they don't *exist* until specific external events happen — grid position isn't final until qualifying resolves and any penalties are applied by the stewards (sometimes hours after the session ends), and compound choice isn't announced until race day. No amount of "pull more session data" fixes this; it's not a data-access limitation, it's that the information genuinely doesn't exist yet. `live_predict.py` handles this honestly: qualifying classification is used as a *proxy* for grid position (explicitly documented as pre-penalty), and both columns accept manual overrides for exactly the moment their real values become known from an announcement rather than from FastF1's structured data.
+
+### A real-world surprise: FastF1's location names aren't stable across seasons
+
+Pulling 2025-2026 data to test all this surfaced something the circuit reference table wasn't built to expect: FastF1 renamed the *same physical circuit's* location string between seasons — Monaco appears as `"Monaco"` through 2025 and `"Monte Carlo"` starting 2026; Miami similarly shifts to `"Miami Gardens"`. Since [circuit_reference.py](src/features/circuit_reference.py)'s `resolve()` matches purely on the `location` string, this would have raised a hard error (by design — it's supposed to fail loudly on an unmapped circuit rather than silently produce garbage) for every Monaco/Miami race in the new data, even though nothing about the actual track changed. The fix is a small `LOCATION_ALIASES` dict applied only to the *matching* step, not the data itself — the row keeps its original `location` value (needed later to re-query FastF1 for that exact race), it's only the lookup key that gets normalized. This is a good instance of a general pattern: when two systems both claim to identify "the same real-world thing," don't assume their identifiers agree with each other over time, and build the seam (an alias/normalization layer) rather than hoping it never comes up.
+
 ## Phase 1 — Data foundation
 
 ### The problem this phase solves

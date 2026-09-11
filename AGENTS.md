@@ -38,6 +38,14 @@ tests/
 .github/workflows/               # Phase 6 — scheduled re-prediction workflow
 ```
 
+## Python environment
+
+- **Never install packages into the global/system Python.** This project uses a venv at `.venv/` (already gitignored). All `pip install` and `python -m ...` invocations must go through it:
+  - Windows agents/shells: `.venv/Scripts/python.exe` / `.venv/Scripts/pip.exe` (or, for a persistent interactive shell only — not across separate tool calls — activate with `.venv\Scripts\Activate.ps1` in PowerShell or `source .venv/Scripts/activate` in Git Bash).
+  - If `.venv/` doesn't exist yet, create it once with whichever Python is on PATH: `python -m venv .venv` — that bootstrap step is the only time the global interpreter is touched.
+  - An agent's tool calls don't persist shell activation state between calls, so always invoke the venv's `python.exe`/`pip.exe` directly by path rather than relying on `activate` having stuck from a previous command.
+- This rule exists because it was violated once already — `requirements.txt` got installed straight into the global interpreter (both by an agent running bare `pip install` and by the user re-running the same command), requiring a manual `pip uninstall` cleanup before `.venv/` was introduced. See PROGRESS.md/LEARNING.md for that incident.
+
 ## Conventions
 
 - Build phases in order (1→6); each phase's Output in the plan is the acceptance bar before moving on.

@@ -25,8 +25,12 @@ def load_raw() -> pd.DataFrame:
     return pd.concat((pd.read_parquet(f) for f in files), ignore_index=True)
 
 
-def build() -> pd.DataFrame:
-    raw = circuit_reference.resolve(load_raw())
+def build(raw: pd.DataFrame | None = None) -> pd.DataFrame:
+    """raw: pre-loaded raw table to use instead of reading data/raw/races/ —
+    live prediction passes historical rows plus one appended not-yet-happened
+    race here, so the exact same feature layers below (including every
+    leakage-safe rolling stat) run identically for training and live rows."""
+    raw = circuit_reference.resolve(raw if raw is not None else load_raw())
 
     driver = driver_features.build(raw)
     team = team_features.build(raw)
