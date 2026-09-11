@@ -1,0 +1,7 @@
+Las Vegas Strip Circuit — Circuit Notes
+
+Las Vegas joined the calendar in 2023 as a purpose-built street circuit run at night down the middle of the Strip, past the Bellagio fountains and the Sphere. It has the second-longest straight in the reference table (≈1,900m, behind only Baku), which creates a genuine, high-speed overtaking opportunity, keeping overtaking_difficulty at a moderate level (≈0.35) despite being a street circuit — most street tracks (Monaco, Singapore, Jeddah) skew harder to pass at than this.
+
+The circuit is run very late at night in cold desert-adjacent conditions (Vegas in November), which is atypical for F1 — track temperatures are unusually low for the sport, and tyre_degradation_level is rated on the lower side (≈2/5) partly as a result, since cold track temperatures reduce the aggressive degradation seen at hotter rounds. Safety car frequency is moderate (≈0.4), and rain is effectively a non-factor given the desert climate (rain_race_frequency ≈ 0.0).
+
+As one of the newest circuits in the reference table, Las Vegas has comparatively little accumulated historical race data behind it relative to a long-established venue — its row is a real, current-generation street circuit rather than a rough inaugural-year estimate, but the model still has fewer prior seasons to draw driver/team track-form history from here than at, say, Monza or Silverstone.

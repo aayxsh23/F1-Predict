@@ -30,10 +30,12 @@ data/processed/*
 # Trained models & serialized artifacts
 models/saved/
 src/models/saved/
+src/rag/saved/
 *.joblib
 *.pkl
 *.pickle
 *.model
+*.safetensors
 
 # Vector store (Phase 4 RAG)
 chroma_db/

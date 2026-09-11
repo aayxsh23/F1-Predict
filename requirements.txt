@@ -12,7 +12,20 @@ shap
 # Phase 4-5 — RAG + agent
 langchain
 langgraph
+langchain-huggingface
+langchain-chroma
+langchain-text-splitters
 chromadb
+sentence-transformers
+pypdf
+torch
+transformers
+peft
+bitsandbytes
+accelerate
+trl
+datasets
+huggingface-hub
 
 # Phase 6 — backend
 fastapi

@@ -1,0 +1,7 @@
+Autodromo Nazionale Monza — Circuit Notes
+
+Monza is F1's classic "Temple of Speed" and has the lowest overtaking_difficulty rating in the entire reference table (≈0.2) — the layout is dominated by long straights (the front straight and the run through the Parabolica) into heavy-braking chicanes, which is about as favourable a geometry for passing as exists anywhere on the calendar. It also has the highest pit_lane_loss_time in the reference table (≈23s) — because lap times here are so short relative to other circuits, even a small pit-lane time loss represents a larger fraction of a lap than at a longer, slower circuit, which affects the undercut/overcut math.
+
+Safety car frequency (≈0.2) and DNF rate (≈0.1) are both on the low side — Monza's chicanes are slow and forgiving by design, and its long straights don't carry the same wall-proximity risk as a street circuit at similar speed. Tyre degradation is comparatively low (≈2/5), since much of the lap is flat-out running rather than sustained cornering load.
+
+Monza is the natural opposite pole to Monaco/Hungaroring/Zandvoort in any circuit-interaction analysis: grid position should matter comparatively little here, and a model that shows `grid_x_overtaking_difficulty` mattering far less at Monza than at those tracks is behaving exactly as the underlying racing reality suggests it should.

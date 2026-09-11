@@ -1,0 +1,7 @@
+Circuit Paul Ricard (Le Castellet) — Circuit Notes
+
+Paul Ricard hosted the French Grand Prix through 2022 before dropping off the calendar — it's included in the reference table with a valid range ending in 2022, so it's a good example of the table's era-keying handling a circuit's departure rather than treating it as a permanent fixture. It's a wide, modern permanent circuit with the distinctive asphalt run-off "safety zones" instead of gravel traps, and one of the longer straights outside Baku/Las Vegas (≈1,800m) feeding the Mistral straight braking zone.
+
+Overtaking difficulty was moderate-to-high (≈0.6) — the wide track surface actually made side-by-side racing easier in some sections than the number alone suggests, but a genuinely quick middle sector limited how often drivers found themselves close enough to attempt a pass. The circuit had the lowest DNF rate (≈0.08) and one of the lowest safety-car frequencies (≈0.1) in the whole reference table — the asphalt run-off areas meant an off-track excursion very rarely ended a car's race or triggered a caution, since a driver could simply rejoin without contact.
+
+Because it's no longer on the calendar, this circuit's data only ever appears as historical training rows (2022 and earlier) — the model will never need to produce a live prediction here, but the historical rows remain useful, leakage-safe training signal for the general relationship between circuit layout and outcome.

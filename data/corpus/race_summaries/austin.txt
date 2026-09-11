@@ -1,0 +1,7 @@
+Circuit of the Americas (Austin) — Circuit Notes
+
+COTA was purpose-built for F1 with a mix of corner styles deliberately inspired by other famous circuits (its Turn 1 uphill esses draw comparisons to Silverstone's Maggotts-Becketts, and its infield section nods to several classic European tracks). Overtaking difficulty is moderate (≈0.35) — the long back straight into Turn 12 is a reliable passing zone, similar in concept to Austin's fellow modern-build permanent circuits like Shanghai and Bahrain.
+
+Tyre degradation is moderate (≈3/5), safety car frequency and DNF rate are both fairly average for the calendar (≈0.3 and ≈0.1), and rain is a real if secondary factor (rain_race_frequency ≈ 0.15) given the circuit's Texas autumn date, which can bring sudden storms. Pit-lane loss time (≈21s) sits near the calendar median, making strategy calculations here comparatively "textbook" relative to outlier circuits like Montréal (very short pit loss) or Monza (very long pit loss).
+
+COTA is a useful calendar "baseline" circuit in modeling terms — none of its reference-table values are extreme outliers in either direction, so it's a reasonable circuit to compare a more unusual track's characteristics against when explaining why a prediction differs from the calendar median.

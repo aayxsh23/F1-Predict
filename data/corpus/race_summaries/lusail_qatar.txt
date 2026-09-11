@@ -1,0 +1,7 @@
+Lusail International Circuit (Qatar) — Circuit Notes
+
+Lusail is a fast, flowing desert circuit originally built for motorcycle racing before being adapted for F1, with a long sequence of high-speed corners that place unusually high demand on tyres — tyre_degradation_level is rated at the top of the scale (≈4/5), among the highest in the reference table alongside Bahrain, Barcelona, Silverstone, and Suzuka. Overtaking difficulty is moderate (≈0.55) — there are passing opportunities, but the high-speed nature of most corners means a driver needs a real pace advantage, not just a slipstream, to make a move stick.
+
+Safety car and DNF rates are both fairly typical for the calendar (≈0.3 and ≈0.1 respectively), and rain is effectively a non-factor given the Gulf desert climate (rain_race_frequency ≈ 0.0), similar to Bahrain and Jeddah. As a floodlit night race on a circuit built for two-wheeled racing, track temperature management (rather than rain) is the more significant weather-adjacent variable here — track temp tends to be more stable and cooler at night than an equivalent daytime desert race, which affects tyre degradation modeling more than any rain-probability feature would.
+
+Given the combination of high degradation and moderate overtaking difficulty, race outcomes here tend to be shaped as much by who manages their tyres best across a long stint as by grid position alone.

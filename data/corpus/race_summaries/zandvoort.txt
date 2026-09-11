@@ -1,0 +1,7 @@
+Circuit Zandvoort — Circuit Notes
+
+Zandvoort returned to the F1 calendar in 2021 after a long absence, reconfigured with banked corners (most notably the final corner) inspired by American oval racing, in an attempt to improve overtaking at what is fundamentally a narrow, dune-constrained old-school circuit. Despite the banking, overtaking_difficulty is rated the second-highest in the entire reference table (≈0.85, behind only Monaco) — the track is simply too narrow through most of its lap for the banking alone to fix the underlying passing problem, and the circuit has few genuine straight-into-hard-braking zones.
+
+Tyre degradation is moderate (≈3/5), and rain is a real factor given the North Sea coastal location (rain_race_frequency ≈ 0.15) — Dutch coastal weather can turn quickly, and the dunes that give the circuit its character also create localized wind effects that can catch drivers out. Safety car frequency is moderate (≈0.4), broadly in line with other narrow permanent circuits with limited run-off in key corners.
+
+Given how close Zandvoort's overtaking difficulty sits to Monaco's, a well-tuned model should show grid position and grid-times-overtaking-difficulty interaction features carrying similarly outsized weight at both — Zandvoort is a useful check on whether a circuit-aware feature is really learning "hard to pass" rather than just memorizing "this is Monaco."

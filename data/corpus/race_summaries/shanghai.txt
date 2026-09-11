@@ -1,0 +1,7 @@
+Shanghai International Circuit — Circuit Notes
+
+Shanghai is a large, purpose-built permanent circuit distinguished by an unusually long, decreasing-radius Turn 1-2-3 complex (often compared to a snail shell) and one of the longest back straights on the calendar (≈1,170m) into a hard-braking hairpin. That combination keeps overtaking_difficulty at a moderate level (≈0.4) — the back straight is a genuine, reliable passing zone, similar in character to Austin or Bahrain.
+
+Pit-lane loss time is on the higher side (≈22s), and tyre degradation is moderate (≈3/5) — the long, high-speed corners of the opening complex put real sustained load through the tyres despite the circuit's otherwise fairly conventional layout. Rain is a real if secondary factor (rain_race_frequency ≈ 0.15), consistent with Shanghai's typically damp spring race date. Safety car frequency (≈0.4) and DNF rate (≈0.1) are both close to the calendar median.
+
+Shanghai's return to the calendar after a multi-year absence (following construction and pandemic-era cancellations) means its more recent rows carry less accumulated recent track-form history for some drivers than a circuit that's been raced every year without interruption — worth remembering when a driver's `driver_track_form` value at this circuit looks unusually sparse.

@@ -1,0 +1,7 @@
+Circuit de Spa-Francorchamps — Circuit Notes
+
+Spa is the longest circuit on the F1 calendar (7.004 km) and, alongside Bahrain, has the lowest overtaking_difficulty rating in the reference table (≈0.25) — the run from Eau Rouge/Raidillon up the Kemmel Straight into the Les Combes braking zone is one of the most famous and reliable overtaking opportunities in motorsport, and the long lap also means multiple further passing zones elsewhere. This is a track where a poor qualifying result is one of the most recoverable in the whole calendar.
+
+Spa has the highest rain_race_frequency of any circuit in the reference table (≈0.35) — the Ardennes forest region is famous for its own microclimate, where it can be raining at one part of the circuit and dry at another within the same lap, which is a genuinely unique strategic challenge (mixed-conditions tyre choice) that few other circuits present at this scale. Tyre degradation is rated high (≈3/5, and effectively higher in practice given the very high average speed and long straights that load tyres differently than a technical circuit). Safety car frequency (≈0.5) and DNF rate (≈0.12) are both elevated by the combination of high average speed and a track that, despite modern run-off at Eau Rouge, still punishes a mistake at the wrong moment severely.
+
+Spa is a strong counter-example to Monaco/Hungaroring/Zandvoort in any circuit-interaction SHAP analysis — grid position should matter comparatively little here relative to those tracks, precisely because overtaking is genuinely easy.
