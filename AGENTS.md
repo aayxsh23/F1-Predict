@@ -35,7 +35,7 @@ src/
   features/               # Phase 1 — feature pipeline incl. circuit reference table
   models/                  # Phase 2-3 — the 2 predictors + SHAP
   rag/                      # Phase 4 — LangChain retrieval/explainer
-  agent/                     # Phase 5 — LangGraph live-standings agent
+  agent/                     # Phase 6 — LangGraph live-standings agent
   api/                        # Phase 6 — FastAPI endpoints (predict, explain, ask-agent)
 notebooks/                     # exploration, not production code
 tests/
