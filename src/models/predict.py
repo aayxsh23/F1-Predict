@@ -40,6 +40,28 @@ def predict(model: xgb.XGBRegressor, rows: pd.DataFrame, target: str = "finish_p
     return pd.Series(model.predict(X), index=rows.index)
 
 
+# one canonical output-column name per target, shared by every caller that
+# wants "all 4 predictions on this row set" (live_predict.py, rag/chat.py) so
+# they can't quietly diverge into two different naming schemes for the same computation
+CANONICAL_PRED_COLS = {
+    "qualifying": "predicted_qualifying_gap",
+    "finish_position": "predicted_finish_position",
+    "quali_delta": "predicted_quali_to_race_delta",
+    "race_time": "predicted_race_time_gap",
+}
+
+
+def predict_all(rows: pd.DataFrame) -> pd.DataFrame:
+    """Add all 4 predictors' columns to rows (see CANONICAL_PRED_COLS for the
+    exact column names) -- the shared implementation behind both
+    live_predict.predict_upcoming_race() and rag/chat.py's race table."""
+    rows = rows.copy()
+    for target, col in CANONICAL_PRED_COLS.items():
+        model = load_model(target)
+        rows[col] = predict(model, rows, target=target).round(2)
+    return rows
+
+
 def mask_for_stage(rows: pd.DataFrame, stage: str) -> pd.DataFrame:
     """stage: 'post_practice' | 'post_quali' | 'pre_race'."""
     rows = rows.copy()

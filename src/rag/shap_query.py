@@ -47,12 +47,25 @@ FEATURE_PHRASES = {
 }
 
 
+# shap.TreeExplainer(model) parses the whole tree ensemble on construction --
+# worth reusing across calls for the same model (e.g. build_finetune_dataset.py
+# calls this once per circuit, ~27x per model) rather than rebuilding it every time
+_explainer_cache: dict[int, shap.TreeExplainer] = {}
+
+
+def _get_explainer(model: xgb.XGBRegressor) -> shap.TreeExplainer:
+    key = id(model)
+    if key not in _explainer_cache:
+        _explainer_cache[key] = shap.TreeExplainer(model)
+    return _explainer_cache[key]
+
+
 def top_shap_features(model: xgb.XGBRegressor, row: pd.DataFrame, target: str = "finish_position", top_k: int = 5) -> list[dict]:
     """row: a single-row DataFrame with the raw Phase 1 feature-table columns
     (same shape predict.predict() expects). Returns the top_k features driving
     THIS prediction, ranked by |SHAP value|, each with its signed contribution."""
     X = PREPARE_FN[target](row)
-    explainer = shap.TreeExplainer(model)
+    explainer = _get_explainer(model)
     shap_values = explainer.shap_values(X)[0]
     contributions = pd.Series(shap_values, index=X.columns).sort_values(key=abs, ascending=False)
     return [
@@ -84,3 +97,17 @@ def build_retrieval_query(circuit_name: str, prediction: float, target: str, top
         direction = f"pushed the prediction {worse_word}" if f["shap_value"] > 0 else f"pushed the prediction {better_word}"
         parts.append(f"{f['phrase'].capitalize()} {direction}.")
     return " ".join(parts)
+
+
+def build_user_prompt(prediction: float, target: str, circuit_name: str, top_features: list[dict], context: str) -> str:
+    """The exact user-prompt shape both real inference (explain.py) and the
+    Phase 5 fine-tuning dataset (build_finetune_dataset.py) must use -- one
+    implementation so the two can never silently drift apart on prompt shape,
+    which would reintroduce a train/inference skew."""
+    target_label = TARGET_INFO[target][0]
+    feature_lines = "\n".join(f"- {f['phrase']}: SHAP contribution {f['shap_value']:+.2f}" for f in top_features)
+    return (
+        f"Prediction: {prediction:.1f} ({target_label}) at {circuit_name}.\n\n"
+        f"Top feature contributions:\n{feature_lines}\n\n"
+        f"Retrieved context:\n{context}"
+    )

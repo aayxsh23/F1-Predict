@@ -12,11 +12,12 @@ ADAPTER_DIR = Path(__file__).resolve().parent / "saved" / "explainer_lora"
 
 _model = None
 _tokenizer = None
+_loaded_with_adapter = None
 
 
 def _load(use_adapter: bool = True):
-    global _model, _tokenizer
-    if _model is not None:
+    global _model, _tokenizer, _loaded_with_adapter
+    if _model is not None and _loaded_with_adapter == use_adapter:
         return _model, _tokenizer
 
     quant_config = BitsAndBytesConfig(
@@ -29,17 +30,20 @@ def _load(use_adapter: bool = True):
         from peft import PeftModel
         _model = PeftModel.from_pretrained(_model, str(ADAPTER_DIR))
 
+    _loaded_with_adapter = use_adapter
     return _model, _tokenizer
 
 
 def generate(system_prompt: str, user_prompt: str, max_new_tokens: int = 400) -> str:
     model, tokenizer = _load()
     messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}]
-    inputs = tokenizer.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt").to(model.device)
+    # this transformers version returns a BatchEncoding (dict of input_ids/
+    # attention_mask), not a bare tensor, despite only passing return_tensors
+    inputs = tokenizer.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt", return_dict=True).to(model.device)
 
     output = model.generate(
-        inputs, max_new_tokens=max_new_tokens, do_sample=True, temperature=0.6, top_p=0.9,
+        **inputs, max_new_tokens=max_new_tokens, do_sample=True, temperature=0.6, top_p=0.9,
         pad_token_id=tokenizer.eos_token_id,
     )
-    new_tokens = output[0][inputs.shape[1]:]
+    new_tokens = output[0][inputs["input_ids"].shape[1]:]
     return tokenizer.decode(new_tokens, skip_special_tokens=True).strip()

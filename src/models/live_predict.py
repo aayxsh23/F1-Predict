@@ -26,7 +26,7 @@ import pandas as pd
 from src.data.fastf1_client import event_schedule, load_session
 from src.data.ingest import _practice_pace, _quali_features, _weather_features
 from src.features import build_dataset
-from src.models.predict import load_model, predict
+from src.models.predict import predict_all
 
 # a session that hasn't happened yet is the expected, common case here (not
 # an error) — FastF1 logs it as a full traceback by default, which is noisy
@@ -140,11 +140,7 @@ def predict_upcoming_race(season: int, round_number: int, **overrides) -> pd.Dat
     any real quali/grid data exists for this race — that's the entire point
     of that model; the other three sharpen as more real session data arrives."""
     rows = build_live_rows(season, round_number, **overrides)
-    rows = rows.copy()
-    rows["predicted_qualifying_gap"] = predict(load_model("qualifying"), rows, target="qualifying").round(2)
-    rows["predicted_finish_position"] = predict(load_model("finish_position"), rows, target="finish_position").round(2)
-    rows["predicted_quali_to_race_delta"] = predict(load_model("quali_delta"), rows, target="quali_delta").round(2)
-    rows["predicted_race_time_gap"] = predict(load_model("race_time"), rows, target="race_time").round(2)
+    rows = predict_all(rows)
     display_cols = [
         "driver", "team", "grid_position", "quali_gap_to_pole", "practice_pace",
         "predicted_qualifying_gap", "predicted_finish_position",

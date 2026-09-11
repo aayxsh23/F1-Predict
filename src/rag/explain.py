@@ -5,9 +5,9 @@ local, per the project's Phase 4+5 scope decision (see PROGRESS.md)."""
 import pandas as pd
 
 from src.models.predict import load_model, predict
-from src.rag.ingest_corpus import load_vector_store
+from src.rag.ingest_corpus import format_retrieved_context, load_vector_store
 from src.rag.llm import generate
-from src.rag.shap_query import TARGET_INFO, build_retrieval_query, top_shap_features
+from src.rag.shap_query import build_retrieval_query, build_user_prompt, top_shap_features
 
 SYSTEM_PROMPT = (
     "You are an F1 race-prediction analyst. Explain a model's prediction in "
@@ -28,15 +28,8 @@ def explain(row: pd.DataFrame, target: str = "finish_position", top_k_features: 
 
     query = build_retrieval_query(circuit_name, prediction, target, features)
     retrieved = load_vector_store().similarity_search(query, k=top_k_context)
-    context = "\n\n".join(f"[{d.metadata['source']}]\n{d.page_content}" for d in retrieved)
-
-    feature_lines = "\n".join(f"- {f['phrase']}: SHAP contribution {f['shap_value']:+.2f}" for f in features)
-    target_label = TARGET_INFO[target][0]
-    user_prompt = (
-        f"Prediction: {prediction:.1f} ({target_label}) at {circuit_name}.\n\n"
-        f"Top feature contributions:\n{feature_lines}\n\n"
-        f"Retrieved context:\n{context}"
-    )
+    context = format_retrieved_context(retrieved)
+    user_prompt = build_user_prompt(prediction, target, circuit_name, features, context)
 
     return {
         "prediction": prediction,

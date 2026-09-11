@@ -59,5 +59,13 @@ def load_vector_store() -> Chroma:
     return Chroma(collection_name=COLLECTION_NAME, embedding_function=embeddings, persist_directory=str(PERSIST_DIR))
 
 
+def format_retrieved_context(docs: list[Document]) -> str:
+    """One shared formatting of retrieved chunks for the LLM prompt -- used by
+    every caller of load_vector_store().similarity_search() (explain.py,
+    build_finetune_dataset.py, chat.py) so the context shape they show the
+    model can't quietly diverge between call sites."""
+    return "\n\n".join(f"[{d.metadata['source']}]\n{d.page_content}" for d in docs)
+
+
 if __name__ == "__main__":
     build_vector_store()

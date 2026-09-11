@@ -137,6 +137,16 @@ User-requested, explicit scope change from the plan's original "exactly 2 predic
 - Compare outputs qualitatively (and ideally with a small held-out eval set) against the Phase 4 API-based version to confirm the fine-tuned model is actually competitive in explanation quality.
 - **Output:** a locally fine-tuned, self-hosted LLM generating explanations — genuine hands-on deep-learning/fine-tuning experience, not just API calls.
 
+### Phase 4+5, as actually built (2026-09-11) — done, deviated from the plan text above by explicit user choice
+
+Both phases were merged and built local-only from day one rather than staged through an external-API version first — see PROGRESS.md/LEARNING.md for the full reasoning; the short version is that building a throwaway API-backed version first only de-risks the retrieval logic, and the base local model does that same de-risking job just as well. Concrete differences from the plan text above:
+
+- **No external LLM API at any point** — embeddings (`sentence-transformers`), retrieval (Chroma), and generation (`meta-llama/Llama-3.2-1B-Instruct`, 4-bit) are all local from the first working version.
+- **The fine-tuning dataset (108 examples, not 100-300 hand-curated) was agent-drafted, not GPT-4/Claude-API-drafted-then-hand-cleaned** — one example per (circuit, target) combination, built from real predictions/SHAP/retrieved context run through the actual inference pipeline, with template-composed completions authored to have the exact grounding discipline the base model's own test run proved it lacked (repetition, one internally-contradictory claim). Lives in `src/rag/training_data/explanations.jsonl`.
+- **Served via plain `transformers`+`peft` in-process, not Ollama/vLLM** — an always-on local server is a Phase 7 deployment decision, not needed for building/testing the pipeline itself.
+- **Result, qualitatively verified**: same Monaco prediction, base model vs. fine-tuned adapter — base model produced a rambling explanation that at one point contradicted its own premise (claimed a "strong chance of overhauling other drivers" immediately after correctly stating Monaco is the hardest circuit on the calendar to overtake at, for a driver predicted to finish 15th). The fine-tuned adapter produced a concise, internally-consistent explanation with correct SHAP-direction language, and generalized the learned style to a genuinely held-out row/target combination rather than memorizing training examples verbatim.
+- **Output achieved:** yes — grounded, local, natural-language explanations of all 4 predictors' outputs, with a real (not just claimed) qualitative improvement from the fine-tune.
+
 ### Phase 6 — Live standings agent with LangGraph (Week 5–6)
 - Build a **LangGraph** agent with a tool for fetching live/current standings data (Jolpica-F1/F1 API).
 - Give it multi-step reasoning ability: e.g. "what does Norris need to win the title this weekend?" requires pulling current points, computing remaining-race scenarios, and reasoning about outcomes — not a single lookup.
