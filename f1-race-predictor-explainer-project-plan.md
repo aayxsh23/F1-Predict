@@ -21,9 +21,9 @@ This came out of a broader analysis of the Indian AI internship market for Summe
 - Recruiters weight a strong, deployed, defendable GitHub project over tutorials or certificates
 - Projects that combine *multiple* high-demand skills (classic ML + GenAI + backend) stand out more than single-skill projects
 
-This project is designed to hit: Python, classic ML (XGBoost + SHAP), embeddings (the one place deep learning shows up, via the vector DB's embedding model), RAG, **LLM orchestration (LangChain + LangGraph)**, backend (FastAPI), and agentic tool-calling — the last two now pulled into v1 scope rather than deferred.
+This project is designed to hit: Python, classic ML (XGBoost + hyperparameter tuning + SHAP), **real deep learning (LoRA fine-tuning of a local 1B LLM)**, embeddings, RAG, **LLM orchestration (LangChain + LangGraph)**, backend (FastAPI), and agentic tool-calling.
 
-**Note on deep learning:** the predictor deliberately uses XGBoost/LightGBM, not a neural net — tabular race-summary data doesn't need DL, and XGBoost is the right tool here. The only DL you get "for free" is via embeddings in the RAG pipeline. If deep learning specifically matters for your resume, see the optional stretch model in the Future Phases table below — it's a genuinely separate piece of work, not something to force into the core pipeline.
+**Note on deep learning:** the predictor deliberately uses XGBoost/LightGBM, not a neural net — tabular race-summary data doesn't need DL, and XGBoost is the right tool here, tuned properly via hyperparameter search. The genuine deep learning component now comes from **fine-tuning Llama 3.2 1B locally** (Phase 5) to generate explanations, rather than only calling an external LLM API — this is real neural-network training (via LoRA/QLoRA), not just tabular ML.
 
 ---
 
@@ -34,8 +34,9 @@ This project is designed to hit: Python, classic ML (XGBoost + SHAP), embeddings
 - **Scope decided:**
   - Predictor: **two** targets sharing one feature pipeline — race finishing position, and quali-to-race delta (how much a driver gains/loses from grid to finish).
   - **Rolling predictions** — the model re-runs after each session (FP1/FP2/FP3 → Qualifying → pre-race) rather than predicting once, using progressively more complete features (practice pace → actual grid position → final weather/strategy assumptions). The explainer can then answer "why did the prediction change after qualifying?"
-  - **Track-aware features (single model, no clustering)** — circuit characteristics (overtaking difficulty, street vs. permanent flag, historical average positions gained/lost, safety car frequency, pit-lane loss time) are added as ordinary columns to the same feature table used by the two predictors below — a one-time circuit reference table (~24 rows, one per track) merged onto every race row via the circuit name. Still just **2 models total**; the tree-based model learns interactions like "grid position matters more when overtaking difficulty is high" on its own. No per-circuit or per-cluster models, and no extra components connected to the explainer or agent beyond the same 2 predictors.
+  - **Track-aware features, time-aware (single model, no clustering)** — circuit characteristics are added as ordinary columns to the same feature table used by the two predictors below, via a small circuit reference table merged onto every race row. The table is keyed by **circuit + configuration era** (not just circuit name), so a pre-revamp Spa and a post-2022-revamp Spa don't inherit identical characteristics. Still just **2 models total**; the tree-based model learns interactions like "grid position matters more when overtaking difficulty is high" on its own. No per-circuit or per-cluster models, and no extra components connected to the explainer or agent beyond the same 2 predictors. Full feature list (circuit, driver, team, relative, weather, strategy groups) is detailed in Phase 1.
   - Explainer: RAG over regulations + historical precedent, driven by the predictor's own SHAP feature importances, built with **LangChain/LangGraph** rather than a manual pipeline.
+  - **Local fine-tuned LLM for explanations** — instead of relying solely on an external API for generating explanations, **Llama 3.2 1B** is fine-tuned locally via **LoRA/QLoRA** on a small hand-built dataset of (prediction + retrieved context) → (good explanation) pairs. Chosen over reasoning-style distilled models (e.g. DeepSeek-R1-Distill) because the task here is consistent, plain-English explanation writing, not multi-step reasoning traces — Llama 3.2 1B is easier to control and has more direct fine-tuning precedent for this kind of task. RAG still does the fact-grounding/retrieval; fine-tuning teaches the model the explanation *style and task format*, and gives genuine hands-on deep-learning/fine-tuning experience. Runs locally via Hugging Face `transformers`/`peft`, served with `Ollama` or `vLLM`.
   - **Live standings agent pulled into v1** — this is the natural home for LangGraph's tool-calling and multi-step reasoning (e.g. "what does Norris need to win the title this weekend?").
   - **Free automated hosting** — GitHub Actions (scheduled workflow, timed to known session end times) triggers re-prediction automatically instead of running manually; the app itself is hosted on a free tier (Render/Railway/Fly.io for FastAPI, or Streamlit Community Cloud for a simpler UI). Free tiers spin down when idle, which is fine for a portfolio project.
   - Strategy simulation (pit-stop "what-if" modeling) and cross-prediction reasoning are still deferred to a later phase — not part of v1.
@@ -45,16 +46,67 @@ This project is designed to hit: Python, classic ML (XGBoost + SHAP), embeddings
 ## Phase-wise build plan
 
 ### Phase 1 — Data foundation (Week 1)
+
+**Pipeline structure:** think of the feature table as a hierarchy, built in layers and merged together — this keeps the pipeline clean and makes it much easier to explain in the README/architecture diagram:
+
+```
+Circuit features (per circuit + configuration era)
+        ↓
+Driver features (per driver, per race)
+        ↓
+Team/car features (per constructor, per race)
+        ↓
+Relative features (driver vs. teammate, actual vs. expected)
+        ↓
+Weather + strategy features (per race weekend)
+        ↓
+Final model matrix
+```
+
 - Pull historical race data via FastF1 / Jolpica-F1 for a meaningful set of seasons (start with recent 3–5 seasons for data quality, extend further back if needed).
-- Build a clean, reusable feature set: grid position, practice/quali pace, historical track performance per driver, weather, tire strategy, team/car form.
-- Build a small **circuit reference table** (~24 rows, one per track) with track-characteristic columns: overtaking-difficulty proxy (e.g. historical avg. on-track overtakes per race), `is_street_circuit` flag, historical average |grid − finish| position change, safety car frequency, pit-lane loss time. Merge this onto the main race dataset by circuit name — every driver in the same race gets the same circuit-feature values, only their own grid position/pace/etc. differ.
-- **Output:** a clean tabular dataset ready for modeling, with track characteristics included as ordinary columns.
+
+- **Circuit reference table, time-aware.** Key it by **circuit + configuration era** (`circuit`, `configuration_id`, `valid_from_year`, `valid_to_year`), not just circuit name — so a pre-2022 Spa and a post-Eau-Rouge-runoff Spa don't inherit identical characteristics. v1 columns:
+  - `overtaking_difficulty` (proxy, e.g. historical avg. on-track overtakes per race)
+  - `is_street_circuit`
+  - `pit_lane_loss_time`
+  - `safety_car_frequency`
+  - `dnf_rate`
+  - `longest_straight_m`
+  - `braking_zone_count`
+  - `tyre_degradation_level`
+  - `rain_race_frequency`
+  - `track_length_km`
+
+  Merge onto the main race dataset by `circuit` + race year (resolved to the correct configuration era) — every driver in the same race gets the same circuit-feature values.
+
+- **Driver features** (per driver, per race):
+  - `grid_position`, `quali_gap_to_pole`, `practice_pace`
+  - `driver_recent_form` (rolling avg. finish/points over recent races)
+  - `driver_track_form` (historical performance at this specific circuit)
+  - `driver_positions_gained_form` (rolling avg. grid→finish delta)
+  - `driver_dnf_rate`
+
+  **Recency-weight** the "form" and "track form" rolling stats rather than treating all past seasons equally (e.g. this year's race at a track weighted ~1.0, last year's ~0.7, two years back ~0.5) — a driver's result from 5 years ago shouldn't count as much as last season's. This matters more than adding extra raw columns.
+
+- **Team/car features** (per constructor, per race): `team_recent_form`, `team_quali_pace`, `team_race_pace`, `team_reliability`, `team_track_type_form` (e.g. constructor's average performance on high-downforce vs. street-circuit vs. low-downforce tracks — captures that a car's competitiveness isn't constant across circuit types).
+
+- **Relative features** (driver vs. teammate — same car, so this isolates driver-specific performance from car performance): `teammate_quali_gap`, `teammate_race_pace_gap`, `grid_vs_expected_position` (how far grid position deviated from what recent form/pace would predict).
+
+- **Weather features**: `air_temp`, `track_temp`, `rain_probability`, `wind_speed`, `wet_track_probability`. These matter especially for the rolling-prediction concept, since weather forecasts firm up between FP1 → Quali → pre-race.
+
+- **Strategy features**: `starting_tire_compound`, `expected_stops`, `tyre_degradation` (from the circuit table), `historical_compound_performance` — gives strategic context without building the full strategy simulator (deferred, see Future phases).
+
+- **Prevent leakage — apply this to every rolling/historical feature above.** For a race being predicted, every "recent form," "track form," or circuit-history stat must be computed using **only races before it** — never using the target race itself or future races. This is the same principle behind the time-based CV splits used in Phase 2; it needs to be enforced at the feature-engineering stage too, not just at model-validation time.
+
+- **Output:** a clean, ~30–45-column tabular dataset ready for modeling — deliberately not 100+ columns; a few well-chosen, leakage-safe, recency-aware features beat a wall of raw columns, and it keeps the eventual SHAP explanations interpretable enough to feed cleanly into the RAG explainer.
 
 ### Phase 2 — Predictor v1 (Week 1–2)
 - Train **race finishing position** model (XGBoost/LightGBM — tabular data, no need for deep learning here) as a **single model** using the full feature table from Phase 1, including the merged-in circuit characteristics. No clustering or per-track models — the tree-based model learns feature interactions (e.g. "grid position matters more when overtaking difficulty is high") directly from the data.
-- Evaluate properly (not just accuracy — check calibration, compare against a naive baseline like "grid position = finish position", and check via SHAP that circuit features are actually being used meaningfully, e.g. contributing more at Monaco-like rows than Monza-like rows).
+- **Tune hyperparameters** (tree depth, learning rate, number of estimators, regularization) via `RandomizedSearchCV`/Optuna, using **time-based cross-validation splits** (not random splits — you don't want the model validated on "future" races relative to its training data).
+- Evaluate properly (not just accuracy — check calibration, compare against a naive baseline like "grid position = finish position", and check via SHAP that circuit features are actually being used meaningfully, e.g. contributing more at Monaco-like rows than Monza-like rows). As part of this, sanity-check for leakage — confirm no rolling/historical feature for a given race was computed using that race or later ones.
+- Optionally add a handful of **interpretable interaction features** (e.g. `grid_position × overtaking_difficulty`, `team_form × circuit_type`) — XGBoost learns interactions on its own, so this isn't required for model performance, but a few manually-created ones can make SHAP output more directly readable when it feeds the RAG explainer later.
 - Build the **rolling re-prediction** capability: the same model can be called again with updated inputs after FP1/FP2/FP3 and after Qualifying, producing a fresh prediction each time as more real session data becomes available (practice pace → actual grid position → final weather/strategy assumptions).
-- **Output:** a working, evaluated, track-aware single model for target #1, callable at multiple points across a race weekend.
+- **Output:** a working, evaluated, tuned, track-aware single model for target #1, callable at multiple points across a race weekend.
 
 ### Phase 3 — Predictor v2 (Week 2)
 - Add **quali-to-race delta** model, reusing the Phase 1/2 pipeline — including the merged circuit features and rolling re-prediction, since both targets share the same feature base. Still just the same 2 models, no additional ones.
@@ -64,19 +116,26 @@ This project is designed to hit: Python, classic ML (XGBoost + SHAP), embeddings
 ### Phase 4 — RAG explainer with LangChain (Week 3–4)
 - Collect and chunk the grounding corpus: FIA regulations, steward decision documents, historical race summaries.
 - Build the retrieval pipeline using **LangChain**: embed the corpus, store in a vector DB (start simple — Chroma), retrieve relevant chunks based on the SHAP output as the query.
-- Use LangChain's chains to connect retrieval output + predictor output to an LLM and generate a plain-English explanation.
+- Use LangChain's chains to connect retrieval output + predictor output to an **external LLM API** (OpenAI/Anthropic/Gemini) and generate a plain-English explanation — this proves the RAG pipeline works before adding the complexity of a local fine-tuned model.
 - **Output:** given a prediction, the system explains it in natural language, citing real regulation/history text — built on a framework, not manual glue code.
 
-### Phase 5 — Live standings agent with LangGraph (Week 4–5)
+### Phase 5 — Local LLM fine-tuning with Llama 3.2 1B (Week 4–5)
+- Build a **small hand-curated dataset** (~100–300 examples) of (prediction + retrieved regulation/history context) → (good explanation) pairs — draft with a larger API model (GPT-4/Claude) first, then review and clean by hand for quality and consistent style.
+- Fine-tune **Llama 3.2 1B** locally via **LoRA/QLoRA** using Hugging Face `transformers` + `peft` — feasible on a single consumer GPU (even ~8GB VRAM) given the model's small size.
+- Swap the fine-tuned local model in as the generation step in the Phase 4 pipeline (retrieval logic stays identical — only the final "write the explanation" call changes), and serve it locally via `Ollama` or `vLLM`.
+- Compare outputs qualitatively (and ideally with a small held-out eval set) against the Phase 4 API-based version to confirm the fine-tuned model is actually competitive in explanation quality.
+- **Output:** a locally fine-tuned, self-hosted LLM generating explanations — genuine hands-on deep-learning/fine-tuning experience, not just API calls.
+
+### Phase 6 — Live standings agent with LangGraph (Week 5–6)
 - Build a **LangGraph** agent with a tool for fetching live/current standings data (Jolpica-F1/F1 API).
 - Give it multi-step reasoning ability: e.g. "what does Norris need to win the title this weekend?" requires pulling current points, computing remaining-race scenarios, and reasoning about outcomes — not a single lookup.
 - Add basic state/memory so it can handle follow-up questions in the same conversation.
 - **Output:** an agent that answers dynamic, scenario-based questions using live data and tool calls — the clearest demonstration of orchestration-framework skills in the project.
 
-### Phase 6 — Backend + automation + polish (Week 5–6)
+### Phase 7 — Backend + automation + polish (Week 6–7)
 - Wrap everything in a FastAPI backend with clear endpoints (predict, explain, ask-agent).
 - Automate the rolling re-prediction with a **GitHub Actions scheduled workflow**, timed to known session end times for a race weekend, instead of running the script manually — it calls the prediction pipeline and writes the latest result to a small DB or JSON file the app reads from.
-- Deploy the app on a **free hosting tier** — Render, Railway, or Fly.io for the FastAPI backend, or Streamlit Community Cloud if a simpler built-in UI is preferred over a custom frontend. Free tiers spin down when idle and take a few seconds to wake up on first request — acceptable for a portfolio demo, not something to worry about fixing.
+- Deploy the app on a **free hosting tier** — Render, Railway, or Fly.io for the FastAPI backend, or Streamlit Community Cloud if a simpler built-in UI is preferred over a custom frontend. Free tiers spin down when idle and take a few seconds to wake up on first request — acceptable for a portfolio demo, not something to worry about fixing. **Note:** the locally fine-tuned model needs to run somewhere with GPU access or be served via a small inference endpoint — free-tier web hosts typically won't have GPU, so plan to either run inference on your own machine and expose it, or fall back to the Phase 4 API model for the hosted demo while showcasing the fine-tuned model separately (e.g. in a notebook/video) in your README.
 - Build a simple UI or at least a clean demo script/notebook.
 - Write a strong README: problem, architecture in plain words, demo GIF, what you'd improve next.
 - **Output:** a deployed, self-updating, demoable, documented v1 project — no manual re-runs required.
@@ -90,7 +149,21 @@ This project is designed to hit: Python, classic ML (XGBoost + SHAP), embeddings
 | **Strategy simulation** | "What if he pits lap 20 vs lap 30?" — a different kind of model (simulation, not classification/regression) | Genuinely different problem type from the two predictors; not a quick add-on |
 | **Cross-prediction reasoning** | Explainer compares two predictions at once (e.g. why race position improves but quali doesn't) | Needs multi-input reasoning, harder than single-output explanation — natural v2 feature |
 | **Penalty likelihood model** | Predicts penalty risk from incident type | Needs a labeled steward-decision dataset, which is harder to build than lap-time data |
-| **Dedicated deep learning model** | A neural net over lap-by-lap telemetry (sequence data — e.g. tire degradation or pace-drop prediction) | Telemetry is genuinely sequence-shaped and suits DL better than race-summary tables do, but it's a separate modeling effort, not a quick add-on. Only worth it if DL specifically is a resume priority. |
+| **Dedicated telemetry deep learning model** | A neural net over lap-by-lap telemetry (sequence data — e.g. tire degradation or pace-drop prediction) | Telemetry is genuinely sequence-shaped and suits DL better than race-summary tables do, but it's a separate modeling effort from the LLM fine-tuning already in v1 — only worth it if you want DL on structured time-series data specifically |
+
+## Future feature extensions (beyond the v1 ~30–45 column set)
+
+The v1 feature set in Phase 1 is deliberately curated, not exhaustive. If the model needs more signal later, or as a "what I'd add next" talking point for interviews, these are the next features worth adding — grouped the same way as Phase 1, roughly in order of expected value:
+
+| Feature group | Additional features | Why deferred from v1 |
+|---|---|---|
+| Circuit | `num_corners`, `high_speed_corner_ratio`, `elevation_change_m`, `avg_lap_distance_km`, `race_laps`, `avg_safety_car_laps` (disruption magnitude, not just SC occurrence), `red_flag_frequency`, `pit_stop_frequency`, `track_evolution_proxy` (how much lap time improves through the weekend) | Diminishing returns beyond the core 10 circuit columns; XGBoost already gets strong signal from overtaking difficulty, degradation, and street-circuit flag |
+| Driver | Split `driver_recent_form` into explicit windows (`driver_avg_finish_last_3/5`, `driver_points_last_5`, `driver_quali_avg_last_5`, `driver_race_pace_avg_last_5`), plus `q1_time_gap`/`q2_time_gap`/`q3_time_gap` instead of a single quali-gap-to-pole | More granular than v1 needs; useful once you're tuning for marginal accuracy gains rather than proving the concept |
+| Team | `constructor_avg_finish_last_3/5`, `constructor_points_rate`, `team_dnf_rate` broken out separately from driver DNF rate | Adds precision but overlaps significantly with `team_reliability`/`team_recent_form` already in v1 |
+| Historical track performance | Full rolling stat set per driver-at-circuit (`driver_avg_grid_at_track`, `driver_avg_positions_gained_at_track`, `driver_points_at_track`, `driver_podium_rate_at_track`, `driver_avg_pace_at_track`), all recency-weighted | v1's single recency-weighted `driver_track_form` captures most of this value with far less feature-engineering overhead |
+| Weather | `humidity`, `wind_direction`, `rain_intensity`, derived `temperature_vs_historical_avg`, `crosswind_strength` | Marginal beyond the 5 v1 weather columns; worth adding if weather-sensitivity turns out to matter a lot in early evaluation |
+| Strategy | `one_stop_probability`/`two_stop_probability` as explicit predicted outputs, `compound_laps`, `tyre_age_at_predicted_finish` | Edges toward the deferred strategy-simulation feature above; fine as tabular columns, but easy to over-invest here before the core predictor is even validated |
+| Reliability/incidents | `mechanical_failure_rate` split from general DNF rate, `penalty_count_recent`, `incident_rate_recent` | Keep penalties/incidents separate from the main predictor if the explainer later uses steward documents directly — avoids the model and the RAG layer working from overlapping but inconsistent penalty signals |
 
 ---
 
@@ -98,9 +171,9 @@ This project is designed to hit: Python, classic ML (XGBoost + SHAP), embeddings
 
 A live, deployed, self-updating system where you can:
 1. Pick an upcoming or historical race
-2. Get two predictions (finishing position, quali-to-race delta) with model confidence, aware of the specific circuit's overtaking characteristics (e.g. Monaco vs. Monza behave differently)
+2. Get two predictions (finishing position, quali-to-race delta) with model confidence, built on a ~30–45 feature table spanning circuit (time-aware, per configuration era), driver, team, relative, weather, and strategy signals — aware of the specific circuit's overtaking characteristics (e.g. Monaco vs. Monza behave differently), from a **properly tuned** model
 3. See the prediction automatically update after each practice/qualifying session, without running anything manually
-4. Get a plain-English explanation of *why*, and *why it changed*, grounded in real FIA regulations and historical precedent — not a generic LLM guess
+4. Get a plain-English explanation of *why*, and *why it changed*, grounded in real FIA regulations and historical precedent — generated either by an API model or by your **own locally fine-tuned Llama 3.2 1B**, not a generic LLM guess
 5. Ask dynamic, scenario-based questions ("what does X need to do to win the title?") and get an agentic answer using live data
 
-That (Phases 1–6) is a complete, strong, defendable project that hits classic ML, track-aware feature engineering, RAG, LangChain/LangGraph orchestration, agentic tool-calling, and free automated deployment — all built on just **2 predictors + 1 explainer + 1 agent**, not a sprawl of per-circuit models. Everything in "Future phases" is optional upside, not a requirement to call this finished.
+That (Phases 1–7) is a complete, strong, defendable project that hits classic ML with hyperparameter tuning, track-aware feature engineering, RAG, **real LLM fine-tuning (genuine deep learning)**, LangChain/LangGraph orchestration, agentic tool-calling, and free automated deployment — all built on just **2 predictors + 1 fine-tuned explainer LLM + 1 agent**, not a sprawl of extra models. Everything in "Future phases" is optional upside, not a requirement to call this finished.

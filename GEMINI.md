@@ -6,5 +6,5 @@
 
 ## Gemini-specific notes
 
-- After any change worth remembering across sessions — a scope decision, a phase completed, a blocker — update [PROGRESS.md](PROGRESS.md) before ending the turn. See AGENTS.md's "Multi-agent coordination" section for what counts.
+- After any change worth remembering across sessions — a scope decision, a phase completed, a blocker — update [PROGRESS.md](PROGRESS.md) *and* [LEARNING.md](LEARNING.md) before ending the turn. See AGENTS.md's "Multi-agent coordination" section for what counts and how the two files differ (build log vs. teaching document).
 - If a hard scope constraint needs to change, edit [AGENTS.md](AGENTS.md) directly — don't fork the rule into this file.

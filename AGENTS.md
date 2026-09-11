@@ -51,7 +51,8 @@ More than one agent (Claude via [CLAUDE.md](CLAUDE.md), Gemini via [GEMINI.md](G
 - **This file is canonical.** Shared rules (scope constraints, repo layout, conventions) live here once. CLAUDE.md/GEMINI.md hold only tool-specific notes (e.g. which slash commands or CLI flags that tool uses) — never a second copy of a shared rule.
 - **Changing scope or a hard constraint?** Edit it here first, in the same change also check whether CLAUDE.md/GEMINI.md need their short pointer text updated (usually they don't — they just point here).
 - **Update [PROGRESS.md](PROGRESS.md) after every meaningful change** — new phase started/finished, a scope decision, a file layout change, a blocker hit. This is the handoff mechanism between agents and sessions: whichever agent picks up next reads PROGRESS.md first to know what state the repo is actually in, rather than re-deriving it or trusting stale memory. Keep entries short (a few lines), newest first.
-- Don't assume the other agent's last session is fully reflected in the project plan file — the plan is the *design*, PROGRESS.md is the *build log*. Check both.
+- **Update [LEARNING.md](LEARNING.md) after every meaningful change too, but write it differently.** PROGRESS.md is a terse build log (what happened); LEARNING.md is a teaching document (why, and how the concepts work) — the user is using this project to learn, not just to ship it. When a phase advances or a real decision/bugfix lands, add or extend that phase's section in LEARNING.md explaining the concept in depth: what problem it solves, why this approach over the obvious alternative, how the code implements it, and what a wrong/naive version would have gotten wrong. Write for someone learning the material, not for a changelog reader.
+- Don't assume the other agent's last session is fully reflected in the project plan file — the plan is the *design*, PROGRESS.md is the *build log*, LEARNING.md is the *tutorial*. Check all three.
 
 ## Repo hygiene
 

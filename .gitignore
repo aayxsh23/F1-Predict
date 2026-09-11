@@ -29,6 +29,7 @@ data/processed/*
 
 # Trained models & serialized artifacts
 models/saved/
+src/models/saved/
 *.joblib
 *.pkl
 *.pickle
@@ -53,6 +54,9 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+
+# Local Claude Code / plugin state
+.claude/
 
 # Operating System & IDE
 .DS_Store

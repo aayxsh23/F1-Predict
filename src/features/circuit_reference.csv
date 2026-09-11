@@ -1,0 +1,27 @@
+location,circuit_name,configuration_id,valid_from_year,valid_to_year,overtaking_difficulty,is_street_circuit,pit_lane_loss_time,safety_car_frequency,dnf_rate,longest_straight_m,braking_zone_count,tyre_degradation_level,rain_race_frequency,track_length_km
+Sakhir,Bahrain International Circuit,standard,2022,,0.25,0,21.0,0.3,0.12,1100,8,4,0.0,5.412
+Jeddah,Jeddah Corniche Circuit,standard,2022,,0.55,1,20.0,0.6,0.15,1100,6,2,0.0,6.174
+Melbourne,Albert Park Circuit,standard,2022,,0.5,1,19.0,0.5,0.12,900,7,2,0.05,5.278
+Imola,Autodromo Enzo e Dino Ferrari,standard,2022,,0.75,0,22.0,0.5,0.15,600,6,3,0.15,4.909
+Miami,Miami International Autodrome,standard,2022,,0.5,1,20.0,0.6,0.12,1300,7,3,0.05,5.412
+Monaco,Circuit de Monaco,standard,2022,,0.95,1,19.5,0.6,0.15,600,6,1,0.1,3.337
+Baku,Baku City Circuit,standard,2022,,0.35,1,21.0,0.7,0.18,2200,4,2,0.0,6.003
+Barcelona,Circuit de Barcelona-Catalunya,standard,2022,,0.65,0,21.0,0.2,0.1,1000,8,4,0.05,4.657
+Montréal,Circuit Gilles Villeneuve,standard,2022,,0.35,1,15.5,0.8,0.2,750,6,2,0.2,4.361
+Spielberg,Red Bull Ring,standard,2022,,0.4,0,18.5,0.3,0.1,700,3,3,0.1,4.318
+Le Castellet,Circuit Paul Ricard,standard,2022,2022,0.6,0,20.0,0.1,0.08,1800,5,3,0.0,5.842
+Silverstone,Silverstone Circuit,standard,2022,,0.35,0,22.0,0.3,0.1,770,6,4,0.25,5.891
+Budapest,Hungaroring,standard,2022,,0.8,0,21.0,0.3,0.08,900,6,3,0.1,4.381
+Spa-Francorchamps,Circuit de Spa-Francorchamps,standard,2022,,0.25,0,20.5,0.5,0.12,2000,5,3,0.35,7.004
+Zandvoort,Circuit Zandvoort,standard,2022,,0.85,0,19.0,0.4,0.1,700,5,3,0.15,4.259
+Monza,Autodromo Nazionale Monza,standard,2022,,0.2,0,23.0,0.2,0.1,1100,6,2,0.1,5.793
+Marina Bay,Marina Bay Street Circuit,pre_2023,2022,2022,0.8,1,24.0,0.9,0.2,800,11,3,0.15,5.063
+Marina Bay,Marina Bay Street Circuit,post_2023,2023,,0.8,1,24.0,0.9,0.2,800,10,3,0.15,4.94
+Suzuka,Suzuka International Racing Course,standard,2022,,0.5,0,21.0,0.3,0.1,1200,6,4,0.3,5.807
+Lusail,Lusail International Circuit,standard,2022,,0.55,0,20.0,0.3,0.1,1000,5,4,0.0,5.419
+Austin,Circuit of the Americas,standard,2022,,0.35,0,21.0,0.3,0.1,1200,6,3,0.15,5.513
+Mexico City,Autodromo Hermanos Rodriguez,standard,2022,,0.45,0,18.0,0.4,0.1,1200,6,2,0.1,4.304
+São Paulo,Autodromo Jose Carlos Pace,standard,2022,,0.3,0,19.0,0.4,0.12,1000,5,3,0.35,4.309
+Las Vegas,Las Vegas Strip Circuit,standard,2023,,0.35,1,20.0,0.4,0.1,1900,5,2,0.0,6.201
+Yas Island,Yas Marina Circuit,standard,2022,,0.55,0,21.0,0.3,0.08,1100,6,2,0.0,5.281
+Shanghai,Shanghai International Circuit,standard,2022,,0.4,0,22.0,0.4,0.1,1170,6,3,0.15,5.451
