@@ -41,6 +41,8 @@ def build(raw: pd.DataFrame | None = None) -> pd.DataFrame:
     out["starting_tire_compound"] = raw["starting_compound"]
     out["target_finish_position"] = raw["finish_position"]
     out["target_quali_to_race_delta"] = raw["grid_position"] - raw["finish_position"]
+    out["target_race_time_gap"] = raw["gap_to_winner_seconds"]
+    out["target_qualifying_gap"] = raw["quali_gap_to_pole"]
 
     for layer in (driver, team, relative, strategy):
         new_cols = [c for c in layer.columns if c not in KEY]

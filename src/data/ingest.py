@@ -122,12 +122,19 @@ def ingest_race(season: int, round_number: int, location: str, race_date) -> pd.
 
     df = results[[
         "Abbreviation", "DriverNumber", "TeamName", "GridPosition", "Position",
-        "Points", "Status",
+        "Points", "Status", "Time",
     ]].rename(columns={
         "Abbreviation": "driver", "DriverNumber": "driver_number", "TeamName": "team",
         "GridPosition": "grid_position", "Position": "finish_position",
         "Points": "points", "Status": "status",
     })
+    # FastF1's Time is the winner's absolute race duration, and everyone else's
+    # gap to that winner -- both leak straight to 0 for the winner, the target
+    # a "predicted race time" model actually wants. NaN (DNF/not classified)
+    # stays NaN, not imputed -- same honest-gap philosophy as every other target.
+    df["gap_to_winner_seconds"] = df["Time"].dt.total_seconds()
+    df.loc[df["finish_position"] == 1, "gap_to_winner_seconds"] = 0.0
+    df = df.drop(columns=["Time"])
     classified_not_dnf = df["status"].isin(["Finished", "Lapped"]) | df["status"].str.contains(r"^\+", regex=True, na=False)
     df["dnf"] = ~classified_not_dnf
 

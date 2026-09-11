@@ -7,7 +7,7 @@ import pandas as pd
 from src.models.predict import load_model, predict
 from src.rag.ingest_corpus import load_vector_store
 from src.rag.llm import generate
-from src.rag.shap_query import build_retrieval_query, top_shap_features
+from src.rag.shap_query import TARGET_INFO, build_retrieval_query, top_shap_features
 
 SYSTEM_PROMPT = (
     "You are an F1 race-prediction analyst. Explain a model's prediction in "
@@ -22,8 +22,8 @@ def explain(row: pd.DataFrame, target: str = "finish_position", top_k_features: 
     """row: single-row DataFrame with the raw Phase 1 feature-table columns
     plus 'location' (circuit name) -- same shape predict.predict() takes."""
     model = load_model(target)
-    prediction = float(predict(model, row).iloc[0])
-    features = top_shap_features(model, row, top_k=top_k_features)
+    prediction = float(predict(model, row, target=target).iloc[0])
+    features = top_shap_features(model, row, target=target, top_k=top_k_features)
     circuit_name = row["location"].iloc[0]
 
     query = build_retrieval_query(circuit_name, prediction, target, features)
@@ -31,7 +31,7 @@ def explain(row: pd.DataFrame, target: str = "finish_position", top_k_features: 
     context = "\n\n".join(f"[{d.metadata['source']}]\n{d.page_content}" for d in retrieved)
 
     feature_lines = "\n".join(f"- {f['phrase']}: SHAP contribution {f['shap_value']:+.2f}" for f in features)
-    target_label = "finishing position" if target == "finish_position" else "grid-to-finish position change"
+    target_label = TARGET_INFO[target][0]
     user_prompt = (
         f"Prediction: {prediction:.1f} ({target_label}) at {circuit_name}.\n\n"
         f"Top feature contributions:\n{feature_lines}\n\n"

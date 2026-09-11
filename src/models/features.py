@@ -1,5 +1,7 @@
-"""Shared feature-column list for the finishing-position model, so training
-and prediction never drift apart."""
+"""Shared feature-column list for finish_position/quali_delta/race_time (all
+three predict a pre-race-stage or later outcome, so all pre-race info is fair
+game). The qualifying model is different -- see QUALI_SAFE_FEATURE_COLS below
+-- and gets its own prepare function so the two never get mixed up."""
 import pandas as pd
 
 from src.features.build_dataset import CIRCUIT_COLS, WEATHER_COLS
@@ -27,3 +29,52 @@ def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
     X["grid_x_overtaking_difficulty"] = X["grid_position"] * X["overtaking_difficulty"]
     X["starting_tire_compound"] = pd.Categorical(X["starting_tire_compound"], categories=COMPOUND_CATEGORIES)
     return X
+
+
+# --- qualifying predictor: a genuinely different information stage ---
+#
+# Every other model here predicts something that resolves at pre-race or
+# later, so "everything known before the race" is a fair feature set. The
+# qualifying model predicts qualifying itself, from only what's known before
+# qualifying happens (practice sessions + historical form). Reusing
+# FEATURE_COLS wholesale would leak the target into its own inputs. Excluded,
+# and why:
+#   - grid_position, quali_gap_to_pole:      this race's actual qualifying
+#                                             result (or the target itself)
+#   - teammate_quali_gap:                    derived from this race's actual
+#                                             quali_gap_to_pole
+#   - grid_vs_expected_position:             derived from this race's actual
+#                                             grid_position
+#   - starting_tire_compound:                a race-day-only decision, not
+#                                             known until Sunday
+#   - historical_compound_performance:       computable only once this race's
+#                                             starting_tire_compound is known
+#                                             (it's part of the lookup key),
+#                                             which qualifying-time doesn't have
+#   - WEATHER_COLS (all 5):                  ingest.py captures these from the
+#                                             RACE session, not qualifying or
+#                                             practice — Sunday's weather isn't
+#                                             known on Saturday. No separate
+#                                             qualifying-weather column exists
+#                                             yet, so weather is dropped
+#                                             entirely for this model rather
+#                                             than fed a future value.
+QUALI_SAFE_DRIVER_COLS = ["practice_pace", "driver_recent_form", "driver_track_form", "driver_positions_gained_form", "driver_dnf_rate"]
+QUALI_SAFE_TEAM_COLS = TEAM_COLS  # all historical (recent_form-based), none of this race's actuals
+QUALI_SAFE_RELATIVE_COLS = ["teammate_race_pace_gap"]  # historical-form comparison only
+QUALI_SAFE_STRATEGY_COLS = ["expected_stops"]  # historical; excludes historical_compound_performance (see above)
+
+QUALI_SAFE_FEATURE_COLS = CIRCUIT_COLS + QUALI_SAFE_DRIVER_COLS + QUALI_SAFE_TEAM_COLS + QUALI_SAFE_RELATIVE_COLS + QUALI_SAFE_STRATEGY_COLS
+
+
+def prepare_features_quali(df: pd.DataFrame) -> pd.DataFrame:
+    return df[QUALI_SAFE_FEATURE_COLS].copy()
+
+
+# single shared mapping of target -> its feature-prep function, so every
+# caller (predict.py, the SHAP/RAG explainer) dispatches identically instead
+# of each guessing which prepare fn goes with which target
+PREPARE_FN = {
+    "finish_position": prepare_features, "quali_delta": prepare_features,
+    "qualifying": prepare_features_quali, "race_time": prepare_features,
+}

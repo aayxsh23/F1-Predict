@@ -76,19 +76,24 @@ def shap_circuit_check(model: xgb.XGBRegressor, X: pd.DataFrame, df: pd.DataFram
     difficulty, in particular) should matter more at Monaco-like (hard to
     overtake) rows than Monza-like (easy to overtake) rows — for either target,
     since a hard-to-overtake circuit constrains both how far you finish from
-    your grid slot and how much your finishing position can differ from it."""
+    your grid slot and how much your finishing position can differ from it.
+
+    The grid_x_overtaking_difficulty half only runs when that column is
+    actually in X — the qualifying model deliberately excludes grid_position
+    (and therefore this interaction) since it isn't known before qualifying,
+    so it still gets the top-10 SHAP ranking without the hard/easy split."""
     import shap
     explainer = shap.TreeExplainer(model)
     shap_values = explainer.shap_values(X)
     shap_df = pd.DataFrame(shap_values, columns=X.columns, index=X.index)
 
-    hard = df["overtaking_difficulty"] >= 0.7
-    easy = df["overtaking_difficulty"] <= 0.3
-    return {
-        "mean_abs_shap_grid_x_overtaking__hard_tracks": float(shap_df.loc[hard, "grid_x_overtaking_difficulty"].abs().mean()),
-        "mean_abs_shap_grid_x_overtaking__easy_tracks": float(shap_df.loc[easy, "grid_x_overtaking_difficulty"].abs().mean()),
-        "top_10_mean_abs_shap": shap_df.abs().mean().sort_values(ascending=False).head(10).to_dict(),
-    }
+    result = {"top_10_mean_abs_shap": shap_df.abs().mean().sort_values(ascending=False).head(10).to_dict()}
+    if "grid_x_overtaking_difficulty" in X.columns:
+        hard = df["overtaking_difficulty"] >= 0.7
+        easy = df["overtaking_difficulty"] <= 0.3
+        result["mean_abs_shap_grid_x_overtaking__hard_tracks"] = float(shap_df.loc[hard, "grid_x_overtaking_difficulty"].abs().mean())
+        result["mean_abs_shap_grid_x_overtaking__easy_tracks"] = float(shap_df.loc[easy, "grid_x_overtaking_difficulty"].abs().mean())
+    return result
 
 
 def save_model_and_metrics(model: xgb.XGBRegressor, metrics: dict, model_dir, name: str) -> None:

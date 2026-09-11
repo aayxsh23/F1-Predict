@@ -135,15 +135,20 @@ def build_live_rows(
 
 
 def predict_upcoming_race(season: int, round_number: int, **overrides) -> pd.DataFrame:
-    """Both v1 targets (finish position, quali-to-race delta), the same live
-    row set through both trained models — see plan's "done" definition."""
+    """All four targets, the same live row set through all four trained
+    models. The qualifying prediction is the one genuinely useful even before
+    any real quali/grid data exists for this race — that's the entire point
+    of that model; the other three sharpen as more real session data arrives."""
     rows = build_live_rows(season, round_number, **overrides)
     rows = rows.copy()
-    rows["predicted_finish_position"] = predict(load_model("finish_position"), rows).round(2)
-    rows["predicted_quali_to_race_delta"] = predict(load_model("quali_delta"), rows).round(2)
+    rows["predicted_qualifying_gap"] = predict(load_model("qualifying"), rows, target="qualifying").round(2)
+    rows["predicted_finish_position"] = predict(load_model("finish_position"), rows, target="finish_position").round(2)
+    rows["predicted_quali_to_race_delta"] = predict(load_model("quali_delta"), rows, target="quali_delta").round(2)
+    rows["predicted_race_time_gap"] = predict(load_model("race_time"), rows, target="race_time").round(2)
     display_cols = [
         "driver", "team", "grid_position", "quali_gap_to_pole", "practice_pace",
-        "predicted_finish_position", "predicted_quali_to_race_delta",
+        "predicted_qualifying_gap", "predicted_finish_position",
+        "predicted_quali_to_race_delta", "predicted_race_time_gap",
     ]
     return rows.sort_values("predicted_finish_position")[display_cols].reset_index(drop=True)
 

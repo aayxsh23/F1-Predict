@@ -5,7 +5,7 @@ import pandas as pd
 import shap
 import xgboost as xgb
 
-from src.models.features import prepare_features
+from src.models.features import PREPARE_FN
 
 # feature name -> plain-English topic, used to phrase the top SHAP features as
 # a query rather than dumping raw column names at the retriever/LLM
@@ -47,11 +47,11 @@ FEATURE_PHRASES = {
 }
 
 
-def top_shap_features(model: xgb.XGBRegressor, row: pd.DataFrame, top_k: int = 5) -> list[dict]:
+def top_shap_features(model: xgb.XGBRegressor, row: pd.DataFrame, target: str = "finish_position", top_k: int = 5) -> list[dict]:
     """row: a single-row DataFrame with the raw Phase 1 feature-table columns
     (same shape predict.predict() expects). Returns the top_k features driving
     THIS prediction, ranked by |SHAP value|, each with its signed contribution."""
-    X = prepare_features(row)
+    X = PREPARE_FN[target](row)
     explainer = shap.TreeExplainer(model)
     shap_values = explainer.shap_values(X)[0]
     contributions = pd.Series(shap_values, index=X.columns).sort_values(key=abs, ascending=False)
@@ -61,20 +61,25 @@ def top_shap_features(model: xgb.XGBRegressor, row: pd.DataFrame, top_k: int = 5
     ]
 
 
+# (label, higher-means, lower-means) per target -- sign convention genuinely
+# differs across all four: for finish_position/qualifying/race_time a HIGHER
+# number is WORSE (further from P1/pole/the winner), but for quali_delta
+# (= grid - finish) a HIGHER number means MORE positions gained, i.e. BETTER.
+# Getting this backwards would make every delta-model explanation claim the
+# opposite of what actually happened.
+TARGET_INFO = {
+    "finish_position": ("finishing position", "higher (worse finish)", "lower (better finish)"),
+    "quali_delta": ("quali-to-race position change", "higher (more positions gained)", "lower (fewer positions gained)"),
+    "qualifying": ("qualifying gap to pole (seconds)", "higher (further from pole)", "lower (closer to pole)"),
+    "race_time": ("race time gap to the winner (seconds)", "higher (further behind the winner)", "lower (closer to the winner)"),
+}
+
+
 def build_retrieval_query(circuit_name: str, prediction: float, target: str, top_features: list[dict]) -> str:
     """One natural-language paragraph summarizing what mattered most for this
-    prediction, used as the semantic search query against the corpus.
-
-    Sign convention differs by target: for finish_position, a HIGHER number is
-    a WORSE finish (P1 is best); for quali_delta (= grid - finish), a HIGHER
-    number means MORE positions gained, which is BETTER. A positive SHAP
-    contribution therefore reads as "worse" for one target and "better" for
-    the other -- getting this backwards would make every delta-model
-    explanation say the opposite of what actually happened."""
-    target_label = "finishing position" if target == "finish_position" else "quali-to-race position change"
+    prediction, used as the semantic search query against the corpus."""
+    target_label, worse_word, better_word = TARGET_INFO[target]
     parts = [f"Explain the predicted {target_label} of {prediction:.1f} at {circuit_name}."]
-    worse_word, better_word = ("higher (worse finish)", "lower (better finish)") if target == "finish_position" \
-        else ("higher (more positions gained)", "lower (fewer positions gained)")
     for f in top_features:
         direction = f"pushed the prediction {worse_word}" if f["shap_value"] > 0 else f"pushed the prediction {better_word}"
         parts.append(f"{f['phrase'].capitalize()} {direction}.")

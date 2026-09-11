@@ -10,7 +10,11 @@ F1 Race Predictor + Strategy Explainer: an XGBoost predictor (finishing position
 
 ## Hard scope constraints (do not violate without the user explicitly changing scope)
 
-- **Exactly 2 predictor models**, both sharing one feature pipeline. No per-circuit or per-cluster models — circuit characteristics are ordinary columns in the shared feature table, not a reason to fork models.
+- **Exactly 4 predictor models**, all XGBoost, all built on the same circuit/driver/team feature-engineering layers (Phase 1). Originally 2 (finish position, quali-to-race delta); the user explicitly expanded scope on 2026-09-11 to add a qualifying-result predictor and a race-time predictor — see PROGRESS.md for that decision. No per-circuit or per-cluster models — circuit characteristics are ordinary columns in the shared feature table, not a reason to fork models. The 4 targets:
+  1. `finish_position` — race finishing position (Phase 2).
+  2. `quali_delta` — grid-to-finish position change (Phase 3).
+  3. `qualifying` — predicted qualifying gap-to-pole, predicted *before qualifying happens* from practice pace + historical form only. This one does NOT share the other three's full feature set — it must exclude any column that only becomes known once qualifying/the race itself happens (grid_position, quali_gap_to_pole, teammate_quali_gap, grid_vs_expected_position, starting_tire_compound, historical_compound_performance, and all race-day weather — see `src/models/features.py`'s `QUALI_SAFE_FEATURE_COLS` for the enforced list). Getting this wrong is a leakage bug, not a style choice — the whole point of this model is to be usable before qualifying exists.
+  4. `race_time` — predicted gap to the race winner, in seconds (0 for the winner). Uses the same full feature set as `finish_position`/`quali_delta` (it's a pre-race-stage prediction like those two, not a pre-qualifying one).
 - **No deep learning** in the core pipeline — XGBoost/LightGBM only. Embeddings (via the vector DB) are the only DL surface. A telemetry DL model is a deferred stretch goal, not core work.
 - **Strategy simulation and cross-prediction reasoning are deferred** — don't build them into v1 even if they seem like a natural extension.
 - Explainer must be built on **LangChain**, agent on **LangGraph** — not manual pipeline glue.

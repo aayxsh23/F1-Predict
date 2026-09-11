@@ -8,12 +8,14 @@ import numpy as np
 import pandas as pd
 import xgboost as xgb
 
-from src.models.features import prepare_features
+from src.models.features import PREPARE_FN
 
 MODEL_DIR = Path(__file__).resolve().parent / "saved"
 MODEL_FILES = {
     "finish_position": MODEL_DIR / "finish_position_xgb.json",
     "quali_delta": MODEL_DIR / "quali_delta_xgb.json",
+    "qualifying": MODEL_DIR / "qualifying_xgb.json",
+    "race_time": MODEL_DIR / "race_time_xgb.json",
 }
 
 # columns not yet known before qualifying happens
@@ -23,17 +25,18 @@ PRE_RACE_ONLY_COLS = ["starting_tire_compound"]
 
 
 def load_model(target: str = "finish_position") -> xgb.XGBRegressor:
-    """target: 'finish_position' or 'quali_delta' — the two Phase 2/3 predictors,
-    both sharing this same prepare_features/predict/mask_for_stage machinery."""
+    """target: 'finish_position' | 'quali_delta' | 'qualifying' | 'race_time'
+    — all four predictors, sharing this same predict/mask_for_stage machinery
+    (qualifying uses its own restricted feature prep, see _PREPARE_FN)."""
     model = xgb.XGBRegressor()
     model.load_model(MODEL_FILES[target])
     return model
 
 
-def predict(model: xgb.XGBRegressor, rows: pd.DataFrame) -> pd.Series:
+def predict(model: xgb.XGBRegressor, rows: pd.DataFrame, target: str = "finish_position") -> pd.Series:
     """rows must have the raw Phase 1 feature-table columns (see
     src.models.features.FEATURE_COLS); missing columns/values are fine."""
-    X = prepare_features(rows)
+    X = PREPARE_FN[target](rows)
     return pd.Series(model.predict(X), index=rows.index)
 
 
