@@ -1,10 +1,13 @@
-"""Phase 2: tune, train, and evaluate the race-finishing-position XGBoost model.
+"""Phase 3: tune, train, and evaluate the quali-to-race delta XGBoost model —
+target #2, reusing the exact same feature table, time-based CV, tuning search,
+and SHAP check as Phase 2's finish-position model (training_common.py).
 
-Time-based CV throughout — folds are built from chronologically ordered races
-(never randomly), and every fold's test set only ever follows its train set,
-matching the leakage discipline already enforced at the feature-engineering
-stage in Phase 1. Shared tuning/evaluation machinery lives in
-training_common.py, used identically by train_quali_delta.py (Phase 3).
+target_quali_to_race_delta = grid_position - finish_position (positive =
+gained places, negative = lost places). grid_position is legitimately a
+*feature* here too, not leakage — it's known before the race, and it's the
+whole reason this target is interesting: a driver starting P1 has far less
+room to gain than one starting P18, so the model needs grid_position to learn
+that ceiling/floor effect.
 """
 import json
 from pathlib import Path
@@ -22,28 +25,28 @@ MODEL_DIR = Path(__file__).resolve().parent / "saved"
 
 def load_data() -> pd.DataFrame:
     df = pd.read_parquet(DATA_PATH)
-    df = df.dropna(subset=["target_finish_position"]).reset_index(drop=True)
+    df = df.dropna(subset=["target_quali_to_race_delta"]).reset_index(drop=True)
     return df
 
 
 def baseline_mae(df: pd.DataFrame, folds: list) -> float:
-    """Naive baseline: predicted finish position = grid position."""
+    """Naive baseline: predict zero change — you finish where you qualified."""
     errs = []
     for _, test_idx in folds:
         test = df.iloc[test_idx]
-        errs.append(mean_absolute_error(test["target_finish_position"], test["grid_position"].fillna(10)))
+        errs.append(mean_absolute_error(test["target_quali_to_race_delta"], np.zeros(len(test))))
     return float(np.mean(errs))
 
 
 def main():
     df = load_data()
     X = prepare_features(df)
-    y = df["target_finish_position"]
+    y = df["target_quali_to_race_delta"]
     folds = list(time_based_splits(df))
 
     print(f"{len(df)} rows, {len(folds)} time-based folds")
     base_mae = baseline_mae(df, folds)
-    print(f"baseline MAE (grid position = finish position): {base_mae:.3f}")
+    print(f"baseline MAE (predicted delta = 0, i.e. finish = grid): {base_mae:.3f}")
 
     search = tune(X, y, folds)
     print(f"best params: {search.best_params_}")
@@ -65,7 +68,7 @@ def main():
         "n_rows": len(df), "n_folds": len(folds), "baseline_mae": base_mae, "tuned_mae": tuned_mae,
         "best_params": search.best_params_, "shap_circuit_check": shap_result,
     }
-    save_model_and_metrics(final_model, metrics, MODEL_DIR, "finish_position")
+    save_model_and_metrics(final_model, metrics, MODEL_DIR, "quali_delta")
     print(f"saved model + metrics to {MODEL_DIR}")
 
 

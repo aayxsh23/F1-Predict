@@ -10,7 +10,11 @@ import xgboost as xgb
 
 from src.models.features import prepare_features
 
-MODEL_PATH = Path(__file__).resolve().parent / "saved" / "finish_position_xgb.json"
+MODEL_DIR = Path(__file__).resolve().parent / "saved"
+MODEL_FILES = {
+    "finish_position": MODEL_DIR / "finish_position_xgb.json",
+    "quali_delta": MODEL_DIR / "quali_delta_xgb.json",
+}
 
 # columns not yet known before qualifying happens
 POST_QUALI_ONLY_COLS = ["grid_position", "quali_gap_to_pole", "grid_vs_expected_position", "teammate_quali_gap"]
@@ -18,9 +22,11 @@ POST_QUALI_ONLY_COLS = ["grid_position", "quali_gap_to_pole", "grid_vs_expected_
 PRE_RACE_ONLY_COLS = ["starting_tire_compound"]
 
 
-def load_model() -> xgb.XGBRegressor:
+def load_model(target: str = "finish_position") -> xgb.XGBRegressor:
+    """target: 'finish_position' or 'quali_delta' — the two Phase 2/3 predictors,
+    both sharing this same prepare_features/predict/mask_for_stage machinery."""
     model = xgb.XGBRegressor()
-    model.load_model(MODEL_PATH)
+    model.load_model(MODEL_FILES[target])
     return model
 
 
