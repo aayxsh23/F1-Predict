@@ -171,6 +171,10 @@ The plan's own phrase "live data and tool calls" implied a ReAct-style agent whe
 - Write a strong README: problem, architecture in plain words, demo GIF, what you'd improve next.
 - **Output:** a deployed, self-updating, demoable, documented v1 project — no manual re-runs required.
 
+### Phase 7, as actually built (2026-09-12) — backend and frontend both done
+
+Backend built first (user asked to skip the UI initially), frontend ("Pit Wall") built same day in a follow-up request using the impeccable/ui-ux-pro-max design skill. Both verified end-to-end per [phase7-ui-backend-plan.md](phase7-ui-backend-plan.md)'s design (API skeleton, SHAP endpoint, backtest export, GitHub Actions automation, React/Vite/Tailwind frontend) — see PROGRESS.md/LEARNING.md for the real bugs hit and fixed along the way, and [frontend/DESIGN.md](frontend/DESIGN.md) for the frontend's own design-system record. Two real deviations from the plan doc, both the same shape: it designed `/explain`/`/ask-agent` and their frontend pages as disabled `501`/"coming soon" stubs because it was written before Phases 4-6 existed; both are real, working features now (backend wired to `rag.explain.explain()`/`agent.graph.ask()`, frontend has a full SHAP+explanation page and a real agent chat page), since a stub would be a strict downgrade from functionality that already works. Nothing has been pushed to GitHub or deployed yet — this was a local build+verify session; the scheduled workflow hasn't run for real on a schedule (run manually as verification instead).
+
 ---
 
 ## Future phases (stretch goals, not required for v1)

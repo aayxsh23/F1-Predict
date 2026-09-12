@@ -1,0 +1,147 @@
+/* Design tokens — see phase7-ui-backend-plan.md's "Design system" section for
+   the source spec. Tailwind v4 reads CSS custom properties directly via the
+   @theme block in globals.css; this file only defines the properties. */
+
+:root {
+  /* Neutrals */
+  --gray-0: #ffffff;
+  --gray-50: #f8f9fb;
+  --gray-100: #eef0f3;
+  --gray-200: #dde1e6;
+  --gray-300: #c3c9d1;
+  --gray-400: #9aa2ad;
+  --gray-500: #717a87;
+  /* between 500/600 -- the darkest tone that still reads as "muted" rather
+     than "secondary" while clearing 4.5:1 on a light surface (~4.96:1
+     against white/gray-50); gray-500 itself only clears ~4.35:1 */
+  --gray-550: #67717d;
+  --gray-600: #4f5761;
+  --gray-700: #363c44;
+  --gray-800: #22262b;
+  --gray-900: #131519;
+  --gray-950: #0a0b0d;
+
+  /* Accent — a controlled nod to F1 red, used sparingly for primary
+     actions/highlights only, never as chrome */
+  --red-400: #ff6b5e;
+  --red-500: #e8483a;
+  --red-600: #c22e22;
+  --red-700: #961f17;
+
+  /* Data-signal colors for signed SHAP values */
+  --green-500: #1f9d55;
+  --green-400: #34b46a;
+  /* text-safe on a light badge bg (~5.5:1 vs white) -- green-500 itself
+     only clears ~3.5:1 as small text, same class of issue as gray-550 above */
+  --green-700: #147842;
+
+  /* Spacing (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Type scale — smaller than a marketing site, this is dense tabular data */
+  --text-xs: 12px;
+  --leading-xs: 16px;
+  --text-sm: 13px;
+  --leading-sm: 18px;
+  --text-base: 14px;
+  --leading-base: 20px;
+  --text-md: 16px;
+  --leading-md: 24px;
+  --text-lg: 18px;
+  --leading-lg: 26px;
+  --text-xl: 22px;
+  --leading-xl: 28px;
+  --text-2xl: 28px;
+  --leading-2xl: 34px;
+  --text-3xl: 36px;
+  --leading-3xl: 42px;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+  /* Semantic — light (default) */
+  --bg-canvas: var(--gray-50);
+  --bg-surface: var(--gray-0);
+  --bg-surface-sunken: var(--gray-100);
+  --border-default: var(--gray-200);
+  --text-primary: var(--gray-900);
+  --text-secondary: var(--gray-600);
+  /* AA body-text floor (4.5:1 on a light surface), not gray-400 (~2.7:1) --
+     gray-400 stays a valid choice for large/decorative use (chart-pending
+     below), just not for the small informational text this token is
+     actually used for (freshness lines, table headers, placeholders) */
+  --text-muted: var(--gray-550);
+  --accent-default: var(--red-500);
+  --accent-hover: var(--red-600);
+  --accent-text: var(--red-600);
+
+  --chart-positive: var(--green-500);
+  --chart-negative: var(--red-500);
+  --chart-known: var(--green-500);
+  --chart-pending: var(--gray-400);
+
+  --table-row-hover-bg: var(--gray-100);
+  --badge-known-bg: color-mix(in srgb, var(--green-500) 15%, transparent);
+  --badge-known-text: var(--green-700);
+  --badge-pending-bg: var(--gray-100);
+  /* shares --text-muted rather than its own gray-500 -- same semantic role
+     (muted informational text), and can't drift out of AA compliance again
+     if kept as one value instead of two */
+  --badge-pending-text: var(--text-muted);
+}
+
+/* Dark — system preference, unless an explicit toggle overrides it */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg-canvas: var(--gray-950);
+    --bg-surface: var(--gray-900);
+    --bg-surface-sunken: var(--gray-800);
+    --border-default: var(--gray-700);
+    --text-primary: var(--gray-50);
+    --text-secondary: var(--gray-300);
+    /* gray-500 only clears ~4.2:1 against gray-900 (fails AA) -- gray-400
+       clears ~7:1 against both gray-900 and gray-950 */
+    --text-muted: var(--gray-400);
+    --accent-default: var(--red-400);
+    --accent-hover: var(--red-500);
+    --accent-text: var(--red-400);
+
+    --table-row-hover-bg: var(--gray-800);
+    --badge-pending-bg: var(--gray-800);
+    --badge-pending-text: var(--text-muted);
+    --badge-known-text: var(--green-400);
+  }
+}
+
+/* Dark — explicit toggle wins in both directions */
+:root[data-theme='dark'] {
+  --bg-canvas: var(--gray-950);
+  --bg-surface: var(--gray-900);
+  --bg-surface-sunken: var(--gray-800);
+  --border-default: var(--gray-700);
+  --text-primary: var(--gray-50);
+  --text-secondary: var(--gray-300);
+  --text-muted: var(--gray-400);
+  --accent-default: var(--red-400);
+  --accent-hover: var(--red-500);
+  --accent-text: var(--red-400);
+
+  --table-row-hover-bg: var(--gray-800);
+  --badge-pending-bg: var(--gray-800);
+  --badge-pending-text: var(--text-muted);
+  --badge-known-text: var(--green-400);
+}

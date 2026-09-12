@@ -29,13 +29,22 @@ data/processed/*
 
 # Trained models & serialized artifacts
 models/saved/
-src/models/saved/
 src/rag/saved/
 *.joblib
 *.pkl
 *.pickle
 *.model
 *.safetensors
+
+# src/models/saved/ ignores its own contents (not the directory itself,
+# unlike the other saved/ dirs above) so the Phase 7 exception below can
+# actually re-include a file inside it -- git can't un-ignore a path whose
+# PARENT DIRECTORY is excluded, only a path whose parent is merely "contents
+# ignored". The 4 predictor models are small (~600KB total) and a deployed
+# backend needs them at process startup with no training step available --
+# commit them, keep everything else here (metrics JSON, anything else) ignored.
+src/models/saved/*
+!src/models/saved/*_xgb.json
 
 # Vector store (Phase 4 RAG)
 chroma_db/

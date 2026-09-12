@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-12T00:00:00Z",
+  "title": "Design System: Pit Wall",
+  "extensions": {
+    "colorMeta": {
+      "red-500": { "role": "primary", "displayName": "F1 Red", "canonical": "#e8483a" },
+      "red-400": { "role": "primary", "displayName": "F1 Red (dark mode)", "canonical": "#ff6b5e" },
+      "gray-50": { "role": "neutral", "displayName": "Canvas Light", "canonical": "#f8f9fb" },
+      "gray-950": { "role": "neutral", "displayName": "Canvas Dark", "canonical": "#0a0b0d" },
+      "gray-550": { "role": "neutral", "displayName": "Muted Text (AA-safe)", "canonical": "#67717d", "tonalRamp": ["#0a0b0d", "#131519", "#22262b", "#363c44", "#4f5761", "#67717d", "#9aa2ad", "#c3c9d1"] },
+      "green-500": { "role": "data-signal", "displayName": "Chart Positive / Known", "canonical": "#1f9d55" },
+      "green-700": { "role": "data-signal", "displayName": "Badge Known Text (AA-safe)", "canonical": "#147842" },
+      "red-500-neg": { "role": "data-signal", "displayName": "Chart Negative", "canonical": "#e8483a" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Grand Prix name on Dashboard/RaceDetail; only page-identity role." },
+      "label": { "displayName": "Label", "purpose": "Uppercase section labels inside body content (not a pre-headline kicker)." },
+      "numeral": { "displayName": "Numeral", "purpose": "Every number, driver code, and timing value app-wide; JetBrains Mono, tabular-nums." }
+    },
+    "shadows": [
+      { "name": "shadow-sm", "value": "0 1px 2px rgba(0,0,0,0.06)", "purpose": "Resting shadow on Card and the active sidebar/tab item." },
+      { "name": "shadow-md", "value": "0 4px 12px rgba(0,0,0,0.12)", "purpose": "Declared but unused by any shipped component." }
+    ],
+    "motion": [
+      { "name": "color-transition", "value": "transition-colors duration-150", "purpose": "Standard hover/active state transition for buttons, nav items, tabs, table rows." }
+    ],
+    "breakpoints": [
+      { "name": "md", "value": "768px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Default call-to-action button; red fill, white text.",
+      "html": "<button class=\"ds-btn-primary\">View explanation</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 8px; font-weight: 500; font-size: 14px; background: #e8483a; color: #ffffff; border: none; transition: background-color 150ms; } .ds-btn-primary:hover { background: #c22e22; } .ds-btn-primary:focus-visible { outline: 2px solid #e8483a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Outlined button on white/surface background.",
+      "html": "<button class=\"ds-btn-secondary\">Cancel</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 8px; font-weight: 500; font-size: 14px; background: #ffffff; color: #131519; border: 1px solid #dde1e6; transition: background-color 150ms; } .ds-btn-secondary:hover { background: #eef0f3; }"
+    },
+    {
+      "name": "Known Session Badge",
+      "kind": "chip",
+      "refersTo": "badge-known",
+      "description": "Signals a session's real data is available, e.g. Qualifying known.",
+      "html": "<span class=\"ds-badge-known\"><svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><polyline points=\"20 6 9 17 4 12\"/></svg>Qualifying</span>",
+      "css": ".ds-badge-known { display: inline-flex; align-items: center; gap: 6px; border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 500; line-height: 16px; background: color-mix(in srgb, #1f9d55 15%, transparent); color: #147842; }"
+    },
+    {
+      "name": "Pending Session Badge",
+      "kind": "chip",
+      "refersTo": "badge-pending",
+      "description": "Signals a session's data is not yet known.",
+      "html": "<span class=\"ds-badge-pending\"><svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><circle cx=\"12\" cy=\"12\" r=\"10\"/></svg>Practice</span>",
+      "css": ".ds-badge-pending { display: inline-flex; align-items: center; gap: 6px; border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 500; line-height: 16px; background: #eef0f3; color: #67717d; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Base surface container; flat with a hairline border and near-invisible ambient shadow.",
+      "html": "<div class=\"ds-card\">Card content</div>",
+      "css": ".ds-card { border-radius: 8px; border: 1px solid #dde1e6; background: #ffffff; padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }"
+    },
+    {
+      "name": "Timing-Sheet Row",
+      "kind": "custom",
+      "refersTo": "timing-sheet-row",
+      "description": "Signature pattern: mono rank digit + two-line identity block + trailing chevron/Why affordance, as one tappable row.",
+      "html": "<a class=\"ds-row\" href=\"#\"><span class=\"ds-row-rank\">1</span><div class=\"ds-row-id\"><p class=\"ds-row-name\">VER</p><p class=\"ds-row-team\">Red Bull Racing</p></div><span class=\"ds-row-why\">Why <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"9 18 15 12 9 6\"/></svg></span></a>",
+      "css": ".ds-row { display: flex; align-items: center; gap: 16px; padding: 16px 20px; border-bottom: 1px solid #dde1e6; text-decoration: none; transition: background-color 150ms; } .ds-row:hover { background: #eef0f3; } .ds-row-rank { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 600; color: #e8483a; width: 24px; } .ds-row-id { flex: 1; min-width: 0; } .ds-row-name { font-family: 'JetBrains Mono', monospace; font-weight: 600; letter-spacing: 0.02em; color: #131519; } .ds-row-team { font-size: 14px; color: #4f5761; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-row-why { display: flex; align-items: center; gap: 8px; color: #67717d; font-size: 14px; }"
+    },
+    {
+      "name": "Sidebar Nav Item",
+      "kind": "nav",
+      "refersTo": "sidebar-nav-item",
+      "description": "Desktop sidebar navigation link, active and inactive states.",
+      "html": "<a class=\"ds-nav-item ds-nav-item-active\" href=\"#\">Dashboard</a>",
+      "css": ".ds-nav-item { display: flex; align-items: center; gap: 12px; border-radius: 8px; padding: 8px 12px; font-size: 14px; font-weight: 500; color: #4f5761; transition: background-color 150ms, color 150ms; } .ds-nav-item:hover { background: #ffffff; color: #131519; } .ds-nav-item-active { background: #ffffff; color: #131519; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Timing Tower",
+    "overview": "Pit Wall is built like the data screens a race engineer actually reads during a session: a restrained neutral canvas, one controlled accent, and every number set in a monospace face so columns of positions, gaps, and times never jitter against each other. It is not a marketing dashboard of icon cards; it is dense, tabular, and built to be scanned in seconds — the FIRST VIEWPORT direction pins the podium as one card of timing-sheet rows, not three duplicate stat tiles, and the shipped Dashboard, RaceDetail, and History routes hold that line. The palette is almost entirely gray. F1 red exists only where it means something — the current selection, a primary action, a link — never as chrome, never as decoration on a heading. This is a \"brief-pinned\" system: the token set was specified in phase7-ui-backend-plan.md and approved as-is rather than explored through a visual-world workshop, so its authority comes from deliberate specification and from what actually shipped, not from a comp file.",
+    "keyCharacteristics": [
+      "Restrained neutral canvas (gray-50 light / gray-950 dark) with a single red accent reserved for selection, primary actions, and links.",
+      "Inter for all UI text; JetBrains Mono for every numeral so tabular data never jitters column-to-column.",
+      "Dense, timing-tower-style rows and tables over icon-card grids.",
+      "Flat surfaces (hairline borders + a near-invisible ambient shadow), not lifted cards.",
+      "Full light/dark parity via the same semantic token names, driven by prefers-color-scheme with an explicit [data-theme] override."
+    ],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "Red is spent on exactly three things: the primary action, the active/selected state, and a link. It never appears on a container, a border, or a heading.", "section": "colors" },
+      { "name": "The Re-Picked Contrast Step Rule", "body": "Where a token is used as small informational text, its value is deliberately stepped off the raw numeric scale (gray-550 instead of gray-500; green-700 instead of green-500) to clear AA 4.5:1. Don't substitute the nearby raw scale step back in.", "section": "colors" },
+      { "name": "The No-Jitter Rule", "body": "Any value that is a number, a driver code, or session/timing data renders in JetBrains Mono with tabular-nums. Prose never does.", "section": "typography" },
+      { "name": "The Border-Over-Shadow Rule", "body": "The default way to separate one surface from another is a 1px border, not a shadow. Shadows are reserved for the resting Card token and active-state highlighting, never for implying hover elevation.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do put every number, driver code, or timing value in JetBrains Mono with tabular-nums — never in Inter.",
+      "Do reserve red for the primary action, the active/selected state, and links only.",
+      "Do use the border-default hairline as the default surface separator; reach for shadow-sm only on Card and active nav/tab, never as a hover-triggered lift.",
+      "Do re-pick a color's small-text step off its neutral or signal scale (gray-550, green-700) rather than reusing the visually-nearest raw step, whenever that token will render as small informational text.",
+      "Do collapse dense tables to stacked cards below md, not a horizontally-scrolling or truncated table."
+    ],
+    "donts": [
+      "Don't put a kicker/eyebrow label above a page's h1. Three route headers shipped with an invented eyebrow pattern during this build and it was removed in finish review; it is not part of this system going forward.",
+      "Don't add a second accent hue. The system is one neutral ramp plus one accent plus two data-signal colors.",
+      "Don't use a pill (fully-rounded) shape or a sharp (0px) corner anywhere.",
+      "Don't introduce a drop shadow heavier than shadow-md, or one that appears only on hover to simulate lift."
+    ]
+  }
+}

@@ -24,6 +24,22 @@ COMPOUND_CATEGORIES = ["SOFT", "MEDIUM", "HARD", "INTERMEDIATE", "WET"]
 INTERACTION_COLS = ["grid_x_overtaking_difficulty"]
 
 
+def row_from_dict(feature_row: dict) -> pd.DataFrame:
+    """Rebuild a single-row DataFrame from a feature dict that's been through
+    a JSON round-trip (refresh_job.py writes it, the API reads it back for
+    /explain). JSON's null becomes Python None, and a dict with a None value
+    makes pandas infer `object` dtype for that column instead of float64/NaN
+    -- which XGBoost's categorical-dtype check then rejects outright, even
+    for columns that were never meant to be categorical. Coerce every
+    FEATURE_COLS member except the one genuinely categorical column back to
+    numeric; anything outside FEATURE_COLS (e.g. an added 'location' column)
+    is left alone."""
+    row = pd.DataFrame([feature_row])
+    numeric_cols = [c for c in FEATURE_COLS if c != "starting_tire_compound" and c in row.columns]
+    row[numeric_cols] = row[numeric_cols].apply(pd.to_numeric, errors="coerce")
+    return row
+
+
 def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
     X = df[FEATURE_COLS].copy()
     X["grid_x_overtaking_difficulty"] = X["grid_position"] * X["overtaking_difficulty"]
