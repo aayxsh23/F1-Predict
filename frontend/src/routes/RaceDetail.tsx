@@ -4,6 +4,8 @@ import { Link, useParams } from 'react-router-dom'
 
 import { Card } from '@/components/ui/Card'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { AskCopilotButton } from '@/components/workbench/AskCopilotButton'
+import { useHighlightFlash } from '@/components/workbench/useHighlightFlash'
 import { formatNumber, formatRelativeTime, formatSigned } from '@/lib/format'
 import { usePredictionsForRace } from '@/lib/queries'
 import type { DriverPrediction } from '@/lib/types'
@@ -68,39 +70,7 @@ export function RaceDetail() {
           </thead>
           <tbody>
             {rows.map((d, i) => (
-              <tr
-                key={d.driver}
-                className="border-b border-border-default last:border-0 hover:bg-surface-sunken"
-              >
-                <Td className="font-mono tabular-nums text-text-muted">{i + 1}</Td>
-                <Td>
-                  <p className="font-mono font-semibold text-text-primary">{d.driver}</p>
-                  <p className="text-xs text-text-secondary">{d.team}</p>
-                </Td>
-                <Td className="font-mono tabular-nums">{d.grid_position ?? '—'}</Td>
-                <Td className="font-mono tabular-nums">{formatNumber(d.quali_gap_to_pole, 3, 's')}</Td>
-                <Td className="font-mono tabular-nums">{formatNumber(d.practice_pace, 3, 's')}</Td>
-                <Td align="right" className="font-mono tabular-nums">
-                  {formatNumber(d.predicted_qualifying_gap, 2, 's')}
-                </Td>
-                <Td align="right" className="font-mono font-semibold tabular-nums text-text-primary">
-                  {formatNumber(d.predicted_finish_position, 1)}
-                </Td>
-                <Td align="right" className="font-mono tabular-nums">
-                  {d.predicted_quali_to_race_delta === null ? '—' : formatSigned(d.predicted_quali_to_race_delta)}
-                </Td>
-                <Td align="right" className="font-mono tabular-nums">
-                  {formatNumber(d.predicted_race_time_gap, 1, 's')}
-                </Td>
-                <Td align="right">
-                  <Link
-                    to={`/race/${data.season}/${data.round}/driver/${d.driver}`}
-                    className="text-accent-text hover:underline"
-                  >
-                    Why
-                  </Link>
-                </Td>
-              </tr>
+              <DriverRow key={d.driver} d={d} i={i} season={data.season} round={data.round} />
             ))}
           </tbody>
         </table>
@@ -113,6 +83,50 @@ export function RaceDetail() {
         ))}
       </div>
     </div>
+  )
+}
+
+function DriverRow({ d, i, season, round }: { d: DriverPrediction; i: number; season: number; round: number }) {
+  const { ref, flashing } = useHighlightFlash(d.driver)
+  return (
+    <tr
+      ref={ref as React.RefObject<HTMLTableRowElement>}
+      className={`group border-b border-border-default last:border-0 hover:bg-surface-sunken ${
+        flashing ? 'animate-[flash-highlight_1.2s_ease-out]' : ''
+      }`}
+    >
+      <Td className="font-mono tabular-nums text-text-muted">{i + 1}</Td>
+      <Td>
+        <p className="font-mono font-semibold text-text-primary">{d.driver}</p>
+        <p className="text-xs text-text-secondary">{d.team}</p>
+      </Td>
+      <Td className="font-mono tabular-nums">{d.grid_position ?? '—'}</Td>
+      <Td className="font-mono tabular-nums">{formatNumber(d.quali_gap_to_pole, 3, 's')}</Td>
+      <Td className="font-mono tabular-nums">{formatNumber(d.practice_pace, 3, 's')}</Td>
+      <Td align="right" className="font-mono tabular-nums">
+        {formatNumber(d.predicted_qualifying_gap, 2, 's')}
+      </Td>
+      <Td align="right" className="font-mono font-semibold tabular-nums text-text-primary">
+        {formatNumber(d.predicted_finish_position, 1)}
+      </Td>
+      <Td align="right" className="font-mono tabular-nums">
+        {d.predicted_quali_to_race_delta === null ? '—' : formatSigned(d.predicted_quali_to_race_delta)}
+      </Td>
+      <Td align="right" className="font-mono tabular-nums">
+        {formatNumber(d.predicted_race_time_gap, 1, 's')}
+      </Td>
+      <Td align="right">
+        <div className="flex items-center justify-end gap-1">
+          <AskCopilotButton
+            prompt={`Why is ${d.driver} predicted to finish around P${Math.round(d.predicted_finish_position ?? 0)}?`}
+            className="opacity-0 group-hover:opacity-100"
+          />
+          <Link to={`/race/${season}/${round}/driver/${d.driver}`} className="text-accent-text hover:underline">
+            Why
+          </Link>
+        </div>
+      </Td>
+    </tr>
   )
 }
 
@@ -143,31 +157,46 @@ function MobileDriverRow({
   season: number
   round: number
 }) {
+  const { ref, flashing } = useHighlightFlash(driver.driver)
   return (
-    <Link to={`/race/${season}/${round}/driver/${driver.driver}`} className="block">
-      <Card className="flex items-center gap-3 p-4">
-        <span className="w-5 shrink-0 font-mono text-lg font-semibold tabular-nums text-text-muted">{rank}</span>
-        <div className="min-w-0 flex-1">
-          <p className="font-mono font-semibold text-text-primary">{driver.driver}</p>
-          <p className="truncate text-xs text-text-secondary">{driver.team}</p>
-          <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-            <div className="flex justify-between">
-              <dt className="text-text-muted">Pred. finish</dt>
-              <dd className="font-mono tabular-nums text-text-primary">
-                {formatNumber(driver.predicted_finish_position, 1)}
-              </dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-text-muted">Pred. delta</dt>
-              <dd className="font-mono tabular-nums text-text-primary">
-                {driver.predicted_quali_to_race_delta === null ? '—' : formatSigned(driver.predicted_quali_to_race_delta)}
-              </dd>
-            </div>
-          </dl>
-        </div>
-        <ChevronRight className="h-4 w-4 shrink-0 text-text-muted" strokeWidth={2} />
-      </Card>
-    </Link>
+    <div
+      ref={ref as React.RefObject<HTMLDivElement>}
+      className={`relative ${flashing ? 'animate-[flash-highlight_1.2s_ease-out] rounded-md' : ''}`}
+    >
+      <Link to={`/race/${season}/${round}/driver/${driver.driver}`} className="block">
+        <Card className="flex items-center gap-3 p-4 pr-12">
+          <span className="w-5 shrink-0 font-mono text-lg font-semibold tabular-nums text-text-muted">{rank}</span>
+          <div className="min-w-0 flex-1">
+            <p className="font-mono font-semibold text-text-primary">{driver.driver}</p>
+            <p className="truncate text-xs text-text-secondary">{driver.team}</p>
+            <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+              <div className="flex justify-between">
+                <dt className="text-text-muted">Pred. finish</dt>
+                <dd className="font-mono tabular-nums text-text-primary">
+                  {formatNumber(driver.predicted_finish_position, 1)}
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-text-muted">Pred. delta</dt>
+                <dd className="font-mono tabular-nums text-text-primary">
+                  {driver.predicted_quali_to_race_delta === null
+                    ? '—'
+                    : formatSigned(driver.predicted_quali_to_race_delta)}
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <ChevronRight className="h-4 w-4 shrink-0 text-text-muted" strokeWidth={2} />
+        </Card>
+      </Link>
+      {/* sibling of the Link, not nested inside it -- a <button> inside an
+      <a> is invalid HTML and would need stopPropagation hacks to avoid
+      double-triggering navigation */}
+      <AskCopilotButton
+        prompt={`Why is ${driver.driver} predicted to finish there?`}
+        className="absolute right-3 top-1/2 -translate-y-1/2 bg-surface"
+      />
+    </div>
   )
 }
 

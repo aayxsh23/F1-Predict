@@ -27,6 +27,19 @@ data/raw/*
 data/processed/*
 !data/processed/.gitkeep
 
+# data/raw/races/ is excluded by the data/raw/* rule above, so re-including
+# files inside it needs the same "un-ignore the dir, then re-ignore its
+# contents, then re-include the specific files" dance as src/models/saved/
+# below -- git can't un-ignore a path whose PARENT DIRECTORY is excluded.
+# The refresh-predictions CI job builds live features by appending one row
+# to this historical table (src/models/live_predict.py's build_live_rows),
+# and a fresh checkout has no re-ingestion budget (FastF1's ~500/h rate
+# limit) to rebuild 105 races from scratch every 30 minutes -- commit the
+# small (~2MB) per-race parquet cache so that table exists in CI at all.
+!data/raw/races/
+data/raw/races/*
+!data/raw/races/*.parquet
+
 # Trained models & serialized artifacts
 models/saved/
 src/rag/saved/

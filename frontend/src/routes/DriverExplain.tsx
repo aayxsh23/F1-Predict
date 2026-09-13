@@ -7,8 +7,9 @@ import { Badge } from '@/components/ui/Badge'
 import { Card } from '@/components/ui/Card'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { AskCopilotButton } from '@/components/workbench/AskCopilotButton'
 import { formatFeatureName, formatNumber } from '@/lib/format'
-import { useDriverExplain, useNaturalExplanation } from '@/lib/queries'
+import { useDriverExplain, useNaturalExplanation, useRegulationsList } from '@/lib/queries'
 import { TARGET_HIGHER_IS_BETTER, TARGET_LABELS, TARGET_UNITS, TARGETS, type Target } from '@/lib/types'
 
 export function DriverExplain() {
@@ -116,10 +117,17 @@ function ExplanationPanel({
   target: Target
 }) {
   const { data, isPending, isError } = useNaturalExplanation(season, round, driver, target)
+  // only the regulations/steward-decision corpus is browsable at /regulations
+  // (race_summaries citations share the same .txt extension but aren't) --
+  // check against the real list rather than guessing from the extension.
+  const { data: regulations } = useRegulationsList()
 
   return (
     <Card>
-      <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Why</p>
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Why</p>
+        <AskCopilotButton prompt={`Why is ${driver} predicted for ${TARGET_LABELS[target].toLowerCase()}?`} />
+      </div>
 
       {isPending && (
         <div className="mt-3 space-y-2">
@@ -146,11 +154,19 @@ function ExplanationPanel({
           {data.sources.length > 0 && (
             <div className="mt-5 flex flex-wrap items-center gap-1.5 border-t border-border-default pt-4">
               <span className="text-xs text-text-muted">Grounded in:</span>
-              {data.sources.map((source, i) => (
-                <Badge key={`${source}-${i}`} tone="neutral">
-                  {formatSourceName(source)}
-                </Badge>
-              ))}
+              {data.sources.map((source, i) => {
+                const filename = source.split(/[/\\]/).pop() ?? source
+                const isRegCorpus = regulations?.some((r) => r.filename === filename) ?? false
+                return isRegCorpus ? (
+                  <Link key={`${source}-${i}`} to={`/regulations?doc=${encodeURIComponent(filename)}`}>
+                    <Badge tone="neutral">{formatSourceName(source)}</Badge>
+                  </Link>
+                ) : (
+                  <Badge key={`${source}-${i}`} tone="neutral">
+                    {formatSourceName(source)}
+                  </Badge>
+                )
+              })}
             </div>
           )}
         </>

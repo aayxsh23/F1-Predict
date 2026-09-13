@@ -19,6 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.agent.graph import ask as agent_ask
 from src.agent.graph import build_graph
 from src.api.cache import get_json
+from src.api.corpus_files import get_document_text, list_documents, search_documents
 from src.api.schemas import AskAgentRequest, ExplainRequest
 from src.data.fastf1_client import event_schedule
 from src.models.explain import shap_explanation
@@ -117,6 +118,27 @@ def backtest_for_race(season: int, round: int):
         return get_json(f"backtest/{season}_{round}.json")
     except FileNotFoundError:
         raise HTTPException(404, "no backtest data for this race")
+
+
+@app.get("/regulations")
+def regulations_list():
+    return list_documents()
+
+
+# must be declared before /regulations/{filename} -- Starlette matches path
+# operations in declaration order, so {filename} would otherwise swallow the
+# literal "search" segment.
+@app.get("/regulations/search")
+def regulations_search(query: str, k: int = 5):
+    return search_documents(query, k=k)
+
+
+@app.get("/regulations/{filename}")
+def regulations_get(filename: str):
+    try:
+        return {"filename": filename, "text": get_document_text(filename)}
+    except FileNotFoundError:
+        raise HTTPException(404, f"no corpus document named '{filename}'")
 
 
 @app.post("/explain")

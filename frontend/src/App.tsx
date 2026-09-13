@@ -2,17 +2,17 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import { TooltipProvider } from '@/components/ui/Tooltip'
+import { WorkbenchShell } from '@/components/workbench/WorkbenchShell'
 import { queryClient } from '@/lib/queryClient'
 import { ThemeProvider } from '@/lib/theme'
 
-import { Shell } from './components/layout/Shell'
-import { Agent } from './routes/Agent'
 import { Dashboard } from './routes/Dashboard'
 import { DriverExplain } from './routes/DriverExplain'
 import { History } from './routes/History'
 import { HistoryDetail } from './routes/HistoryDetail'
 import { NotFound } from './routes/NotFound'
 import { RaceDetail } from './routes/RaceDetail'
+import { Regulations } from './routes/Regulations'
 
 export function App() {
   return (
@@ -21,13 +21,15 @@ export function App() {
         <TooltipProvider>
           <BrowserRouter>
             <Routes>
-              <Route element={<Shell />}>
+              <Route element={<WorkbenchShell />}>
                 <Route index element={<Dashboard />} />
                 <Route path="race/:season/:round" element={<RaceDetail />} />
                 <Route path="race/:season/:round/driver/:driver" element={<DriverExplain />} />
                 <Route path="history" element={<History />} />
                 <Route path="history/:season/:round" element={<HistoryDetail />} />
-                <Route path="agent" element={<Agent />} />
+                <Route path="regulations" element={<Regulations />} />
+                {/* the Agent page is now the permanently-docked Copilot -- redirect any stale links */}
+                <Route path="agent" element={<Navigate to="/" replace />} />
                 <Route path="404" element={<NotFound />} />
                 <Route path="*" element={<Navigate to="/404" replace />} />
               </Route>

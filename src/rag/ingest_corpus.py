@@ -21,6 +21,18 @@ DOC_TYPES = {
 }
 
 
+def extract_text(path: Path) -> str:
+    """PDF pages joined, txt read whole; "" for anything else (including
+    empty/unreadable files) -- shared by load_corpus() and the API's
+    single-document text endpoint so PDF extraction lives in exactly one
+    place."""
+    if path.suffix == ".pdf":
+        return "\n".join(page.extract_text() or "" for page in PdfReader(str(path)).pages)
+    if path.suffix == ".txt":
+        return path.read_text(encoding="utf-8")
+    return ""
+
+
 def load_corpus() -> list[Document]:
     """One Document per source file (PDF pages joined, txt read whole) --
     chunking happens separately so page boundaries don't create artificial
@@ -29,12 +41,7 @@ def load_corpus() -> list[Document]:
     for subdir, doc_type in DOC_TYPES.items():
         folder = CORPUS_DIR / subdir
         for path in sorted(folder.glob("*")):
-            if path.suffix == ".pdf":
-                text = "\n".join(page.extract_text() or "" for page in PdfReader(str(path)).pages)
-            elif path.suffix == ".txt":
-                text = path.read_text(encoding="utf-8")
-            else:
-                continue
+            text = extract_text(path)
             if not text.strip():
                 continue
             docs.append(Document(page_content=text, metadata={"source": path.name, "doc_type": doc_type}))

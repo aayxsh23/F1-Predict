@@ -53,3 +53,32 @@ export function useAskAgent() {
       api.askAgent(message, conversationId),
   })
 }
+
+export function useHealth() {
+  return useQuery({
+    queryKey: ['health'],
+    queryFn: api.health,
+    refetchInterval: 30_000,
+    retry: false,
+  })
+}
+
+export function useRegulationsList() {
+  return useQuery({ queryKey: ['regulations', 'list'], queryFn: api.regulationsList })
+}
+
+export function useRegulationDetail(filename: string | null) {
+  return useQuery({
+    queryKey: ['regulations', 'detail', filename],
+    queryFn: () => api.regulationsGet(filename!),
+    enabled: filename !== null,
+  })
+}
+
+export function useRegulationsSearch(query: string) {
+  return useQuery({
+    queryKey: ['regulations', 'search', query],
+    queryFn: () => api.regulationsSearch(query),
+    enabled: query.trim().length > 0,
+  })
+}

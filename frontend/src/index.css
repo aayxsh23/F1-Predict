@@ -30,6 +30,11 @@
   --color-badge-pending-bg: var(--badge-pending-bg);
   --color-badge-pending-text: var(--badge-pending-text);
 
+  --color-telemetry-crimson: var(--telemetry-crimson);
+  --color-telemetry-cyan: var(--telemetry-cyan);
+  --color-telemetry-amber: var(--telemetry-amber);
+  --color-telemetry-green: var(--telemetry-green);
+
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 
@@ -66,6 +71,17 @@
   :focus-visible {
     outline: 2px solid var(--accent-default);
     outline-offset: 2px;
+  }
+}
+
+/* Ask-Copilot cross-panel highlight: a citation/driver-code click in the
+   dock scrolls a matching row into view and flashes it once. */
+@keyframes flash-highlight {
+  0% {
+    background-color: color-mix(in srgb, var(--telemetry-amber) 35%, transparent);
+  }
+  100% {
+    background-color: transparent;
   }
 }
 

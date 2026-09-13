@@ -1,8 +1,11 @@
+import { Settings } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/Popover'
 import { cn } from '@/lib/cn'
 
 import { NAV_ITEMS } from './navItems'
+import { SettingsBody } from '@/components/workbench/SettingsPopover'
 
 export function BottomNav() {
   return (
@@ -23,6 +26,17 @@ export function BottomNav() {
           {label}
         </NavLink>
       ))}
+      <Popover>
+        <PopoverTrigger asChild>
+          <button className="flex flex-1 flex-col items-center gap-1 py-2.5 text-xs font-medium text-text-muted transition-colors duration-150">
+            <Settings className="h-5 w-5" strokeWidth={2} />
+            Settings
+          </button>
+        </PopoverTrigger>
+        <PopoverContent align="end">
+          <SettingsBody />
+        </PopoverContent>
+      </Popover>
     </nav>
   )
 }

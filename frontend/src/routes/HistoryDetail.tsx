@@ -5,6 +5,7 @@ import { Link, useParams } from 'react-router-dom'
 import { Card } from '@/components/ui/Card'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { AskCopilotButton } from '@/components/workbench/AskCopilotButton'
 import { formatNumber } from '@/lib/format'
 import { useBacktestForRace } from '@/lib/queries'
 import { TARGET_LABELS, TARGET_UNITS, TARGETS, type Target } from '@/lib/types'
@@ -85,11 +86,15 @@ export function HistoryDetail() {
               <th className="px-4 py-3 text-left font-medium">Driver</th>
               <th className="px-4 py-3 text-right font-medium">Actual</th>
               <th className="px-4 py-3 text-right font-medium">Predicted</th>
+              <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody>
             {rows.map((d, i) => (
-              <tr key={d.driver} className={i === rows.length - 1 ? '' : 'border-b border-border-default'}>
+              <tr
+                key={d.driver}
+                className={`group ${i === rows.length - 1 ? '' : 'border-b border-border-default'}`}
+              >
                 <td className="px-4 py-3">
                   <p className="font-mono font-semibold text-text-primary">{d.driver}</p>
                   <p className="text-xs text-text-secondary">{d.team}</p>
@@ -99,6 +104,12 @@ export function HistoryDetail() {
                 </td>
                 <td className="px-4 py-3 text-right font-mono tabular-nums text-text-secondary">
                   {formatNumber(d[target].predicted, decimals, unit)}
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <AskCopilotButton
+                    prompt={`Why did ${d.driver} finish ${formatNumber(d[target].actual, decimals, unit)} instead of the predicted ${formatNumber(d[target].predicted, decimals, unit)} at ${data.location}?`}
+                    className="opacity-0 group-hover:opacity-100"
+                  />
                 </td>
               </tr>
             ))}

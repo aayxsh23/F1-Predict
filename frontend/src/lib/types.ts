@@ -124,3 +124,26 @@ export interface ChatMessage {
   role: 'user' | 'assistant'
   text: string
 }
+
+export type RegulationDocType = 'regulation' | 'steward_decision'
+
+export interface RegulationDocument {
+  filename: string
+  doc_type: RegulationDocType
+  title: string
+  size_bytes: number
+  modified_at: string
+  grand_prix?: string
+  car_number?: number
+}
+
+export interface RegulationDetail {
+  filename: string
+  text: string
+}
+
+export interface RegulationSearchHit {
+  filename: string
+  doc_type: RegulationDocType
+  snippet: string
+}

@@ -3,6 +3,9 @@ import type {
   BacktestIndexEntry,
   BacktestRacePayload,
   PredictionPayload,
+  RegulationDetail,
+  RegulationDocument,
+  RegulationSearchHit,
   ShapExplanation,
   Target,
 } from './types'
@@ -51,4 +54,8 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ message, conversation_id: conversationId }),
     }),
+  regulationsList: () => request<RegulationDocument[]>('/regulations'),
+  regulationsGet: (filename: string) => request<RegulationDetail>(`/regulations/${encodeURIComponent(filename)}`),
+  regulationsSearch: (query: string, k = 5) =>
+    request<RegulationSearchHit[]>(`/regulations/search?query=${encodeURIComponent(query)}&k=${k}`),
 }

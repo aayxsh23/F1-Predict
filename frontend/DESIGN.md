@@ -21,6 +21,12 @@ colors:
   green-400: "#34b46a"
   green-500: "#1f9d55"
   green-700: "#147842"
+  crimson-400: "#ff5c72"
+  crimson-500: "#d81e3f"
+  cyan-400: "#22d3ee"
+  cyan-500: "#0891b2"
+  amber-400: "#fbbf24"
+  amber-500: "#b45309"
 typography:
   display:
     fontFamily: "Inter, system-ui, sans-serif"
@@ -135,6 +141,12 @@ The palette is a single neutral gray ramp plus one accent hue plus two data-sign
 - **Chart Pending** (`--gray-400`): not-yet-known chart/badge state.
 - **Badge Known Text** (`--green-700` `#147842` light / `--green-400` dark): re-picked off the raw green scale for the same reason as `--text-muted` — green-500 as small badge text cleared only ~3.5:1.
 
+### Telemetry Accent (status-signal only)
+
+Added with the Race Control workbench build (activity bar / copilot dock / status strip). Three new hues — `--telemetry-crimson`, `--telemetry-cyan`, `--telemetry-amber` — plus `--telemetry-green` (an alias onto the existing `--green-500`/`--green-400` signal color, not a new hue) exist for exactly one purpose: **live status/telemetry signals** — the status strip's connection-health dot, the session-phase indicator, and quick-action-chip category accents (a left-border or dot, never a filled chip background).
+
+This is a deliberate, scoped exception to the One Accent Rule below, not a reversal of it. Telemetry tokens never appear on a button, a link, a selection state, or the activity bar's active-item indicator — those stay on `--accent-default` red exactly as before. If you're reaching for a telemetry color anywhere other than a small status dot/indicator, it's the wrong token.
+
 ### Named Rules
 **The One Accent Rule.** Red is spent on exactly three things: the primary action, the active/selected state, and a link. It never appears on a container, a border, or a heading. A screen where red decorates chrome instead of signaling selection or action is off-system.
 
@@ -161,7 +173,15 @@ The palette is a single neutral gray ramp plus one accent hue plus two data-sign
 
 Content is centered in a max-width column per route (`max-w-3xl` for single-column reading views like Dashboard/History, `max-w-5xl` for the RaceDetail results table), with `px-4 md:px-6` horizontal padding and `py-8 md:py-12` vertical rhythm — generous on desktop, tighter on mobile. Vertical spacing between page sections steps through the 4px-based scale in a consistent block sequence (`mt-2` → `mt-6` → `mt-8`/`mt-10`), never arbitrary values.
 
-The app shell is a persistent sidebar on desktop (`md:` and up, 224px/`w-56`, fixed, `surface-sunken` background) and a fixed bottom tab bar on mobile (`md:hidden`, `surface` background, safe-area-aware), sharing one `NAV_ITEMS` source so the two chrome components never drift out of sync. A sticky, blurred top bar (`bg-surface/90 backdrop-blur-sm`) holds only the mobile wordmark and the theme toggle — it carries no page title, since the page title lives in the content column itself.
+### The Race Control Workbench
+
+The app shell (`WorkbenchShell`) is a 3-pane IDE-style layout, permanently hosting the AI copilot alongside whatever page is on screen rather than routing to it as a separate page — reasoning and the data it explains are never more than a click apart, the same THESIS as the original Timing Tower direction, extended to the copilot. Three responsive tiers, all driven by one `dockCollapsed` boolean plus Tailwind breakpoints (no separate "mode" state, no resizable-panel library — the dock is a fixed ~380–420px width with collapse/expand, not user drag-resize):
+
+- **Below `md:`** — unchanged mobile territory: a fixed bottom tab bar (`BottomNav`, `surface` background, safe-area-aware) plus a sticky mobile top bar (`MobileTopBar`, wordmark + settings) replace the desktop chrome entirely. The copilot is reached via a floating action button that opens it as a full-screen sheet — the dock defaults *closed* here (and on `md:`–`lg:`), since a full-screen chat takeover on first load would bury the entire page.
+- **`md:`–`lg:`** — a slim icon-only `ActivityBar` (56px, `surface-sunken`, replaces the old labeled sidebar) appears alongside the `StatusStrip`, but the copilot dock opens as a slide-over with a dismissible backdrop rather than eating into table width.
+- **`lg:` and up** — the full 3-pane layout: `ActivityBar` + center canvas + an inline, permanently-open `CopilotDock` (~400px, `border-l`), with the `StatusStrip` as a thin footer row beneath all three panes.
+
+`ActivityBar`, `BottomNav`, and `MobileTopBar`'s settings trigger all share the same `NAV_ITEMS` source so chrome can't drift out of sync across breakpoints.
 
 Tables collapse to stacked cards below `md:` (RaceDetail's driver grid becomes `MobileDriverRow` cards) rather than horizontally scrolling or truncating columns — a squeezed table is treated as a non-solution for dense tabular data on narrow screens.
 
@@ -201,9 +221,14 @@ Corners are consistently soft and small: `--radius-sm` (4px) on badges and table
 - **Internal Padding:** `p-5` (20px) by default; list-style cards (podium rows, history rows) override to `p-0` and let internal rows carry their own `px-5 py-4`/`py-3` padding with hairline dividers between them instead of gaps between separate cards.
 
 ### Navigation
-- Sidebar (desktop, `md:` and up): fixed 224px column, `surface-sunken` background, vertical list of icon + label items; active item gets `surface` background, `text-primary`, and the resting shadow token; inactive items are `text-secondary` and hover to the same active treatment.
+- Activity bar (`md:` and up): a slim 56px icon-only rail, `surface-sunken` background, a red accent bar that glides (CSS transform transition) to the active item's position rather than jumping; a tooltip supplies the label lost by dropping text.
 - Bottom nav (mobile, below `md:`): fixed full-width bar, `surface` background, icon-over-label items in a flex row; active item is text-only accent-colored (`text-accent-text`), no background change, distinguishing the mobile active state from the desktop one.
 - Both share one `NAV_ITEMS` list (icons from lucide-react) so item order and labels can't drift between the two breakpoint-specific components.
+
+### Copilot Dock
+- The AI assistant, permanently mounted in `WorkbenchShell` rather than routed to — its `messages`/`conversationId` state lives in a `CopilotProvider` context above the router `<Outlet/>`, so switching pages never resets an in-progress conversation (the defect the workbench build specifically corrects).
+- Header carries view-context badges (current driver/round, derived from route params) plus collapse and clear-thread controls. Body reuses the Card/message-bubble visual language already established by the original Agent page; quick-action chips are context-aware (a driver page suggests "why" questions about that driver, a race page about that race).
+- Citations and driver codes inside a reply are clickable — `text-accent-text underline decoration-dotted` — and scroll/flash (`flash-highlight` keyframe, `--telemetry-amber`) the matching row in the center canvas. This is the one place a telemetry color rides on something other than a bare dot, since it's a transient highlight, not a persistent chip/badge fill.
 
 ### Signature Component: Timing-Sheet Row
 The recurring pattern across Dashboard's podium, RaceDetail's mobile driver cards, and History's race list: a large mono rank/position digit on the left, a two-line identity block (bold primary line, muted secondary line) in the middle, and a trailing affordance (a "Why" label + chevron, or just a chevron) on the right, the whole row as one tappable `Link`. This is the app's core visual signature — direct grounding of the THESIS/FIRST VIEWPORT commitment that a prediction and its reasoning are never more than a tap apart.
@@ -219,6 +244,6 @@ The recurring pattern across Dashboard's podium, RaceDetail's mobile driver card
 
 ### Don't:
 - **Don't** put a kicker/eyebrow label above a page's `<h1>`. Three route headers shipped with an invented eyebrow pattern during this build and it was removed in finish review; it is not part of this system going forward. (The `text-muted` uppercase label style that remains — "Predicted top 3", a season-group header, table column headers — is a section label living *inside* body content, not a device sitting above a headline; don't conflate the two.)
-- **Don't** add a second accent hue. The system is one neutral ramp plus one accent plus two data-signal colors (green/red for SHAP polarity) — a second brand color has no precedent in the build.
+- **Don't** add a second accent hue for anything a button, link, or selection state could use. The system is one neutral ramp plus one accent plus two data-signal colors (green/red for SHAP polarity) — plus the Telemetry Accent subsection's crimson/cyan/amber, scoped strictly to live status indicators (see Colors above). That scoped exception is not a license to reach for a telemetry color anywhere else.
 - **Don't** use a pill (fully-rounded) shape or a sharp (0px) corner anywhere. The radius vocabulary is `sm`/`md`/`lg` (4/8/12px) only.
 - **Don't** introduce a drop shadow heavier than `--shadow-md`, or one that appears only on hover to simulate lift — depth in this system comes from the border + tone-ramp model, not shadow escalation.
