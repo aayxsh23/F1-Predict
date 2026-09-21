@@ -8,15 +8,15 @@
       "team": "Red Bull Racing",
       "qualifying": {
         "actual": 0.0,
-        "predicted": 0.46
+        "predicted": 0.55
       },
       "finish_position": {
         "actual": 1.0,
-        "predicted": 1.39
+        "predicted": 1.61
       },
       "quali_delta": {
         "actual": 0.0,
-        "predicted": -0.25
+        "predicted": -0.49
       },
       "race_time": {
         "actual": 0.0,
@@ -32,11 +32,11 @@
       },
       "finish_position": {
         "actual": 2.0,
-        "predicted": 3.72
+        "predicted": 3.76
       },
       "quali_delta": {
         "actual": 1.0,
-        "predicted": -0.77
+        "predicted": -0.73
       },
       "race_time": {
         "actual": 12.594,
@@ -52,11 +52,11 @@
       },
       "finish_position": {
         "actual": 3.0,
-        "predicted": 2.32
+        "predicted": 2.52
       },
       "quali_delta": {
         "actual": -1.0,
-        "predicted": -0.42
+        "predicted": -0.77
       },
       "race_time": {
         "actual": 16.572,
@@ -72,11 +72,11 @@
       },
       "finish_position": {
         "actual": 4.0,
-        "predicted": 5.18
+        "predicted": 5.71
       },
       "quali_delta": {
         "actual": 1.0,
-        "predicted": -0.37
+        "predicted": -0.61
       },
       "race_time": {
         "actual": 23.279,
@@ -92,15 +92,15 @@
       },
       "finish_position": {
         "actual": 5.0,
-        "predicted": 4.07
+        "predicted": 4.31
       },
       "quali_delta": {
         "actual": -1.0,
-        "predicted": -0.02
+        "predicted": -0.11
       },
       "race_time": {
         "actual": 48.563,
-        "predicted": 30.47
+        "predicted": 28.31
       }
     },
     {
@@ -108,15 +108,15 @@
       "team": "Aston Martin",
       "qualifying": {
         "actual": 0.654,
-        "predicted": 0.95
+        "predicted": 0.99
       },
       "finish_position": {
         "actual": 6.0,
-        "predicted": 8.22
+        "predicted": 9.98
       },
       "quali_delta": {
         "actual": 0.0,
-        "predicted": -1.58
+        "predicted": -2.13
       },
       "race_time": {
         "actual": 67.562,
@@ -132,15 +132,15 @@
       },
       "finish_position": {
         "actual": 7.0,
-        "predicted": 9.64
+        "predicted": 10.8
       },
       "quali_delta": {
         "actual": 1.0,
-        "predicted": -1.48
+        "predicted": -1.86
       },
       "race_time": {
         "actual": 69.876,
-        "predicted": 54.48
+        "predicted": 54.52
       }
     },
     {
@@ -152,15 +152,15 @@
       },
       "finish_position": {
         "actual": 8.0,
-        "predicted": 10.57
+        "predicted": 11.35
       },
       "quali_delta": {
         "actual": 8.0,
-        "predicted": 3.74
+        "predicted": 3.72
       },
       "race_time": {
         "actual": 72.67,
-        "predicted": 46.57
+        "predicted": 46.99
       }
     },
     {
@@ -168,11 +168,11 @@
       "team": "Kick Sauber",
       "qualifying": {
         "actual": 1.243,
-        "predicted": 1.09
+        "predicted": 1.11
       },
       "finish_position": {
         "actual": 9.0,
-        "predicted": 13.56
+        "predicted": 14.09
       },
       "quali_delta": {
         "actual": 9.0,
@@ -180,7 +180,7 @@
       },
       "race_time": {
         "actual": 79.014,
-        "predicted": 55.55
+        "predicted": 55.74
       }
     },
     {
@@ -188,15 +188,15 @@
       "team": "Aston Martin",
       "qualifying": {
         "actual": 0.89,
-        "predicted": 1.17
+        "predicted": 1.22
       },
       "finish_position": {
         "actual": 10.0,
-        "predicted": 12.71
+        "predicted": 13.85
       },
       "quali_delta": {
         "actual": 5.0,
-        "predicted": 0.78
+        "predicted": 0.52
       },
       "race_time": {
         "actual": 79.523,
@@ -208,15 +208,15 @@
       "team": "Kick Sauber",
       "qualifying": {
         "actual": 0.667,
-        "predicted": 1.2
+        "predicted": 1.22
       },
       "finish_position": {
         "actual": 11.0,
-        "predicted": 10.26
+        "predicted": 10.98
       },
       "quali_delta": {
         "actual": -4.0,
-        "predicted": -2.17
+        "predicted": -2.46
       },
       "race_time": {
         "actual": 81.043,
@@ -232,15 +232,15 @@
       },
       "finish_position": {
         "actual": 12.0,
-        "predicted": 10.86
+        "predicted": 12.26
       },
       "quali_delta": {
         "actual": -1.0,
-        "predicted": 0.24
+        "predicted": 0.09
       },
       "race_time": {
         "actual": 81.166,
-        "predicted": 54.66
+        "predicted": 54.52
       }
     },
     {
@@ -248,15 +248,15 @@
       "team": "Williams",
       "qualifying": {
         "actual": 0.835,
-        "predicted": 1.04
+        "predicted": 1.05
       },
       "finish_position": {
         "actual": 13.0,
-        "predicted": 11.65
+        "predicted": 12.13
       },
       "quali_delta": {
         "actual": -1.0,
-        "predicted": 0.63
+        "predicted": 0.59
       },
       "race_time": {
         "actual": 82.158,
@@ -268,11 +268,11 @@
       "team": "Red Bull Racing",
       "qualifying": {
         "actual": 0.827,
-        "predicted": 1.19
+        "predicted": 1.25
       },
       "finish_position": {
         "actual": 14.0,
-        "predicted": 11.77
+        "predicted": 11.89
       },
       "quali_delta": {
         "actual": -4.0,
@@ -280,7 +280,7 @@
       },
       "race_time": {
         "actual": 83.794,
-        "predicted": 53.4
+        "predicted": 53.11
       }
     },
     {
@@ -292,11 +292,11 @@
       },
       "finish_position": {
         "actual": 15.0,
-        "predicted": 7.65
+        "predicted": 7.95
       },
       "quali_delta": {
         "actual": -1.0,
-        "predicted": 3.83
+        "predicted": 3.74
       },
       "race_time": {
         "actual": 84.399,
@@ -312,7 +312,7 @@
       },
       "finish_position": {
         "actual": 16.0,
-        "predicted": 13.65
+        "predicted": 13.99
       },
       "quali_delta": {
         "actual": 1.0,
@@ -332,11 +332,11 @@
       },
       "finish_position": {
         "actual": 17.0,
-        "predicted": 9.87
+        "predicted": 10.6
       },
       "quali_delta": {
         "actual": -8.0,
-        "predicted": -0.54
+        "predicted": -0.83
       },
       "race_time": {
         "actual": 1.327,
@@ -352,11 +352,11 @@
       },
       "finish_position": {
         "actual": 18.0,
-        "predicted": 13.4
+        "predicted": 13.42
       },
       "quali_delta": {
         "actual": -5.0,
-        "predicted": 0.42
+        "predicted": 0.31
       },
       "race_time": {
         "actual": 4.659,
@@ -372,15 +372,15 @@
       },
       "finish_position": {
         "actual": 19.0,
-        "predicted": 15.61
+        "predicted": 15.67
       },
       "quali_delta": {
         "actual": 0.0,
-        "predicted": 2.59
+        "predicted": 2.57
       },
       "race_time": {
         "actual": 11.908,
-        "predicted": 53.04
+        "predicted": 55.04
       }
     },
     {
@@ -388,11 +388,11 @@
       "team": "Alpine",
       "qualifying": {
         "actual": 1.683,
-        "predicted": 1.79
+        "predicted": 1.83
       },
       "finish_position": {
         "actual": 20.0,
-        "predicted": 18.96
+        "predicted": 17.51
       },
       "quali_delta": {
         "actual": 0.0,
@@ -400,7 +400,7 @@
       },
       "race_time": {
         "actual": 14.003,
-        "predicted": 54.36
+        "predicted": 57.95
       }
     }
   ]

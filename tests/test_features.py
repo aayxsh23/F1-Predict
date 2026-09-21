@@ -32,6 +32,20 @@ def test_recent_form_uses_only_prior_rows():
     assert third == 6  # mean(10, 2)
 
 
+def test_recent_form_excludes_same_date_ties():
+    # two teammates (same group_col) sharing one race_date -- neither may see
+    # the other's same-race result as "prior", regardless of row order/sort ties
+    df = pd.DataFrame({
+        "team": ["RBR", "RBR", "RBR", "RBR"],
+        "race_date": pd.to_datetime(["2024-01-01", "2024-01-01", "2024-02-01", "2024-02-01"]),
+        "finish_position": [1, 18, 2, 15],
+    })
+    out = recent_form(df, "team", "race_date", "finish_position", decay=1.0)
+    assert np.isnan(out.iloc[0]) and np.isnan(out.iloc[1])  # first race: no prior data for either teammate
+    # second race: both teammates' "prior" must be the mean of race 1's two results, not each other's own-race value
+    assert out.iloc[2] == 9.5 and out.iloc[3] == 9.5  # mean(1, 18)
+
+
 def test_track_form_uses_year_gap_and_no_future_rows():
     df = pd.DataFrame({
         "driver": ["A", "A", "A"],
