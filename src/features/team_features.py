@@ -8,7 +8,7 @@ def build(df: pd.DataFrame) -> pd.DataFrame:
     prior races. df must already have `track_type` merged in (circuit layer)."""
     df = df.copy()
     df["team_recent_form"] = recent_form(df, "team", "race_date", "finish_position")
-    df["team_quali_pace"] = recent_form(df, "team", "race_date", "quali_gap_to_pole")
+    df["team_quali_pace"] = recent_form(df, "team", "race_date", "quali_gap_pct")
     df["team_race_pace"] = recent_form(df, "team", "race_date", "race_pace_pct")
     df["_dnf_f"] = df["dnf"].astype(float)
     df["team_reliability"] = 1 - recent_form(df, "team", "race_date", "_dnf_f", decay=0.9)

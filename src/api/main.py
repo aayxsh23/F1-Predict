@@ -1,165 +1,247 @@
-"""FastAPI backend -- Phase 7. Wraps Phases 1-6 unchanged (predict.py,
-live_predict.py, rag/explain.py, agent/graph.py); the only new logic is here
-and in explain.py/backtest_export.py/refresh_job.py. See
-phase7-ui-backend-plan.md for the full design.
+"""FastAPI backend. Serves what the pipeline precomputed (data/predictions/,
+written by the scheduled refresh job and the training run) plus a few cheap
+live computations: odds, explanations, strategy, championship odds and chat.
 
-Deviation from that plan, worth being explicit about: it was written before
-Phases 4-6 existed, so it designed /explain and /ask-agent as 501 stubs
-("RAG explainer lands in Phase 4"/"Phase 6"). Both are real now -- wiring
-them to the actual rag.explain.explain()/agent.graph.ask() implementations
-below is strictly more correct than reverting to a stub for functionality
-that already works, so that's what this does instead."""
+Nothing here imports torch, a vector database, FastF1 or a PDF parser, so it
+fits a serverless function (see api/index.py for the Vercel entry point).
+Run locally: `uvicorn src.api.main:app --reload`.
+"""
+import json
 import os
-import uuid
+import time
+from collections import defaultdict, deque
+from datetime import datetime, timezone
 from functools import lru_cache
 
-import pandas as pd
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 
-from src.agent.graph import ask as agent_ask
-from src.agent.graph import build_graph
 from src.api.cache import get_json
-from src.api.corpus_files import get_document_text, list_documents, search_documents
-from src.api.enrich import with_car_numbers, with_probabilities
-from src.api.schemas import AskAgentRequest, ExplainRequest
-from src.data.fastf1_client import event_schedule
+from src.api.enrich import with_probabilities
+from src.api.schemas import ChatRequest, ExplainRequest
 from src.models.explain import shap_explanation
-from src.models.features import row_from_dict
-from src.models.predict import CANONICAL_PRED_COLS, load_model
-from src.rag.explain import explain as rag_explain
+from src.models.features import FEATURE_LABELS, row_from_dict
+from src.models.predict import CANONICAL_PRED_COLS, MODEL_DIR, load_model
+from src.rag import corpus
 
-app = FastAPI(title="F1 Race Predictor API")
-
-# no frontend deployed yet to scope this to -- tighten to the real origin
-# once one exists (phase7-ui-backend-plan.md's "CORS locked to the deployed
-# frontend origin"); nothing behind this API is sensitive or writes state.
+app = FastAPI(title="Pit Wall F1 API")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.environ.get("FRONTEND_ORIGIN", "*")],
+    allow_origins=os.environ.get("FRONTEND_ORIGIN", "*").split(","),
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
-_agent_graph = None
+TARGET_DIRECTION = {  # what a positive contribution means, per target
+    "finish_position": "towards a worse finish", "qualifying": "further from pole",
+    "quali_delta": "towards gaining more places", "race_time": "further behind the winner",
+}
+LLM_LIMIT, LLM_WINDOW_S = 20, 600
+_calls: dict[str, deque] = defaultdict(deque)
 
 
-def _get_agent_graph():
-    global _agent_graph
-    if _agent_graph is None:
-        _agent_graph = build_graph()
-    return _agent_graph
+def _limit(request: Request) -> None:
+    """20 LLM calls per 10 minutes per client IP."""
+    # ponytail: per-instance memory, so each serverless instance counts separately; use Upstash/Vercel KV if abused
+    ip = (request.headers.get("x-forwarded-for") or (request.client.host if request.client else "?")).split(",")[0].strip()
+    q, now = _calls[ip], time.monotonic()
+    while q and now - q[0] > LLM_WINDOW_S:
+        q.popleft()
+    if len(q) >= LLM_LIMIT:
+        raise HTTPException(429, "Too many questions in a short time. Try again in a few minutes.")
+    q.append(now)
 
 
-@lru_cache(maxsize=4)
-def _cached_model(target: str):
-    return load_model(target)
+def _json(path: str, missing: str):
+    try:
+        return get_json(path)
+    except FileNotFoundError:
+        raise HTTPException(404, missing)
 
 
-def _driver_feature_row(payload: dict, driver: str) -> dict:
-    row = next((d for d in payload["drivers"] if d["driver"] == driver), None)
+def _forecast(season: int, round: int) -> dict:
+    return _json(f"{season}_{round}.json", "No forecast for this race yet.")
+
+
+def _driver(payload: dict, driver: str) -> dict:
+    row = next((d for d in payload["drivers"] if d["driver"] == driver.upper()), None)
     if row is None:
-        raise HTTPException(404, f"no driver '{driver}' in this race's cached prediction")
+        raise HTTPException(404, f"No driver '{driver}' in this race's forecast.")
     return row
 
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    try:
+        generated = get_json("latest.json").get("generated_at")
+    except FileNotFoundError:
+        generated = None
+    age = None if generated is None else (datetime.now(timezone.utc) - datetime.fromisoformat(generated)).total_seconds() / 3600
+    return {"status": "ok", "latest_forecast_at": generated, "latest_forecast_age_hours": None if age is None else round(age, 1)}
 
 
 @app.get("/races")
 def races(season: int):
-    sched = event_schedule(season)
-    cols = ["RoundNumber", "EventName", "Location", "Country", "EventFormat", "Session1DateUtc", "EventDate"]
-    out = sched[cols].copy()
-    for c in ("Session1DateUtc", "EventDate"):  # ISO strings; NaT (an unscheduled session) becomes null
-        out[c] = out[c].apply(lambda v: None if pd.isna(v) else v.isoformat())
-    return out.to_dict("records")
+    return _json(f"schedule/{season}.json", f"No calendar for {season}.")
 
 
 @app.get("/predictions/latest")
 def predictions_latest():
-    try:
-        return with_probabilities(get_json("latest.json"))
-    except FileNotFoundError:
-        raise HTTPException(404, "no predictions have been generated yet -- run src.models.refresh_job")
+    return with_probabilities(_json("latest.json", "No forecasts yet -- run src.models.refresh_job."))
 
 
 @app.get("/predictions/{season}/{round}")
 def predictions_for_race(season: int, round: int):
-    try:
-        return with_probabilities(get_json(f"{season}_{round}.json"))
-    except FileNotFoundError:
-        raise HTTPException(404, "no cached prediction for this race yet")
+    return with_probabilities(_forecast(season, round))
 
 
 @app.get("/predictions/{season}/{round}/explain")
 def predictions_explain(season: int, round: int, driver: str, target: str = "finish_position"):
     if target not in CANONICAL_PRED_COLS:
-        raise HTTPException(400, f"unknown target '{target}', expected one of {list(CANONICAL_PRED_COLS)}")
-    try:
-        payload = get_json(f"{season}_{round}.json")
-    except FileNotFoundError:
-        raise HTTPException(404, "no cached prediction for this race yet")
+        raise HTTPException(400, f"Unknown target '{target}'; expected one of {list(CANONICAL_PRED_COLS)}.")
+    d = _driver(_forecast(season, round), driver)
+    result = shap_explanation(load_model(target), row_from_dict(d["feature_row"]), target=target)
+    for c in result["top_contributions"]:
+        c["label"] = FEATURE_LABELS.get(c["feature"], c["feature"])
+    return {"driver": d["driver"], "target": target, **result}
 
-    driver_row = _driver_feature_row(payload, driver)
-    row = row_from_dict(driver_row["feature_row"])
-    result = shap_explanation(_cached_model(target), row, target=target)
-    return {"driver": driver, "target": target, **result}
+
+@app.get("/predictions/{season}/{round}/timeline")
+def predictions_timeline(season: int, round: int):
+    try:
+        return get_json(f"timeline/{season}_{round}.json")
+    except FileNotFoundError:
+        return []
 
 
 @app.get("/backtest/races")
 def backtest_races():
-    try:
-        return get_json("backtest/index.json")
-    except FileNotFoundError:
-        raise HTTPException(404, "no backtest data yet -- run src.models.backtest_export")
+    return _json("backtest/index.json", "No backtest yet -- run src.models.backtest_export.")
+
+
+@app.get("/backtest/summary")
+def backtest_summary():
+    return _json("backtest/summary.json", "No backtest yet -- run src.models.backtest_export.")
 
 
 @app.get("/backtest/{season}/{round}")
 def backtest_for_race(season: int, round: int):
-    try:
-        return with_car_numbers(get_json(f"backtest/{season}_{round}.json"))
-    except FileNotFoundError:
-        raise HTTPException(404, "no backtest data for this race")
+    return _json(f"backtest/{season}_{round}.json", "No backtest for this race.")
+
+
+@app.get("/model")
+def model_card():
+    """Held-out accuracy of each model (the numbers the track-record view shows)."""
+    out = {}
+    for t in CANONICAL_PRED_COLS:
+        m = json.loads((MODEL_DIR / f"{t}_metrics.json").read_text())
+        out[t] = {k: m[k] for k in ("unit", "baseline", "evaluation", "stages", "data_through", "trained_at")}
+        out[t]["top_features"] = [{"feature": f, "label": FEATURE_LABELS.get(f, f), "weight": w} for f, w in m["top_features"].items()]
+    return out
 
 
 @app.get("/regulations")
 def regulations_list():
-    return list_documents()
+    return corpus.list_documents()
 
 
-# must be declared before /regulations/{filename} -- Starlette matches path
-# operations in declaration order, so {filename} would otherwise swallow the
-# literal "search" segment.
+# declared before /regulations/{filename}, which would otherwise swallow "search"
 @app.get("/regulations/search")
 def regulations_search(query: str, k: int = 5):
-    return search_documents(query, k=k)
+    return corpus.search_documents(query, k=min(k, 20))
 
 
 @app.get("/regulations/{filename}")
 def regulations_get(filename: str):
     try:
-        return {"filename": filename, "text": get_document_text(filename)}
+        return {"filename": filename, "text": corpus.get_document_text(filename)}
     except FileNotFoundError:
-        raise HTTPException(404, f"no corpus document named '{filename}'")
+        raise HTTPException(404, f"No document named '{filename}'.")
+
+
+@lru_cache(maxsize=64)
+def _strategy(location: str, laps: int, sc_lap: int | None) -> dict:
+    from src.strategy.model import simulate
+
+    return simulate(location, laps, sc_lap=sc_lap)
+
+
+@app.get("/strategy/{season}/{round}")
+def strategy(season: int, round: int, sc_lap: int | None = None):
+    p = _forecast(season, round)
+    laps = int(p.get("race", {}).get("laps") or 57)
+    if sc_lap is not None and not 1 <= sc_lap < laps:
+        raise HTTPException(400, f"sc_lap must be between 1 and {laps - 1}.")
+    return {"season": season, "round": round, **_strategy(p["location"], laps, sc_lap)}
+
+
+@app.get("/championship")
+def championship():
+    from src.agent.tools import championship_state
+
+    try:
+        c = championship_state()
+    except Exception as exc:  # Jolpica down or rate-limited
+        raise HTTPException(503, f"Live standings unavailable right now ({type(exc).__name__}).")
+    from src.agent.f1_api import get_constructor_standings
+
+    odds = c["odds"]
+    return {
+        "remaining": {"races": len(c["remaining"]), "sprints": sum(r["is_sprint"] for r in c["remaining"])},
+        "drivers": [{**s, "title_chance": round(float(odds["champion"][i]), 4),
+                     "expected_points": round(float(odds["expected_points"][i]), 1)} for i, s in enumerate(c["standings"])],
+        "constructors": [{**t, "title_chance": round(float(odds["team_champion"].get(t["name"], 0.0)), 4)}
+                         for t in get_constructor_standings()],
+    }
 
 
 @app.post("/explain")
-def explain_endpoint(req: ExplainRequest):
+def explain_endpoint(req: ExplainRequest, request: Request):
+    """A plain-English paragraph on why the model predicts what it does: the
+    SHAP breakdown is the query into the corpus, and Gemini writes from both."""
+    from src.agent.chat import ChatNotConfigured, explain_text
+
+    _limit(request)
+    payload = _forecast(req.season, req.round)
+    d = _driver(payload, req.driver)
+    exp = shap_explanation(load_model(req.target), row_from_dict(d["feature_row"]), target=req.target)
+    top = exp["top_contributions"][:5]
+    labels = [FEATURE_LABELS.get(c["feature"], c["feature"]) for c in top]
+    circuit = payload["location"]
+    query = f"{circuit} " + " ".join(labels)
+    hits = corpus.search(query, k=3, circuit=circuit)
+    lines = [f"- {lab}: value {c['value']}, effect {c['shap']:+.2f} ({'pushes ' + TARGET_DIRECTION[req.target] if c['shap'] > 0 else 'pulls the other way'})"
+             for lab, c in zip(labels, top)]
+    facts = (f"Driver {d['driver']} ({d['team']}) at {circuit}, {payload['season']} round {payload['round']}.\n"
+             f"Prediction ({req.target.replace('_', ' ')}): {exp['predicted_value']:.2f}; an average driver here: {exp['base_value']:.2f}.\n"
+             "Inputs that moved it most:\n" + "\n".join(lines) + "\n\nContext:\n"
+             + "\n\n".join(f"[{h['source']}{' art. ' + h['article'] if h['article'] else ''}]\n{h['text'][:1200]}" for h in hits))
     try:
-        payload = get_json(f"{req.season}_{req.round}.json")
-    except FileNotFoundError:
-        raise HTTPException(404, "no cached prediction for this race yet")
+        text = explain_text(facts)
+    except ChatNotConfigured as exc:
+        raise HTTPException(503, str(exc))
+    return {
+        "prediction": exp["predicted_value"], "target": req.target, "circuit": circuit,
+        "top_features": [{"feature": c["feature"], "shap_value": c["shap"], "phrase": lab} for c, lab in zip(top, labels)],
+        "retrieval_query": query, "sources": [h["source"] for h in hits], "explanation": text,
+    }
 
-    driver_row = _driver_feature_row(payload, req.driver)
-    row = row_from_dict({**driver_row["feature_row"], "location": payload["location"]})
-    return rag_explain(row, target=req.target)
 
+@app.post("/chat")
+def chat_endpoint(req: ChatRequest, request: Request):
+    """Server-sent events: one `data: {json}` line per event (see src/agent/chat.py)."""
+    from src.agent.chat import stream_chat
 
-@app.post("/ask-agent")
-def ask_agent_endpoint(req: AskAgentRequest):
-    conversation_id = req.conversation_id or str(uuid.uuid4())
-    reply = agent_ask(_get_agent_graph(), req.message, thread_id=conversation_id)
-    return {"reply": reply, "conversation_id": conversation_id}
+    if req.messages[-1].role != "user":
+        raise HTTPException(400, "The last message must be the user's.")
+    _limit(request)
+    history = [m.model_dump() for m in req.messages]
+    context = req.context.model_dump() if req.context else None
+
+    def events():
+        for e in stream_chat(history, context):
+            yield f"data: {json.dumps(e, ensure_ascii=False, default=str)}\n\n"
+
+    return StreamingResponse(events(), media_type="text/event-stream",
+                             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})

@@ -1,0 +1,57 @@
+{
+  "target": "qualifying",
+  "column": "target_qualifying_gap_pct",
+  "unit": "% of the pole lap",
+  "baseline": "the team's recent qualifying gap",
+  "n_rows": 2123,
+  "n_races": 106,
+  "data_through": "2026-09-26",
+  "evaluation": "43 races from 2024-10-27 to 2026-09-26, each predicted by a model trained only on earlier races; none of them was used to pick hyperparameters",
+  "stages": {
+    "pre_weekend": {
+      "mae": 0.7154,
+      "baseline_mae": 0.7033,
+      "n": 875
+    },
+    "post_practice": {
+      "mae": 0.6422,
+      "baseline_mae": 0.7033,
+      "n": 875
+    }
+  },
+  "all_walk_forward_stages": {
+    "pre_weekend": {
+      "mae": 0.8526,
+      "baseline_mae": 0.9778,
+      "n": 1927
+    },
+    "post_practice": {
+      "mae": 0.8021,
+      "baseline_mae": 0.9778,
+      "n": 1927
+    }
+  },
+  "best_params": {
+    "colsample_bytree": 0.718509402281633,
+    "learning_rate": 0.0430533878126005,
+    "max_depth": 2,
+    "min_child_weight": 7,
+    "n_estimators": 108,
+    "reg_alpha": 1.5444895385933148,
+    "reg_lambda": 1.0961470446025172,
+    "subsample": 0.602208846849441
+  },
+  "top_features": {
+    "team_quali_pace": 0.24210000038146973,
+    "driver_recent_form": 0.22460000216960907,
+    "practice_pace": 0.14630000293254852,
+    "team_recent_form": 0.09380000084638596,
+    "driver_positions_gained_form": 0.04800000041723251,
+    "expected_stops": 0.03739999979734421,
+    "team_race_pace": 0.02239999920129776,
+    "team_track_type_form": 0.016300000250339508,
+    "longest_straight_m": 0.016100000590085983,
+    "teammate_race_pace_gap": 0.006599999964237213
+  },
+  "trained_at": "2026-09-28T15:21:20+00:00"
+}

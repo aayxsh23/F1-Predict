@@ -1,32 +1,16 @@
-# Phase 1 — data
-fastf1
-pandas
-pyarrow
-requests
-
-# Phase 2-3 — predictor
-xgboost
-scikit-learn
-shap
-
-# Phase 4-5 — RAG + agent
-langchain
-langgraph
-langchain-huggingface
-langchain-chroma
-langchain-text-splitters
-chromadb
-sentence-transformers
-pypdf
-torch
-transformers
-peft
-bitsandbytes
-accelerate
-trl
-datasets
-huggingface-hub
-
-# Phase 6 — backend
-fastapi
-uvicorn
+# What the API needs at runtime -- this is what Vercel installs, so keep it
+# lean: no torch, FastF1, PDF parser or vector database. Pipeline, training
+# and tests: requirements-dev.txt. The optional local Llama fine-tune:
+# requirements-llm.txt.
+fastapi==0.141.1
+pydantic==2.13.5
+requests==2.34.2
+numpy==2.5.3
+pandas==2.3.3
+# the CPU-only build on Linux: the regular wheel pulls in ~200 MB of CUDA libraries
+xgboost-cpu==3.4.1; sys_platform == "linux"
+xgboost==3.4.1; sys_platform != "linux"
+langchain==1.4.0
+langchain-core==1.6.2
+langgraph==1.2.11
+langchain-google-genai==4.4.0

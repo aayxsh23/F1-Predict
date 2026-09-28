@@ -14,6 +14,6 @@ def build(df: pd.DataFrame) -> pd.DataFrame:
     df["_loc_compound_key"] = df["location"] + "|" + df["starting_compound"].astype(str)
     df["historical_compound_performance"] = recent_form(
         df, "_loc_compound_key", "race_date", "finish_position", decay=0.9
-    )
+    ).where(df["starting_compound"].notna())
 
     return df[["season", "round", "driver", "expected_stops", "historical_compound_performance"]]

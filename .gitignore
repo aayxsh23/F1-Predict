@@ -39,6 +39,10 @@ data/processed/*
 !data/raw/races/
 data/raw/races/*
 !data/raw/races/*.parquet
+# lap-by-lap stint data (~5MB), the strategy model's input -- same reason
+!data/raw/laps/
+data/raw/laps/*
+!data/raw/laps/*.parquet
 
 # Trained models & serialized artifacts
 models/saved/
@@ -55,10 +59,11 @@ src/rag/saved/
 # PARENT DIRECTORY is excluded, only a path whose parent is merely "contents
 # ignored". The 4 predictor models are small (~600KB total) and a deployed
 # backend needs them at process startup with no training step available --
-# commit them, keep everything else here (metrics JSON, anything else) ignored.
+# commit them and their metrics, keep everything else here ignored.
 src/models/saved/*
 !src/models/saved/*_xgb.json
 !src/models/saved/pl_calibration.json
+!src/models/saved/*_metrics.json
 
 # Vector store (Phase 4 RAG)
 chroma_db/

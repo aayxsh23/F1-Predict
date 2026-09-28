@@ -33,7 +33,7 @@ def build_race_predictions(season: int, round_number: int) -> pd.DataFrame:
     rows = df[(df["season"] == season) & (df["round"] == round_number)].copy()
     if rows.empty:
         # not a completed historical race in the table -- treat as upcoming/live
-        rows = build_live_rows(season, round_number)
+        rows, _ = build_live_rows(season, round_number)
     return predict_all(rows)
 
 

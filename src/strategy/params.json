@@ -1,0 +1,756 @@
+{
+  "global": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.2852176806956269,
+        "deg_s_per_lap": 0.04953182139274349,
+        "laps": 12216
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.03484931745019873,
+        "laps": 35851
+      },
+      "HARD": {
+        "offset_s": 0.015405952199114921,
+        "deg_s_per_lap": 0.030220091759685486,
+        "laps": 45292
+      }
+    },
+    "max_stint": {
+      "SOFT": 25,
+      "MEDIUM": 31,
+      "HARD": 42
+    },
+    "pit_loss_s": 23.163499999999985,
+    "sc_probability": 0.7476635514018691
+  },
+  "Austin": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.024958378727780894,
+        "deg_s_per_lap": 0.05693840984141759,
+        "laps": 422
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.05236463209999472,
+        "laps": 1650
+      },
+      "HARD": {
+        "offset_s": 0.34632779076562087,
+        "deg_s_per_lap": 0.039585992301676386,
+        "laps": 1419
+      }
+    },
+    "max_stint": {
+      "SOFT": 27,
+      "MEDIUM": 31,
+      "HARD": 36
+    },
+    "pit_loss_s": 21.55499999999998,
+    "sc_probability": 0.7492211838006231,
+    "races": 4,
+    "green_laps": 3491
+  },
+  "Baku": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.12860626408512782,
+        "deg_s_per_lap": 0.02878201409492309,
+        "laps": 349
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.0227000554033663,
+        "laps": 1160
+      },
+      "HARD": {
+        "offset_s": 0.13473597196987833,
+        "deg_s_per_lap": 0.020223275407692386,
+        "laps": 2376
+      }
+    },
+    "max_stint": {
+      "SOFT": 31,
+      "MEDIUM": 30,
+      "HARD": 43
+    },
+    "pit_loss_s": 22.563000000000017,
+    "sc_probability": 0.9279038718291055,
+    "races": 5,
+    "green_laps": 3885
+  },
+  "Barcelona": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.2119555000357452,
+        "deg_s_per_lap": 0.08970949105518819,
+        "laps": 1970
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.07750916027575153,
+        "laps": 1948
+      },
+      "HARD": {
+        "offset_s": 0.012955136257646896,
+        "deg_s_per_lap": 0.07164515885999567,
+        "laps": 1551
+      }
+    },
+    "max_stint": {
+      "SOFT": 21,
+      "MEDIUM": 28,
+      "HARD": 30
+    },
+    "pit_loss_s": 23.585000000000008,
+    "sc_probability": 0.49933244325767695,
+    "races": 5,
+    "green_laps": 5469
+  },
+  "Budapest": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.15769140205335352,
+        "deg_s_per_lap": 0.06513456981477736,
+        "laps": 684
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.05612698185691003,
+        "laps": 2283
+      },
+      "HARD": {
+        "offset_s": 0.04201562861945865,
+        "deg_s_per_lap": 0.05790254616752829,
+        "laps": 3056
+      }
+    },
+    "max_stint": {
+      "SOFT": 28,
+      "MEDIUM": 31,
+      "HARD": 39
+    },
+    "pit_loss_s": 21.926000000000002,
+    "sc_probability": 0.49933244325767695,
+    "races": 5,
+    "green_laps": 6023
+  },
+  "Imola": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.39165046077118476,
+        "deg_s_per_lap": 0.05403362502226157,
+        "laps": 53
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.012807332271323343,
+        "laps": 1430
+      },
+      "HARD": {
+        "offset_s": -0.42809528575023387,
+        "deg_s_per_lap": 0.04771071602026501,
+        "laps": 1342
+      }
+    },
+    "max_stint": {
+      "SOFT": 12,
+      "MEDIUM": 44,
+      "HARD": 39
+    },
+    "pit_loss_s": 29.30449999999999,
+    "sc_probability": 0.6990654205607477,
+    "races": 3,
+    "green_laps": 2825
+  },
+  "Jeddah": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.32023045596975425,
+        "deg_s_per_lap": 0.049281217404705105,
+        "laps": 80
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.021851862208633333,
+        "laps": 952
+      },
+      "HARD": {
+        "offset_s": 0.12798782912604786,
+        "deg_s_per_lap": 0.009890032572694732,
+        "laps": 2001
+      }
+    },
+    "max_stint": {
+      "SOFT": 14,
+      "MEDIUM": 29,
+      "HARD": 43
+    },
+    "pit_loss_s": 21.666999999999987,
+    "sc_probability": 0.9158878504672897,
+    "races": 4,
+    "green_laps": 3033
+  },
+  "Las Vegas": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.2826163625533053,
+        "deg_s_per_lap": 0.05188575043901148,
+        "laps": 9
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.04721939696465901,
+        "laps": 553
+      },
+      "HARD": {
+        "offset_s": 0.15786087329864937,
+        "deg_s_per_lap": 0.034945372353132956,
+        "laps": 1681
+      }
+    },
+    "max_stint": {
+      "SOFT": 7,
+      "MEDIUM": 23,
+      "HARD": 33
+    },
+    "pit_loss_s": 23.589999999999975,
+    "sc_probability": 0.6990654205607477,
+    "races": 3,
+    "green_laps": 2243
+  },
+  "Le Castellet": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.2852176806956269,
+        "deg_s_per_lap": 0.04953182139274349,
+        "laps": 0
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.05107818904956389,
+        "laps": 304
+      },
+      "HARD": {
+        "offset_s": 0.2814160531243604,
+        "deg_s_per_lap": 0.04688660542063855,
+        "laps": 486
+      }
+    },
+    "max_stint": {
+      "SOFT": 25,
+      "MEDIUM": 31,
+      "HARD": 42
+    },
+    "pit_loss_s": 29.164,
+    "sc_probability": 0.8317757009345795,
+    "races": 1,
+    "green_laps": 790
+  },
+  "Lusail": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.18299082244654558,
+        "deg_s_per_lap": 0.05671925516209716,
+        "laps": 90
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.011357682098018898,
+        "laps": 1478
+      },
+      "HARD": {
+        "offset_s": -0.3706825177257366,
+        "deg_s_per_lap": 0.036217116778896795,
+        "laps": 838
+      }
+    },
+    "max_stint": {
+      "SOFT": 17,
+      "MEDIUM": 34,
+      "HARD": 25
+    },
+    "pit_loss_s": 28.420500000000004,
+    "sc_probability": 0.8990654205607477,
+    "races": 3,
+    "green_laps": 2406
+  },
+  "Madrid": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.15963509680608964,
+        "deg_s_per_lap": 0.04386506996415206,
+        "laps": 71
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.039039862901250624,
+        "laps": 145
+      },
+      "HARD": {
+        "offset_s": 0.027417430866472626,
+        "deg_s_per_lap": 0.015245636327497503,
+        "laps": 764
+      }
+    },
+    "max_stint": {
+      "SOFT": 25,
+      "MEDIUM": 31,
+      "HARD": 42
+    },
+    "pit_loss_s": 25.86099999999999,
+    "sc_probability": 0.8317757009345795,
+    "races": 1,
+    "green_laps": 980
+  },
+  "Marina Bay": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.21456615248499405,
+        "deg_s_per_lap": 0.032085742431076585,
+        "laps": 406
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.03141439556352226,
+        "laps": 1464
+      },
+      "HARD": {
+        "offset_s": 0.05088525227601834,
+        "deg_s_per_lap": 0.04814358744196456,
+        "laps": 1463
+      }
+    },
+    "max_stint": {
+      "SOFT": 26,
+      "MEDIUM": 36,
+      "HARD": 42
+    },
+    "pit_loss_s": 27.5175,
+    "sc_probability": 0.5825545171339565,
+    "races": 4,
+    "green_laps": 3333
+  },
+  "Melbourne": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.29823665631413177,
+        "deg_s_per_lap": 0.05536124205947458,
+        "laps": 131
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.03697117394841408,
+        "laps": 682
+      },
+      "HARD": {
+        "offset_s": 0.2199779512598996,
+        "deg_s_per_lap": 0.010459947643484083,
+        "laps": 2432
+      }
+    },
+    "max_stint": {
+      "SOFT": 10,
+      "MEDIUM": 22,
+      "HARD": 46
+    },
+    "pit_loss_s": 21.59349999999999,
+    "sc_probability": 0.9279038718291055,
+    "races": 5,
+    "green_laps": 3245
+  },
+  "Mexico City": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.35845947734813455,
+        "deg_s_per_lap": 0.051397778688058324,
+        "laps": 1018
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.040001084709694004,
+        "laps": 2084
+      },
+      "HARD": {
+        "offset_s": 0.20412066423819353,
+        "deg_s_per_lap": 0.032582285943552454,
+        "laps": 1398
+      }
+    },
+    "max_stint": {
+      "SOFT": 34,
+      "MEDIUM": 40,
+      "HARD": 43
+    },
+    "pit_loss_s": 23.3215,
+    "sc_probability": 0.9158878504672897,
+    "races": 4,
+    "green_laps": 4500
+  },
+  "Miami": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.2398708173107491,
+        "deg_s_per_lap": 0.04226775965473798,
+        "laps": 115
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.022255298186191617,
+        "laps": 1618
+      },
+      "HARD": {
+        "offset_s": -0.0030927418607961687,
+        "deg_s_per_lap": 0.022165134870425346,
+        "laps": 2426
+      }
+    },
+    "max_stint": {
+      "SOFT": 18,
+      "MEDIUM": 29,
+      "HARD": 42
+    },
+    "pit_loss_s": 20.602000000000004,
+    "sc_probability": 0.7850467289719626,
+    "races": 5,
+    "green_laps": 4159
+  },
+  "Monaco": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.28595056162462895,
+        "deg_s_per_lap": 0.05070452285798986,
+        "laps": 347
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.01804064812004365,
+        "laps": 1957
+      },
+      "HARD": {
+        "offset_s": 0.11671129321650067,
+        "deg_s_per_lap": 0.013696441987453633,
+        "laps": 2575
+      }
+    },
+    "max_stint": {
+      "SOFT": 10,
+      "MEDIUM": 50,
+      "HARD": 57
+    },
+    "pit_loss_s": 20.415999999999983,
+    "sc_probability": 0.7850467289719626,
+    "races": 5,
+    "green_laps": 4879
+  },
+  "Montréal": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": 0.010993542306825893,
+        "deg_s_per_lap": 0.027547757667211896,
+        "laps": 390
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.011398567513440244,
+        "laps": 1466
+      },
+      "HARD": {
+        "offset_s": -0.24941237238627695,
+        "deg_s_per_lap": 0.023818237656207414,
+        "laps": 2516
+      }
+    },
+    "max_stint": {
+      "SOFT": 31,
+      "MEDIUM": 31,
+      "HARD": 47
+    },
+    "pit_loss_s": 20.942999999999984,
+    "sc_probability": 0.9279038718291055,
+    "races": 5,
+    "green_laps": 4372
+  },
+  "Monza": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.3083787411815405,
+        "deg_s_per_lap": 0.04764243262276166,
+        "laps": 241
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.027758471543686505,
+        "laps": 1756
+      },
+      "HARD": {
+        "offset_s": -0.031057453533689,
+        "deg_s_per_lap": 0.030116718610886543,
+        "laps": 2343
+      }
+    },
+    "max_stint": {
+      "SOFT": 20,
+      "MEDIUM": 34,
+      "HARD": 47
+    },
+    "pit_loss_s": 25.72199999999998,
+    "sc_probability": 0.49933244325767695,
+    "races": 5,
+    "green_laps": 4340
+  },
+  "Sakhir": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.2355015913240996,
+        "deg_s_per_lap": 0.12502579060195698,
+        "laps": 1376
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.09618340686405262,
+        "laps": 753
+      },
+      "HARD": {
+        "offset_s": 0.06977271183983978,
+        "deg_s_per_lap": 0.10372134520812741,
+        "laps": 1596
+      }
+    },
+    "max_stint": {
+      "SOFT": 19,
+      "MEDIUM": 25,
+      "HARD": 26
+    },
+    "pit_loss_s": 24.816499999999976,
+    "sc_probability": 0.7492211838006231,
+    "races": 4,
+    "green_laps": 3725
+  },
+  "Shanghai": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.23755548187204806,
+        "deg_s_per_lap": 0.05469968750366994,
+        "laps": 70
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.0754993310303915,
+        "laps": 622
+      },
+      "HARD": {
+        "offset_s": 0.36857743216694444,
+        "deg_s_per_lap": 0.0365495575274071,
+        "laps": 1734
+      }
+    },
+    "max_stint": {
+      "SOFT": 16,
+      "MEDIUM": 20,
+      "HARD": 46
+    },
+    "pit_loss_s": 24.56149999999998,
+    "sc_probability": 0.6990654205607477,
+    "races": 3,
+    "green_laps": 2426
+  },
+  "Silverstone": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.08446475466162517,
+        "deg_s_per_lap": 0.051605400840173454,
+        "laps": 605
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.047465055360797585,
+        "laps": 1737
+      },
+      "HARD": {
+        "offset_s": 0.04941352302057603,
+        "deg_s_per_lap": 0.04462520692931907,
+        "laps": 684
+      }
+    },
+    "max_stint": {
+      "SOFT": 20,
+      "MEDIUM": 31,
+      "HARD": 26
+    },
+    "pit_loss_s": 29.87700000000001,
+    "sc_probability": 0.7850467289719626,
+    "races": 5,
+    "green_laps": 3026
+  },
+  "Spa-Francorchamps": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.5816439592327618,
+        "deg_s_per_lap": 0.08040594013290644,
+        "laps": 491
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.05333560049704924,
+        "laps": 1629
+      },
+      "HARD": {
+        "offset_s": -0.14362942011665694,
+        "deg_s_per_lap": 0.062208422894486436,
+        "laps": 1130
+      }
+    },
+    "max_stint": {
+      "SOFT": 23,
+      "MEDIUM": 31,
+      "HARD": 29
+    },
+    "pit_loss_s": 19.802500000000023,
+    "sc_probability": 0.6421895861148198,
+    "races": 5,
+    "green_laps": 3250
+  },
+  "Spielberg": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.16073477094267102,
+        "deg_s_per_lap": 0.051730984794339574,
+        "laps": 192
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.061491581370452686,
+        "laps": 2414
+      },
+      "HARD": {
+        "offset_s": 0.054053427057316805,
+        "deg_s_per_lap": 0.05925442910238351,
+        "laps": 2783
+      }
+    },
+    "max_stint": {
+      "SOFT": 19,
+      "MEDIUM": 28,
+      "HARD": 32
+    },
+    "pit_loss_s": 21.493999999999986,
+    "sc_probability": 0.9279038718291055,
+    "races": 5,
+    "green_laps": 5389
+  },
+  "Suzuka": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.30059639127397414,
+        "deg_s_per_lap": 0.06537067092713013,
+        "laps": 166
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.061509691580353285,
+        "laps": 1283
+      },
+      "HARD": {
+        "offset_s": 0.08787300301991187,
+        "deg_s_per_lap": 0.057600702028957944,
+        "laps": 1910
+      }
+    },
+    "max_stint": {
+      "SOFT": 15,
+      "MEDIUM": 24,
+      "HARD": 32
+    },
+    "pit_loss_s": 23.779500000000013,
+    "sc_probability": 0.6421895861148198,
+    "races": 5,
+    "green_laps": 3359
+  },
+  "São Paulo": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.08257045900251282,
+        "deg_s_per_lap": 0.046579608553140056,
+        "laps": 1257
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.053990373879518536,
+        "laps": 1604
+      },
+      "HARD": {
+        "offset_s": -0.01838006324129833,
+        "deg_s_per_lap": 0.036086456703526455,
+        "laps": 54
+      }
+    },
+    "max_stint": {
+      "SOFT": 25,
+      "MEDIUM": 32,
+      "HARD": 28
+    },
+    "pit_loss_s": 22.338499999999996,
+    "sc_probability": 0.9158878504672897,
+    "races": 4,
+    "green_laps": 2915
+  },
+  "Yas Island": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.23797147747308084,
+        "deg_s_per_lap": 0.06571441050247041,
+        "laps": 84
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.07978079054227691,
+        "laps": 1301
+      },
+      "HARD": {
+        "offset_s": 0.27971966542483806,
+        "deg_s_per_lap": 0.050378617629147866,
+        "laps": 2659
+      }
+    },
+    "max_stint": {
+      "SOFT": 21,
+      "MEDIUM": 25,
+      "HARD": 41
+    },
+    "pit_loss_s": 23.327999999999975,
+    "sc_probability": 0.41588785046728977,
+    "races": 4,
+    "green_laps": 4044
+  },
+  "Zandvoort": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.03017055065295451,
+        "deg_s_per_lap": 0.03368485741159573,
+        "laps": 1599
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.045489863947152626,
+        "laps": 1578
+      },
+      "HARD": {
+        "offset_s": 0.013688491986690353,
+        "deg_s_per_lap": 0.03496654191924296,
+        "laps": 2075
+      }
+    },
+    "max_stint": {
+      "SOFT": 26,
+      "MEDIUM": 30,
+      "HARD": 44
+    },
+    "pit_loss_s": 23.134000000000015,
+    "sc_probability": 0.7850467289719626,
+    "races": 5,
+    "green_laps": 5252
+  }
+}

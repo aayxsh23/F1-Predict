@@ -1,16 +1,14 @@
-"""Interactive test harness for the Phase 6 live-standings agent, mirroring
-rag/chat.py's pattern. Usage: python -m src.agent.cli
-"""
+"""Chat with the assistant in a terminal: `python -m src.agent.cli`.
+Needs GEMINI_API_KEY (and optionally GEMINI_MODEL) in the environment or .env."""
 import sys
 
-from src.agent.graph import build_graph, ask
+from src.agent.chat import stream_chat
 
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
-    graph = build_graph()
-    thread_id = "cli-session"
-    print("F1 live-standings agent. Ask about driver/constructor standings or title scenarios (blank line to quit).\n")
+    history: list[dict] = []
+    print("Ask about forecasts, strategy, standings or the rules (blank line to quit).\n")
     while True:
         try:
             question = input("> ").strip()
@@ -18,7 +16,18 @@ def main():
             break
         if not question:
             break
-        print(ask(graph, question, thread_id=thread_id), "\n")
+        history.append({"role": "user", "content": question})
+        answer = []
+        for e in stream_chat(history):
+            if e["type"] == "token":
+                answer.append(e["text"])
+                print(e["text"], end="", flush=True)
+            elif e["type"] == "tool_start":
+                print(f"[{e['name']}]", end=" ", flush=True)
+            elif e["type"] == "error":
+                print(e["message"], end="")
+        print("\n")
+        history.append({"role": "assistant", "content": "".join(answer)})
 
 
 if __name__ == "__main__":

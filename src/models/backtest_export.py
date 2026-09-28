@@ -1,68 +1,94 @@
-"""Historical actual-vs-predicted export for the /history view. Reads
-data/processed/model_matrix.parquet directly -- that file already IS the
-built feature table (build_dataset.build()'s own persisted output), so there's
-no reason to rebuild it from raw data a second time just to read it back.
-Run periodically (e.g. after a retrain), not on every refresh_job.py tick
-like live predictions -- historical results don't change."""
+"""The History view's data: for every past race, what the model predicted
+before it and what actually happened. Predictions come from train.py's walk-
+forward run, so each race was predicted by a model trained only on earlier
+races (the first MIN_HISTORY races have no such model and are left out).
+Race targets are shown as of the evening after qualifying (grid known,
+tyres not), qualifying as of after practice: what a live forecast has at
+those points.
+
+Also writes summary.json: accuracy per season against the naive baselines,
+for the "track record" view. Run after train.py.
+"""
 import json
 from pathlib import Path
 
 import pandas as pd
 
-from src.models.predict import CANONICAL_PRED_COLS, predict_all
+from src.features.build_dataset import load_raw
+from src.models.train import TARGETS, WALKFORWARD_PATH
 
-DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "processed" / "model_matrix.parquet"
 OUT_DIR = Path(__file__).resolve().parents[2] / "data" / "predictions" / "backtest"
-
-TARGET_COLS = {
-    "qualifying": "target_qualifying_gap",
-    "finish_position": "target_finish_position",
-    "quali_delta": "target_quali_to_race_delta",
-    "race_time": "target_race_time_gap",
-}
+SHOWN_STAGE = {"qualifying": "post_practice", "finish_position": "post_quali", "quali_delta": "post_quali", "race_time": "post_quali"}
 
 
 def _clean(v):
-    # round(float(v), 4) rather than a bare float(v) -- float32 -> float64
-    # widening otherwise reintroduces noise into an already-rounded value
-    # (e.g. XGBoost's float32 0.20 prints as 0.20000000298023224 once cast)
     return None if pd.isna(v) else round(float(v), 4)
 
 
-def build_race_payload(predicted_df: pd.DataFrame, season: int, round_number: int) -> dict:
-    """predicted_df: the FULL dataset, already run through predict_all() once
-    -- reloading each of the 4 models per race (105+ times) instead of once
-    for the whole table would be pure waste, since predict_all() doesn't care
-    about grouping."""
-    race = predicted_df[(predicted_df["season"] == season) & (predicted_df["round"] == round_number)]
-
-    drivers = []
-    for _, row in race.iterrows():
-        entry = {"driver": row["driver"], "team": row["team"]}
-        for target, pred_col in CANONICAL_PRED_COLS.items():
-            entry[target] = {"actual": _clean(row[TARGET_COLS[target]]), "predicted": _clean(row[pred_col])}
-        drivers.append(entry)
-
-    return {"season": season, "round": round_number, "location": race.iloc[0]["location"], "drivers": drivers}
-
-
 def export_all() -> list[dict]:
-    df = pd.read_parquet(DATA_PATH)
-    predicted_df = predict_all(df)
-    races = df[["season", "round", "location", "race_date"]].drop_duplicates().sort_values("race_date")
+    wf = pd.read_parquet(WALKFORWARD_PATH)
+    wf = pd.concat([wf[(wf["target"] == t) & (wf["stage"] == s)] for t, s in SHOWN_STAGE.items()])
+    raw = load_raw()
+    info = raw.drop_duplicates(["season", "round", "driver"]).set_index(["season", "round", "driver"])
+    races = raw[["season", "round", "location", "race_date"]].drop_duplicates(["season", "round"]).sort_values("race_date")
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    for stale in OUT_DIR.glob("*_*.json"):  # races that no longer have a walk-forward prediction
+        stale.unlink()
     index = []
     for _, r in races.iterrows():
-        season, round_number = int(r["season"]), int(r["round"])
-        payload = build_race_payload(predicted_df, season, round_number)
-        (OUT_DIR / f"{season}_{round_number}.json").write_text(json.dumps(payload, indent=2))
-        index.append({"season": season, "round": round_number, "location": r["location"]})
+        season, rnd = int(r["season"]), int(r["round"])
+        race = wf[(wf["season"] == season) & (wf["round"] == rnd)]
+        if race.empty:
+            continue
+        drivers = []
+        for driver, g in race.groupby("driver"):
+            d = info.loc[(season, rnd, driver)]
+            entry = {"driver": driver, "team": d["team"],
+                     "driver_number": int(d["driver_number"]) if str(d["driver_number"]).isdigit() else None}
+            for target in TARGETS:
+                row = g[g["target"] == target]
+                entry[target] = {"actual": _clean(row["actual"].iloc[0]) if len(row) else None,
+                                 "predicted": _clean(row["pred"].iloc[0]) if len(row) else None}
+            entry["finish_position"]["actual"] = _clean(d["finish_position"])  # retirements too, for the result column
+            drivers.append(entry)
+        payload = {"season": season, "round": rnd, "location": r["location"],
+                   "method": "walk-forward: predicted by a model trained only on earlier races", "drivers": drivers}
+        (OUT_DIR / f"{season}_{rnd}.json").write_text(json.dumps(payload, indent=2))
+        index.append({"season": season, "round": rnd, "location": r["location"]})
 
     (OUT_DIR / "index.json").write_text(json.dumps(index, indent=2))
+    (OUT_DIR / "summary.json").write_text(json.dumps(summary(wf), indent=2))
+    results = raw.sort_values(["race_date", "finish_position"])[
+        ["season", "round", "location", "driver", "team", "grid_position", "quali_position", "finish_position", "status", "points"]]
+    (OUT_DIR / "results.json").write_text(json.dumps(
+        [{k: (_clean(v) if isinstance(v, float) else v) for k, v in r.items()} for r in results.to_dict("records")]))
     return index
+
+
+def summary(wf: pd.DataFrame) -> dict:
+    """Per target and season: model error vs naive baseline, and how often
+    the predicted winner / podium were right."""
+    out = {}
+    for target, g in wf.groupby("target"):
+        seasons = {}
+        for season, s in g.groupby("season"):
+            row = {"races": int(s[["season", "round"]].drop_duplicates().shape[0]),
+                   "mae": round(float((s["pred"] - s["actual"]).abs().mean()), 3),
+                   "baseline_mae": round(float((s["baseline"] - s["actual"]).abs().mean()), 3)}
+            if target in ("finish_position", "qualifying"):
+                hits = []
+                for _, r in s.groupby("round"):
+                    top_pred = r.nsmallest(1, "pred")["driver"].iloc[0]
+                    top_true = r.nsmallest(1, "actual")["driver"].iloc[0]
+                    hits.append(top_pred == top_true)
+                row["called_the_winner" if target == "finish_position" else "called_pole"] = round(float(sum(hits) / len(hits)), 3)
+            seasons[int(season)] = row
+        out[target] = {"unit": TARGETS[target].unit, "baseline": TARGETS[target].baseline_name,
+                       "stage_shown": SHOWN_STAGE[target], "by_season": seasons}
+    return out
 
 
 if __name__ == "__main__":
     written = export_all()
-    print(f"exported backtest data for {len(written)} races -> {OUT_DIR}")
+    print(f"exported walk-forward backtest for {len(written)} races -> {OUT_DIR}")

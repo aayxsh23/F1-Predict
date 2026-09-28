@@ -9,6 +9,13 @@ from pathlib import Path
 
 import pandas as pd
 
+try:
+    import torch  # noqa: F401  -- the local LLM extras (requirements-llm.txt)
+except ImportError:
+    import pytest
+
+    pytest.skip("needs the local LLM extras: pip install -r requirements-llm.txt", allow_module_level=True)
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.rag.explain import explain

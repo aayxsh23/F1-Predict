@@ -32,6 +32,14 @@ def load() -> pd.DataFrame:
     return pd.read_csv(_CSV)
 
 
+def coords(location: str, season: int) -> tuple[float, float]:
+    """(lat, lon) of a circuit, for the weather forecast; NaNs if unmapped."""
+    c = load()
+    loc = LOCATION_ALIASES.get(location, location)
+    hit = c[(c["location"] == loc) & (c["valid_from_year"] <= season) & (c["valid_to_year"].fillna(9999) >= season)]
+    return (float(hit.iloc[0]["lat"]), float(hit.iloc[0]["lon"])) if len(hit) else (np.nan, np.nan)
+
+
 def resolve(df: pd.DataFrame, circuits: pd.DataFrame | None = None) -> pd.DataFrame:
     """Merge circuit reference columns onto df (needs `location`, `season`),
     picking the era row whose [valid_from_year, valid_to_year] window

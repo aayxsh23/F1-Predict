@@ -1,0 +1,85 @@
+{
+  "target": "quali_delta",
+  "column": "target_quali_to_race_delta",
+  "unit": "places",
+  "baseline": "no change from the grid",
+  "n_rows": 2166,
+  "n_races": 107,
+  "data_through": "2026-09-26",
+  "evaluation": "43 races from 2024-11-03 to 2026-09-26, each predicted by a model trained only on earlier races; none of them was used to pick hyperparameters",
+  "stages": {
+    "pre_weekend": {
+      "mae": 3.4339,
+      "baseline_mae": 3.4263,
+      "n": 889,
+      "mean_race_spearman": 0.0101
+    },
+    "post_practice": {
+      "mae": 3.4302,
+      "baseline_mae": 3.4263,
+      "n": 889,
+      "mean_race_spearman": 0.0195
+    },
+    "post_quali": {
+      "mae": 3.1763,
+      "baseline_mae": 3.4263,
+      "n": 889,
+      "mean_race_spearman": 0.4077
+    },
+    "race_day": {
+      "mae": 3.1763,
+      "baseline_mae": 3.4263,
+      "n": 889,
+      "mean_race_spearman": 0.4077
+    }
+  },
+  "all_walk_forward_stages": {
+    "pre_weekend": {
+      "mae": 3.4903,
+      "baseline_mae": 3.4652,
+      "n": 1967,
+      "mean_race_spearman": -0.0023
+    },
+    "post_practice": {
+      "mae": 3.4883,
+      "baseline_mae": 3.4652,
+      "n": 1967,
+      "mean_race_spearman": 0.0056
+    },
+    "post_quali": {
+      "mae": 3.0823,
+      "baseline_mae": 3.4652,
+      "n": 1967,
+      "mean_race_spearman": 0.4761
+    },
+    "race_day": {
+      "mae": 3.0823,
+      "baseline_mae": 3.4652,
+      "n": 1967,
+      "mean_race_spearman": 0.4761
+    }
+  },
+  "best_params": {
+    "colsample_bytree": 0.718509402281633,
+    "learning_rate": 0.0430533878126005,
+    "max_depth": 2,
+    "min_child_weight": 7,
+    "n_estimators": 108,
+    "reg_alpha": 1.5444895385933148,
+    "reg_lambda": 1.0961470446025172,
+    "subsample": 0.602208846849441
+  },
+  "top_features": {
+    "grid_vs_expected_position": 1.0907000303268433,
+    "grid_position": 0.24539999663829803,
+    "grid_x_overtaking_difficulty": 0.08259999752044678,
+    "teammate_quali_gap": 0.04780000075697899,
+    "driver_positions_gained_form": 0.04529999941587448,
+    "team_recent_form": 0.043800000101327896,
+    "driver_dnf_rate": 0.03889999911189079,
+    "quali_gap_pct": 0.03799999877810478,
+    "driver_track_form": 0.03400000184774399,
+    "practice_pace": 0.033900000154972076
+  },
+  "trained_at": "2026-09-28T15:21:09+00:00"
+}

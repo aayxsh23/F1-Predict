@@ -33,7 +33,7 @@ OUT_PATH = Path(__file__).resolve().parent / "training_data" / "explanations.jso
 MAX_LENGTH = 1536
 TARGET_COLS = {
     "finish_position": "target_finish_position", "quali_delta": "target_quali_to_race_delta",
-    "qualifying": "target_qualifying_gap", "race_time": "target_race_time_gap",
+    "qualifying": "target_qualifying_gap_pct", "race_time": "target_race_gap_pct",
 }
 
 # one accurate, specific fact per circuit, drawn directly from the

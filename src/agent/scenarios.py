@@ -1,17 +1,19 @@
-"""F1 championship scenario math -- the multi-step reasoning behind questions
-like "what does Norris need to win the title this weekend" (the project
-plan's own example). Deterministic Python, not LLM-driven: pulling points,
-computing the remaining-race points pool, and comparing ceilings/floors is
-exact arithmetic, not something to hand to a 1B model and hope it gets right.
+"""Championship maths: what a driver needs to win the title, and the chance
+they do.
 
-Known, deliberate simplification: this does NOT implement full FIA countback
-tie-break rules (equal points on points is broken by most wins, then most
-2nd places, etc.). It answers "how many points would guarantee it," not "who
-technically wins a countback at equal points" -- correct for the vast
-majority of real scenarios, and the honest thing for a "points needed to
-guarantee" answer to state is the points threshold, not adjudicate a tie.
+`title_scenario` is exact arithmetic (points pool, elimination, points needed
+to draw level if the rival scores nothing more). `title_odds` simulates the
+rest of the season many times, each remaining race drawn from the race
+sampler with every driver's current forecast strength.
+
+Simplification: ties on points are not broken by FIA countback (most wins,
+then most seconds...); a tie splits the title chance evenly.
 """
-RACE_POINTS = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]  # P1..P10, points-paying positions
+import numpy as np
+
+from src.models.probabilities import sample_positions
+
+RACE_POINTS = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]  # P1..P10
 SPRINT_POINTS = [8, 7, 6, 5, 4, 3, 2, 1]  # P1..P8
 
 
@@ -20,48 +22,22 @@ def remaining_rounds(schedule: list[dict], completed_through_round: int) -> list
 
 
 def max_points_available(remaining: list[dict]) -> int:
-    """Max points a single driver could still score: win every remaining
-    race and every remaining sprint outright."""
-    races = len(remaining)
-    sprints = sum(r["is_sprint"] for r in remaining)
-    return races * max(RACE_POINTS) + sprints * max(SPRINT_POINTS)
+    """Most points one driver can still score: win every race and sprint."""
+    return len(remaining) * RACE_POINTS[0] + sum(r["is_sprint"] for r in remaining) * SPRINT_POINTS[0]
 
 
 def closest_rival(standings: list[dict], driver_code: str) -> dict:
-    """The driver most relevant to a title question when none is named: the
-    highest-points driver other than this one. If `driver` isn't leading,
-    that's simply the actual points leader (who they'd have to overhaul); if
-    `driver` IS leading, the highest-points *other* driver is automatically
-    whoever is 2nd -- the real threat to their lead. One expression handles
-    both cases; no need to branch on whether `driver` happens to be P1."""
-    others = [d for d in standings if d["code"] != driver_code]
-    return max(others, key=lambda d: d["points"])
+    """The highest-scoring other driver: the leader if `driver` trails, second place if `driver` leads."""
+    return max((d for d in standings if d["code"] != driver_code), key=lambda d: d["points"])
 
 
 def title_scenario(driver_points: float, rival_points: float, remaining: list[dict]) -> dict:
-    """Is `driver` still mathematically able to finish ahead of `rival`, and
-    what they'd need to score across the remaining races to draw level
-    assuming the rival scores nothing more.
-
-    Earlier version of this function computed "points needed to guarantee
-    finishing ahead of the rival regardless of what the rival does" -- that
-    number turns out to only ever be achievable (non-None) when `driver` is
-    ALREADY ahead of `rival`, because the rival's own ceiling grows by the
-    identical remaining-points pool: a driver who trails can never force a
-    guarantee against a rival who could simply match their result for the
-    rest of the season. Mathematically correct, but useless for exactly the
-    question this function exists to answer (a driver who's behind, like the
-    plan's own "what does Norris need" example) -- caught by
-    tests/test_scenarios.py asserting a concrete expected value and getting
-    None back. "Needed if the rival scores zero more" is the standard framing
-    real title-race analysis uses instead: always a well-defined number,
-    and it's exactly the gap the trailing driver has to make up."""
+    """Can `driver` still finish ahead of `rival`, and how many points would
+    they need to draw level if the rival scores nothing more? (A trailing
+    driver can never *guarantee* the title against a rival who can match
+    them, so "points to draw level" is the useful number.)"""
     pool = max_points_available(remaining)
-    driver_ceiling = driver_points + pool
-
-    still_in_contention = driver_ceiling > rival_points
-    points_needed_if_rival_scores_zero = max(0, rival_points - driver_points + 1)
-
+    needed = max(0, rival_points - driver_points + 1)
     return {
         "driver_points": driver_points,
         "rival_points": rival_points,
@@ -69,8 +45,39 @@ def title_scenario(driver_points: float, rival_points: float, remaining: list[di
         "remaining_races": len(remaining),
         "remaining_sprints": sum(r["is_sprint"] for r in remaining),
         "max_points_available": pool,
-        "still_mathematically_in_contention": still_in_contention,
-        "points_needed_if_rival_scores_zero": (
-            points_needed_if_rival_scores_zero if points_needed_if_rival_scores_zero <= pool else None
-        ),
+        "still_mathematically_in_contention": driver_points + pool > rival_points,
+        "points_needed_if_rival_scores_zero": needed if needed <= pool else None,
     }
+
+
+def _points(positions: np.ndarray, table: list[int]) -> np.ndarray:
+    lookup = np.zeros(max(positions.max(), len(table)) + 1)
+    lookup[1: len(table) + 1] = table
+    return lookup[positions]
+
+
+def title_odds(points, predicted_finish, remaining: list[dict], tau: float, p_dnf=0.1,
+               groups=None, n: int = 5000, seed: int = 0) -> dict:
+    """points / predicted_finish: current points and forecast finishing
+    position per driver (lower = stronger). `groups`: optional team per
+    driver, to also get constructors' odds. Returns per-driver arrays
+    `champion` and `expected_points`, plus `team_champion` {team: p}."""
+    points = np.asarray(points, dtype=float)
+    score = -np.asarray(predicted_finish, dtype=float)
+    total = np.tile(points, (n, 1))
+    for i, r in enumerate(remaining):
+        total += _points(sample_positions(score, tau, p_dnf, n=n, seed=seed + 2 * i), RACE_POINTS)
+        if r["is_sprint"]:
+            total += _points(sample_positions(score, tau, p_dnf, n=n, seed=seed + 2 * i + 1), SPRINT_POINTS)
+    best = total.max(axis=1, keepdims=True)
+    share = (total == best) / (total == best).sum(axis=1, keepdims=True)  # ties split the title
+    out = {"champion": share.mean(axis=0), "expected_points": total.mean(axis=0)}
+    if groups is not None:
+        teams = sorted(set(groups))
+        idx = np.array([teams.index(g) for g in groups])
+        team_total = np.zeros((n, len(teams)))
+        np.add.at(team_total, (slice(None), idx), total)
+        tbest = team_total.max(axis=1, keepdims=True)
+        tshare = (team_total == tbest) / (team_total == tbest).sum(axis=1, keepdims=True)
+        out["team_champion"] = dict(zip(teams, tshare.mean(axis=0)))
+    return out

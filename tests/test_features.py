@@ -46,6 +46,20 @@ def test_recent_form_excludes_same_date_ties():
     assert out.iloc[2] == 9.5 and out.iloc[3] == 9.5  # mean(1, 18)
 
 
+def test_recent_form_discounts_previous_regulation_era():
+    # 2025 was a win, 2026 (new rules) a P10: the 2026 race weighs 1, the 2025 one CROSS_ERA_WEIGHT
+    from src.features.rolling import CROSS_ERA_WEIGHT
+    df = pd.DataFrame({
+        "team": ["X", "X", "X"], "season": [2025, 2026, 2026],
+        "race_date": pd.to_datetime(["2025-12-01", "2026-03-01", "2026-04-01"]),
+        "finish_position": [1, 10, 5],
+    })
+    out = recent_form(df, "team", "race_date", "finish_position", decay=1.0)
+    assert out.iloc[1] == 1  # only prior row, whatever its era
+    expected = (10 * 1.0 + 1 * CROSS_ERA_WEIGHT) / (1.0 + CROSS_ERA_WEIGHT)
+    assert abs(out.iloc[2] - expected) < 1e-9
+
+
 def test_track_form_uses_year_gap_and_no_future_rows():
     df = pd.DataFrame({
         "driver": ["A", "A", "A"],

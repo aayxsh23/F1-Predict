@@ -14,7 +14,11 @@ CIRCUIT_COLS = [
     "dnf_rate", "longest_straight_m", "braking_zone_count", "tyre_degradation_level",
     "rain_race_frequency", "track_length_km",
 ]
-WEATHER_COLS = ["air_temp", "track_temp", "rain_probability", "wind_speed", "wet_track_probability"]
+# forecasts for race start (src/data/weather.py), not measured race weather:
+# a live prediction only ever has the forecast
+WEATHER_COLS = ["air_temp_forecast", "rain_mm_forecast", "wind_kph_forecast"]
+# race-level facts carried through for the lap-time and race-duration estimates
+RACE_INFO_COLS = ["race_start_utc", "practice_fastest_s", "quali_pole_s", "race_winner_time_s", "race_laps", "sc_laps"]
 KEY = ["season", "round", "driver"]
 
 
@@ -26,7 +30,7 @@ def load_raw() -> pd.DataFrame:
 
 
 def build(raw: pd.DataFrame | None = None) -> pd.DataFrame:
-    """raw: pre-loaded raw table to use instead of reading data/raw/races/ —
+    """raw: pre-loaded raw table to use instead of reading data/raw/races/ --
     live prediction passes historical rows plus one appended not-yet-happened
     race here, so the exact same feature layers below (including every
     leakage-safe rolling stat) run identically for training and live rows."""
@@ -37,12 +41,16 @@ def build(raw: pd.DataFrame | None = None) -> pd.DataFrame:
     relative = relative_features.build(raw.merge(driver[KEY + ["driver_recent_form"]], on=KEY))
     strategy = strategy_features.build(raw)
 
-    out = raw[KEY + ["team", "location", "race_date"] + CIRCUIT_COLS + WEATHER_COLS].copy()
+    out = raw.reindex(columns=KEY + ["team", "location", "race_date"] + CIRCUIT_COLS + WEATHER_COLS + RACE_INFO_COLS).copy()
+    # coarse steps: hourly forecast wobble shouldn't count as new information
+    for col, step in zip(WEATHER_COLS, (1.0, 0.5, 5.0)):
+        out[col] = (out[col] / step).round() * step
     out["starting_tire_compound"] = raw["starting_compound"]
     out["target_finish_position"] = raw["finish_position"]
     out["target_quali_to_race_delta"] = raw["grid_position"] - raw["finish_position"]
-    out["target_race_time_gap"] = raw["gap_to_winner_seconds"]
-    out["target_qualifying_gap"] = raw["quali_gap_to_pole"]
+    out["target_race_gap_pct"] = raw["race_gap_pct"]
+    out["target_qualifying_gap_pct"] = raw["quali_gap_pct"]
+    out["quali_gap_to_pole"] = raw["quali_gap_to_pole"]  # seconds, for display only
 
     for layer in (driver, team, relative, strategy):
         new_cols = [c for c in layer.columns if c not in KEY]

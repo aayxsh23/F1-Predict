@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.agent.scenarios import closest_rival, max_points_available, remaining_rounds, title_scenario
+from src.agent.scenarios import closest_rival, max_points_available, remaining_rounds, title_odds, title_scenario
 
 SCHEDULE = [{"round": r, "race_name": f"Round {r}", "date": "2026-01-01", "is_sprint": r in (14, 18)} for r in range(1, 24)]
 
@@ -63,6 +63,15 @@ def test_title_scenario_realistic_midseason_battle():
     assert result["still_mathematically_in_contention"] is True  # 171+266=437 > 267
     # to draw level assuming the rival scores nothing more: close a 96-point gap
     assert result["points_needed_if_rival_scores_zero"] == 97.0
+
+
+def test_title_odds_sum_to_one_and_respect_elimination():
+    remaining = remaining_rounds(SCHEDULE, completed_through_round=20)  # 3 races, 75 points left
+    points = [300.0, 280.0, 100.0]  # the third driver can no longer catch the leader
+    odds = title_odds(points, [1.0, 1.5, 2.0], remaining, tau=2.0, p_dnf=0.05, groups=["A", "B", "A"], n=3000)
+    assert abs(odds["champion"].sum() - 1) < 1e-9
+    assert odds["champion"][2] == 0 and odds["champion"][0] > odds["champion"][1] > 0
+    assert abs(sum(odds["team_champion"].values()) - 1) < 1e-9
 
 
 if __name__ == "__main__":

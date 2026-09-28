@@ -2,10 +2,10 @@
 retrieval query -- this is the bridge the project plan describes: SHAP output
 IS the query into the RAG layer, not a separate hand-written question."""
 import pandas as pd
-import shap
 import xgboost as xgb
 
 from src.models.features import PREPARE_FN
+from src.models.predict import contributions
 
 # feature name -> plain-English topic, used to phrase the top SHAP features as
 # a query rather than dumping raw column names at the retriever/LLM
@@ -27,6 +27,11 @@ FEATURE_PHRASES = {
     "wet_track_probability": "the chance of a wet track",
     "grid_position": "starting grid position",
     "quali_gap_to_pole": "the qualifying gap to pole position",
+    "quali_gap_pct": "the qualifying gap to pole position",
+    "practice_long_run_pace": "long-run pace in practice",
+    "air_temp_forecast": "the forecast air temperature",
+    "rain_mm_forecast": "the rain forecast",
+    "wind_kph_forecast": "the wind forecast",
     "practice_pace": "practice session pace",
     "driver_recent_form": "the driver's recent form",
     "driver_track_form": "the driver's history at this specific circuit",
@@ -47,30 +52,14 @@ FEATURE_PHRASES = {
 }
 
 
-# shap.TreeExplainer(model) parses the whole tree ensemble on construction --
-# worth reusing across calls for the same model (e.g. build_finetune_dataset.py
-# calls this once per circuit, ~27x per model) rather than rebuilding it every time
-_explainer_cache: dict[int, shap.TreeExplainer] = {}
-
-
-def _get_explainer(model: xgb.XGBRegressor) -> shap.TreeExplainer:
-    key = id(model)
-    if key not in _explainer_cache:
-        _explainer_cache[key] = shap.TreeExplainer(model)
-    return _explainer_cache[key]
-
-
 def top_shap_features(model: xgb.XGBRegressor, row: pd.DataFrame, target: str = "finish_position", top_k: int = 5) -> list[dict]:
-    """row: a single-row DataFrame with the raw Phase 1 feature-table columns
-    (same shape predict.predict() expects). Returns the top_k features driving
-    THIS prediction, ranked by |SHAP value|, each with its signed contribution."""
-    X = PREPARE_FN[target](row)
-    explainer = _get_explainer(model)
-    shap_values = explainer.shap_values(X)[0]
-    contributions = pd.Series(shap_values, index=X.columns).sort_values(key=abs, ascending=False)
+    """The top_k features driving THIS prediction, by |SHAP value|, each with its signed contribution."""
+    contrib, _ = contributions(model, PREPARE_FN[target](row))
+    c = contrib.iloc[0]
+    c = c.reindex(c.abs().sort_values(ascending=False).index)
     return [
         {"feature": feat, "shap_value": float(val), "phrase": FEATURE_PHRASES.get(feat, feat)}
-        for feat, val in contributions.head(top_k).items()
+        for feat, val in c.head(top_k).items()
     ]
 
 
@@ -83,8 +72,8 @@ def top_shap_features(model: xgb.XGBRegressor, row: pd.DataFrame, target: str = 
 TARGET_INFO = {
     "finish_position": ("finishing position", "higher (worse finish)", "lower (better finish)"),
     "quali_delta": ("quali-to-race position change", "higher (more positions gained)", "lower (fewer positions gained)"),
-    "qualifying": ("qualifying gap to pole (seconds)", "higher (further from pole)", "lower (closer to pole)"),
-    "race_time": ("race time gap to the winner (seconds)", "higher (further behind the winner)", "lower (closer to the winner)"),
+    "qualifying": ("qualifying gap to pole (% of the pole lap)", "higher (further from pole)", "lower (closer to pole)"),
+    "race_time": ("race time gap to the winner (% of race time)", "higher (further behind the winner)", "lower (closer to the winner)"),
 }
 
 

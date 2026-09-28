@@ -1,20 +1,97 @@
 {
-  "tau_top": 1.6847888701627434,
-  "tau_field": 3.0539315796744075,
-  "dnf_prior": 0.1565703634669152,
-  "n_races": 85,
-  "brier": {
-    "win": 0.033717380382608894,
-    "podium": 0.07286898898550725,
-    "top10": 0.1530597222028987
+  "dnf_prior": 0.14990774907749077,
+  "race": {
+    "post_practice": {
+      "tau_top": 1.8647344661936414,
+      "tau_field": 3.3168449751139075
+    },
+    "post_quali": {
+      "tau_top": 1.5834065197228941,
+      "tau_field": 2.9790662962488077
+    },
+    "pre_weekend": {
+      "tau_top": 1.9112943651258456,
+      "tau_field": 3.3264219704509497
+    },
+    "race_day": {
+      "tau_top": 1.5834065197228941,
+      "tau_field": 2.9790662962488077
+    }
   },
-  "brier_uniform_field": {
-    "win": 0.04684730098718937,
-    "podium": 0.12597353497164065,
-    "top10": 0.2499474900230952
+  "qualifying": {
+    "post_practice": {
+      "tau": 0.5884736949343893
+    },
+    "pre_weekend": {
+      "tau": 0.5801094883315471
+    }
   },
-  "band_p10_p90_coverage": 0.8776811594202899,
-  "mean_p_dnf": 0.1442967608252294,
-  "method": "walk-forward OOF (time_based_splits), Plackett-Luce MLE over finishers, DNFs sampled separately",
-  "fitted_at": "2026-09-21T14:27:04.500884+00:00"
+  "checks": {
+    "race_post_practice": {
+      "brier": {
+        "win": 0.0369,
+        "podium": 0.0832,
+        "top10": 0.1693
+      },
+      "brier_if_guessing_evenly": {
+        "win": 0.0469,
+        "podium": 0.1261,
+        "top10": 0.25
+      },
+      "range_p10_p90_coverage": 0.868
+    },
+    "race_post_quali": {
+      "brier": {
+        "win": 0.0331,
+        "podium": 0.0732,
+        "top10": 0.1556
+      },
+      "brier_if_guessing_evenly": {
+        "win": 0.0469,
+        "podium": 0.1261,
+        "top10": 0.25
+      },
+      "range_p10_p90_coverage": 0.871
+    },
+    "race_pre_weekend": {
+      "brier": {
+        "win": 0.0385,
+        "podium": 0.0854,
+        "top10": 0.1712
+      },
+      "brier_if_guessing_evenly": {
+        "win": 0.0469,
+        "podium": 0.1261,
+        "top10": 0.25
+      },
+      "range_p10_p90_coverage": 0.872
+    },
+    "race_race_day": {
+      "brier": {
+        "win": 0.0331,
+        "podium": 0.0732,
+        "top10": 0.1556
+      },
+      "brier_if_guessing_evenly": {
+        "win": 0.0469,
+        "podium": 0.1261,
+        "top10": 0.25
+      },
+      "range_p10_p90_coverage": 0.871
+    },
+    "qualifying_post_practice": {
+      "brier": {
+        "pole": 0.0415,
+        "q3": 0.1405
+      }
+    },
+    "qualifying_pre_weekend": {
+      "brier": {
+        "pole": 0.0425,
+        "q3": 0.1499
+      }
+    }
+  },
+  "method": "Plackett-Luce MLE on walk-forward predictions (src/models/train.py), per weekend stage",
+  "fitted_at": "2026-09-28T15:22:02+00:00"
 }

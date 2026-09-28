@@ -1,0 +1,11 @@
+# Data pipeline, training, scheduled refresh and tests, on top of the API.
+-r requirements.txt
+fastf1==3.8.3
+pyarrow==25.0.1
+scikit-learn==1.9.1
+scipy==1.18.1
+pypdf==6.18.1
+uvicorn==0.52.4
+python-dotenv==1.2.3
+httpx==0.28.1
+pytest==8.4.2

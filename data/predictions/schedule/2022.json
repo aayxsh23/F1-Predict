@@ -1,0 +1,222 @@
+[
+  {
+    "RoundNumber": 1,
+    "EventName": "Bahrain Grand Prix",
+    "Location": "Sakhir",
+    "Country": "Bahrain",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-03-18T12:00:00",
+    "EventDate": "2022-03-20T00:00:00",
+    "RaceStartUtc": "2022-03-20T15:00:00"
+  },
+  {
+    "RoundNumber": 2,
+    "EventName": "Saudi Arabian Grand Prix",
+    "Location": "Jeddah",
+    "Country": "Saudi Arabia",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-03-25T14:00:00",
+    "EventDate": "2022-03-27T00:00:00",
+    "RaceStartUtc": "2022-03-27T17:00:00"
+  },
+  {
+    "RoundNumber": 3,
+    "EventName": "Australian Grand Prix",
+    "Location": "Melbourne",
+    "Country": "Australia",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-04-08T03:00:00",
+    "EventDate": "2022-04-10T00:00:00",
+    "RaceStartUtc": "2022-04-10T05:00:00"
+  },
+  {
+    "RoundNumber": 4,
+    "EventName": "Emilia Romagna Grand Prix",
+    "Location": "Imola",
+    "Country": "Italy",
+    "EventFormat": "sprint",
+    "Session1DateUtc": "2022-04-22T11:30:00",
+    "EventDate": "2022-04-24T00:00:00",
+    "RaceStartUtc": "2022-04-24T13:00:00"
+  },
+  {
+    "RoundNumber": 5,
+    "EventName": "Miami Grand Prix",
+    "Location": "Miami",
+    "Country": "United States",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-05-06T18:30:00",
+    "EventDate": "2022-05-08T00:00:00",
+    "RaceStartUtc": "2022-05-08T19:30:00"
+  },
+  {
+    "RoundNumber": 6,
+    "EventName": "Spanish Grand Prix",
+    "Location": "Barcelona",
+    "Country": "Spain",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-05-20T12:00:00",
+    "EventDate": "2022-05-22T00:00:00",
+    "RaceStartUtc": "2022-05-22T13:00:00"
+  },
+  {
+    "RoundNumber": 7,
+    "EventName": "Monaco Grand Prix",
+    "Location": "Monaco",
+    "Country": "Monaco",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-05-27T12:00:00",
+    "EventDate": "2022-05-29T00:00:00",
+    "RaceStartUtc": "2022-05-29T13:00:00"
+  },
+  {
+    "RoundNumber": 8,
+    "EventName": "Azerbaijan Grand Prix",
+    "Location": "Baku",
+    "Country": "Azerbaijan",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-06-10T11:00:00",
+    "EventDate": "2022-06-12T00:00:00",
+    "RaceStartUtc": "2022-06-12T11:00:00"
+  },
+  {
+    "RoundNumber": 9,
+    "EventName": "Canadian Grand Prix",
+    "Location": "Montréal",
+    "Country": "Canada",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-06-17T18:00:00",
+    "EventDate": "2022-06-19T00:00:00",
+    "RaceStartUtc": "2022-06-19T18:00:00"
+  },
+  {
+    "RoundNumber": 10,
+    "EventName": "British Grand Prix",
+    "Location": "Silverstone",
+    "Country": "Great Britain",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-07-01T12:00:00",
+    "EventDate": "2022-07-03T00:00:00",
+    "RaceStartUtc": "2022-07-03T14:00:00"
+  },
+  {
+    "RoundNumber": 11,
+    "EventName": "Austrian Grand Prix",
+    "Location": "Spielberg",
+    "Country": "Austria",
+    "EventFormat": "sprint",
+    "Session1DateUtc": "2022-07-08T11:30:00",
+    "EventDate": "2022-07-10T00:00:00",
+    "RaceStartUtc": "2022-07-10T13:00:00"
+  },
+  {
+    "RoundNumber": 12,
+    "EventName": "French Grand Prix",
+    "Location": "Le Castellet",
+    "Country": "France",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-07-22T12:00:00",
+    "EventDate": "2022-07-24T00:00:00",
+    "RaceStartUtc": "2022-07-24T13:00:00"
+  },
+  {
+    "RoundNumber": 13,
+    "EventName": "Hungarian Grand Prix",
+    "Location": "Budapest",
+    "Country": "Hungary",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-07-29T12:00:00",
+    "EventDate": "2022-07-31T00:00:00",
+    "RaceStartUtc": "2022-07-31T13:00:00"
+  },
+  {
+    "RoundNumber": 14,
+    "EventName": "Belgian Grand Prix",
+    "Location": "Spa-Francorchamps",
+    "Country": "Belgium",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-08-26T12:00:00",
+    "EventDate": "2022-08-28T00:00:00",
+    "RaceStartUtc": "2022-08-28T13:00:00"
+  },
+  {
+    "RoundNumber": 15,
+    "EventName": "Dutch Grand Prix",
+    "Location": "Zandvoort",
+    "Country": "Netherlands",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-09-02T10:30:00",
+    "EventDate": "2022-09-04T00:00:00",
+    "RaceStartUtc": "2022-09-04T13:00:00"
+  },
+  {
+    "RoundNumber": 16,
+    "EventName": "Italian Grand Prix",
+    "Location": "Monza",
+    "Country": "Italy",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-09-09T12:00:00",
+    "EventDate": "2022-09-11T00:00:00",
+    "RaceStartUtc": "2022-09-11T13:00:00"
+  },
+  {
+    "RoundNumber": 17,
+    "EventName": "Singapore Grand Prix",
+    "Location": "Marina Bay",
+    "Country": "Singapore",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-09-30T10:00:00",
+    "EventDate": "2022-10-02T00:00:00",
+    "RaceStartUtc": "2022-10-02T12:00:00"
+  },
+  {
+    "RoundNumber": 18,
+    "EventName": "Japanese Grand Prix",
+    "Location": "Suzuka",
+    "Country": "Japan",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-10-07T03:00:00",
+    "EventDate": "2022-10-09T00:00:00",
+    "RaceStartUtc": "2022-10-09T05:00:00"
+  },
+  {
+    "RoundNumber": 19,
+    "EventName": "United States Grand Prix",
+    "Location": "Austin",
+    "Country": "United States",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-10-21T19:00:00",
+    "EventDate": "2022-10-23T00:00:00",
+    "RaceStartUtc": "2022-10-23T19:00:00"
+  },
+  {
+    "RoundNumber": 20,
+    "EventName": "Mexico City Grand Prix",
+    "Location": "Mexico City",
+    "Country": "Mexico",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-10-28T19:00:00",
+    "EventDate": "2022-10-30T00:00:00",
+    "RaceStartUtc": "2022-10-30T20:00:00"
+  },
+  {
+    "RoundNumber": 21,
+    "EventName": "São Paulo Grand Prix",
+    "Location": "São Paulo",
+    "Country": "Brazil",
+    "EventFormat": "sprint",
+    "Session1DateUtc": "2022-11-11T15:30:00",
+    "EventDate": "2022-11-13T00:00:00",
+    "RaceStartUtc": "2022-11-13T18:00:00"
+  },
+  {
+    "RoundNumber": 22,
+    "EventName": "Abu Dhabi Grand Prix",
+    "Location": "Yas Island",
+    "Country": "Abu Dhabi",
+    "EventFormat": "conventional",
+    "Session1DateUtc": "2022-11-18T10:00:00",
+    "EventDate": "2022-11-20T00:00:00",
+    "RaceStartUtc": "2022-11-20T13:00:00"
+  }
+]
