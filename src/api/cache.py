@@ -36,7 +36,7 @@ def get_json(relative_path: str) -> dict:
         path = LOCAL_DATA_DIR / relative_path
         if not path.exists():
             raise FileNotFoundError(relative_path)
-        data = json.loads(path.read_text())
+        data = json.loads(path.read_text(encoding="utf-8"))
 
     _cache[relative_path] = (now, data)
     return data

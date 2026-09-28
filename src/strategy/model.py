@@ -32,9 +32,8 @@ from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
-from src.features.circuit_reference import LOCATION_ALIASES, load as load_circuits
+from src.models.catalog import LOCATION_ALIASES
 
 ROOT = Path(__file__).resolve().parents[2]
 LAPS_DIR = ROOT / "data" / "raw" / "laps"
@@ -51,7 +50,9 @@ def _canon(location: str) -> str:
     return LOCATION_ALIASES.get(location, location)
 
 
-def _load_laps() -> pd.DataFrame:
+def _load_laps():
+    import pandas as pd
+
     frames = []
     for f in sorted(LAPS_DIR.glob("*.parquet")):
         season, rnd, location = f.stem.split("_", 2)
@@ -59,15 +60,17 @@ def _load_laps() -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
-def _green(laps: pd.DataFrame) -> pd.DataFrame:
+def _green(laps):
     ok = laps[(laps["track_status"] == "1") & ~laps["pit_in"] & ~laps["pit_out"] & (laps["lap"] > 1)
               & laps["lap_time_s"].notna() & laps["compound"].isin(DRY) & laps["tyre_life"].notna()]
     med = ok.groupby(["race", "driver"])["lap_time_s"].transform("median")
     return ok[ok["lap_time_s"] < med * 1.07]
 
 
-def _tyre_fit(g: pd.DataFrame) -> dict:
+def _tyre_fit(g) -> dict:
     """Least squares on laps demeaned within each driver's race."""
+    import pandas as pd
+
     X = pd.DataFrame({"lap": g["lap"]}, index=g.index)
     for c in DRY:
         on = (g["compound"] == c).astype(float)
@@ -92,12 +95,12 @@ def _shrink(own: dict, glob: dict) -> dict:
     return out
 
 
-def _max_stints(laps: pd.DataFrame) -> dict:
+def _max_stints(laps) -> dict:
     stints = laps[laps["compound"].isin(DRY)].groupby(["race", "driver", "stint", "compound"]).size().reset_index(name="n")
     return {c: int(stints.loc[stints["compound"] == c, "n"].quantile(0.9)) for c in DRY if (stints["compound"] == c).any()}
 
 
-def _pit_loss(laps: pd.DataFrame) -> float:
+def _pit_loss(laps) -> float:
     base = _green(laps).groupby(["race", "driver"])["lap_time_s"].median()
     nxt = laps.assign(lap=laps["lap"] - 1)[["race", "driver", "lap", "lap_time_s", "track_status", "pit_out"]]
     stops = laps[laps["pit_in"] & (laps["track_status"] == "1")].merge(nxt, on=["race", "driver", "lap"], suffixes=("", "_out"))
@@ -109,6 +112,7 @@ def _pit_loss(laps: pd.DataFrame) -> float:
 
 def fit_params() -> dict:
     from src.features.build_dataset import load_raw
+    from src.features.circuit_reference import load as load_circuits
     from src.models.estimates import safety_car_probability
 
     laps = _load_laps()
@@ -129,6 +133,9 @@ def fit_params() -> dict:
             "sc_probability": safety_car_probability(raw, loc),
             "races": races, "green_laps": int(len(own)),
         }
+    for loc, c in circuits.iterrows():  # venues with no lap history yet (a new circuit): all-circuit tyres, own pit lane
+        params.setdefault(loc, {**params["global"], "pit_loss_s": float(c["pit_lane_loss_time"]),
+                                "sc_probability": safety_car_probability(raw, loc), "races": 0, "green_laps": 0})
     PARAMS_PATH.write_text(json.dumps(params, indent=2, ensure_ascii=False), encoding="utf-8")
     load_params.cache_clear()
     return params
@@ -177,11 +184,7 @@ def simulate(location: str, laps: int, sc_lap: int | None = None, top: int = 4, 
     """Best plans for a race at `location` over `laps` laps. `sc_lap`: a safety
     car on that lap (the scenario the app lets you inject)."""
     all_params = load_params()
-    p = all_params.get(_canon(location))
-    if p is None:  # a venue with no lap history: all-circuit tyre model, its own pit lane from the circuit table
-        c = load_circuits()
-        row = c[c["location"] == _canon(location)]
-        p = {**all_params["global"], **({"pit_loss_s": float(row.iloc[0]["pit_lane_loss_time"])} if len(row) else {})}
+    p = all_params.get(_canon(location)) or all_params["global"]
     comp, pit_loss = p["compounds"], p["pit_loss_s"]
     max_stint = {c: min(p["max_stint"].get(c, laps), laps) for c in DRY}
     plans = _plans(laps, max_stint)

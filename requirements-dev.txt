@@ -1,5 +1,9 @@
 # Data pipeline, training, scheduled refresh and tests, on top of the API.
 -r requirements.txt
+pandas==2.3.3
+# the CPU-only build on Linux (CI): the regular wheel pulls in ~200 MB of CUDA libraries
+xgboost-cpu==3.4.1; sys_platform == "linux"
+xgboost==3.4.1; sys_platform != "linux"
 fastf1==3.8.3
 pyarrow==25.0.1
 scikit-learn==1.9.1

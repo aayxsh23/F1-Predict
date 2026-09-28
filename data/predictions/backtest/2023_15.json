@@ -3,6 +3,8 @@
   "round": 15,
   "location": "Marina Bay",
   "method": "walk-forward: predicted by a model trained only on earlier races",
+  "pole_time_s": 90.984,
+  "race_duration_s": 6397.418,
   "drivers": [
     {
       "driver": "ALB",

@@ -30,7 +30,7 @@ def export_all() -> list[dict]:
     wf = pd.concat([wf[(wf["target"] == t) & (wf["stage"] == s)] for t, s in SHOWN_STAGE.items()])
     raw = load_raw()
     info = raw.drop_duplicates(["season", "round", "driver"]).set_index(["season", "round", "driver"])
-    races = raw[["season", "round", "location", "race_date"]].drop_duplicates(["season", "round"]).sort_values("race_date")
+    races = raw[["season", "round", "location", "race_date", "quali_pole_s", "race_winner_time_s"]].drop_duplicates(["season", "round"]).sort_values("race_date")
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for stale in OUT_DIR.glob("*_*.json"):  # races that no longer have a walk-forward prediction
@@ -53,7 +53,10 @@ def export_all() -> list[dict]:
             entry["finish_position"]["actual"] = _clean(d["finish_position"])  # retirements too, for the result column
             drivers.append(entry)
         payload = {"season": season, "round": rnd, "location": r["location"],
-                   "method": "walk-forward: predicted by a model trained only on earlier races", "drivers": drivers}
+                   "method": "walk-forward: predicted by a model trained only on earlier races",
+                   # the real pole lap and race length, to turn % gaps into seconds
+                   "pole_time_s": _clean(r["quali_pole_s"]), "race_duration_s": _clean(r["race_winner_time_s"]),
+                   "drivers": drivers}
         (OUT_DIR / f"{season}_{rnd}.json").write_text(json.dumps(payload, indent=2))
         index.append({"season": season, "round": rnd, "location": r["location"]})
 

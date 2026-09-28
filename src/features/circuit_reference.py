@@ -15,17 +15,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-_CSV = Path(__file__).with_name("circuit_reference.csv")
+from src.models.catalog import LOCATION_ALIASES  # FastF1 renames some venues between seasons
 
-# FastF1's schedule metadata occasionally renames a location between seasons
-# for the same physical circuit (e.g. Monaco -> "Monte Carlo", Miami ->
-# "Miami Gardens" starting 2026) — map those back to the canonical CSV key
-# rather than duplicating a row for the same track under a new label.
-LOCATION_ALIASES = {
-    "Monte Carlo": "Monaco",
-    "Miami Gardens": "Miami",
-    "Yas Marina": "Yas Island",
-}
+_CSV = Path(__file__).with_name("circuit_reference.csv")
 
 
 def load() -> pd.DataFrame:

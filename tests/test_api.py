@@ -18,7 +18,7 @@ import src.api.main as main
 from src.agent import chat
 from src.models.explain import _native, shap_explanation
 from src.models.features import FEATURE_COLS, row_from_dict
-from src.models.predict import load_model
+from src.models.predict import TARGETS, load_model
 
 DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "processed" / "model_matrix.parquet"
 client = TestClient(main.app)
@@ -35,7 +35,8 @@ def _fixture() -> dict:
     for i, (code, team, fr) in enumerate(zip(["VER", "HAM", "NOR", "PIA"], ["Red Bull", "Ferrari", "McLaren", "McLaren"], _feature_rows(4))):
         drivers.append({"driver": code, "team": team, "driver_number": i + 1, "grid_position": None,
                         "predicted_qualifying_gap_pct": 0.1 * i, "predicted_finish_position": 2.0 + i,
-                        "predicted_quali_to_race_delta": 0.0, "predicted_race_gap_pct": 0.2 * i, "feature_row": fr})
+                        "predicted_quali_to_race_delta": 0.0, "predicted_race_gap_pct": 0.2 * i, "feature_row": fr,
+                        "explanations": {t: shap_explanation(load_model(t), row_from_dict(fr), target=t) for t in TARGETS}})
     return {"season": 2026, "round": 14, "location": "Madrid", "generated_at": "2026-09-11T14:00:00+00:00",
             "stage": "post_practice", "known_sessions": {"practice": True, "qualifying": False, "grid": False, "compound": False},
             "race": {"laps": 57}, "drivers": drivers}
@@ -107,6 +108,12 @@ def test_explain_route_labels_and_validation():
     assert body["driver"] == "VER" and all(c["label"] and "_" not in c["label"] for c in body["top_contributions"])
     assert client.get("/predictions/2026/14/explain", params={"driver": "ALO"}).status_code == 404
     assert client.get("/predictions/2026/14/explain", params={"driver": "VER", "target": "nope"}).status_code == 400
+    old = _fixture()
+    for d in old["drivers"]:
+        del d["explanations"]
+    cache._cache.clear()
+    (cache.LOCAL_DATA_DIR / "2026_14.json").write_text(json.dumps(old))
+    assert client.get("/predictions/2026/14/explain", params={"driver": "VER"}).status_code == 404, "older forecasts have no breakdown"
 
 
 @_with_fixture_dir

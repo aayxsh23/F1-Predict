@@ -6,7 +6,7 @@ import { SeasonRaceBar } from '@/components/season/SeasonRaceBar'
 import { ChatProvider } from '@/lib/chat'
 import { SelectionProvider, TAB_ORDER, useSelection } from '@/lib/selection'
 
-/** 1-4 open a dossier tab, [ and ] step through the calendar. Never while typing. */
+/** 1-5 open a dossier tab, [ and ] step through the calendar. Never while typing. */
 function Shortcuts() {
   const sel = useSelection()
   useEffect(() => {

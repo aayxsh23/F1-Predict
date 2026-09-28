@@ -5,8 +5,8 @@ import { useSeasonCalendar, type CalendarRace } from './calendar'
 import { useBacktestRaces, usePredictionsLatest } from './queries'
 import { TARGETS, type Target } from './types'
 
-export type Tab = 'predictor' | 'strategist' | 'shap' | 'rules'
-export const TAB_ORDER: Tab[] = ['predictor', 'strategist', 'shap', 'rules']
+export type Tab = 'predictor' | 'shap' | 'strategist' | 'title' | 'rules'
+export const TAB_ORDER: Tab[] = ['predictor', 'shap', 'strategist', 'title', 'rules']
 
 export interface SelectedRace {
   season: number
@@ -25,6 +25,7 @@ interface SelectionValue {
   driver: string | null // null = follow the predicted winner
   target: Target
   doc: string | null
+  article: string | null // a rule article to land on in the Rules reader
   selectRace: (round: number, season?: number) => void
   selectSeason: (season: number) => void
   stepRace: (direction: -1 | 1) => void
@@ -32,7 +33,7 @@ interface SelectionValue {
   setTarget: (target: Target) => void
   setDoc: (filename: string | null) => void
   openDriver: (code: string, tab?: Tab) => void
-  openDoc: (filename: string) => void
+  openDoc: (filename: string, article?: string | null) => void
 }
 
 const SelectionContext = createContext<SelectionValue | null>(null)
@@ -40,7 +41,7 @@ const SelectionContext = createContext<SelectionValue | null>(null)
 const isTab = (v: string | null): v is Tab => TAB_ORDER.includes(v as Tab)
 const isTarget = (v: string | null): v is Target => TARGETS.includes(v as Target)
 
-/** The whole workbench's state lives in the URL (?season&round&tab&driver&target&doc),
+/** The whole workbench's state lives in the URL (?season&round&tab&driver&target&doc&article),
  *  so every view is linkable and the old /race/... /regulations links can redirect
  *  into it. Defaults resolve from the latest forecast, then the calendar. */
 export function SelectionProvider({ children }: { children: ReactNode }) {
@@ -98,6 +99,7 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
       driver: params.get('driver'),
       target: isTarget(targetParam) ? targetParam : 'finish_position',
       doc: params.get('doc'),
+      article: params.get('article'),
       selectRace: (next, nextSeason) => update({ round: String(next), season: String(nextSeason ?? season), driver: null }),
       selectSeason: (next) => update({ season: String(next), round: null, driver: null }),
       stepRace: (direction) => {
@@ -107,9 +109,9 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
       },
       setTab: (tab) => update({ tab }),
       setTarget: (target) => update({ target }),
-      setDoc: (filename) => update({ doc: filename }),
+      setDoc: (filename) => update({ doc: filename, article: null }),
       openDriver: (code, tab) => update({ driver: code, ...(tab ? { tab } : {}) }),
-      openDoc: (filename) => update({ doc: filename, tab: 'rules' }),
+      openDoc: (filename, article) => update({ doc: filename, article: article ?? null, tab: 'rules' }),
     }
   }, [params, season, seasons, calendar, calendarPending, calendarDegraded, round, circuitId, update])
 

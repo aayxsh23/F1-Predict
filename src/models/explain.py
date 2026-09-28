@@ -14,8 +14,8 @@ def _native(v):
         return None
     if isinstance(v, np.integer):
         return int(v)
-    if isinstance(v, np.floating):
-        return float(v)
+    if isinstance(v, (float, np.floating)):
+        return round(float(v), 4)
     return v
 
 

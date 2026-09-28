@@ -216,7 +216,8 @@ export function RulesCard() {
   const sel = useSelection()
   const docs = useRegulationsList()
   const [query, setQuery] = useState('')
-  const [highlight, setHighlight] = useState('')
+  const [localHighlight, setHighlight] = useState('')
+  const highlight = localHighlight || sel.article || ''
   const debounced = useDebounced(query, 250)
   const hits = useRegulationsSearch(debounced)
 
@@ -248,8 +249,11 @@ export function RulesCard() {
               <SheetSkeleton rows={4} />
             ) : hits.data && hits.data.length > 0 ? (
               hits.data.map((h, i) => (
-                <button key={`${h.filename}-${i}`} type="button" onClick={() => sel.setDoc(h.filename)} className="block w-full border-b border-line px-3 py-2.5 text-left hover:bg-obsidian-700/60">
-                  <span className="block truncate text-sm text-silver-100">{h.filename}</span>
+                <button key={`${h.filename}-${i}`} type="button" onClick={() => { setHighlight(h.article ?? ''); sel.setDoc(h.filename) }} className="block w-full border-b border-line px-3 py-2.5 text-left hover:bg-obsidian-700/60">
+                  <span className="block truncate text-sm text-silver-100">
+                    {h.article && <span className="mr-1.5 font-mono text-hud text-laser-300">Art. {h.article}</span>}
+                    {docs.data.find((d) => d.filename === h.filename)?.title ?? h.filename}
+                  </span>
                   <span className="mt-0.5 line-clamp-2 block text-hud text-silver-400">{h.snippet}</span>
                 </button>
               ))

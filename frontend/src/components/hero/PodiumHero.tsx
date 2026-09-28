@@ -39,34 +39,32 @@ function SessionStrip({ known }: { known: KnownSessions }) {
 
 function SourceChip({ view, pending }: { view: RaceView | null; pending: boolean }) {
   let label = 'Loading forecast'
-  let tone: 'live' | 'quiet' | 'warn' = 'quiet'
+  let tone: 'live' | 'quiet' = 'quiet'
   let hint: string | undefined
   if (!pending && view) {
     if (view.mode === 'forecast' && view.isLatest && view.generatedAt) {
       const fresh = Date.now() - new Date(view.generatedAt).getTime() < 36 * 3_600_000
-      label = `${fresh ? 'Live' : 'Latest'} forecast · updated ${formatRelativeTime(view.generatedAt)}`
+      label = `${fresh ? 'Live' : 'Latest'} forecast${view.sessionLabel ? ` · ${view.sessionLabel.toLowerCase()}` : ''} · updated ${formatRelativeTime(view.generatedAt)}`
       tone = fresh ? 'live' : 'quiet'
       if (!fresh) hint = "The scheduled refresh hasn't produced a newer forecast since then."
     } else if (view.mode === 'forecast') {
       label = view.hasActuals ? 'Pre-race forecast vs result' : `Archived forecast${view.generatedAt ? ` · ${formatRelativeTime(view.generatedAt)}` : ''}`
     } else if (view.mode === 'replay') {
-      label = 'Replay · scored after the race'
-      tone = 'warn'
-      hint = 'The model was trained on this race, so a replay flatters it. Live forecasts are the honest test.'
+      label = 'Past race · predicted vs result'
+      hint = 'Predicted by a model trained only on earlier races, so this is how it would really have called it.'
     } else {
       label = 'No forecast yet'
     }
   }
   return (
     <p
-      className={cn('hud-label inline-flex items-center gap-2', tone === 'live' ? 'text-laser-300' : tone === 'warn' ? 'text-signal-amber' : 'text-silver-300')}
+      className={cn('hud-label inline-flex items-center gap-2', tone === 'live' ? 'text-laser-300' : 'text-silver-300')}
       title={hint}
     >
       <span
         className={cn(
           'h-1.5 w-1.5 rounded-full',
           tone === 'live' && 'bg-laser-400 motion-safe:animate-[pulse-dot_1.6s_ease-in-out_infinite]',
-          tone === 'warn' && 'bg-signal-amber',
           tone === 'quiet' && 'border border-silver-400',
         )}
         aria-hidden

@@ -2,23 +2,12 @@
 point of a race weekend: columns not known yet are NaN (see
 features.mask_for_stage for how training prepares for that)."""
 from functools import lru_cache
-from pathlib import Path
 
 import pandas as pd
 import xgboost as xgb
 
+from src.models.catalog import CANONICAL_PRED_COLS, MODEL_DIR, TARGETS
 from src.models.features import PREPARE_FN
-
-MODEL_DIR = Path(__file__).resolve().parent / "saved"
-TARGETS = ("qualifying", "finish_position", "quali_delta", "race_time")
-
-# one output column per target, shared by every caller
-CANONICAL_PRED_COLS = {
-    "qualifying": "predicted_qualifying_gap_pct",
-    "finish_position": "predicted_finish_position",
-    "quali_delta": "predicted_quali_to_race_delta",
-    "race_time": "predicted_race_gap_pct",
-}
 
 
 @lru_cache(maxsize=len(TARGETS))

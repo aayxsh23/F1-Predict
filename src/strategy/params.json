@@ -752,5 +752,33 @@
     "sc_probability": 0.7850467289719626,
     "races": 5,
     "green_laps": 5252
+  },
+  "Kuala Lumpur": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.2852176806956269,
+        "deg_s_per_lap": 0.04953182139274349,
+        "laps": 12216
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.03484931745019873,
+        "laps": 35851
+      },
+      "HARD": {
+        "offset_s": 0.015405952199114921,
+        "deg_s_per_lap": 0.030220091759685486,
+        "laps": 45292
+      }
+    },
+    "max_stint": {
+      "SOFT": 25,
+      "MEDIUM": 31,
+      "HARD": 42
+    },
+    "pit_loss_s": 20.5,
+    "sc_probability": 0.7476635514018691,
+    "races": 0,
+    "green_laps": 0
   }
 }

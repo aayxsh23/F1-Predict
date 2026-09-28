@@ -3,6 +3,8 @@
   "round": 6,
   "location": "Monte Carlo",
   "method": "walk-forward: predicted by a model trained only on earlier races",
+  "pole_time_s": 72.051,
+  "race_duration_s": 8611.243,
   "drivers": [
     {
       "driver": "ALB",

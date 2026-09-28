@@ -3,6 +3,8 @@
   "round": 6,
   "location": "Miami Gardens",
   "method": "walk-forward: predicted by a model trained only on earlier races",
+  "pole_time_s": null,
+  "race_duration_s": 5331.587,
   "drivers": [
     {
       "driver": "ALB",

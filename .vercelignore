@@ -1,0 +1,11 @@
+# not needed to build the frontend or run the API
+.venv
+data/raw
+data/processed
+notebooks
+chroma_db
+tests
+src/rag/saved
+frontend/node_modules
+frontend/dist
+**/__pycache__

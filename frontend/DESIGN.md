@@ -21,6 +21,9 @@ colors:
   laser-900: "#072a2b"
   signal-amber: "#f5b84b"
   signal-coral: "#ff6b5e"
+  tyre-soft: "#e5384a"
+  tyre-medium: "#f5c518"
+  tyre-hard: "#f4f7fb"
   weave-light: "rgb(255 255 255 / 0.03)"
   weave-dark: "rgb(0 0 0 / 0.3)"
   grid-line: "rgb(148 163 184 / 0.07)"
@@ -165,6 +168,9 @@ A single-accent dark palette: five obsidian steps, a silver type ramp, one laser
 - **Pending Amber** (signal-amber): pending and warning only. "Simulator offline", replay caveats, archive view, the API waking LED.
 - **Loss Coral** (signal-coral): negative delta and failure only. Lost grid places, SHAP features pushing the wrong way, an errored chat message, API down.
 
+### Data: tyre compounds
+- **Soft Red** (tyre-soft), **Medium Yellow** (tyre-medium), **Hard White** (tyre-hard): Pirelli's sidewall code. Stint bars, the strategy panel and the starting-tyre marks on the podium cars only; lib/teams.ts holds the same values for three.js. Labels on them are obsidian-950.
+
 ### Neutral
 - **Obsidian Deep** (obsidian-950): the season ribbon, inactive folder tabs, the stage floor of the gradient, 3D fog.
 - **Obsidian Carbon** (obsidian-900): page ground and input fills.
@@ -183,6 +189,8 @@ A single-accent dark palette: five obsidian steps, a silver type ramp, one laser
 **The Trim-Only Team Colour Rule.** Team colour (lib/teams.ts accents) appears only as a 2px accent line on a HUD callout or as small trim on a car, never as body paint. A teal body sheen was tried and rejected because it read as a livery; teal reaches the cars only as light. Unknown teams fall back to silver (#94A3B8), never a guessed colour.
 
 **The Signal Means Something Rule.** Amber means pending or warning; coral means negative delta or failure. Neither is decoration.
+
+**The Tyre Code Rule.** The three compound colours describe tyres and nothing else. They never tint a control, a panel or a chart that isn't about compounds, so they can never be mistaken for the one interface light.
 
 **The Graphite Is Not Text Rule.** silver-500 (3.9:1) is for decoration and disabled controls only, never text a reader needs.
 

@@ -3,6 +3,8 @@
   "round": 2,
   "location": "Shanghai",
   "method": "walk-forward: predicted by a model trained only on earlier races",
+  "pole_time_s": 90.641,
+  "race_duration_s": 5455.026,
   "drivers": [
     {
       "driver": "ALB",

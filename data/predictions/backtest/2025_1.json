@@ -3,6 +3,8 @@
   "round": 1,
   "location": "Melbourne",
   "method": "walk-forward: predicted by a model trained only on earlier races",
+  "pole_time_s": 75.096,
+  "race_duration_s": 6126.304,
   "drivers": [
     {
       "driver": "ALB",

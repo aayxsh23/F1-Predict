@@ -18,9 +18,7 @@ from src.agent.scenarios import closest_rival, remaining_rounds, title_odds, tit
 from src.api.cache import get_json
 from src.api.enrich import head_to_head as _h2h
 from src.api.enrich import with_probabilities
-from src.models.explain import shap_explanation
-from src.models.features import FEATURE_LABELS, row_from_dict
-from src.models.predict import CANONICAL_PRED_COLS, MODEL_DIR, load_model
+from src.models.catalog import CANONICAL_PRED_COLS, FEATURE_LABELS, MODEL_DIR
 from src.models.probabilities import load_calibration
 from src.rag.corpus import circuit_summary, search
 from src.strategy.model import simulate
@@ -97,7 +95,9 @@ def explain_prediction(driver: str, target: Target = "finish_position", season: 
     p = get_json("latest.json" if season is None or round is None else f"{season}_{round}.json")
     code = _code(p, driver)
     d = next(x for x in p["drivers"] if x["driver"] == code)
-    exp = shap_explanation(load_model(target), row_from_dict(d["feature_row"]), target=target)
+    exp = d.get("explanations", {}).get(target)
+    if exp is None:
+        raise ValueError("this forecast has no stored breakdown")
     return _dump({
         "driver": code, "prediction_of": TARGET_MEANING[target], "predicted": exp["predicted_value"],
         "average_prediction": exp["base_value"],

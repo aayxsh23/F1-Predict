@@ -31,3 +31,24 @@ export function formatFeatureName(feature: string): string {
     .map((w) => w[0].toUpperCase() + w.slice(1))
     .join(' ')
 }
+
+/** 101.234 -> "1:41.234" */
+export function formatLapTime(seconds: number | null): string {
+  if (seconds === null || Number.isNaN(seconds)) return '—'
+  const m = Math.floor(seconds / 60)
+  return `${m}:${(seconds - m * 60).toFixed(3).padStart(6, '0')}`
+}
+
+/** 5520 -> "1h 32m" */
+export function formatDuration(seconds: number | null | undefined): string {
+  if (seconds === null || seconds === undefined || Number.isNaN(seconds)) return '—'
+  const minutes = Math.round(seconds / 60)
+  return `${Math.floor(minutes / 60)}h ${String(minutes % 60).padStart(2, '0')}m`
+}
+
+/** A chance in words first, number second: "likely (74%)". */
+export function describeChance(p: number | null | undefined): string {
+  if (p === null || p === undefined) return '—'
+  const words = p >= 0.9 ? 'almost certain' : p >= 0.65 ? 'likely' : p >= 0.35 ? 'about even' : p >= 0.1 ? 'unlikely' : 'a long shot'
+  return `${words} (${Math.round(p * 100)}%)`
+}

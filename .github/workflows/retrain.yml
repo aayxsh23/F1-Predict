@@ -1,0 +1,59 @@
+name: Retrain models
+
+# Tuesdays, after the weekend's race is in the data: ingest it, retrain all
+# four models, and commit them only if every model still beats its naive
+# baseline on races it never saw and the test suite passes.
+on:
+  schedule:
+    - cron: "0 4 * * 2"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-writes
+  cancel-in-progress: false
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - run: pip install -r requirements-dev.txt
+
+      - name: Ingest races finished since the last run
+        run: python -m src.data.ingest --seasons $(date -u +%Y)
+
+      - run: python -m src.features.build_dataset
+
+      - name: Retrain (fails if a model no longer beats its baseline)
+        run: python -m src.models.train --gate
+
+      - name: Refit odds, history, strategy
+        run: |
+          python -m src.models.probabilities
+          python -m src.models.backtest_export
+          python -m src.strategy.model
+
+      - name: Tests against the new models
+        run: pytest -q -p no:cacheprovider
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/raw/races data/raw/laps src/models/saved src/strategy/params.json data/predictions/backtest
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: weekly retrain"
+            git pull --rebase
+            git push
+          fi

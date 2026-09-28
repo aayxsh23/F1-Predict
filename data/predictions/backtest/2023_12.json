@@ -3,6 +3,8 @@
   "round": 12,
   "location": "Spa-Francorchamps",
   "method": "walk-forward: predicted by a model trained only on earlier races",
+  "pole_time_s": 106.168,
+  "race_duration_s": 4950.45,
   "drivers": [
     {
       "driver": "ALB",

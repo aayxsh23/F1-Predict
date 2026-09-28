@@ -3,6 +3,8 @@
   "round": 16,
   "location": "Monza",
   "method": "walk-forward: predicted by a model trained only on earlier races",
+  "pole_time_s": 78.792,
+  "race_duration_s": 4404.325,
   "drivers": [
     {
       "driver": "ALB",

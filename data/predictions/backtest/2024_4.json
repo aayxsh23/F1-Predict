@@ -3,6 +3,8 @@
   "round": 4,
   "location": "Suzuka",
   "method": "walk-forward: predicted by a model trained only on earlier races",
+  "pole_time_s": 88.197,
+  "race_duration_s": 6863.566,
   "drivers": [
     {
       "driver": "ALB",

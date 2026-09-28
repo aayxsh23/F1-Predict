@@ -23,7 +23,6 @@ from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
 CALIBRATION_PATH = Path(__file__).resolve().parent / "saved" / "pl_calibration.json"
 N_SAMPLES = 10_000
@@ -133,11 +132,13 @@ def fit_tau(races: list[np.ndarray], k: int = 10**6) -> float:
     return float(minimize_scalar(lambda t: _pl_nll(t, races, k), bounds=(0.01, 30.0), method="bounded").x)
 
 
-def _ordered_scores(g: pd.DataFrame) -> list[np.ndarray]:
+def _ordered_scores(g) -> list[np.ndarray]:
     return [-r.sort_values("actual")["pred"].to_numpy() for _, r in g.groupby(["season", "round"]) if len(r) >= 3]
 
 
 def calibrate() -> dict:
+    import pandas as pd
+
     from src.features.build_dataset import OUT_PATH, load_raw
     from src.models.train import WALKFORWARD_PATH
 

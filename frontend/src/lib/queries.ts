@@ -1,30 +1,22 @@
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
 import { api } from './api'
 import type { Target } from './types'
 
 export function usePredictionsLatest() {
-  return useQuery({
-    queryKey: ['predictions', 'latest'],
-    queryFn: api.predictionsLatest,
-    placeholderData: keepPreviousData,
-  })
+  return useQuery({ queryKey: ['predictions', 'latest'], queryFn: api.predictionsLatest, placeholderData: keepPreviousData })
 }
 
 export function usePredictionsForRace(season: number, round: number, enabled = true) {
-  return useQuery({
-    queryKey: ['predictions', season, round],
-    queryFn: () => api.predictionsForRace(season, round),
-    enabled,
-  })
+  return useQuery({ queryKey: ['predictions', season, round], queryFn: () => api.predictionsForRace(season, round), enabled })
+}
+
+export function useTimeline(season: number, round: number, enabled = true) {
+  return useQuery({ queryKey: ['timeline', season, round], queryFn: () => api.timeline(season, round), enabled })
 }
 
 export function useRaces(season: number) {
-  return useQuery({
-    queryKey: ['races', season],
-    queryFn: () => api.races(season),
-    staleTime: 5 * 60_000, // a schedule, not a live value
-  })
+  return useQuery({ queryKey: ['races', season], queryFn: () => api.races(season), staleTime: 5 * 60_000 })
 }
 
 export function useDriverExplain(season: number, round: number, driver: string, target: Target, enabled = true) {
@@ -39,7 +31,7 @@ export function useNaturalExplanation(season: number, round: number, driver: str
   return useQuery({
     queryKey: ['explain-nl', season, round, driver, target],
     queryFn: () => api.explain(season, round, driver, target),
-    staleTime: Infinity, // an LLM generation, not a live value -- one fetch per (race, driver, target) is enough
+    staleTime: Infinity, // generated text, not a live value: once per (race, driver, target)
     retry: 1,
     enabled,
   })
@@ -50,27 +42,28 @@ export function useBacktestRaces() {
 }
 
 export function useBacktestForRace(season: number, round: number, enabled = true) {
+  return useQuery({ queryKey: ['backtest', season, round], queryFn: () => api.backtestForRace(season, round), enabled })
+}
+
+export function useModelCard() {
+  return useQuery({ queryKey: ['model'], queryFn: api.modelCard, staleTime: Infinity })
+}
+
+export function useStrategy(season: number, round: number, scLap: number | null, enabled = true) {
   return useQuery({
-    queryKey: ['backtest', season, round],
-    queryFn: () => api.backtestForRace(season, round),
+    queryKey: ['strategy', season, round, scLap],
+    queryFn: () => api.strategy(season, round, scLap),
+    placeholderData: keepPreviousData, // moving the safety-car lap shouldn't blank the panel
     enabled,
   })
 }
 
-export function useAskAgent() {
-  return useMutation({
-    mutationFn: ({ message, conversationId }: { message: string; conversationId?: string }) =>
-      api.askAgent(message, conversationId),
-  })
+export function useChampionship() {
+  return useQuery({ queryKey: ['championship'], queryFn: api.championship, staleTime: 5 * 60_000, retry: 1 })
 }
 
 export function useHealth() {
-  return useQuery({
-    queryKey: ['health'],
-    queryFn: api.health,
-    refetchInterval: 30_000,
-    retry: false,
-  })
+  return useQuery({ queryKey: ['health'], queryFn: api.health, refetchInterval: 30_000, retry: false })
 }
 
 export function useRegulationsList() {

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { Activity, ListOrdered, MessageSquare, Scale, type LucideIcon } from 'lucide-react'
+import { Activity, ListOrdered, MessageSquare, Scale, Trophy, type LucideIcon } from 'lucide-react'
 import type { KeyboardEvent } from 'react'
 
 import { cn } from '@/lib/cn'
@@ -9,12 +9,14 @@ import { PredictorCard } from './PredictorCard'
 import { RulesCard } from './RulesCard'
 import { ShapCard } from './ShapCard'
 import { StrategistCard } from './StrategistCard'
+import { TitleCard } from './TitleCard'
 
-const TABS: Record<Tab, { n: string; label: string; short: string; Icon: LucideIcon }> = {
-  predictor: { n: '01', label: 'RACE PREDICTOR', short: 'PREDICTOR', Icon: ListOrdered },
-  strategist: { n: '02', label: 'COPILOT STRATEGIST', short: 'STRATEGIST', Icon: MessageSquare },
-  shap: { n: '03', label: 'TELEMETRY & SHAP', short: 'SHAP', Icon: Activity },
-  rules: { n: '04', label: 'FIA STEWARDS & RULES', short: 'RULES', Icon: Scale },
+const TABS: Record<Tab, { label: string; short: string; Icon: LucideIcon }> = {
+  predictor: { label: 'FORECAST', short: 'FORECAST', Icon: ListOrdered },
+  shap: { label: 'WHY THIS PREDICTION', short: 'WHY', Icon: Activity },
+  strategist: { label: 'STRATEGY & ANALYST', short: 'ANALYST', Icon: MessageSquare },
+  title: { label: 'TITLE RACE', short: 'TITLE', Icon: Trophy },
+  rules: { label: 'RULES & RULINGS', short: 'RULES', Icon: Scale },
 }
 
 function ActiveCard({ tab }: { tab: Tab }) {
@@ -25,6 +27,8 @@ function ActiveCard({ tab }: { tab: Tab }) {
       return <StrategistCard />
     case 'shap':
       return <ShapCard />
+    case 'title':
+      return <TitleCard />
     case 'rules':
       return <RulesCard />
   }
@@ -39,7 +43,8 @@ export function TelemetryFolderDeck() {
 
   function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
     const i = TAB_ORDER.indexOf(sel.tab)
-    const next = { ArrowRight: (i + 1) % 4, ArrowLeft: (i + 3) % 4, Home: 0, End: 3 }[e.key as string]
+    const n = TAB_ORDER.length
+    const next = { ArrowRight: (i + 1) % n, ArrowLeft: (i + n - 1) % n, Home: 0, End: n - 1 }[e.key as string]
     if (next === undefined) return
     e.preventDefault()
     sel.setTab(TAB_ORDER[next])
@@ -50,7 +55,8 @@ export function TelemetryFolderDeck() {
     <section aria-label="Telemetry dossier" className="relative z-10 shrink-0 pb-3 lg:pb-5">
       <div role="tablist" aria-label="Dossier" onKeyDown={onKeyDown} className="scroll-none relative z-10 flex gap-1 overflow-x-auto px-3 pt-1 lg:px-6">
         {TAB_ORDER.map((tab) => {
-          const { n, label, short, Icon } = TABS[tab]
+          const { label, short, Icon } = TABS[tab]
+          const n = String(TAB_ORDER.indexOf(tab) + 1).padStart(2, '0')
           const active = sel.tab === tab
           return (
             <button
@@ -62,7 +68,7 @@ export function TelemetryFolderDeck() {
               aria-controls="dossier-sheet"
               tabIndex={active ? 0 : -1}
               onClick={() => sel.setTab(tab)}
-              className={cn('relative -mb-px h-11 shrink-0 text-left sm:min-w-[172px] sm:flex-1 lg:max-w-[268px]', active ? 'z-10' : 'z-0')}
+              className={cn('relative -mb-px h-11 shrink-0 text-left sm:min-w-[150px] sm:flex-1 lg:max-w-[268px]', active ? 'z-10' : 'z-0')}
             >
               {active ? (
                 <motion.span
@@ -93,7 +99,11 @@ export function TelemetryFolderDeck() {
         id="dossier-sheet"
         role="tabpanel"
         aria-labelledby={`tab-${sel.tab}`}
-        className="cut-frame cut-bottom frame-carbon relative mx-3 h-[min(74dvh,640px)] lg:mx-6 lg:h-[clamp(240px,34dvh,380px)]"
+        className={cn(
+          'cut-frame cut-bottom frame-carbon relative mx-3 h-[min(74dvh,640px)] lg:mx-6',
+          // a conversation needs room to read; the stage gives way while it's open
+          sel.tab === 'strategist' ? 'lg:h-[clamp(360px,50dvh,560px)]' : 'lg:h-[clamp(240px,34dvh,380px)]',
+        )}
         style={{ ['--c-tr' as string]: '0px' }}
       >
         <AnimatePresence mode="wait" initial={false}>

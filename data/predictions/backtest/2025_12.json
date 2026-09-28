@@ -3,6 +3,8 @@
   "round": 12,
   "location": "Silverstone",
   "method": "walk-forward: predicted by a model trained only on earlier races",
+  "pole_time_s": 84.892,
+  "race_duration_s": 5835.735,
   "drivers": [
     {
       "driver": "ALB",

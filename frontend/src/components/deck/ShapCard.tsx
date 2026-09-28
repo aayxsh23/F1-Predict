@@ -3,50 +3,24 @@ import { useState } from 'react'
 
 import { cn } from '@/lib/cn'
 import { formatFeatureName, formatNumber, formatPct, formatSigned } from '@/lib/format'
-import { useDriverExplain, useNaturalExplanation, usePredictionsLatest, useRegulationsList } from '@/lib/queries'
-import { useRaceView, type RaceDriver } from '@/lib/raceView'
+import { useDriverExplain, useModelCard, useNaturalExplanation, usePredictionsLatest, useRegulationsList, useTimeline } from '@/lib/queries'
+import { useRaceView, type RaceDriver, type RaceView } from '@/lib/raceView'
 import { useSelection } from '@/lib/selection'
-import { TARGET_HIGHER_IS_BETTER, TARGET_LABELS, TARGET_UNITS, TARGETS, type ShapExplanation, type Target } from '@/lib/types'
+import {
+  TARGET_HIGHER_IS_BETTER,
+  TARGET_LABELS,
+  TARGET_MEANING,
+  TARGET_UNITS,
+  TARGETS,
+  type ShapContribution,
+  type ShapExplanation,
+  type Stage,
+  type Target,
+} from '@/lib/types'
 
 import { rise, SheetMessage, SheetSkeleton, stagger } from './parts'
 
-// The model's inputs in a fan's words (PRODUCT.md: "grid position", not "feature")
-const FEATURE_LABELS: Record<string, string> = {
-  overtaking_difficulty: 'How hard it is to pass here',
-  is_street_circuit: 'Street circuit',
-  pit_lane_loss_time: 'Time lost in the pit lane',
-  safety_car_frequency: 'Safety cars at this track',
-  dnf_rate: 'Retirements at this track',
-  longest_straight_m: 'Longest straight',
-  braking_zone_count: 'Heavy braking zones',
-  tyre_degradation_level: 'Tyre wear at this track',
-  rain_race_frequency: 'How often it rains here',
-  track_length_km: 'Lap length',
-  air_temp: 'Air temperature',
-  track_temp: 'Track temperature',
-  rain_probability: 'Rain',
-  wind_speed: 'Wind',
-  wet_track_probability: 'Wet track',
-  grid_position: 'Starting grid slot',
-  quali_gap_to_pole: 'Qualifying gap to pole',
-  practice_pace: 'Practice pace',
-  driver_recent_form: 'Recent results',
-  driver_track_form: 'Past results here',
-  driver_positions_gained_form: 'Usual places gained',
-  driver_dnf_rate: 'Recent retirements',
-  team_recent_form: "Team's recent results",
-  team_quali_pace: "Team's qualifying pace",
-  team_race_pace: "Team's race pace",
-  team_reliability: "Team's reliability",
-  team_track_type_form: "Team's form on tracks like this",
-  teammate_quali_gap: 'Qualifying vs teammate',
-  teammate_race_pace_gap: 'Race pace vs teammate',
-  grid_vs_expected_position: 'Grid slot vs usual form',
-  starting_tire_compound: 'Starting tyre',
-  expected_stops: 'Usual pit stops here',
-  historical_compound_performance: 'Past results on this tyre',
-  grid_x_overtaking_difficulty: 'Grid slot on a hard-to-pass track',
-}
+const label = (c: ShapContribution) => c.label ?? formatFeatureName(c.feature)
 
 function formatValue(v: number | string | null): string {
   if (v === null) return '—'
@@ -67,7 +41,7 @@ interface Step {
 function buildSteps(exp: ShapExplanation): Step[] {
   let running = exp.base_value
   const steps: Step[] = exp.top_contributions.map((c) => {
-    const step = { key: c.feature, label: FEATURE_LABELS[c.feature] ?? formatFeatureName(c.feature), feature: c.feature, value: c.value, from: running, to: running + c.shap, shap: c.shap }
+    const step = { key: c.feature, label: label(c), feature: c.feature, value: c.value, from: running, to: running + c.shap, shap: c.shap }
     running += c.shap
     return step
   })
@@ -76,9 +50,28 @@ function buildSteps(exp: ShapExplanation): Step[] {
   return steps
 }
 
+/** One sentence a fan can repeat: the prediction and its two biggest reasons. */
+function PlainSummary({ exp, target, me }: { exp: ShapExplanation; target: Target; me: RaceDriver | undefined }) {
+  const good = (s: number) => (TARGET_HIGHER_IS_BETTER[target] ? s > 0 : s < 0)
+  const helps = exp.top_contributions.find((c) => good(c.shap))
+  const hurts = exp.top_contributions.find((c) => !good(c.shap))
+  const headline =
+    target === 'finish_position' && me
+      ? `${me.code} is predicted to finish P${me.rank}${me.band ? `, most likely between P${me.band[0]} and P${me.band[1]}` : ''}.`
+      : target === 'qualifying' && me
+        ? `${me.code} is predicted to qualify P${me.qualiRank}${me.qualiGapPredicted ? `, ${formatNumber(me.qualiGapPredicted, 3, 's')} off pole` : ''}.`
+        : `${TARGET_LABELS[target]}: ${formatNumber(exp.predicted_value, 2, TARGET_UNITS[target])} (an average driver here: ${formatNumber(exp.base_value, 2, TARGET_UNITS[target])}).`
+  return (
+    <p className="max-w-[72ch] text-base leading-relaxed text-silver-200">
+      {headline}
+      {helps && <> Helping most: <span className="text-laser-300">{label(helps).toLowerCase()}</span>.</>}
+      {hurts && <> Holding back most: <span className="text-signal-coral">{label(hurts).toLowerCase()}</span>.</>}
+    </p>
+  )
+}
+
 function Waterfall({ exp, target }: { exp: ShapExplanation; target: Target }) {
   const unit = TARGET_UNITS[target]
-  const decimals = target === 'finish_position' || target === 'quali_delta' ? 2 : 2
   const steps = buildSteps(exp)
   const marks = [exp.base_value, exp.predicted_value, ...steps.flatMap((s) => [s.from, s.to])]
   const lo = Math.min(...marks)
@@ -100,15 +93,15 @@ function Waterfall({ exp, target }: { exp: ShapExplanation; target: Target }) {
   return (
     <div>
       <div className="mb-2 flex flex-wrap gap-x-5 gap-y-1 text-hud text-silver-400">
-        <span className="flex items-center gap-1.5"><span className="h-2 w-3 bg-laser-400" aria-hidden />pushes {TARGET_LABELS[target].toLowerCase()} the right way</span>
-        <span className="flex items-center gap-1.5"><span className="h-2 w-3 bg-signal-coral" aria-hidden />pushes it the wrong way</span>
-        <span>{higherIsBetter ? 'higher is better' : 'lower is better'}</span>
+        <span className="flex items-center gap-1.5"><span className="h-2 w-3 bg-laser-400" aria-hidden />helps</span>
+        <span className="flex items-center gap-1.5"><span className="h-2 w-3 bg-signal-coral" aria-hidden />hurts</span>
+        <span>{TARGET_MEANING[target]}; {higherIsBetter ? 'higher is better' : 'lower is better'}</span>
       </div>
       <ol>
         <li className={row}>
-          <span className="hud-label text-silver-400">Model average</span>
+          <span className="hud-label text-silver-400" title="What the model predicts for a typical driver before looking at this one">Typical driver</span>
           <div className="relative h-full">{guides}</div>
-          <span className="text-right font-mono text-sm tabular-nums text-silver-300">{formatNumber(exp.base_value, decimals, unit)}</span>
+          <span className="text-right font-mono text-sm tabular-nums text-silver-300">{formatNumber(exp.base_value, 2, unit)}</span>
         </li>
         {steps.map((s, i) => {
           const good = higherIsBetter ? s.shap > 0 : s.shap < 0
@@ -135,7 +128,7 @@ function Waterfall({ exp, target }: { exp: ShapExplanation; target: Target }) {
         <li className={cn(row, 'mt-1 border-t border-line-strong')}>
           <span className="hud-label text-silver-100">Prediction</span>
           <div className="relative h-full">{guides}</div>
-          <span className="text-right font-mono text-sm font-medium tabular-nums text-silver-100">{formatNumber(exp.predicted_value, decimals, unit)}</span>
+          <span className="text-right font-mono text-sm font-medium tabular-nums text-silver-100">{formatNumber(exp.predicted_value, 2, unit)}</span>
         </li>
       </ol>
     </div>
@@ -144,11 +137,12 @@ function Waterfall({ exp, target }: { exp: ShapExplanation; target: Target }) {
 
 function TeammatePanel({ me, mate }: { me: RaceDriver; mate: RaceDriver | undefined }) {
   if (!mate) return <p className="text-sm text-silver-400">No teammate in this race's data.</p>
-  const pace = me.featureRow?.teammate_race_pace_gap
   const rows: Array<{ label: string; mine: string; theirs: string; leads: 'me' | 'mate' | null }> = [
     { label: 'Predicted finish', mine: `P${me.rank}`, theirs: `P${mate.rank}`, leads: me.rank < mate.rank ? 'me' : 'mate' },
-    { label: 'Grid', mine: me.grid === null ? '—' : `P${me.grid}`, theirs: mate.grid === null ? '—' : `P${mate.grid}`, leads: me.grid === null || mate.grid === null || me.grid === mate.grid ? null : me.grid < mate.grid ? 'me' : 'mate' },
-    { label: 'Quali gap', mine: formatNumber(me.qualiGap, 3, 's'), theirs: formatNumber(mate.qualiGap, 3, 's'), leads: me.qualiGap === null || mate.qualiGap === null ? null : me.qualiGap < mate.qualiGap ? 'me' : 'mate' },
+    { label: 'Predicted quali', mine: `P${me.qualiRank}`, theirs: `P${mate.qualiRank}`, leads: me.qualiRank < mate.qualiRank ? 'me' : 'mate' },
+    ...(me.grid !== null || mate.grid !== null
+      ? [{ label: 'Grid', mine: me.grid === null ? '—' : `P${me.grid}`, theirs: mate.grid === null ? '—' : `P${mate.grid}`, leads: (me.grid === null || mate.grid === null || me.grid === mate.grid ? null : me.grid < mate.grid ? 'me' : 'mate') as 'me' | 'mate' | null }]
+      : []),
     ...(me.win !== null && mate.win !== null ? [{ label: 'Win chance', mine: formatPct(me.win), theirs: formatPct(mate.win), leads: (me.win > mate.win ? 'me' : 'mate') as 'me' | 'mate' }] : []),
   ]
   return (
@@ -171,11 +165,66 @@ function TeammatePanel({ me, mate }: { me: RaceDriver; mate: RaceDriver | undefi
           ))}
         </tbody>
       </table>
-      {typeof pace === 'number' && (
+      {me.beatsTeammate !== null && (
         <p className="mt-2 text-hud text-silver-400">
-          Recent race pace {formatSigned(pace, 2, '%')} {pace > 0 ? 'slower' : 'faster'} than {mate.code}
+          {me.code} finishes ahead of {mate.code} in {formatPct(me.beatsTeammate)} of simulated races.
         </p>
       )}
+    </div>
+  )
+}
+
+/** How this driver's predicted finish moved through the weekend's sessions. */
+function WeekendTimeline({ view, code }: { view: RaceView; code: string }) {
+  const q = useTimeline(view.season, view.round, view.mode === 'forecast')
+  // rank within each snapshot, not the raw model number
+  const points = (q.data ?? [])
+    .map((s) => {
+      const order = s.drivers.filter((d) => d.predicted_finish_position !== null).sort((a, b) => a.predicted_finish_position! - b.predicted_finish_position!)
+      return { label: s.label, rank: order.findIndex((d) => d.driver === code) + 1 }
+    })
+    .filter((pt) => pt.rank > 0)
+  if (points.length < 2) return null
+  return (
+    <div>
+      <p className="hud-label mb-1.5 text-silver-400">Through the weekend</p>
+      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+        {points.map((pt, i) => (
+          <li key={pt.label} className="flex items-center gap-2">
+            {i > 0 && <span className="text-silver-500" aria-hidden>→</span>}
+            <span className="text-silver-400">{pt.label}</span>
+            <span className="font-mono tabular-nums text-silver-100">P{pt.rank}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  )
+}
+
+const STAGE_WORDS: Record<Stage, string> = {
+  pre_weekend: 'before practice',
+  post_practice: 'after practice',
+  post_quali: 'after qualifying',
+  race_day: 'on race day',
+}
+
+/** The honest numbers: error on races the model had never seen, next to a naive guess. */
+function Accuracy({ target, stage }: { target: Target; stage: Stage | null }) {
+  const card = useModelCard()
+  const m = card.data?.[target]
+  if (!m) return null
+  const s = stage ?? 'post_quali'
+  const acc = m.stages[s] ?? m.stages.post_practice ?? Object.values(m.stages)[0]
+  if (!acc) return null
+  const unit = target === 'qualifying' || target === 'race_time' ? '%' : ' places'
+  return (
+    <div className="border-t border-line pt-3">
+      <p className="hud-label mb-1 text-silver-400">How accurate is this?</p>
+      <p className="text-sm leading-relaxed text-silver-300">
+        On races it had never seen, this prediction made {STAGE_WORDS[s]} was off by{' '}
+        <span className="font-mono text-silver-100">{acc.mae.toFixed(2)}{unit}</span> on average. The simple guess ({m.baseline}) was off by{' '}
+        <span className="font-mono text-silver-100">{acc.baseline_mae.toFixed(2)}{unit}</span>.
+      </p>
     </div>
   )
 }
@@ -195,13 +244,13 @@ function ExplainInWords({ season, round, driver, target }: { season: number; rou
           {q.data.sources.length > 0 && (
             <div className="mt-3 flex flex-wrap items-center gap-1.5">
               <span className="text-hud text-silver-400">Grounded in</span>
-              {[...new Set(q.data.sources.map((s) => s.split(/[/\\]/).pop() ?? s))].map((file) =>
+              {[...new Set(q.data.sources)].map((file) =>
                 docs.data?.some((d) => d.filename === file) ? (
                   <button key={file} type="button" onClick={() => sel.openDoc(file)} className="border border-line-strong px-2 py-0.5 font-mono text-micro text-laser-300 hover:border-laser-500">
                     {file.replace(/\.(pdf|txt)$/i, '')}
                   </button>
                 ) : (
-                  <span key={file} className="border border-line px-2 py-0.5 font-mono text-micro text-silver-400">{file.replace(/\.(pdf|txt)$/i, '')}</span>
+                  <span key={file} className="border border-line px-2 py-0.5 font-mono text-micro text-silver-400">{file.replace(/\.(pdf|txt)$/i, '').replace(/_/g, ' ')}</span>
                 ),
               )}
             </div>
@@ -216,11 +265,11 @@ function ExplainInWords({ season, round, driver, target }: { season: number; rou
               </div>
             ))}
           </div>
-          <p className="mt-2 text-hud text-silver-400">Writing a grounded explanation. This runs on the local model and can take 10–20 seconds.</p>
+          <p className="mt-2 text-hud text-silver-400">Writing an explanation from these numbers and the circuit notes…</p>
         </div>
       ) : q.isError ? (
         <div>
-          <p className="text-sm text-silver-300">The explanation service isn't reachable right now. The breakdown on the left still holds.</p>
+          <p className="text-sm text-silver-300">{q.error.message.includes('GEMINI') ? "Written explanations aren't set up on this server yet." : "The explanation service isn't reachable right now."} The breakdown on the left still holds.</p>
           <button type="button" onClick={() => q.refetch()} className="hud-label mt-2 border border-laser-500 px-3 py-1.5 text-laser-300 hover:bg-laser-900">Try again</button>
         </div>
       ) : (
@@ -246,11 +295,11 @@ export function ShapCard() {
   const shap = useDriverExplain(race?.season ?? 0, race?.round ?? 0, code ?? '', sel.target, enabled)
 
   if (status === 'pending') return <SheetSkeleton rows={6} />
-  if (status === 'error') return <SheetMessage title="Attribution isn't reachable right now">The backend may still be waking up. Try again in a moment.</SheetMessage>
+  if (status === 'error') return <SheetMessage title="The breakdown isn't reachable right now">The backend may still be waking up. Try again in a moment.</SheetMessage>
   if (view.mode !== 'forecast') {
     return (
       <SheetMessage
-        title="Attribution needs the pre-race forecast"
+        title="The breakdown needs a stored forecast"
         action={
           latest.data && (
             <button type="button" onClick={() => sel.selectRace(latest.data.round, latest.data.season)} className="hud-label border border-laser-500 px-3 py-2 text-laser-300 hover:bg-laser-900">
@@ -259,7 +308,7 @@ export function ShapCard() {
           )
         }
       >
-        Feature attribution is computed from the forecast cached before a race. It exists for the most recent rounds; older races only have the replay.
+        The reasons behind a prediction come from the forecast stored before the race. Recent rounds have one; older races only have the prediction-vs-result archive.
       </SheetMessage>
     )
   }
@@ -279,7 +328,7 @@ export function ShapCard() {
             ))}
           </select>
         </label>
-        <div role="group" aria-label="Prediction target" className="scroll-none -mb-px flex min-w-0 gap-1 overflow-x-auto">
+        <div role="group" aria-label="Which prediction" className="scroll-none -mb-px flex min-w-0 gap-1 overflow-x-auto">
           {TARGETS.map((t) => (
             <button
               key={t}
@@ -296,20 +345,23 @@ export function ShapCard() {
 
       <div className="scroll-thin min-h-0 flex-1 overflow-auto">
         <div className="grid gap-x-10 gap-y-6 px-4 py-4 lg:grid-cols-[minmax(0,1fr)_340px] lg:px-6">
-          <motion.div variants={rise} className="min-w-0">
+          <motion.div variants={rise} className="min-w-0 space-y-4">
             {shap.isPending ? (
               <SheetSkeleton rows={6} />
             ) : shap.isError || !shap.data ? (
-              <p className="text-sm text-silver-300">No feature breakdown for {code} on this target right now.</p>
+              <p className="text-sm text-silver-300">No breakdown for {code} on this prediction right now.</p>
             ) : (
-              <Waterfall key={`${code}-${sel.target}`} exp={shap.data} target={sel.target} />
+              <>
+                <PlainSummary exp={shap.data} target={sel.target} me={me} />
+                <Waterfall key={`${code}-${sel.target}`} exp={shap.data} target={sel.target} />
+              </>
             )}
+            {code && <WeekendTimeline view={view} code={code} />}
           </motion.div>
           <motion.div variants={rise} className="min-w-0 space-y-6">
             {me && <TeammatePanel me={me} mate={mate} />}
-            {code && race && (
-              <ExplainInWords season={race.season} round={race.round} driver={code} target={sel.target} />
-            )}
+            {code && race && <ExplainInWords season={race.season} round={race.round} driver={code} target={sel.target} />}
+            <Accuracy target={sel.target} stage={view.stage} />
           </motion.div>
         </div>
       </div>

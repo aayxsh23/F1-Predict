@@ -4,8 +4,8 @@ happen; never inside a user request.
 
 Writes, for season S round R:
   S_R.json and latest.json   the forecast (per driver: all four predictions,
-                             absolute lap/race times, the raw feature row the
-                             explanation endpoint needs)
+                             absolute lap/race times, and each prediction's
+                             SHAP breakdown, so serving needs no XGBoost)
   timeline/S_R.json          one snapshot per weekend session, so the app can
                              show how the forecast moved after FP2 or qualifying
   schedule/S.json            the season calendar
@@ -22,9 +22,10 @@ from src.data.fastf1_client import event_schedule
 from src.data.ingest import race_start
 from src.features.build_dataset import load_raw
 from src.models import estimates
+from src.models.explain import shap_explanation
 from src.models.features import FEATURE_COLS, stage_of
 from src.models.live_predict import build_live_rows, event_info
-from src.models.predict import MODEL_DIR, predict_all
+from src.models.predict import MODEL_DIR, TARGETS, load_model, predict_all
 
 OUT_DIR = Path(__file__).resolve().parents[2] / "data" / "predictions"
 RACE_OVER_AFTER = pd.Timedelta(hours=3)
@@ -89,6 +90,8 @@ def build_prediction_payload(season: int, round_number: int) -> dict:
             "predicted_race_gap_pct": _clean(row["predicted_race_gap_pct"]),
             "predicted_race_time_gap": _clean(r_rel[i] / 100 * duration_s),
             "feature_row": {c: row[c] if isinstance(row[c], str) else _clean(row[c]) for c in FEATURE_COLS},
+            # the "why" behind each prediction, precomputed so serving needs no XGBoost
+            "explanations": {t: shap_explanation(load_model(t), p.iloc[[i]], target=t, top_n=10) for t in TARGETS},
         })
 
     trained = json.loads((MODEL_DIR / "finish_position_metrics.json").read_text()).get("trained_at")

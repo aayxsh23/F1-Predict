@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd frontend && npm ci && npm run build",
+  "outputDirectory": "frontend/dist",
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 60,
+      "includeFiles": "{src/**/*.py,src/**/*.json,src/**/*.csv,data/predictions/**,data/corpus/index.json}",
+      "excludeFiles": "{frontend/**,data/raw/**,notebooks/**,tests/**,src/rag/saved/**,src/rag/training_data/**,src/models/saved/*_xgb.json}"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.py" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

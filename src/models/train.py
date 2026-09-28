@@ -189,19 +189,35 @@ def train_target(name: str, df: pd.DataFrame, n_iter: int) -> tuple[dict, pd.Dat
     return metrics, wf
 
 
+def gate(metrics: list[dict]) -> list[str]:
+    """Reasons to refuse a retrained model: at the most informed stage each
+    target is evaluated at, it must beat its naive baseline on unseen races."""
+    failures = []
+    for m in metrics:
+        stage = list(m["stages"])[-1]
+        s = m["stages"][stage]
+        if s["mae"] >= s["baseline_mae"]:
+            failures.append(f"{m['target']} at {stage}: MAE {s['mae']:.3f} doesn't beat the baseline {s['baseline_mae']:.3f}")
+    return failures
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--targets", nargs="+", default=list(TARGETS), choices=list(TARGETS))
     parser.add_argument("--n-iter", type=int, default=40)
+    parser.add_argument("--gate", action="store_true", help="exit non-zero if any model fails to beat its baseline")
     args = parser.parse_args()
 
     df = pd.read_parquet(DATA_PATH)
-    frames = [train_target(name, df, args.n_iter)[1] for name in args.targets]
+    results = [train_target(name, df, args.n_iter) for name in args.targets]
+    frames = [wf for _, wf in results]
     if WALKFORWARD_PATH.exists():  # keep other targets' rows when retraining a subset
         old = pd.read_parquet(WALKFORWARD_PATH)
         frames.append(old[~old["target"].isin(args.targets)])
     pd.concat(frames, ignore_index=True).to_parquet(WALKFORWARD_PATH, index=False)
     print(f"wrote {WALKFORWARD_PATH}")
+    if args.gate and (failures := gate([m for m, _ in results])):
+        raise SystemExit("gate failed:\n  " + "\n  ".join(failures))
 
 
 if __name__ == "__main__":

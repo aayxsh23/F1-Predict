@@ -33,6 +33,13 @@
   --color-signal-amber: #f5b84b;
   --color-signal-coral: #ff6b5e;
 
+  /* tyre compounds: Pirelli's sidewall code, the one colour language every fan
+     already reads. Data only (stint bars, compound marks), never interface.
+     lib/teams.ts COMPOUNDS holds the same values for the three.js cars. */
+  --color-tyre-soft: #e5384a;
+  --color-tyre-medium: #f5c518;
+  --color-tyre-hard: #f4f7fb;
+
   /* surface texture and selection, tokenised so the weave and grid stay one system */
   --color-weave-light: rgb(255 255 255 / 0.03);
   --color-weave-dark: rgb(0 0 0 / 0.3);

@@ -2,8 +2,9 @@
 written by the scheduled refresh job and the training run) plus a few cheap
 live computations: odds, explanations, strategy, championship odds and chat.
 
-Nothing here imports torch, a vector database, FastF1 or a PDF parser, so it
-fits a serverless function (see api/index.py for the Vercel entry point).
+Nothing here imports pandas, XGBoost, torch, FastF1 or a PDF parser (the
+refresh job precomputes everything that needs them, SHAP breakdowns included),
+so it fits a serverless function: see api/index.py for the Vercel entry point.
 Run locally: `uvicorn src.api.main:app --reload`.
 """
 import json
@@ -20,9 +21,7 @@ from fastapi.responses import StreamingResponse
 from src.api.cache import get_json
 from src.api.enrich import with_probabilities
 from src.api.schemas import ChatRequest, ExplainRequest
-from src.models.explain import shap_explanation
-from src.models.features import FEATURE_LABELS, row_from_dict
-from src.models.predict import CANONICAL_PRED_COLS, MODEL_DIR, load_model
+from src.models.catalog import CANONICAL_PRED_COLS, FEATURE_LABELS, MODEL_DIR
 from src.rag import corpus
 
 app = FastAPI(title="Pit Wall F1 API")
@@ -71,6 +70,14 @@ def _driver(payload: dict, driver: str) -> dict:
     return row
 
 
+def stored_explanation(driver_row: dict, target: str) -> dict:
+    """The SHAP breakdown the refresh job stored, with fan labels added."""
+    exp = driver_row.get("explanations", {}).get(target)
+    if exp is None:
+        raise HTTPException(404, "This forecast has no stored breakdown (it predates them).")
+    return {**exp, "top_contributions": [{**c, "label": FEATURE_LABELS.get(c["feature"], c["feature"])} for c in exp["top_contributions"]]}
+
+
 @app.get("/health")
 def health():
     try:
@@ -101,10 +108,7 @@ def predictions_explain(season: int, round: int, driver: str, target: str = "fin
     if target not in CANONICAL_PRED_COLS:
         raise HTTPException(400, f"Unknown target '{target}'; expected one of {list(CANONICAL_PRED_COLS)}.")
     d = _driver(_forecast(season, round), driver)
-    result = shap_explanation(load_model(target), row_from_dict(d["feature_row"]), target=target)
-    for c in result["top_contributions"]:
-        c["label"] = FEATURE_LABELS.get(c["feature"], c["feature"])
-    return {"driver": d["driver"], "target": target, **result}
+    return {"driver": d["driver"], "target": target, **stored_explanation(d, target)}
 
 
 @app.get("/predictions/{season}/{round}/timeline")
@@ -205,9 +209,9 @@ def explain_endpoint(req: ExplainRequest, request: Request):
     _limit(request)
     payload = _forecast(req.season, req.round)
     d = _driver(payload, req.driver)
-    exp = shap_explanation(load_model(req.target), row_from_dict(d["feature_row"]), target=req.target)
+    exp = stored_explanation(d, req.target)
     top = exp["top_contributions"][:5]
-    labels = [FEATURE_LABELS.get(c["feature"], c["feature"]) for c in top]
+    labels = [c["label"] for c in top]
     circuit = payload["location"]
     query = f"{circuit} " + " ".join(labels)
     hits = corpus.search(query, k=3, circuit=circuit)
