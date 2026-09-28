@@ -58,6 +58,7 @@ src/rag/saved/
 # commit them, keep everything else here (metrics JSON, anything else) ignored.
 src/models/saved/*
 !src/models/saved/*_xgb.json
+!src/models/saved/pl_calibration.json
 
 # Vector store (Phase 4 RAG)
 chroma_db/

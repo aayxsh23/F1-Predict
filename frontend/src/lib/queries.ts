@@ -11,28 +11,37 @@ export function usePredictionsLatest() {
   })
 }
 
-export function usePredictionsForRace(season: number, round: number) {
+export function usePredictionsForRace(season: number, round: number, enabled = true) {
   return useQuery({
     queryKey: ['predictions', season, round],
     queryFn: () => api.predictionsForRace(season, round),
-    placeholderData: keepPreviousData,
+    enabled,
   })
 }
 
-export function useDriverExplain(season: number, round: number, driver: string, target: Target) {
+export function useRaces(season: number) {
+  return useQuery({
+    queryKey: ['races', season],
+    queryFn: () => api.races(season),
+    staleTime: 5 * 60_000, // a schedule, not a live value
+  })
+}
+
+export function useDriverExplain(season: number, round: number, driver: string, target: Target, enabled = true) {
   return useQuery({
     queryKey: ['explain-shap', season, round, driver, target],
     queryFn: () => api.driverExplain(season, round, driver, target),
-    placeholderData: keepPreviousData,
+    enabled,
   })
 }
 
-export function useNaturalExplanation(season: number, round: number, driver: string, target: Target) {
+export function useNaturalExplanation(season: number, round: number, driver: string, target: Target, enabled = true) {
   return useQuery({
     queryKey: ['explain-nl', season, round, driver, target],
     queryFn: () => api.explain(season, round, driver, target),
     staleTime: Infinity, // an LLM generation, not a live value -- one fetch per (race, driver, target) is enough
     retry: 1,
+    enabled,
   })
 }
 
@@ -40,10 +49,11 @@ export function useBacktestRaces() {
   return useQuery({ queryKey: ['backtest', 'races'], queryFn: api.backtestRaces })
 }
 
-export function useBacktestForRace(season: number, round: number) {
+export function useBacktestForRace(season: number, round: number, enabled = true) {
   return useQuery({
     queryKey: ['backtest', season, round],
     queryFn: () => api.backtestForRace(season, round),
+    enabled,
   })
 }
 

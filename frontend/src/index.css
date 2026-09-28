@@ -1,87 +1,221 @@
 @import 'tailwindcss';
-@import 'tw-animate-css';
-@import '@fontsource/inter/400.css';
-@import '@fontsource/inter/500.css';
-@import '@fontsource/inter/600.css';
-@import '@fontsource/inter/700.css';
+@import '@fontsource/chakra-petch/400.css';
+@import '@fontsource/chakra-petch/500.css';
+@import '@fontsource/chakra-petch/600.css';
+@import '@fontsource/chakra-petch/700.css';
+@import '@fontsource/barlow/400.css';
+@import '@fontsource/barlow/500.css';
+@import '@fontsource/barlow/600.css';
 @import '@fontsource/jetbrains-mono/400.css';
 @import '@fontsource/jetbrains-mono/500.css';
 @import './styles/tokens.css';
 
-@theme inline {
-  --color-canvas: var(--bg-canvas);
-  --color-surface: var(--bg-surface);
-  --color-surface-sunken: var(--bg-surface-sunken);
-  --color-border-default: var(--border-default);
-  --color-text-primary: var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-muted: var(--text-muted);
-  --color-accent: var(--accent-default);
-  --color-accent-hover: var(--accent-hover);
-  --color-accent-text: var(--accent-text);
-
-  --color-chart-positive: var(--chart-positive);
-  --color-chart-negative: var(--chart-negative);
-  --color-chart-known: var(--chart-known);
-  --color-chart-pending: var(--chart-pending);
-
-  --color-badge-known-bg: var(--badge-known-bg);
-  --color-badge-known-text: var(--badge-known-text);
-  --color-badge-pending-bg: var(--badge-pending-bg);
-  --color-badge-pending-text: var(--badge-pending-text);
-
-  --color-telemetry-crimson: var(--telemetry-crimson);
-  --color-telemetry-cyan: var(--telemetry-cyan);
-  --color-telemetry-amber: var(--telemetry-amber);
-  --color-telemetry-green: var(--telemetry-green);
-
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-
-  --shadow-sm: var(--shadow-sm);
-  --shadow-md: var(--shadow-md);
-}
-
 @layer base {
   * {
-    border-color: var(--border-default);
+    border-color: var(--color-line);
   }
 
   html {
-    color-scheme: light dark;
+    color-scheme: dark;
+    background: var(--color-obsidian-900);
   }
 
   body {
-    background-color: var(--bg-canvas);
-    color: var(--text-primary);
+    background: var(--color-obsidian-900);
+    color: var(--color-silver-200);
     font-family: var(--font-sans);
     font-size: var(--text-base);
-    line-height: var(--leading-base);
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   ::selection {
-    background-color: color-mix(in srgb, var(--accent-default) 30%, transparent);
+    background: var(--color-laser-wash);
+    color: var(--color-silver-100);
   }
 
   :focus-visible {
-    outline: 2px solid var(--accent-default);
+    outline: 2px solid var(--color-laser-400);
     outline-offset: 2px;
+  }
+
+  button,
+  select,
+  input,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
   }
 }
 
-/* Ask-Copilot cross-panel highlight: a citation/driver-code click in the
-   dock scrolls a matching row into view and flashes it once. */
-@keyframes flash-highlight {
-  0% {
-    background-color: color-mix(in srgb, var(--telemetry-amber) 35%, transparent);
+@layer components {
+  /* Laser-cut frame: a 1px hairline that follows chamfered corners. clip-path
+     clips borders, so the frame is the element's own background and ::before is
+     the fill, inset by the hairline width and cut 0.41px tighter so the diagonal
+     stays 1px thick. Per-corner sizes via --c-tl / --c-tr / --c-br / --c-bl. */
+  .cut-frame {
+    --c-tl: 0px;
+    --c-tr: var(--cut);
+    --c-br: 0px;
+    --c-bl: var(--cut);
+    --frame: var(--color-line-strong);
+    --fill: var(--color-obsidian-800);
+    --inset: 1px;
+    --inset-b: 1px;
+    position: relative;
+    isolation: isolate;
+    background: var(--frame);
+    clip-path: polygon(
+      var(--c-tl) 0,
+      calc(100% - var(--c-tr)) 0,
+      100% var(--c-tr),
+      100% calc(100% - var(--c-br)),
+      calc(100% - var(--c-br)) 100%,
+      var(--c-bl) 100%,
+      0 calc(100% - var(--c-bl)),
+      0 var(--c-tl)
+    );
   }
+
+  .cut-frame::before {
+    content: '';
+    position: absolute;
+    inset: var(--inset) var(--inset) var(--inset-b) var(--inset);
+    z-index: -1;
+    background: var(--fill);
+    clip-path: polygon(
+      max(0px, calc(var(--c-tl) - 0.41px)) 0,
+      calc(100% - max(0px, calc(var(--c-tr) - 0.41px))) 0,
+      100% max(0px, calc(var(--c-tr) - 0.41px)),
+      100% calc(100% - max(0px, calc(var(--c-br) - 0.41px))),
+      calc(100% - max(0px, calc(var(--c-br) - 0.41px))) 100%,
+      max(0px, calc(var(--c-bl) - 0.41px)) 100%,
+      0 calc(100% - max(0px, calc(var(--c-bl) - 0.41px))),
+      0 max(0px, calc(var(--c-tl) - 0.41px))
+    );
+  }
+
+  .cut-all {
+    --c-tl: var(--cut);
+    --c-br: var(--cut);
+  }
+
+  .cut-top {
+    --c-tl: var(--cut);
+    --c-tr: var(--cut);
+    --c-br: 0px;
+    --c-bl: 0px;
+  }
+
+  .cut-bottom {
+    --c-tl: 0px;
+    --c-tr: 0px;
+    --c-br: var(--cut);
+    --c-bl: var(--cut);
+  }
+
+  .frame-laser {
+    --frame: var(--color-laser-400);
+    --fill: var(--color-laser-900);
+  }
+
+  /* Carbon weave: the classic twill built from four gradients, kept under 4%
+     so it reads as material, not pattern. */
+  .carbon {
+    background-color: var(--color-obsidian-800);
+    background-image:
+      linear-gradient(135deg, var(--color-weave-light) 25%, transparent 25%),
+      linear-gradient(225deg, var(--color-weave-light) 25%, transparent 25%),
+      linear-gradient(45deg, var(--color-weave-dark) 25%, transparent 25%),
+      linear-gradient(315deg, var(--color-weave-dark) 25%, var(--color-weave-light) 25%);
+    background-size: 8px 8px;
+    background-position:
+      4px 0,
+      4px 0,
+      0 0,
+      0 0;
+  }
+
+  /* the same weave, painted as a frame's fill so it stays inside the chamfers */
+  .frame-carbon::before {
+    background-color: var(--fill);
+    background-image:
+      linear-gradient(135deg, var(--color-weave-light) 25%, transparent 25%),
+      linear-gradient(225deg, var(--color-weave-light) 25%, transparent 25%),
+      linear-gradient(45deg, var(--color-weave-dark) 25%, transparent 25%),
+      linear-gradient(315deg, var(--color-weave-dark) 25%, var(--color-weave-light) 25%);
+    background-size: 8px 8px;
+    background-position:
+      4px 0,
+      4px 0,
+      0 0,
+      0 0;
+  }
+
+  /* HUD micro-grid, faded toward the edges */
+  .hud-grid {
+    background-image:
+      linear-gradient(to right, var(--color-grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-grid-line) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse 75% 70% at 50% 55%, black 25%, transparent 78%);
+  }
+
+  .hud-label {
+    font-family: var(--font-display);
+    font-size: var(--text-hud);
+    font-weight: 600;
+    letter-spacing: var(--tracking-hud);
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-strong) transparent;
+  }
+
+  .scroll-none {
+    scrollbar-width: none;
+  }
+
+  .scroll-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
   100% {
-    background-color: transparent;
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.72);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
   }
 }
 
@@ -91,7 +225,10 @@
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    /* 0s, not the common 0.01ms: with the default transition-property: all, a
+       non-zero duration turns every property change (layout widths included)
+       into a transition that measures at its start value */
+    transition-duration: 0s !important;
     scroll-behavior: auto !important;
   }
 }

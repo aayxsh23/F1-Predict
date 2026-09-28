@@ -1,6 +1,6 @@
-export function formatSigned(value: number, unit = ''): string {
+export function formatSigned(value: number, decimals = 2, unit = ''): string {
   const sign = value > 0 ? '+' : ''
-  return `${sign}${value.toFixed(2)}${unit}`
+  return `${sign}${value.toFixed(decimals)}${unit}`
 }
 
 export function formatNumber(value: number | null, decimals = 2, unit = ''): string {
@@ -8,15 +8,15 @@ export function formatNumber(value: number | null, decimals = 2, unit = ''): str
   return `${value.toFixed(decimals)}${unit}`
 }
 
-export function formatOrdinalPosition(value: number | null): string {
-  if (value === null || Number.isNaN(value)) return '—'
-  return value.toFixed(1)
+/** 0.142 -> "14.2%"; a real but tiny chance stays visibly non-zero. */
+export function formatPct(p: number | null): string {
+  if (p === null || Number.isNaN(p)) return '—'
+  if (p > 0 && p < 0.001) return '<0.1%'
+  return `${(p * 100).toFixed(1)}%`
 }
 
 export function formatRelativeTime(iso: string): string {
-  const then = new Date(iso).getTime()
-  const diffMs = Date.now() - then
-  const minutes = Math.round(diffMs / 60_000)
+  const minutes = Math.round((Date.now() - new Date(iso).getTime()) / 60_000)
   if (minutes < 1) return 'just now'
   if (minutes < 60) return `${minutes} min ago`
   const hours = Math.round(minutes / 60)
@@ -30,8 +30,4 @@ export function formatFeatureName(feature: string): string {
     .split('_')
     .map((w) => w[0].toUpperCase() + w.slice(1))
     .join(' ')
-}
-
-export function formatRaceDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
 }

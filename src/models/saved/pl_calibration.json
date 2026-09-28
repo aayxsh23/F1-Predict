@@ -1,0 +1,20 @@
+{
+  "tau_top": 1.6847888701627434,
+  "tau_field": 3.0539315796744075,
+  "dnf_prior": 0.1565703634669152,
+  "n_races": 85,
+  "brier": {
+    "win": 0.033717380382608894,
+    "podium": 0.07286898898550725,
+    "top10": 0.1530597222028987
+  },
+  "brier_uniform_field": {
+    "win": 0.04684730098718937,
+    "podium": 0.12597353497164065,
+    "top10": 0.2499474900230952
+  },
+  "band_p10_p90_coverage": 0.8776811594202899,
+  "mean_p_dnf": 0.1442967608252294,
+  "method": "walk-forward OOF (time_based_splits), Plackett-Luce MLE over finishers, DNFs sampled separately",
+  "fitted_at": "2026-09-21T14:27:04.500884+00:00"
+}

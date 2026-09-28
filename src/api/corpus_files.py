@@ -29,8 +29,12 @@ _EXCLUDED_DOC_TYPES = {"circuit_summary"}
 _STEWARD_FILENAME_RE = re.compile(r"^(\d{4})_([a-z]+)_gp_car(\d+)_(.+)\.pdf$")
 
 
+_ACRONYMS = {"Fia": "FIA", "Pu": "PU", "Gp": "GP", "Drs": "DRS", "Vsc": "VSC", "Sc": "SC"}
+
+
 def _prettify(stem: str) -> str:
-    return stem.replace("_", " ").replace("-", " ").title()
+    words = stem.replace("_", " ").replace("-", " ").title().split()
+    return " ".join(_ACRONYMS.get(w, w) for w in words)
 
 
 def _document_meta(path: Path, doc_type: str) -> dict:

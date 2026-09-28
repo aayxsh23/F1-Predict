@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Vite + React + TypeScript (static SPA, no server-rendering need — all data comes from a separate FastAPI backend). react-router-dom for routing. TanStack Query as the data layer (no Redux/Zustand — the query cache is the state). Tailwind CSS + shadcn/ui for primitives. Recharts for the SHAP/backtest charts. Decided in [phase7-ui-backend-plan.md](phase7-ui-backend-plan.md) with each choice justified against a simpler alternative — not delegated, not re-opened here.
+Vite + React + TypeScript (static SPA, no server-rendering need — all data comes from a separate FastAPI backend). react-router-dom for routing. TanStack Query as the data layer (no Redux/Zustand — the query cache is the state). Tailwind CSS v4 with hand-built components (no component library), Framer Motion for sheet and tab motion, React Three Fiber + drei for the podium stage (lazy-loaded, with a CSS 3D fallback); charts are hand-drawn SVG/CSS. All workbench state lives in URL params. The original stack was decided in [phase7-ui-backend-plan.md](phase7-ui-backend-plan.md); the 2026-09-25 workbench rebuild replaced shadcn/Radix/Recharts (see PROGRESS.md).
 
 ## Users
 
@@ -31,7 +31,7 @@ Most prediction content (broadcast graphics, punter tip sites) states a number w
 
 ## Capabilities and Constraints
 
-- Backend: FastAPI, already built (`src/api/main.py`) — `/races`, `/predictions/latest`, `/predictions/{season}/{round}`, `/predictions/{season}/{round}/explain` (per-driver SHAP numbers), `/backtest/races`, `/backtest/{season}/{round}`, `POST /explain` (full natural-language explanation, real — not a stub), `POST /ask-agent` (real live-standings agent with conversation memory via `conversation_id`).
+- Backend: FastAPI, already built (`src/api/main.py`) — prediction payloads also carry sampled win/podium/top-10 probabilities and a P10–P90 finishing band (`src/api/enrich.py`); `/races`, `/predictions/latest`, `/predictions/{season}/{round}`, `/predictions/{season}/{round}/explain` (per-driver SHAP numbers), `/backtest/races`, `/backtest/{season}/{round}`, `POST /explain` (full natural-language explanation, real — not a stub), `POST /ask-agent` (real live-standings agent with conversation memory via `conversation_id`).
 - All four predictions and the natural-language explanation are real and working end to end today, verified against live 2026 season data — nothing in this product is a "coming soon" placeholder, unlike the state phase7-ui-backend-plan.md was originally written against.
 - No user accounts, no write actions anywhere in the product — everything is read-only public F1 data.
 - Free-tier hosting: the backend cold-starts after idling: the frontend must not blank the screen or read as broken while a first request wakes it.

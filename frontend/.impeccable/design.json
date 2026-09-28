@@ -1,120 +1,539 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-12T00:00:00Z",
-  "title": "Design System: Pit Wall",
+  "generatedAt": "2026-09-25T00:00:00Z",
+  "title": "Design System: F1 Predict",
   "extensions": {
     "colorMeta": {
-      "red-500": { "role": "primary", "displayName": "F1 Red", "canonical": "#e8483a" },
-      "red-400": { "role": "primary", "displayName": "F1 Red (dark mode)", "canonical": "#ff6b5e" },
-      "gray-50": { "role": "neutral", "displayName": "Canvas Light", "canonical": "#f8f9fb" },
-      "gray-950": { "role": "neutral", "displayName": "Canvas Dark", "canonical": "#0a0b0d" },
-      "gray-550": { "role": "neutral", "displayName": "Muted Text (AA-safe)", "canonical": "#67717d", "tonalRamp": ["#0a0b0d", "#131519", "#22262b", "#363c44", "#4f5761", "#67717d", "#9aa2ad", "#c3c9d1"] },
-      "green-500": { "role": "data-signal", "displayName": "Chart Positive / Known", "canonical": "#1f9d55" },
-      "green-700": { "role": "data-signal", "displayName": "Badge Known Text (AA-safe)", "canonical": "#147842" },
-      "red-500-neg": { "role": "data-signal", "displayName": "Chart Negative", "canonical": "#e8483a" }
+      "laser-400": {
+        "role": "primary",
+        "displayName": "Laser Teal",
+        "canonical": "#00d2be",
+        "tonalRamp": [
+          "#072a2b",
+          "#00615e",
+          "#00a19b",
+          "#00d2be",
+          "#5ff0df",
+          "#9ff6ec",
+          "#cffaf5",
+          "#effefc"
+        ]
+      },
+      "laser-300": {
+        "role": "primary",
+        "displayName": "Laser Glint",
+        "canonical": "#5ff0df",
+        "tonalRamp": [
+          "#072a2b",
+          "#00615e",
+          "#00a19b",
+          "#00d2be",
+          "#5ff0df",
+          "#9ff6ec",
+          "#cffaf5",
+          "#effefc"
+        ]
+      },
+      "laser-500": {
+        "role": "primary",
+        "displayName": "Deep Laser",
+        "canonical": "#00a19b",
+        "tonalRamp": [
+          "#072a2b",
+          "#00615e",
+          "#00a19b",
+          "#00d2be",
+          "#5ff0df",
+          "#9ff6ec",
+          "#cffaf5",
+          "#effefc"
+        ]
+      },
+      "laser-700": {
+        "role": "primary",
+        "displayName": "Laser Ember",
+        "canonical": "#00615e",
+        "tonalRamp": [
+          "#072a2b",
+          "#00615e",
+          "#00a19b",
+          "#00d2be",
+          "#5ff0df",
+          "#9ff6ec",
+          "#cffaf5",
+          "#effefc"
+        ]
+      },
+      "laser-900": {
+        "role": "primary",
+        "displayName": "Laser Well",
+        "canonical": "#072a2b",
+        "tonalRamp": [
+          "#072a2b",
+          "#00615e",
+          "#00a19b",
+          "#00d2be",
+          "#5ff0df",
+          "#9ff6ec",
+          "#cffaf5",
+          "#effefc"
+        ]
+      },
+      "laser-wash": {
+        "role": "primary",
+        "displayName": "Laser Wash",
+        "canonical": "rgb(0 210 190 / 0.32)"
+      },
+      "signal-amber": {
+        "role": "tertiary",
+        "displayName": "Pending Amber",
+        "canonical": "#f5b84b",
+        "tonalRamp": [
+          "#3d2a08",
+          "#5c400d",
+          "#7d5812",
+          "#a67618",
+          "#d1962a",
+          "#f5b84b",
+          "#f9d38e",
+          "#fdeccd"
+        ]
+      },
+      "signal-coral": {
+        "role": "tertiary",
+        "displayName": "Loss Coral",
+        "canonical": "#ff6b5e",
+        "tonalRamp": [
+          "#3d100c",
+          "#5e1a14",
+          "#84251c",
+          "#b33327",
+          "#e34a3d",
+          "#ff6b5e",
+          "#ffa59d",
+          "#ffdcd8"
+        ]
+      },
+      "obsidian-950": {
+        "role": "neutral",
+        "displayName": "Obsidian Deep",
+        "canonical": "#05070a",
+        "tonalRamp": [
+          "#05070a",
+          "#080a0e",
+          "#0f141c",
+          "#151c27",
+          "#1c2532",
+          "#64748b",
+          "#94a3b8",
+          "#c3ccd8"
+        ]
+      },
+      "obsidian-900": {
+        "role": "neutral",
+        "displayName": "Obsidian Carbon",
+        "canonical": "#080a0e",
+        "tonalRamp": [
+          "#05070a",
+          "#080a0e",
+          "#0f141c",
+          "#151c27",
+          "#1c2532",
+          "#64748b",
+          "#94a3b8",
+          "#c3ccd8"
+        ]
+      },
+      "obsidian-800": {
+        "role": "neutral",
+        "displayName": "Carbon Panel",
+        "canonical": "#0f141c",
+        "tonalRamp": [
+          "#05070a",
+          "#080a0e",
+          "#0f141c",
+          "#151c27",
+          "#1c2532",
+          "#64748b",
+          "#94a3b8",
+          "#c3ccd8"
+        ]
+      },
+      "obsidian-700": {
+        "role": "neutral",
+        "displayName": "Raised Carbon",
+        "canonical": "#151c27",
+        "tonalRamp": [
+          "#05070a",
+          "#080a0e",
+          "#0f141c",
+          "#151c27",
+          "#1c2532",
+          "#64748b",
+          "#94a3b8",
+          "#c3ccd8"
+        ]
+      },
+      "obsidian-600": {
+        "role": "neutral",
+        "displayName": "Raised Carbon High",
+        "canonical": "#1c2532",
+        "tonalRamp": [
+          "#05070a",
+          "#080a0e",
+          "#0f141c",
+          "#151c27",
+          "#1c2532",
+          "#64748b",
+          "#94a3b8",
+          "#c3ccd8"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "rgb(148 163 184 / 0.16)"
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Hairline Strong",
+        "canonical": "rgb(148 163 184 / 0.34)"
+      },
+      "silver-100": {
+        "role": "neutral",
+        "displayName": "Silver Highlight",
+        "canonical": "#f4f7fb",
+        "tonalRamp": [
+          "#1c2532",
+          "#64748b",
+          "#94a3b8",
+          "#c3ccd8",
+          "#e2e8f0",
+          "#f4f7fb",
+          "#f8fafc",
+          "#ffffff"
+        ]
+      },
+      "silver-200": {
+        "role": "neutral",
+        "displayName": "Etched Silver",
+        "canonical": "#e2e8f0",
+        "tonalRamp": [
+          "#1c2532",
+          "#64748b",
+          "#94a3b8",
+          "#c3ccd8",
+          "#e2e8f0",
+          "#f4f7fb",
+          "#f8fafc",
+          "#ffffff"
+        ]
+      },
+      "silver-300": {
+        "role": "neutral",
+        "displayName": "Brushed Silver",
+        "canonical": "#c3ccd8",
+        "tonalRamp": [
+          "#1c2532",
+          "#64748b",
+          "#94a3b8",
+          "#c3ccd8",
+          "#e2e8f0",
+          "#f4f7fb",
+          "#f8fafc",
+          "#ffffff"
+        ]
+      },
+      "silver-400": {
+        "role": "neutral",
+        "displayName": "Dim Silver",
+        "canonical": "#94a3b8",
+        "tonalRamp": [
+          "#1c2532",
+          "#64748b",
+          "#94a3b8",
+          "#c3ccd8",
+          "#e2e8f0",
+          "#f4f7fb",
+          "#f8fafc",
+          "#ffffff"
+        ]
+      },
+      "silver-500": {
+        "role": "neutral",
+        "displayName": "Graphite (decoration and disabled only)",
+        "canonical": "#64748b",
+        "tonalRamp": [
+          "#1c2532",
+          "#64748b",
+          "#94a3b8",
+          "#c3ccd8",
+          "#e2e8f0",
+          "#f4f7fb",
+          "#f8fafc",
+          "#ffffff"
+        ]
+      },
+      "weave-light": {
+        "role": "neutral",
+        "displayName": "Weave Highlight",
+        "canonical": "rgb(255 255 255 / 0.03)"
+      },
+      "weave-dark": {
+        "role": "neutral",
+        "displayName": "Weave Shade",
+        "canonical": "rgb(0 0 0 / 0.3)"
+      },
+      "grid-line": {
+        "role": "neutral",
+        "displayName": "HUD Grid Line",
+        "canonical": "rgb(148 163 184 / 0.07)"
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Grand Prix name on Dashboard/RaceDetail; only page-identity role." },
-      "label": { "displayName": "Label", "purpose": "Uppercase section labels inside body content (not a pre-headline kicker)." },
-      "numeral": { "displayName": "Numeral", "purpose": "Every number, driver code, and timing value app-wide; JetBrains Mono, tabular-nums." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "The Grand Prix name over the stage; the one h1. Uppercase Chakra Petch."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Dossier sheet titles and empty or error state titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Race names on ribbon cards, document titles, driver selects."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Base UI text in Barlow."
+      },
+      "body-small": {
+        "displayName": "Body Small",
+        "purpose": "Sheet prose, chat messages, inputs."
+      },
+      "label": {
+        "displayName": "HUD Label",
+        "purpose": "Buttons, tabs, chips, status chips, field labels, table headers. Never a kicker above a heading."
+      },
+      "data": {
+        "displayName": "Data",
+        "purpose": "Round numbers, dates, location lines, citation tags; tabular numerals."
+      },
+      "micro": {
+        "displayName": "Micro",
+        "purpose": "Telemetry pills and circuit plates."
+      }
     },
     "shadows": [
-      { "name": "shadow-sm", "value": "0 1px 2px rgba(0,0,0,0.06)", "purpose": "Resting shadow on Card and the active sidebar/tab item." },
-      { "name": "shadow-md", "value": "0 4px 12px rgba(0,0,0,0.12)", "purpose": "Declared but unused by any shipped component." }
+      {
+        "name": "laser-glow",
+        "value": "drop-shadow(0 6px 14px rgb(0 210 190 / 0.32))",
+        "purpose": "Selected race card only, applied as a filter on a wrapper so clip-path does not cut it."
+      }
     ],
     "motion": [
-      { "name": "color-transition", "value": "transition-colors duration-150", "purpose": "Standard hover/active state transition for buttons, nav items, tabs, table rows." }
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Every entrance and the selected-card lift."
+      },
+      {
+        "name": "rise",
+        "value": "opacity 0 to 1, translateY 14px to 0, 0.4s ease-out-expo, sections staggered 50ms after 80ms",
+        "purpose": "Dossier sheet sections entering; sections are the unit, never rows."
+      },
+      {
+        "name": "sheet-swap",
+        "value": "enter 30px rise 0.36s ease-out-expo; exit 24px drop 0.16s ease-in",
+        "purpose": "Changing dossier tabs."
+      },
+      {
+        "name": "folder-spring",
+        "value": "spring stiffness 520, damping 42",
+        "purpose": "Active folder tab sliding between tabs."
+      },
+      {
+        "name": "podium-reveal",
+        "value": "P3 at 0s, P2 at 0.25s, P1 at 0.5s; callouts fade up 10px, 0.5s, 0.9s after their car",
+        "purpose": "Stage reveal, replayed only when the race or the top three changes."
+      },
+      {
+        "name": "pulse-dot",
+        "value": "1.6s ease-in-out infinite, opacity 1 to 0.45, scale 1 to 0.72",
+        "purpose": "Live and waking status LEDs."
+      },
+      {
+        "name": "scan",
+        "value": "translateX -100% to 100%, 1.6s linear infinite",
+        "purpose": "Skeleton loading sheen."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "transition-duration: 0s; animation-duration: 0.01ms, 1 iteration",
+        "purpose": "0s, not 0.01ms: the 0.01ms version transitioned layout widths."
+      }
     ],
     "breakpoints": [
-      { "name": "md", "value": "768px" }
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
     ]
   },
   "components": [
     {
-      "name": "Primary Button",
+      "name": "Laser Button",
       "kind": "button",
-      "refersTo": "button-primary",
-      "description": "Default call-to-action button; red fill, white text.",
-      "html": "<button class=\"ds-btn-primary\">View explanation</button>",
-      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 8px; font-weight: 500; font-size: 14px; background: #e8483a; color: #ffffff; border: none; transition: background-color 150ms; } .ds-btn-primary:hover { background: #c22e22; } .ds-btn-primary:focus-visible { outline: 2px solid #e8483a; outline-offset: 2px; }"
+      "refersTo": "button-laser",
+      "description": "The acting button: teal outline, HUD label, fills laser-900 on hover.",
+      "html": "<div class=\"ds-btn-wrap\"><button class=\"ds-btn-laser\">Retry</button></div>",
+      "css": ".ds-btn-wrap { background: #080a0e; padding: 16px; } .ds-btn-laser { font-family: 'Chakra Petch', 'Barlow', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.2; background: transparent; color: #5ff0df; border: 1px solid #00a19b; border-radius: 0; padding: 6px 12px; cursor: pointer; transition: background-color 150ms; } .ds-btn-laser:hover { background: #072a2b; } .ds-btn-laser:focus-visible { outline: 2px solid #00d2be; outline-offset: 2px; } .ds-btn-laser:disabled { opacity: 0.4; }"
     },
     {
-      "name": "Secondary Button",
-      "kind": "button",
-      "refersTo": "button-secondary",
-      "description": "Outlined button on white/surface background.",
-      "html": "<button class=\"ds-btn-secondary\">Cancel</button>",
-      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 8px; font-weight: 500; font-size: 14px; background: #ffffff; color: #131519; border: 1px solid #dde1e6; transition: background-color 150ms; } .ds-btn-secondary:hover { background: #eef0f3; }"
-    },
-    {
-      "name": "Known Session Badge",
+      "name": "Prompt Chip",
       "kind": "chip",
-      "refersTo": "badge-known",
-      "description": "Signals a session's real data is available, e.g. Qualifying known.",
-      "html": "<span class=\"ds-badge-known\"><svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><polyline points=\"20 6 9 17 4 12\"/></svg>Qualifying</span>",
-      "css": ".ds-badge-known { display: inline-flex; align-items: center; gap: 6px; border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 500; line-height: 16px; background: color-mix(in srgb, #1f9d55 15%, transparent); color: #147842; }"
+      "refersTo": "chip-prompt",
+      "description": "Suggested prompt in the strategist; a hairline square that turns teal on hover.",
+      "html": "<div class=\"ds-btn-wrap\"><button class=\"ds-chip\">Driver standings</button></div>",
+      "css": ".ds-btn-wrap { background: #080a0e; padding: 16px; } .ds-chip { font-family: 'Chakra Petch', 'Barlow', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.2; background: transparent; color: #c3ccd8; border: 1px solid rgb(148 163 184 / 0.34); border-radius: 0; padding: 6px 10px; cursor: pointer; transition: color 150ms, border-color 150ms; } .ds-chip:hover { color: #5ff0df; border-color: #00a19b; } .ds-chip:focus-visible { outline: 2px solid #00d2be; outline-offset: 2px; }"
     },
     {
-      "name": "Pending Session Badge",
+      "name": "Telemetry Pills",
       "kind": "chip",
-      "refersTo": "badge-pending",
-      "description": "Signals a session's data is not yet known.",
-      "html": "<span class=\"ds-badge-pending\"><svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><circle cx=\"12\" cy=\"12\" r=\"10\"/></svg>Practice</span>",
-      "css": ".ds-badge-pending { display: inline-flex; align-items: center; gap: 6px; border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 500; line-height: 16px; background: #eef0f3; color: #67717d; }"
+      "refersTo": "telemetry-pill",
+      "description": "Micro mono pills on the HUD callout: laser tone for odds, plain for grid delta and tyre (tyre only when the starting compound is known).",
+      "html": "<div class=\"ds-pills\"><span class=\"ds-pill ds-pill-laser\">31.4% WIN</span><span class=\"ds-pill\"><svg width=\"10\" height=\"10\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#00d2be\" stroke-width=\"3\"><path d=\"M12 19V5M5 12l7-7 7 7\"/></svg>2 VS GRID</span><span class=\"ds-pill\"><span class=\"ds-dot\" style=\"background:#E5384A\"></span>SOFT</span></div>",
+      "css": ".ds-pills { display: flex; gap: 6px; flex-wrap: wrap; background: #080a0e; padding: 16px; } .ds-pill { display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgb(148 163 184 / 0.34); padding: 3px 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; line-height: 1; color: #c3ccd8; } .ds-pill-laser { border-color: #00a19b; background: #072a2b; color: #5ff0df; } .ds-dot { width: 8px; height: 8px; border-radius: 9999px; }"
     },
     {
-      "name": "Card",
+      "name": "Race Card",
       "kind": "card",
-      "refersTo": "card",
-      "description": "Base surface container; flat with a hairline border and near-invisible ambient shadow.",
-      "html": "<div class=\"ds-card\">Card content</div>",
-      "css": ".ds-card { border-radius: 8px; border: 1px solid #dde1e6; background: #ffffff; padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }"
+      "refersTo": "race-card",
+      "description": "Season ribbon card in a chamfered hairline frame; the selected card lights laser with a 2px lift and glow.",
+      "html": "<div class=\"ds-ribbon\"><button class=\"ds-frame ds-race\"><span class=\"ds-mono\">R07</span><span class=\"ds-race-name\">Monaco</span><span class=\"ds-race-meta\"><span>25 May</span><span>COMPLETED</span></span></button><div class=\"ds-glow\"><button class=\"ds-frame ds-race ds-race-sel\" aria-current=\"true\"><span class=\"ds-mono\">R08</span><span class=\"ds-race-name\">Spain</span><span class=\"ds-race-meta\"><span>01 Jun</span><span class=\"ds-live\">LIVE</span></span></button></div></div>",
+      "css": ".ds-ribbon { display: flex; gap: 8px; padding: 12px 20px; background: #05070a; } .ds-frame { position: relative; isolation: isolate; border: 0; background: var(--frame, rgb(148 163 184 / 0.34)); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); } .ds-frame::before { content: ''; position: absolute; inset: 1px; z-index: -1; background: var(--fill, #0f141c); clip-path: polygon(0 0, calc(100% - 11.59px) 0, 100% 11.59px, 100% 100%, 11.59px 100%, 0 calc(100% - 11.59px)); } .ds-race { display: flex; flex-direction: column; justify-content: space-between; width: 176px; height: 72px; padding: 8px 12px; text-align: left; cursor: pointer; color: #e2e8f0; } .ds-race:hover { --frame: #94a3b8; } .ds-glow { transform: translateY(-2px); filter: drop-shadow(0 6px 14px rgb(0 210 190 / 0.32)); transition: transform 300ms cubic-bezier(0.16,1,0.3,1), filter 300ms; } .ds-race-sel, .ds-race-sel:hover { --frame: #00d2be; --fill: #072a2b; color: #f4f7fb; } .ds-race:focus-visible { outline: 2px solid #00d2be; outline-offset: 2px; } .ds-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #94a3b8; } .ds-race-name { font-family: 'Chakra Petch', sans-serif; font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; } .ds-race-meta { display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; } .ds-live { color: #5ff0df; font-weight: 600; }"
     },
     {
-      "name": "Timing-Sheet Row",
+      "name": "HUD Callout",
       "kind": "custom",
-      "refersTo": "timing-sheet-row",
-      "description": "Signature pattern: mono rank digit + two-line identity block + trailing chevron/Why affordance, as one tappable row.",
-      "html": "<a class=\"ds-row\" href=\"#\"><span class=\"ds-row-rank\">1</span><div class=\"ds-row-id\"><p class=\"ds-row-name\">VER</p><p class=\"ds-row-team\">Red Bull Racing</p></div><span class=\"ds-row-why\">Why <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"9 18 15 12 9 6\"/></svg></span></a>",
-      "css": ".ds-row { display: flex; align-items: center; gap: 16px; padding: 16px 20px; border-bottom: 1px solid #dde1e6; text-decoration: none; transition: background-color 150ms; } .ds-row:hover { background: #eef0f3; } .ds-row-rank { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 600; color: #e8483a; width: 24px; } .ds-row-id { flex: 1; min-width: 0; } .ds-row-name { font-family: 'JetBrains Mono', monospace; font-weight: 600; letter-spacing: 0.02em; color: #131519; } .ds-row-team { font-size: 14px; color: #4f5761; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-row-why { display: flex; align-items: center; gap: 8px; color: #67717d; font-size: 14px; }"
+      "refersTo": "hud-callout",
+      "description": "Signature: the cut-all frame pinned above each podium car, with rank, code, a 2px team accent line, pills, and the explain link.",
+      "html": "<div class=\"ds-stage\"><div class=\"ds-frame ds-callout\"><div class=\"ds-c-row\"><span class=\"ds-c-rank\">P1</span><span class=\"ds-c-code\">NOR</span><span class=\"ds-c-num\">#4</span></div><div class=\"ds-c-team\"><span class=\"ds-c-accent\" style=\"background:#FF8000\"></span>McLaren</div><span class=\"ds-c-pill\">31.4% WIN</span><a class=\"ds-c-why\" href=\"#\">Why this call <svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></a></div></div>",
+      "css": ".ds-stage { padding: 24px; background: radial-gradient(60% 55% at 50% 68%, rgb(0 210 190 / 0.15), transparent 70%), linear-gradient(180deg, #080a0e, #05070a); } .ds-frame { position: relative; isolation: isolate; border: 0; background: var(--frame, rgb(148 163 184 / 0.34)); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); } .ds-frame::before { content: ''; position: absolute; inset: 1px; z-index: -1; background: var(--fill, #0f141c); clip-path: polygon(0 0, calc(100% - 11.59px) 0, 100% 11.59px, 100% 100%, 11.59px 100%, 0 calc(100% - 11.59px)); } .ds-callout { width: 214px; padding: 8px 12px 10px; --fill: rgb(8 10 14 / 0.88); clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px); } .ds-callout::before { clip-path: polygon(11.59px 0, calc(100% - 11.59px) 0, 100% 11.59px, 100% calc(100% - 11.59px), calc(100% - 11.59px) 100%, 11.59px 100%, 0 calc(100% - 11.59px), 0 11.59px); } .ds-callout:hover { --frame: #00d2be; --fill: #072a2b; } .ds-c-row { display: flex; align-items: baseline; gap: 8px; } .ds-c-rank { font-family: 'Chakra Petch', 'Barlow', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.2; color: #5ff0df; } .ds-c-code { font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 30px; line-height: 1; letter-spacing: 0.025em; color: #f4f7fb; } .ds-c-num { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #c3ccd8; } .ds-c-team { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 11px; color: #94a3b8; } .ds-c-accent { width: 24px; height: 2px; } .ds-c-pill { display: inline-block; margin-top: 6px; border: 1px solid #00a19b; background: #072a2b; color: #5ff0df; font-family: 'JetBrains Mono', monospace; font-size: 10px; line-height: 1; padding: 3px 6px; } .ds-c-why { font-family: 'Chakra Petch', 'Barlow', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.2; display: flex; align-items: center; gap: 4px; margin-top: 6px; color: #c3ccd8; text-decoration: none; } .ds-c-why:hover { color: #5ff0df; } .ds-c-why:focus-visible { outline: 2px solid #00d2be; outline-offset: 2px; }"
     },
     {
-      "name": "Sidebar Nav Item",
+      "name": "Dossier Folder Tabs",
       "kind": "nav",
-      "refersTo": "sidebar-nav-item",
-      "description": "Desktop sidebar navigation link, active and inactive states.",
-      "html": "<a class=\"ds-nav-item ds-nav-item-active\" href=\"#\">Dashboard</a>",
-      "css": ".ds-nav-item { display: flex; align-items: center; gap: 12px; border-radius: 8px; padding: 8px 12px; font-size: 14px; font-weight: 500; color: #4f5761; transition: background-color 150ms, color 150ms; } .ds-nav-item:hover { background: #ffffff; color: #131519; } .ds-nav-item-active { background: #ffffff; color: #131519; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }"
+      "refersTo": "dossier-sheet",
+      "description": "Four folder tabs over a carbon-weave sheet; the active tab is laser-framed carbon joined to the sheet, inactive tabs sit lower on obsidian-950.",
+      "html": "<div class=\"ds-deck\"><div class=\"ds-tabs\" role=\"tablist\"><button class=\"ds-tab ds-tab-on\" role=\"tab\" aria-selected=\"true\"><span class=\"ds-n\">01</span> // RACE PREDICTOR</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">02 // COPILOT STRATEGIST</button></div><div class=\"ds-sheet\"><p class=\"ds-sheet-title\">Predicted finishing order</p></div></div>",
+      "css": ".ds-deck { background: #080a0e; padding: 12px; } .ds-tabs { display: flex; gap: 4px; } .ds-tab { font-family: 'Chakra Petch', 'Barlow', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.2; position: relative; isolation: isolate; height: 44px; min-width: 172px; padding: 0 16px; margin-bottom: -1px; text-align: left; border: 0; cursor: pointer; color: #94a3b8; background: rgb(148 163 184 / 0.34); clip-path: polygon(12px 6px, calc(100% - 12px) 6px, 100% 18px, 100% 100%, 0 100%, 0 18px); } .ds-tab::before { content: ''; position: absolute; inset: 7px 1px 0 1px; z-index: -1; background: #05070a; clip-path: polygon(11.59px 0, calc(100% - 11.59px) 0, 100% 11.59px, 100% 100%, 0 100%, 0 11.59px); } .ds-tab:hover { color: #e2e8f0; } .ds-tab-on { z-index: 1; color: #f4f7fb; background: #00d2be; clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%, 0 12px); } .ds-tab-on::before { inset: 1px 1px 0 1px; background-color: #0f141c; background-image: linear-gradient(135deg, rgb(255 255 255 / 0.03) 25%, transparent 25%), linear-gradient(225deg, rgb(255 255 255 / 0.03) 25%, transparent 25%), linear-gradient(45deg, rgb(0 0 0 / 0.3) 25%, transparent 25%), linear-gradient(315deg, rgb(0 0 0 / 0.3) 25%, rgb(255 255 255 / 0.03) 25%); background-size: 8px 8px; background-position: 4px 0, 4px 0, 0 0, 0 0; } .ds-n { color: #00d2be; } .ds-tab:focus-visible { outline: 2px solid #00d2be; outline-offset: 2px; } .ds-sheet { height: 120px; padding: 16px 24px; border: 1px solid rgb(148 163 184 / 0.34); background-color: #0f141c; background-image: linear-gradient(135deg, rgb(255 255 255 / 0.03) 25%, transparent 25%), linear-gradient(225deg, rgb(255 255 255 / 0.03) 25%, transparent 25%), linear-gradient(45deg, rgb(0 0 0 / 0.3) 25%, transparent 25%), linear-gradient(315deg, rgb(0 0 0 / 0.3) 25%, rgb(255 255 255 / 0.03) 25%); background-size: 8px 8px; background-position: 4px 0, 4px 0, 0 0, 0 0; } .ds-sheet-title { margin: 0; font-family: 'Chakra Petch', sans-serif; font-size: 18px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #f4f7fb; }"
+    },
+    {
+      "name": "Strategist Input",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Square hairline field on obsidian-900; the border shifts to laser on focus.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-sr\">Ask the strategist</span><input class=\"ds-input\" placeholder=\"What does NOR need to win the title?\" /></label>",
+      "css": ".ds-field { display: block; background: #0f141c; padding: 16px; } .ds-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } .ds-input { width: 100%; min-height: 40px; padding: 8px 12px; border: 1px solid rgb(148 163 184 / 0.34); border-radius: 0; background: #080a0e; color: #f4f7fb; font-family: 'Barlow', sans-serif; font-size: 14px; } .ds-input::placeholder { color: #94a3b8; } .ds-input:focus-visible { border-color: #00a19b; outline: 2px solid #00d2be; outline-offset: 2px; }"
+    },
+    {
+      "name": "Source Chip",
+      "kind": "custom",
+      "refersTo": "source-chip",
+      "description": "Signature: states where the numbers come from. Live (teal, pulsing, under 36h old) or replay (amber caveat).",
+      "html": "<div class=\"ds-src-wrap\"><p class=\"ds-src ds-src-live\"><span class=\"ds-led\"></span>Live forecast · updated 3h ago</p><p class=\"ds-src ds-src-warn\"><span class=\"ds-led\"></span>Replay · scored after the race</p></div>",
+      "css": ".ds-src-wrap { display: grid; gap: 8px; background: #080a0e; padding: 16px; } .ds-src { font-family: 'Chakra Petch', 'Barlow', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.2; display: inline-flex; align-items: center; gap: 8px; margin: 0; } .ds-led { width: 6px; height: 6px; border-radius: 9999px; } .ds-src-live { color: #5ff0df; } .ds-src-live .ds-led { background: #00d2be; animation: ds-pulse 1.6s ease-in-out infinite; } .ds-src-warn { color: #f5b84b; } .ds-src-warn .ds-led { background: #f5b84b; } @keyframes ds-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.72); } } @media (prefers-reduced-motion: reduce) { .ds-led { animation: none; } }"
     }
   ],
   "narrative": {
-    "northStar": "The Timing Tower",
-    "overview": "Pit Wall is built like the data screens a race engineer actually reads during a session: a restrained neutral canvas, one controlled accent, and every number set in a monospace face so columns of positions, gaps, and times never jitter against each other. It is not a marketing dashboard of icon cards; it is dense, tabular, and built to be scanned in seconds — the FIRST VIEWPORT direction pins the podium as one card of timing-sheet rows, not three duplicate stat tiles, and the shipped Dashboard, RaceDetail, and History routes hold that line. The palette is almost entirely gray. F1 red exists only where it means something — the current selection, a primary action, a link — never as chrome, never as decoration on a heading. This is a \"brief-pinned\" system: the token set was specified in phase7-ui-backend-plan.md and approved as-is rather than explored through a visual-world workshop, so its authority comes from deliberate specification and from what actually shipped, not from a comp file.",
+    "northStar": "The Night Garage",
+    "overview": "The product is one surface: a pit-garage telemetry wall after dark. A 92px season ribbon runs across the top, three procedurally built cars stand on a lit stage, and a four-tab dossier of tools sits beneath them. The ground is obsidian carbon, the only light is one laser teal, and every piece of type is etched silver. Depth comes from light and material (weave, micro-grid, radial glow), not from shadowed cards.\n\nDensity is HUD density: small caps labels, mono numbers, hairline frames cut at the corners. Every number is one click from its explanation, so the chrome stays quiet and the teal is spent on what is live, selected, or actionable. The cars carry no liveries; team identity is a thin line of colour, and teal reaches the cars only as light.\n\nThe world refuses the tab-and-card dashboard: no rounded card grid, no soft drop-shadow tiles, no light theme.",
     "keyCharacteristics": [
-      "Restrained neutral canvas (gray-50 light / gray-950 dark) with a single red accent reserved for selection, primary actions, and links.",
-      "Inter for all UI text; JetBrains Mono for every numeral so tabular data never jitters column-to-column.",
-      "Dense, timing-tower-style rows and tables over icon-card grids.",
-      "Flat surfaces (hairline borders + a near-invisible ambient shadow), not lifted cards.",
-      "Full light/dark parity via the same semantic token names, driven by prefers-color-scheme with an explicit [data-theme] override."
+      "Obsidian carbon ground (#080A0E / #0F141C) lit by one laser teal (#00D2BE / #00A19B).",
+      "Chakra Petch uppercase for display and HUD labels, Barlow for prose, JetBrains Mono for data.",
+      "Laser-cut chamfered hairline frames (12px cut, 1px line) instead of radius and shadow.",
+      "Carbon twill weave and a faded 32px HUD micro-grid as material, kept under 4% contrast.",
+      "Procedural cars under studio light; team colour as 2px trim only.",
+      "Dark only (`color-scheme: dark`)."
     ],
     "rules": [
-      { "name": "The One Accent Rule", "body": "Red is spent on exactly three things: the primary action, the active/selected state, and a link. It never appears on a container, a border, or a heading.", "section": "colors" },
-      { "name": "The Re-Picked Contrast Step Rule", "body": "Where a token is used as small informational text, its value is deliberately stepped off the raw numeric scale (gray-550 instead of gray-500; green-700 instead of green-500) to clear AA 4.5:1. Don't substitute the nearby raw scale step back in.", "section": "colors" },
-      { "name": "The No-Jitter Rule", "body": "Any value that is a number, a driver code, or session/timing data renders in JetBrains Mono with tabular-nums. Prose never does.", "section": "typography" },
-      { "name": "The Border-Over-Shadow Rule", "body": "The default way to separate one surface from another is a 1px border, not a shadow. Shadows are reserved for the resting Card token and active-state highlighting, never for implying hover elevation.", "section": "elevation" }
+      {
+        "name": "The One Light Rule",
+        "body": "Laser teal is the only hue the interface itself emits. It marks what is live, selected, focused, or actionable; it is never a fill for a whole panel.",
+        "section": "colors"
+      },
+      {
+        "name": "The Trim-Only Team Colour Rule",
+        "body": "Team colour (lib/teams.ts accents) appears only as a 2px accent line on a HUD callout or as small trim on a car, never as body paint. A teal body sheen was tried and rejected because it read as a livery; teal reaches the cars only as light. Unknown teams fall back to silver (#94A3B8), never a guessed colour.",
+        "section": "colors"
+      },
+      {
+        "name": "The Signal Means Something Rule",
+        "body": "Amber means pending or warning; coral means negative delta or failure. Neither is decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The Graphite Is Not Text Rule",
+        "body": "silver-500 (3.9:1) is for decoration and disabled controls only, never text a reader needs.",
+        "section": "colors"
+      },
+      {
+        "name": "The Three-Step Ramp Rule",
+        "body": "The tokenised ramp is micro / hud / base (0.625 / 0.6875 / 0.9375rem). Headlines and display step up through Tailwind's lg-3xl; nothing new sits between micro and hud.",
+        "section": "typography"
+      },
+      {
+        "name": "The Etched Caps Rule",
+        "body": "Chakra Petch is always uppercase and tracked (0.04em at display, 0.14em at label). Barlow is never uppercase.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Kicker Rule",
+        "body": "No eyebrow or kicker label sits above a heading. A HUD label names a field, a control, or a tab; it never introduces a title.",
+        "section": "typography"
+      },
+      {
+        "name": "The Light Not Shadow Rule",
+        "body": "Separation is a hairline or a change of obsidian step; emphasis is teal light. No box shadows on panels.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Material Under 4% Rule",
+        "body": "Weave and grid are material, not pattern: weave highlights at 3% white, grid lines at 7% silver, the grid masked to fade toward the edges.",
+        "section": "elevation"
+      }
     ],
     "dos": [
-      "Do put every number, driver code, or timing value in JetBrains Mono with tabular-nums — never in Inter.",
-      "Do reserve red for the primary action, the active/selected state, and links only.",
-      "Do use the border-default hairline as the default surface separator; reach for shadow-sm only on Card and active nav/tab, never as a hover-triggered lift.",
-      "Do re-pick a color's small-text step off its neutral or signal scale (gray-550, green-700) rather than reusing the visually-nearest raw step, whenever that token will render as small informational text.",
-      "Do collapse dense tables to stacked cards below md, not a horizontally-scrolling or truncated table."
+      "Do frame surfaces with the laser-cut chamfer (12px cut, 1px line-strong hairline) instead of radius or shadow.",
+      "Do spend laser teal only on live, selected, focused, or actionable things.",
+      "Do keep team colour to a 2px accent line or small car trim; fall back to silver (#94A3B8) for an unmatched team.",
+      "Do set every number in JetBrains Mono, tabular where figures align.",
+      "Do draw a telemetry pill only when its data is real: tyre once a starting compound is known, odds once probabilities exist, result once the race is decided.",
+      "Do say \"Live forecast\" only under 36 hours old, and mark replays of decided races with the amber caveat.",
+      "Do default phones and constrained devices to the lite stage, with a visible 3D / Lite toggle.",
+      "Do use transition-duration 0s under prefers-reduced-motion."
     ],
     "donts": [
-      "Don't put a kicker/eyebrow label above a page's h1. Three route headers shipped with an invented eyebrow pattern during this build and it was removed in finish review; it is not part of this system going forward.",
-      "Don't add a second accent hue. The system is one neutral ramp plus one accent plus two data-signal colors.",
-      "Don't use a pill (fully-rounded) shape or a sharp (0px) corner anywhere.",
-      "Don't introduce a drop shadow heavier than shadow-md, or one that appears only on hover to simulate lift."
+      "Don't paint a car body in team colour or teal; a teal body sheen was tried and rejected as a livery. No team liveries.",
+      "Don't use amber or coral for anything but pending/warning and negative delta/failure.",
+      "Don't set text a reader needs in silver-500.",
+      "Don't put a kicker or eyebrow label above a heading.",
+      "Don't add box shadows, rounded cards, or a light theme.",
+      "Don't wire scenario controls that change nothing; unavailable tools are drawn disabled and say why.",
+      "Don't let weave or grid rise above material contrast (3% / 7%)."
     ]
   }
 }

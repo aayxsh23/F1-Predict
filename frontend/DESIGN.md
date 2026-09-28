@@ -1,249 +1,300 @@
 ---
-name: Pit Wall
-description: F1 race predictions and the reasoning behind them, in a fan's vocabulary.
+name: F1 Predict
+description: A pit-garage telemetry wall after dark; three predicted cars staged over the season, a dossier of tools below.
 colors:
-  gray-0: "#ffffff"
-  gray-50: "#f8f9fb"
-  gray-100: "#eef0f3"
-  gray-200: "#dde1e6"
-  gray-300: "#c3c9d1"
-  gray-400: "#9aa2ad"
-  gray-550: "#67717d"
-  gray-600: "#4f5761"
-  gray-700: "#363c44"
-  gray-800: "#22262b"
-  gray-900: "#131519"
-  gray-950: "#0a0b0d"
-  red-400: "#ff6b5e"
-  red-500: "#e8483a"
-  red-600: "#c22e22"
-  red-700: "#961f17"
-  green-400: "#34b46a"
-  green-500: "#1f9d55"
-  green-700: "#147842"
-  crimson-400: "#ff5c72"
-  crimson-500: "#d81e3f"
-  cyan-400: "#22d3ee"
-  cyan-500: "#0891b2"
-  amber-400: "#fbbf24"
-  amber-500: "#b45309"
+  obsidian-950: "#05070a"
+  obsidian-900: "#080a0e"
+  obsidian-800: "#0f141c"
+  obsidian-700: "#151c27"
+  obsidian-600: "#1c2532"
+  line: "rgb(148 163 184 / 0.16)"
+  line-strong: "rgb(148 163 184 / 0.34)"
+  silver-100: "#f4f7fb"
+  silver-200: "#e2e8f0"
+  silver-300: "#c3ccd8"
+  silver-400: "#94a3b8"
+  silver-500: "#64748b"
+  laser-300: "#5ff0df"
+  laser-400: "#00d2be"
+  laser-500: "#00a19b"
+  laser-700: "#00615e"
+  laser-900: "#072a2b"
+  signal-amber: "#f5b84b"
+  signal-coral: "#ff6b5e"
+  weave-light: "rgb(255 255 255 / 0.03)"
+  weave-dark: "rgb(0 0 0 / 0.3)"
+  grid-line: "rgb(148 163 184 / 0.07)"
+  laser-wash: "rgb(0 210 190 / 0.32)"
 typography:
   display:
-    fontFamily: "Inter, system-ui, sans-serif"
-    fontSize: "36px"
+    fontFamily: "Chakra Petch, Barlow, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "1.875rem"
     fontWeight: 600
-    lineHeight: "42px"
-    letterSpacing: "-0.01em"
+    lineHeight: 1.25
+    letterSpacing: "0.04em"
+  headline:
+    fontFamily: "Chakra Petch, Barlow, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "1.125rem"
+    fontWeight: 600
+    lineHeight: 1.4
+    letterSpacing: "0.06em"
   title:
-    fontFamily: "Inter, system-ui, sans-serif"
-    fontSize: "28px"
+    fontFamily: "Chakra Petch, Barlow, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.9375rem"
     fontWeight: 600
-    lineHeight: "34px"
+    lineHeight: 1.3
+    letterSpacing: "0.06em"
   body:
-    fontFamily: "Inter, system-ui, sans-serif"
-    fontSize: "14px"
+    fontFamily: "Barlow, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.9375rem"
     fontWeight: 400
-    lineHeight: "20px"
+    lineHeight: 1.5
+  body-small:
+    fontFamily: "Barlow, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.875rem"
+    fontWeight: 400
+    lineHeight: 1.5
   label:
-    fontFamily: "Inter, system-ui, sans-serif"
-    fontSize: "12px"
+    fontFamily: "Chakra Petch, Barlow, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.6875rem"
     fontWeight: 600
-    lineHeight: "16px"
-    letterSpacing: "0.05em"
-  numeral:
-    fontFamily: "JetBrains Mono, ui-monospace, monospace"
-    fontSize: "14px"
-    fontWeight: 500
-    lineHeight: "20px"
+    lineHeight: 1.2
+    letterSpacing: "0.14em"
+  data:
+    fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+    fontSize: "0.6875rem"
+    fontWeight: 400
+    lineHeight: 1.4
+  micro:
+    fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+    fontSize: "0.625rem"
+    fontWeight: 400
+    lineHeight: 1
 rounded:
-  sm: "4px"
-  md: "8px"
-  lg: "12px"
+  none: "0px"
+  cut: "12px"
+  dot: "9999px"
 spacing:
-  1: "4px"
-  2: "8px"
-  3: "12px"
-  4: "16px"
-  5: "24px"
-  6: "32px"
-  7: "48px"
-  8: "64px"
+  hairline: "1px"
+  ribbon-gap: "8px"
+  gutter: "16px"
+  gutter-lg: "24px"
+  ribbon-height: "92px"
 components:
-  button-primary:
-    backgroundColor: "{colors.red-500}"
-    textColor: "#ffffff"
-    rounded: "{rounded.md}"
-    padding: "0 16px"
-    height: "40px"
-  button-primary-hover:
-    backgroundColor: "{colors.red-600}"
-  button-secondary:
-    backgroundColor: "{colors.gray-0}"
-    textColor: "{colors.gray-900}"
-    rounded: "{rounded.md}"
-    padding: "0 16px"
-  button-ghost:
+  button-laser:
     backgroundColor: "transparent"
-    textColor: "{colors.gray-600}"
-    rounded: "{rounded.md}"
-  badge-known:
-    backgroundColor: "{colors.green-500}"
-    textColor: "{colors.green-700}"
-    rounded: "{rounded.sm}"
-    padding: "2px 8px"
-  badge-pending:
-    backgroundColor: "{colors.gray-100}"
-    textColor: "{colors.gray-550}"
-    rounded: "{rounded.sm}"
-    padding: "2px 8px"
-  card:
-    backgroundColor: "{colors.gray-0}"
-    rounded: "{rounded.md}"
-    padding: "20px"
+    textColor: "{colors.laser-300}"
+    typography: "{typography.label}"
+    rounded: "{rounded.none}"
+    padding: "6px 12px"
+  button-laser-hover:
+    backgroundColor: "{colors.laser-900}"
+    textColor: "{colors.laser-300}"
+  chip-prompt:
+    backgroundColor: "transparent"
+    textColor: "{colors.silver-300}"
+    typography: "{typography.label}"
+    rounded: "{rounded.none}"
+    padding: "6px 10px"
+  chip-prompt-hover:
+    textColor: "{colors.laser-300}"
+  race-card:
+    backgroundColor: "{colors.obsidian-800}"
+    textColor: "{colors.silver-200}"
+    rounded: "{rounded.cut}"
+    width: "176px"
+    height: "72px"
+    padding: "8px 12px"
+  race-card-selected:
+    backgroundColor: "{colors.laser-900}"
+    textColor: "{colors.silver-100}"
+  telemetry-pill:
+    backgroundColor: "transparent"
+    textColor: "{colors.silver-300}"
+    typography: "{typography.micro}"
+    rounded: "{rounded.none}"
+    padding: "3px 6px"
+  telemetry-pill-laser:
+    backgroundColor: "{colors.laser-900}"
+    textColor: "{colors.laser-300}"
+  dossier-sheet:
+    backgroundColor: "{colors.obsidian-800}"
+    textColor: "{colors.silver-200}"
+    rounded: "{rounded.cut}"
+  input-field:
+    backgroundColor: "{colors.obsidian-900}"
+    textColor: "{colors.silver-100}"
+    typography: "{typography.body-small}"
+    rounded: "{rounded.none}"
+    height: "40px"
+    padding: "8px 12px"
 ---
 
-# Design System: Pit Wall
+# Design System: F1 Predict
 
 ## Overview
 
-**Creative North Star: "The Timing Tower"**
+**Creative North Star: "The Night Garage"**
 
-Pit Wall is built like the data screens a race engineer actually reads during a session: a restrained neutral canvas, one controlled accent, and every number set in a monospace face so columns of positions, gaps, and times never jitter against each other. It is not a marketing dashboard of icon cards; it is dense, tabular, and built to be scanned in seconds — the FIRST VIEWPORT direction pins the podium as one card of timing-sheet rows, not three duplicate stat tiles, and the shipped Dashboard, RaceDetail, and History routes hold that line.
+The product is one surface: a pit-garage telemetry wall after dark. A 92px season ribbon runs across the top, three procedurally built cars stand on a lit stage, and a four-tab dossier of tools sits beneath them. The ground is obsidian carbon, the only light is one laser teal, and every piece of type is etched silver. Depth comes from light and material (weave, micro-grid, radial glow), not from shadowed cards.
 
-The palette is almost entirely gray. F1 red exists only where it means something — the current selection, a primary action, a link — never as chrome, never as decoration on a heading. This is a "brief-pinned" system: the token set was specified in phase7-ui-backend-plan.md and approved as-is rather than explored through a visual-world workshop, so its authority comes from deliberate specification and from what actually shipped, not from a comp file.
+Density is HUD density: small caps labels, mono numbers, hairline frames cut at the corners. Every number is one click from its explanation, so the chrome stays quiet and the teal is spent on what is live, selected, or actionable. The cars carry no liveries; team identity is a thin line of colour, and teal reaches the cars only as light.
+
+The world refuses the tab-and-card dashboard: no rounded card grid, no soft drop-shadow tiles, no light theme.
 
 **Key Characteristics:**
-- Restrained neutral canvas (gray-50 light / gray-950 dark) with a single red accent reserved for selection, primary actions, and links.
-- Inter for all UI text; JetBrains Mono for every numeral so tabular data never jitters column-to-column.
-- Dense, timing-tower-style rows and tables over icon-card grids.
-- Flat surfaces (hairline borders + a near-invisible ambient shadow), not lifted cards.
-- Full light/dark parity via the same semantic token names, driven by `prefers-color-scheme` with an explicit `[data-theme]` override.
+- Obsidian carbon ground (#080A0E / #0F141C) lit by one laser teal (#00D2BE / #00A19B).
+- Chakra Petch uppercase for display and HUD labels, Barlow for prose, JetBrains Mono for data.
+- Laser-cut chamfered hairline frames (12px cut, 1px line) instead of radius and shadow.
+- Carbon twill weave and a faded 32px HUD micro-grid as material, kept under 4% contrast.
+- Procedural cars under studio light; team colour as 2px trim only.
+- Dark only (`color-scheme: dark`).
 
 ## Colors
 
-The palette is a single neutral gray ramp plus one accent hue plus two data-signal hues; there is no secondary or tertiary brand color.
+A single-accent dark palette: five obsidian steps, a silver type ramp, one laser-teal ramp, and two signal colours with fixed meanings.
 
 ### Primary
-- **F1 Red** (`#e8483a` light / `#ff6b5e` dark, tokens `--red-500`/`--red-400` via `--accent-default`): primary buttons, active nav/tab state, links, the current-selection rank digit on the dashboard podium. Never used on chrome (headers, sidebars, borders).
+- **Laser Teal** (laser-400): the one light in the world. Focus rings, the selected race card's frame, the active dossier tab frame, live-status dots, positive SHAP bars, and the rim light and stage rings in the 3D scene.
+- **Laser Glint** (laser-300): teal as text. Rank tags (P1), live source chip, laser-button labels, citation links. 9.6:1-class legibility on obsidian.
+- **Deep Laser** (laser-500): outline strokes for laser buttons and inputs on focus, probability bars at 25-60% opacity, text highlight marks.
+- **Laser Ember** (laser-700) and **Laser Well** (laser-900): the assistant message border and the fill behind laser-framed surfaces and laser pills.
+- **Laser Wash** (laser-wash): text selection and the selected race card's glow.
+
+### Tertiary
+- **Pending Amber** (signal-amber): pending and warning only. "Simulator offline", replay caveats, archive view, the API waking LED.
+- **Loss Coral** (signal-coral): negative delta and failure only. Lost grid places, SHAP features pushing the wrong way, an errored chat message, API down.
 
 ### Neutral
-- **Canvas** (`#f8f9fb` light / `#0a0b0d` dark, `--bg-canvas`): page background.
-- **Surface** (`#ffffff` light / `#131519` dark, `--bg-surface`): cards, table backgrounds, the top bar.
-- **Surface Sunken** (`#eef0f3` light / `#22262b` dark, `--bg-surface-sunken`): the sidebar, row hover, skeleton fill, tab-list track.
-- **Border Default** (`#dde1e6` light / `#363c44` dark): the only border color in the system — hairline dividers between rows, card outlines, the top-bar rule.
-- **Text Primary** (`#131519` light / `#f8f9fb` dark): headings, driver codes, primary data values.
-- **Text Secondary** (`#4f5761` light / `#c3c9d1` dark): team names, supporting sentences.
-- **Text Muted** (`--gray-550` `#67717d` light / `--gray-400` `#9aa2ad` dark): freshness lines, table headers, section labels, placeholders — deliberately re-picked off the raw 100-step gray scale on both ends to clear WCAG AA 4.5:1 for small text (gray-500 cleared only ~4.35:1 light; gray-500 cleared only ~4.2:1 dark). This is the system's contrast floor for informational text.
-
-### Data-Signal Colors (chart & badge use only — not general UI colors)
-- **Chart Positive / Known** (`--green-500` `#1f9d55`): SHAP bars pushing toward the target's "better" direction (see the Target-Relative SHAP Color rule below); the known-session badge fill.
-- **Chart Negative** (`--red-500`): SHAP bars pushing toward the "worse" direction.
-- **Chart Pending** (`--gray-400`): not-yet-known chart/badge state.
-- **Badge Known Text** (`--green-700` `#147842` light / `--green-400` dark): re-picked off the raw green scale for the same reason as `--text-muted` — green-500 as small badge text cleared only ~3.5:1.
-
-### Telemetry Accent (status-signal only)
-
-Added with the Race Control workbench build (activity bar / copilot dock / status strip). Three new hues — `--telemetry-crimson`, `--telemetry-cyan`, `--telemetry-amber` — plus `--telemetry-green` (an alias onto the existing `--green-500`/`--green-400` signal color, not a new hue) exist for exactly one purpose: **live status/telemetry signals** — the status strip's connection-health dot, the session-phase indicator, and quick-action-chip category accents (a left-border or dot, never a filled chip background).
-
-This is a deliberate, scoped exception to the One Accent Rule below, not a reversal of it. Telemetry tokens never appear on a button, a link, a selection state, or the activity bar's active-item indicator — those stay on `--accent-default` red exactly as before. If you're reaching for a telemetry color anywhere other than a small status dot/indicator, it's the wrong token.
+- **Obsidian Deep** (obsidian-950): the season ribbon, inactive folder tabs, the stage floor of the gradient, 3D fog.
+- **Obsidian Carbon** (obsidian-900): page ground and input fills.
+- **Carbon Panel** (obsidian-800): framed surface fill and the carbon weave base.
+- **Raised Carbon** (obsidian-700) and obsidian-600: user chat bubbles and skeleton rows.
+- **Hairline** (line) and **Hairline Strong** (line-strong): default borders; the chamfered frame stroke; scrollbar thumb.
+- **Silver Highlight** (silver-100): headings, driver codes, selected text.
+- **Etched Silver** (silver-200): body text.
+- **Brushed Silver** (silver-300): secondary UI text, pill text, inactive controls.
+- **Dim Silver** (silver-400): meta, captions, placeholders, hover frame on race cards (7.2:1).
+- **Graphite** (silver-500): decoration and disabled state only.
 
 ### Named Rules
-**The One Accent Rule.** Red is spent on exactly three things: the primary action, the active/selected state, and a link. It never appears on a container, a border, or a heading. A screen where red decorates chrome instead of signaling selection or action is off-system.
+**The One Light Rule.** Laser teal is the only hue the interface itself emits. It marks what is live, selected, focused, or actionable; it is never a fill for a whole panel.
 
-**The Re-Picked Contrast Step Rule.** Where a token is used as small informational text (muted labels, badge text) rather than as a large/decorative element, its value is deliberately stepped off the raw numeric scale (`gray-550` instead of `gray-500`; `green-700` instead of `green-500`) to clear AA 4.5:1 on its actual background. Don't substitute the "nearby" raw scale step back in — it was rejected for a measured reason.
+**The Trim-Only Team Colour Rule.** Team colour (lib/teams.ts accents) appears only as a 2px accent line on a HUD callout or as small trim on a car, never as body paint. A teal body sheen was tried and rejected because it read as a livery; teal reaches the cars only as light. Unknown teams fall back to silver (#94A3B8), never a guessed colour.
+
+**The Signal Means Something Rule.** Amber means pending or warning; coral means negative delta or failure. Neither is decoration.
+
+**The Graphite Is Not Text Rule.** silver-500 (3.9:1) is for decoration and disabled controls only, never text a reader needs.
 
 ## Typography
 
-**UI Font:** Inter (with `system-ui, sans-serif` fallback)
-**Numeral Font:** JetBrains Mono (with `ui-monospace, monospace` fallback)
+**Display Font:** Chakra Petch (with Barlow, system sans)
+**Body Font:** Barlow (with system sans)
+**Label/Mono Font:** JetBrains Mono (with ui-monospace)
 
-**Character:** A dense data-tool pairing, not an editorial one. Inter carries every word; JetBrains Mono is reserved entirely for numerals and driver/session codes so tabular values align vertically and never reflow mid-digit.
+**Character:** Chakra Petch's squared, machined caps read as etched plate lettering; Barlow keeps prose calm and narrow; the mono carries every number so columns never jitter.
 
 ### Hierarchy
-- **Display** (600, 36px/42px, tracking tight): the top-level page identity — the Grand Prix name on Dashboard/RaceDetail. Scales down to Title (28px) on the same element at the mobile breakpoint via responsive text-size classes, not a separate typographic role.
-- **Title** (600, 28px/34px): secondary page headings ("Race history").
-- **Body** (400, 14px/20px, base document size): descriptive sentences, supporting copy, table cell text.
-- **Label** (600, 12px/16px, `letter-spacing: 0.05em`, uppercase): section labels within a page ("Predicted top 3", a season-group header, table column headers) — always paired with `text-muted`. This is a compact section divider inside body content, not a kicker sitting above a page's `<h1>`.
-- **Numeral** (JetBrains Mono, 400–600, `tabular-nums`): every driver code, position digit, gap, and timing value across the app, regardless of surrounding font size.
+- **Display** (600, 1.5rem rising to 1.875rem at sm, uppercase, 0.04em): the Grand Prix name over the stage; the page's one h1. Driver codes on the podium callouts use the same face at 700, 1.5-1.875rem for P1 and 1.25-1.5rem for P2/P3.
+- **Headline** (600, 1.125rem, uppercase, 0.06-0.08em): dossier sheet titles and empty or error state titles.
+- **Title** (600, 0.9375rem, uppercase, 0.06em): race names on ribbon cards, document titles, driver selects.
+- **Body** (400, 0.9375rem, 1.5): base UI text. Sheet prose and chat use body-small (0.875rem); explanatory copy caps at about 28rem (max-w-md).
+- **Label** (600, 0.6875rem, uppercase, 0.14em): the HUD label. Buttons, tabs, chips, status chips, field labels, table headers.
+- **Data** (JetBrains Mono 400, 0.6875rem): round numbers, dates, location lines, citation tags. Tabular numerals wherever figures align.
+- **Micro** (JetBrains Mono 400, 0.625rem): telemetry pills and circuit plates.
 
 ### Named Rules
-**The No-Jitter Rule.** Any value that is a number, a driver code, or session/timing data renders in JetBrains Mono with `tabular-nums`. Prose never does. This is what keeps the timing-sheet rows and result tables legible at a glance.
+**The Three-Step Ramp Rule.** The tokenised ramp is micro / hud / base (0.625 / 0.6875 / 0.9375rem). Headlines and display step up through Tailwind's lg-3xl; nothing new sits between micro and hud.
+
+**The Etched Caps Rule.** Chakra Petch is always uppercase and tracked (0.04em at display, 0.14em at label). Barlow is never uppercase.
+
+**The No Kicker Rule.** No eyebrow or kicker label sits above a heading. A HUD label names a field, a control, or a tab; it never introduces a title.
 
 ## Layout
 
-Content is centered in a max-width column per route (`max-w-3xl` for single-column reading views like Dashboard/History, `max-w-5xl` for the RaceDetail results table), with `px-4 md:px-6` horizontal padding and `py-8 md:py-12` vertical rhythm — generous on desktop, tighter on mobile. Vertical spacing between page sections steps through the 4px-based scale in a consistent block sequence (`mt-2` → `mt-6` → `mt-8`/`mt-10`), never arbitrary values.
+A single full-viewport surface, no routes. At lg and up the page locks to 100dvh with overflow hidden: ribbon (92px), stage (flex-1), dossier (clamp(240px, 34dvh, 380px) sheet plus 44px tabs). Below lg the page scrolls; the sheet grows to min(74dvh, 640px) and the stage holds a 540px minimum (440px at sm).
 
-### The Race Control Workbench
+The season ribbon is a virtualised horizontal track of 176x72px race cards on an 8px gap with 20px end padding, edges faded by a 28px mask, the selected weekend snapped to centre. Below md the brand and season switcher take their own 48px row above the track.
 
-The app shell (`WorkbenchShell`) is a 3-pane IDE-style layout, permanently hosting the AI copilot alongside whatever page is on screen rather than routing to it as a separate page — reasoning and the data it explains are never more than a click apart, the same THESIS as the original Timing Tower direction, extended to the copilot. Three responsive tiers, all driven by one `dockCollapsed` boolean plus Tailwind breakpoints (no separate "mode" state, no resizable-panel library — the dock is a fixed ~380–420px width with collapse/expand, not user drag-resize):
+The podium composition is shared by the 3D and lite stages: P1 centre at scale 1.0, P2 right at 0.84, P3 left at 0.72, each nosed toward the winner and revealed back to front (P3, then P2, then P1), each under its HUD callout. P1 carries the full callout (214px); P2 and P3 stay compact (172px); on phones all shrink to 116px.
 
-- **Below `md:`** — unchanged mobile territory: a fixed bottom tab bar (`BottomNav`, `surface` background, safe-area-aware) plus a sticky mobile top bar (`MobileTopBar`, wordmark + settings) replace the desktop chrome entirely. The copilot is reached via a floating action button that opens it as a full-screen sheet — the dock defaults *closed* here (and on `md:`–`lg:`), since a full-screen chat takeover on first load would bury the entire page.
-- **`md:`–`lg:`** — a slim icon-only `ActivityBar` (56px, `surface-sunken`, replaces the old labeled sidebar) appears alongside the `StatusStrip`, but the copilot dock opens as a slide-over with a dismissible backdrop rather than eating into table width.
-- **`lg:` and up** — the full 3-pane layout: `ActivityBar` + center canvas + an inline, permanently-open `CopilotDock` (~400px, `border-l`), with the `StatusStrip` as a thin footer row beneath all three panes.
+Known gap (not a rule): on the phone lite stage at 390px the three callouts overlap and the P1 scale does not read.
 
-`ActivityBar`, `BottomNav`, and `MobileTopBar`'s settings trigger all share the same `NAV_ITEMS` source so chrome can't drift out of sync across breakpoints.
-
-Tables collapse to stacked cards below `md:` (RaceDetail's driver grid becomes `MobileDriverRow` cards) rather than horizontally scrolling or truncating columns — a squeezed table is treated as a non-solution for dense tabular data on narrow screens.
+Horizontal gutters are 16px, 24px at lg; the stage title block insets 32px at lg. The stage is 3D only where it will run well (WebGL, no reduced-motion or data-saver, over 2 GB RAM and 2 cores, wider than 639px); phones default to the lite CSS 3D stage. A visible 3D / Lite toggle overrides and persists.
 
 ## Elevation & Depth
 
-The system is flat by default and uses borders, not shadows, as the primary separator between surfaces. Both shadow tokens that exist are near-imperceptible ambient shims (`--shadow-sm: 0 1px 2px rgba(0,0,0,0.06)`, `--shadow-md: 0 4px 12px rgba(0,0,0,0.12)`), applied at rest to cards and the active nav/tab item — never as a hover-triggered "lift." Depth between canvas, surface, and sunken-surface is conveyed by the three-step neutral tone ramp (`--bg-canvas` / `--bg-surface` / `--bg-surface-sunken`), not by shadow escalation.
+Flat surfaces, lit space. Panels do not cast shadows; depth is conveyed by the stage lighting (a teal radial glow at 15% under the cars, a silver radial at 10% from above, obsidian-900 to obsidian-950 falloff), the faded HUD grid behind it, and the carbon weave inside frames. In the 3D scene the cars are carbon clearcoat, silver and titanium metals under cool white studio key lights, with a teal rim light, teal ring under each car, and fog at #05070a.
+
+Known gap (not a rule): there is no legible floor reflection under the 3D cars yet.
 
 ### Shadow Vocabulary
-- **`--shadow-sm`** (`0 1px 2px rgba(0,0,0,0.06)`): default resting shadow on Card and on the active sidebar/tab item — a hairline separation, not a lift.
-- **`--shadow-md`** (`0 4px 12px rgba(0,0,0,0.12)`): declared as a heavier step in the token file; not observed in use by any shipped component. Available for a future overlay/popover surface, not yet spent.
+- **Laser glow** (`drop-shadow(0 6px 14px var(--color-laser-wash))` on a wrapper, with a 2px lift): the selected race card only. It sits on a wrapper because clip-path would cut a shadow on the chamfered element itself.
 
 ### Named Rules
-**The Border-Over-Shadow Rule.** The default way to separate one surface from another is a 1px `--border-default` line, not a shadow. Shadows are reserved for the resting Card token and active-state highlighting, never for implying hover elevation.
+**The Light Not Shadow Rule.** Separation is a hairline or a change of obsidian step; emphasis is teal light. No box shadows on panels.
+
+**The Material Under 4% Rule.** Weave and grid are material, not pattern: weave highlights at 3% white, grid lines at 7% silver, the grid masked to fade toward the edges.
 
 ## Shapes
 
-Corners are consistently soft and small: `--radius-sm` (4px) on badges and table-adjacent small controls, `--radius-md` (8px) on buttons, cards, nav items, and tab triggers, `--radius-lg` (12px) declared in tokens but not yet spent by a shipped component. There is no sharp-cornered or fully-rounded (pill) shape anywhere in the system — every interactive surface uses the same small-radius vocabulary, which reinforces the dense, tool-like character over a softer consumer-app look. Borders are always the single `--border-default` hairline; there is no double-border or outlined-badge pattern.
+Zero radius everywhere; corners are cut, not rounded. The laser-cut frame is a 1px hairline that follows 12px chamfers, drawn as the element's own background with an inset fill (the fill's cut is 0.41px tighter so the diagonal stays 1px). Default chamfers are top-right and bottom-left; variants cut all four corners (HUD callouts, decision blocks), the top two (folder tabs), or the bottom two (the dossier sheet). Small controls (buttons, chips, pills, inputs) are square with a plain 1px border. The only round forms are 6px status LEDs, compound swatches, and the ellipse plinth under each lite-stage car. Disabled placeholders for unavailable inputs use a dashed hairline.
 
 ## Components
 
 ### Buttons
-- **Shape:** `rounded-md` (8px), heights `h-8` (sm, 32px) / `h-10` (md, 40px).
-- **Primary:** `bg-accent` (red-500/red-400) with white text; `padding` follows the size scale (`px-3` sm / `px-4` md).
-- **Hover / Focus:** primary darkens to `--accent-hover`; all variants transition color/background over 150ms; focus-visible gets a 2px solid accent-colored outline with 2px offset, applied globally, not per-component.
-- **Secondary:** white/`gray-900` surface with a `border-default` outline, hovers to `surface-sunken`.
-- **Ghost:** transparent, `text-secondary` at rest, hovers to `text-primary` + `surface-sunken` fill. No dedicated tertiary variant exists.
+Engraved and quiet; teal outline when it acts.
+- **Shape:** square (0px), 1px border.
+- **Laser:** laser-500 border, laser-300 HUD-label text, 6-8px by 12px; hover fills laser-900. Used for Retry, Try again, jump-to-race, send.
+- **Ghost / icon:** no border, silver-300 or silver-400; hover lifts to silver-100 or laser. Disabled at 30-40% opacity.
+- **Focus:** a 2px laser-400 outline, 2px offset, on every focusable element.
 
-### Chips / Badges
-- **Style:** two semantic tones only — `known` (green tint background + AA-safe green text) and `pending` (sunken-gray background + muted text) — plus a generic `neutral` tone for non-session use. `rounded-sm` (4px), `text-xs`, always paired with a small check/circle glyph from lucide-react.
-- **State:** Badges are display-only in this build (no dismiss/select interaction); tone is the only variant axis, driven by boolean session-known data, never invented status language.
+### Chips
+- **Prompt chips:** line-strong border, silver-300 HUD label; hover turns border laser-500 and text laser-300.
+- **Telemetry pills:** micro mono in a square hairline box. Laser tone (laser-500 border, laser-900 fill, laser-300 text) for odds and a podium hit; plain for result, grid delta, and tyre. The tyre pill appears only when a starting compound is known; the odds pill only once the API supplies probabilities.
 
 ### Cards / Containers
-- **Corner Style:** `rounded-md` (8px).
-- **Background:** `--bg-surface` (white/gray-900).
-- **Shadow Strategy:** `--shadow-sm` at rest (see Elevation & Depth); no hover elevation change.
-- **Border:** 1px `--border-default` on every card.
-- **Internal Padding:** `p-5` (20px) by default; list-style cards (podium rows, history rows) override to `p-0` and let internal rows carry their own `px-5 py-4`/`py-3` padding with hairline dividers between them instead of gaps between separate cards.
+- **Corner Style:** laser-cut chamfer (12px), never radius.
+- **Background:** obsidian-800, with carbon weave on the dossier sheet and active tab.
+- **Shadow Strategy:** none (see Elevation & Depth).
+- **Border:** 1px line-strong frame; laser-400 frame with laser-900 fill when selected or hovered.
+- **Internal Padding:** 16px, 24px at lg; ribbon cards 8px by 12px.
+
+### Inputs / Fields
+- **Style:** square, 1px line-strong border, obsidian-900 fill, body-small silver-100 text, silver-400 placeholder, 40px minimum height.
+- **Focus:** border shifts to laser-500 plus the global laser focus ring.
+- **Disabled:** silver-500 HUD label, line border, not-allowed cursor. The strategy scenario controls are drawn but disabled under an amber "Simulator offline" tag; no control pretends to change a prediction.
 
 ### Navigation
-- Activity bar (`md:` and up): a slim 56px icon-only rail, `surface-sunken` background, a red accent bar that glides (CSS transform transition) to the active item's position rather than jumping; a tooltip supplies the label lost by dropping text.
-- Bottom nav (mobile, below `md:`): fixed full-width bar, `surface` background, icon-over-label items in a flex row; active item is text-only accent-colored (`text-accent-text`), no background change, distinguishing the mobile active state from the desktop one.
-- Both share one `NAV_ITEMS` list (icons from lucide-react) so item order and labels can't drift between the two breakpoint-specific components.
+- **Season ribbon:** obsidian-950 header, 92px at md. Brand wordmark in Chakra Petch 700 at 0.2em tracking with a teal interpunct; season stepper; draggable, wheel-scrollable race track; API LED and race step arrows at the end. Race cards show round in mono, circuit plate, a SPRINT tag on sprint weekends, race name, date and a status mark (check for completed, pulsing teal dot for live, hollow dot for upcoming). Selected card: laser frame, laser-900 fill, 2px lift and glow.
+- **Dossier tabs:** four folder tabs (numbered 01-04 with a // separator in HUD label). The active tab is a shared-layout carbon folder with a laser frame that springs between tabs and joins the sheet; inactive tabs sit 6px lower on obsidian-950. Arrow keys, Home and End move between tabs; 1-4 and [ ] are page shortcuts.
 
-### Copilot Dock
-- The AI assistant, permanently mounted in `WorkbenchShell` rather than routed to — its `messages`/`conversationId` state lives in a `CopilotProvider` context above the router `<Outlet/>`, so switching pages never resets an in-progress conversation (the defect the workbench build specifically corrects).
-- Header carries view-context badges (current driver/round, derived from route params) plus collapse and clear-thread controls. Body reuses the Card/message-bubble visual language already established by the original Agent page; quick-action chips are context-aware (a driver page suggests "why" questions about that driver, a race page about that race).
-- Citations and driver codes inside a reply are clickable — `text-accent-text underline decoration-dotted` — and scroll/flash (`flash-highlight` keyframe, `--telemetry-amber`) the matching row in the center canvas. This is the one place a telemetry color rides on something other than a bare dot, since it's a transient highlight, not a persistent chip/badge fill.
+### HUD Callout (signature)
+A cut-all frame over 88% obsidian-900 pinned above each car: P-rank in laser-300 label, driver code in Chakra Petch, car number in mono, a 2px team accent line with the team name, a row of telemetry pills, and a "Why this call" link. Hover lights the frame laser and the car together.
 
-### Signature Component: Timing-Sheet Row
-The recurring pattern across Dashboard's podium, RaceDetail's mobile driver cards, and History's race list: a large mono rank/position digit on the left, a two-line identity block (bold primary line, muted secondary line) in the middle, and a trailing affordance (a "Why" label + chevron, or just a chevron) on the right, the whole row as one tappable `Link`. This is the app's core visual signature — direct grounding of the THESIS/FIRST VIEWPORT commitment that a prediction and its reasoning are never more than a tap apart.
+### Source Chip (signature)
+A HUD label with a status dot that states where the numbers come from. "Live forecast" (teal, pulsing) appears only when the forecast is under 36 hours old; older forecasts say "Latest forecast"; replays of decided races carry the amber caveat that a replay flatters the model.
+
+### Motion
+Entrances rise 14px and fade over 0.4s on an expo-out curve (cubic-bezier(0.16, 1, 0.3, 1)), sections staggered 50ms apart; the dossier sheet swaps with a 30px rise. Loading uses a scanning sheen across skeleton rows, never a spinner. Reduced motion sets transition-duration to 0s, not the common 0.01ms: the 0.01ms version still transitioned layout widths.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** put every number, driver code, or timing value in JetBrains Mono with `tabular-nums` — never in Inter.
-- **Do** reserve red for the primary action, the active/selected state, and links only.
-- **Do** use the `--border-default` hairline as the default surface separator; reach for `--shadow-sm` only on Card and active nav/tab, never as a hover-triggered lift.
-- **Do** re-pick a color's small-text step off its neutral or signal scale (`gray-550`, `green-700`) rather than reusing the visually-nearest raw step, whenever that token will render as small informational text — check the actual contrast ratio, don't assume adjacency is safe.
-- **Do** collapse dense tables to stacked cards below `md:`, not a horizontally-scrolling or truncated table.
+- **Do** frame surfaces with the laser-cut chamfer (12px cut, 1px line-strong hairline) instead of radius or shadow.
+- **Do** spend laser teal only on live, selected, focused, or actionable things.
+- **Do** keep team colour to a 2px accent line or small car trim; fall back to silver (#94A3B8) for an unmatched team.
+- **Do** set every number in JetBrains Mono, tabular where figures align.
+- **Do** draw a telemetry pill only when its data is real: tyre once a starting compound is known, odds once probabilities exist, result once the race is decided.
+- **Do** say "Live forecast" only under 36 hours old, and mark replays of decided races with the amber caveat.
+- **Do** default phones and constrained devices to the lite stage, with a visible 3D / Lite toggle.
+- **Do** use transition-duration 0s under prefers-reduced-motion.
 
 ### Don't:
-- **Don't** put a kicker/eyebrow label above a page's `<h1>`. Three route headers shipped with an invented eyebrow pattern during this build and it was removed in finish review; it is not part of this system going forward. (The `text-muted` uppercase label style that remains — "Predicted top 3", a season-group header, table column headers — is a section label living *inside* body content, not a device sitting above a headline; don't conflate the two.)
-- **Don't** add a second accent hue for anything a button, link, or selection state could use. The system is one neutral ramp plus one accent plus two data-signal colors (green/red for SHAP polarity) — plus the Telemetry Accent subsection's crimson/cyan/amber, scoped strictly to live status indicators (see Colors above). That scoped exception is not a license to reach for a telemetry color anywhere else.
-- **Don't** use a pill (fully-rounded) shape or a sharp (0px) corner anywhere. The radius vocabulary is `sm`/`md`/`lg` (4/8/12px) only.
-- **Don't** introduce a drop shadow heavier than `--shadow-md`, or one that appears only on hover to simulate lift — depth in this system comes from the border + tone-ramp model, not shadow escalation.
+- **Don't** paint a car body in team colour or teal; a teal body sheen was tried and rejected as a livery. No team liveries.
+- **Don't** use amber or coral for anything but pending/warning and negative delta/failure.
+- **Don't** set text a reader needs in silver-500.
+- **Don't** put a kicker or eyebrow label above a heading.
+- **Don't** add box shadows, rounded cards, or a light theme.
+- **Don't** wire scenario controls that change nothing; unavailable tools are drawn disabled and say why.
+- **Don't** let weave or grid rise above material contrast (3% / 7%).

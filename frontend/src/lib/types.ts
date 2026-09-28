@@ -46,6 +46,11 @@ export interface DriverPrediction {
   predicted_quali_to_race_delta: number | null
   predicted_race_time_gap: number | null
   feature_row: Record<string, number | string | null>
+  // added by the API on read (src/api/enrich.py), absent on older/cached payloads
+  driver_number?: number | null
+  probabilities?: { win: number; podium: number; top10: number }
+  position_band?: [number, number]
+  expected_position?: number
 }
 
 export interface PredictionPayload {
@@ -105,6 +110,7 @@ export interface BacktestDriverEntry {
   finish_position: BacktestTargetResult
   quali_delta: BacktestTargetResult
   race_time: BacktestTargetResult
+  driver_number?: number | null
 }
 
 export interface BacktestRacePayload {
@@ -123,6 +129,18 @@ export interface ChatMessage {
   id: string
   role: 'user' | 'assistant'
   text: string
+  error?: boolean
+}
+
+// one row of GET /races?season=, the FastF1 event schedule
+export interface RaceSummary {
+  RoundNumber: number
+  EventName: string
+  Location: string
+  Country: string
+  EventFormat: string
+  Session1DateUtc: string | null
+  EventDate: string | null
 }
 
 export type RegulationDocType = 'regulation' | 'steward_decision'

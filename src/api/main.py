@@ -13,6 +13,7 @@ import os
 import uuid
 from functools import lru_cache
 
+import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,6 +21,7 @@ from src.agent.graph import ask as agent_ask
 from src.agent.graph import build_graph
 from src.api.cache import get_json
 from src.api.corpus_files import get_document_text, list_documents, search_documents
+from src.api.enrich import with_car_numbers, with_probabilities
 from src.api.schemas import AskAgentRequest, ExplainRequest
 from src.data.fastf1_client import event_schedule
 from src.models.explain import shap_explanation
@@ -69,14 +71,17 @@ def health():
 @app.get("/races")
 def races(season: int):
     sched = event_schedule(season)
-    cols = ["RoundNumber", "EventName", "Location", "EventDate"]
-    return sched[cols].to_dict("records")
+    cols = ["RoundNumber", "EventName", "Location", "Country", "EventFormat", "Session1DateUtc", "EventDate"]
+    out = sched[cols].copy()
+    for c in ("Session1DateUtc", "EventDate"):  # ISO strings; NaT (an unscheduled session) becomes null
+        out[c] = out[c].apply(lambda v: None if pd.isna(v) else v.isoformat())
+    return out.to_dict("records")
 
 
 @app.get("/predictions/latest")
 def predictions_latest():
     try:
-        return get_json("latest.json")
+        return with_probabilities(get_json("latest.json"))
     except FileNotFoundError:
         raise HTTPException(404, "no predictions have been generated yet -- run src.models.refresh_job")
 
@@ -84,7 +89,7 @@ def predictions_latest():
 @app.get("/predictions/{season}/{round}")
 def predictions_for_race(season: int, round: int):
     try:
-        return get_json(f"{season}_{round}.json")
+        return with_probabilities(get_json(f"{season}_{round}.json"))
     except FileNotFoundError:
         raise HTTPException(404, "no cached prediction for this race yet")
 
@@ -115,7 +120,7 @@ def backtest_races():
 @app.get("/backtest/{season}/{round}")
 def backtest_for_race(season: int, round: int):
     try:
-        return get_json(f"backtest/{season}_{round}.json")
+        return with_car_numbers(get_json(f"backtest/{season}_{round}.json"))
     except FileNotFoundError:
         raise HTTPException(404, "no backtest data for this race")
 

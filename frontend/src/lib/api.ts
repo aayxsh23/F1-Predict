@@ -3,6 +3,7 @@ import type {
   BacktestIndexEntry,
   BacktestRacePayload,
   PredictionPayload,
+  RaceSummary,
   RegulationDetail,
   RegulationDocument,
   RegulationSearchHit,
@@ -21,9 +22,12 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  // Content-Type only when there is a body: on a GET it is not a CORS-safelisted
+  // header, so it would force a preflight round trip on every cross-origin read
+  // (and a cold-started free-tier backend pays that twice)
   const res = await fetch(`${BASE_URL}${path}`, {
     ...init,
-    headers: { 'Content-Type': 'application/json', ...init?.headers },
+    headers: init?.body ? { 'Content-Type': 'application/json', ...init.headers } : init?.headers,
   })
   if (!res.ok) {
     const body = await res.json().catch(() => null)
@@ -34,6 +38,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 export const api = {
   health: () => request<{ status: string }>('/health'),
+  races: (season: number) => request<RaceSummary[]>(`/races?season=${season}`),
   predictionsLatest: () => request<PredictionPayload>('/predictions/latest'),
   predictionsForRace: (season: number, round: number) =>
     request<PredictionPayload>(`/predictions/${season}/${round}`),

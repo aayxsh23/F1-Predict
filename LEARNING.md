@@ -10,6 +10,62 @@ Agents: update this file per AGENTS.md's "Multi-agent coordination" section — 
 
 ---
 
+## Turning a point prediction into probabilities without training a new model
+
+### Why a regressor's output can't just be relabelled as a chance
+
+The finish-position model outputs one number per driver (e.g. ANT 12.89, VER 12.91). That number orders the field, but it says nothing about how *sure* the model is: a 0.02 gap and a 5-place gap both just mean "ahead". To say "14% to win" you need a model of how much real races scramble the model's order.
+
+The tempting shortcut is to divide each score by the field total, or push it through a softmax with a hand-picked temperature. That produces numbers that look like probabilities but have never been checked against a single real race.
+
+### Plackett-Luce: sampling orders instead of guessing percentages
+
+Plackett-Luce treats a race result as drawn one place at a time:
+- P1 goes to driver i with probability proportional to exp(score_i / tau).
+- P2 is drawn the same way from whoever is left, and so on down the field.
+
+The Gumbel-max trick samples a whole order in one step: add independent Gumbel noise to score/tau and sort. Repeat that 10,000 times, and "win" is simply the fraction of draws where a car finished first.
+
+That makes the probabilities consistent with each other for free:
+- win chances always sum to exactly 1;
+- podium chances always sum to exactly 3;
+- every sampled order is a valid 1..N permutation, with no ties.
+
+The only free parameter is tau, the noise level. It is fitted by maximum likelihood on **out-of-fold** predictions. For each time-based fold, the model is retrained on earlier races only, then asked how likely the real finishing order of each later race was. Fitting tau on the model's own training rows would make results look far less noisy than they are, because the model has already seen those outcomes.
+
+### Two lessons the calibration table taught
+
+1. **Check calibration, not just a score.** One tau fitted to the whole order gave a decent Brier score, yet the reliability table showed cars given 20-40% to win actually won 50% of the time. The midfield shuffles far more than the front, and one temperature averaged the two. Fitting a separate tau on the first three places fixed the front without distorting the band for the rest of the field.
+2. **Retirements are a different process, so model them separately.** DNFs are excluded from the tau fit and sampled as independent coin-flips, from each driver's and team's recency-weighted DNF rates. That keeps a car that crashed on lap 1 from teaching the model that the order is pure noise.
+
+Brier scores are compared against a "uniform" baseline, where every car is equally likely. Beating that is the minimum bar. The honest reading of the result is "clearly better than knowing nothing, and calibrated", not "accurate".
+
+## Text extracted from a PDF can look normal and still refuse to wrap
+
+The steward-decision reader showed each ruling's Decision line running straight out of its frame. Measuring it showed 621px of text in a 578px box with ordinary `white-space: normal`, which should be impossible for a sentence of short words.
+
+The cause was invisible: the FIA documents are HTML pages converted to PDF, and `pypdf` returns their spaces as U+00A0, the non-breaking space. On screen it looks identical to a space, but a browser may not break a line there, so a whole paragraph becomes one unbreakable word. The full-document view hid the problem only because every line of the PDF already ends in a hard newline.
+
+The fix is one `replace(/ /g, ' ')` wherever PDF text gets reflowed. The general habit: when layout behaves impossibly around extracted or pasted text, look for invisible characters before looking at the CSS.
+
+## A reduced-motion rule can break layout, not just animation
+
+The common accessibility snippet sets `transition-duration: 0.01ms !important` on every element under `prefers-reduced-motion`. The CSS default for `transition-property` is `all`, and that default is normally harmless only because the default duration is 0.
+
+Forcing a non-zero duration onto every element turns *every* property change into a transition, including a width set from JavaScript. Anything that measures layout right after a change reads the old value mid-transition; here, that was centring a horizontal scroller on the selected race. `transition-duration: 0s` means "no transition at all", which is what reduced motion actually wants.
+
+It was found only because headless Chrome reports reduced motion by default, and the ribbon refused to centre. Instrumenting `getComputedStyle` and `getAnimations()` showed four `CSSTransition`s pinning the width, which no `!important` rule can override.
+
+## A local commit's date isn't the date it started running in CI — and two "identical" live fetches aren't identical
+
+### `git log` tells you when a commit was authored, not when GitHub Actions first saw it
+
+The 09-13 PROGRESS.md entry below this one describes a real fix (commit raw race data + a `.gitignore` un-ignore rule) for the scheduled workflow's `FileNotFoundError`. Reading only that entry, plus a `git log` that shows the fix's commit already sitting in `master`'s history, makes it look like the fix has been live for over a week. But a screenshot of a *freshly failed* run with the exact same error demanded an actual answer to "is the fix really live," not just "does the fix exist in history" — those are different questions whenever a commit was made locally and, per that same 09-13 entry, deliberately **not pushed** pending review. `git log`'s commit date is set at `git commit` time and never changes; it says nothing about when (or whether) that commit reached the remote GitHub actually runs against. The only source of truth for "what did CI actually check out" is asking CI itself: the GitHub REST API's `/actions/workflows/.../runs` endpoint reports each run's real `head_sha`, and `/commits/master` reports when `origin/master` itself last moved (`committer.date` there reflects the push, not the original local commit timestamp when history gets rewritten or delayed in reaching the remote — the two can diverge). Querying both, unauthenticated (this is a public repo, so no token was needed), showed run #56's `head_sha` was the *pre-fix* commit, and `origin/master`'s current tip had only been pushed minutes before this investigation started — confirming the screenshot was real but stale, not evidence the fix was broken. The generalizable habit: when "is X actually deployed/live" matters and you have both a local repo and a remote CI system, check the remote's own record of what it ran, don't infer it from local git history.
+
+### Calling the same "pure-looking" function twice isn't free when it secretly makes network calls
+
+`refresh_job.py`'s `build_prediction_payload()` looked like ordinary data-shuffling: fetch a DataFrame, predict on it, read some columns off. What made it fragile is that `build_live_rows()` — called once directly and a second time inside `predict_upcoming_race()` — isn't a pure function of its arguments at all; it's several real HTTP calls to FastF1's live API for whatever practice/qualifying/weather data happens to exist *at the exact moment each call runs*. Two calls a few hundred milliseconds apart, for the same `(season, round_number)`, can legitimately return different results if a session's data becomes available (or briefly unavailable — FastF1 returned "22 real drivers" and, seconds later on a second manual call, "0 drivers, session not available" for the identical round during this investigation) in that window. The code then joined the two independently-fetched results by driver label (`feature_rows.loc[driver]`) — a pattern that's completely safe when both sides come from the same DataFrame, and silently unsafe when they come from two separate live fetches that are only *usually* consistent with each other. This is the same class of bug as calling `datetime.now()` twice and assuming both calls return the same instant: each individual call is correct, and the assumption that calling it twice yields the same answer is the actual bug. The fix generalizes past this one file: any function that touches the network, the clock, or other mutable outside state should be called once per logical operation and its result reused, not called again "for convenience" wherever its output is needed next — reuse via one variable, not re-derivation via a second call, whenever the world might have moved between the two calls.
+
 ## "Strictly prior rows only" isn't true just because you sorted by date first — ties break the whole contract
 
 ### The bug hides behind a docstring that's correct in spirit and wrong in the one case that matters

@@ -14,7 +14,8 @@ import pandas as pd
 
 from src.data.fastf1_client import event_schedule
 from src.models.features import FEATURE_COLS
-from src.models.live_predict import build_live_rows, predict_upcoming_race
+from src.models.live_predict import build_live_rows
+from src.models.predict import predict_all
 
 OUT_DIR = Path(__file__).resolve().parents[2] / "data" / "predictions"
 
@@ -35,22 +36,24 @@ def _clean(v):
 
 
 def build_prediction_payload(season: int, round_number: int) -> dict:
+    # one live fetch, not two -- build_live_rows() hits several real FastF1
+    # endpoints, and calling it a second time (previously via
+    # predict_upcoming_race()) risked the two independent live fetches
+    # disagreeing on driver data between calls, not just wasting requests
     live_rows = build_live_rows(season, round_number)
-    predicted = predict_upcoming_race(season, round_number)
-    feature_rows = live_rows.set_index("driver")[FEATURE_COLS]
+    predicted = predict_all(live_rows).sort_values("predicted_finish_position").reset_index(drop=True)
 
     known_sessions = {
         "practice": bool(predicted["practice_pace"].notna().any()),
         "qualifying": bool(predicted["quali_gap_to_pole"].notna().any()),
         "grid": bool(predicted["grid_position"].notna().any()),
-        "compound": bool(live_rows["starting_tire_compound"].notna().any()),
+        "compound": bool(predicted["starting_tire_compound"].notna().any()),
     }
 
     drivers = []
     for _, row in predicted.iterrows():
-        driver = row["driver"]
         drivers.append({
-            "driver": driver, "team": row["team"],
+            "driver": row["driver"], "team": row["team"],
             "grid_position": _clean(row["grid_position"]),
             "quali_gap_to_pole": _clean(row["quali_gap_to_pole"]),
             "practice_pace": _clean(row["practice_pace"]),
@@ -58,7 +61,7 @@ def build_prediction_payload(season: int, round_number: int) -> dict:
             "predicted_finish_position": _clean(row["predicted_finish_position"]),
             "predicted_quali_to_race_delta": _clean(row["predicted_quali_to_race_delta"]),
             "predicted_race_time_gap": _clean(row["predicted_race_time_gap"]),
-            "feature_row": {c: _clean(v) if not isinstance(v, str) else v for c, v in feature_rows.loc[driver].items()},
+            "feature_row": {c: _clean(row[c]) if not isinstance(row[c], str) else row[c] for c in FEATURE_COLS},
         })
 
     return {
