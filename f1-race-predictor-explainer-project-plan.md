@@ -175,13 +175,36 @@ The plan's own phrase "live data and tool calls" implied a ReAct-style agent whe
 
 Backend built first (user asked to skip the UI initially), frontend ("Pit Wall") built same day in a follow-up request using the impeccable/ui-ux-pro-max design skill. Both verified end-to-end per [phase7-ui-backend-plan.md](phase7-ui-backend-plan.md)'s design (API skeleton, SHAP endpoint, backtest export, GitHub Actions automation, React/Vite/Tailwind frontend) — see PROGRESS.md/LEARNING.md for the real bugs hit and fixed along the way, and [frontend/DESIGN.md](frontend/DESIGN.md) for the frontend's own design-system record. Two real deviations from the plan doc, both the same shape: it designed `/explain`/`/ask-agent` and their frontend pages as disabled `501`/"coming soon" stubs because it was written before Phases 4-6 existed; both are real, working features now (backend wired to `rag.explain.explain()`/`agent.graph.ask()`, frontend has a full SHAP+explanation page and a real agent chat page), since a stub would be a strict downgrade from functionality that already works. Nothing has been pushed to GitHub or deployed yet — this was a local build+verify session; the scheduled workflow hasn't run for real on a schedule (run manually as verification instead).
 
+### Phase 8 (2026-09-28): production pass, new predictions, Gemini chat, Vercel
+
+User-requested after an audit ("start all"; chat on Gemini; deploy on Vercel). Full detail in PROGRESS.md, the why in LEARNING.md, numbers in docs/MODELS.md.
+
+- **Model correctness:**
+  - One model per target now serves every weekend stage, trained on copies of each row with the not-yet-known columns blanked. Before qualifying, the old model was worse than a naive guess.
+  - Accuracy is walk-forward on races neither the weights nor the hyperparameters saw; the History view uses the same predictions.
+  - Forecast weather replaces measured race weather.
+  - Qualifying and race gaps are in % (race gaps count lapped cars properly).
+  - Previous-era form is weighted 0.1 after the 2026 rule reset.
+- **New outputs:**
+  - predicted qualifying lap times with pole/Q3/Q1-exit odds
+  - race length and safety-car chance
+  - retirement risk, beats-teammate and head-to-head
+  - the forecast's timeline through the weekend
+  - championship title odds
+  - the **strategy simulator**: no longer deferred, fitted on real stint data
+- **Chat:** the keyword-routed agent became a LangGraph tool-calling agent on Gemini with 13 tools, streamed, with rule citations. Retrieval is an article-level BM25 index instead of Chroma + MiniLM.
+- **Production:**
+  - The API precomputes everything heavy, so it runs as a Vercel function.
+  - Requirements are split and pinned.
+  - CI, a gated weekly retrain, and a refresh job that commits only when the forecast changes.
+
 ---
 
 ## Future phases (stretch goals, not required for v1)
 
 | Stretch feature | What it adds | Why it's deferred |
 |---|---|---|
-| **Strategy simulation** | "What if he pits lap 20 vs lap 30?" — a different kind of model (simulation, not classification/regression) | Genuinely different problem type from the two predictors; not a quick add-on |
+| ~~**Strategy simulation**~~ | Built in Phase 8 (`src/strategy/model.py`) | — |
 | **Cross-prediction reasoning** | Explainer compares two predictions at once (e.g. why race position improves but quali doesn't) | Needs multi-input reasoning, harder than single-output explanation — natural v2 feature |
 | **Penalty likelihood model** | Predicts penalty risk from incident type | Needs a labeled steward-decision dataset, which is harder to build than lap-time data |
 | **Dedicated telemetry deep learning model** | A neural net over lap-by-lap telemetry (sequence data — e.g. tire degradation or pace-drop prediction) | Telemetry is genuinely sequence-shaped and suits DL better than race-summary tables do, but it's a separate modeling effort from the LLM fine-tuning already in v1 — only worth it if you want DL on structured time-series data specifically |

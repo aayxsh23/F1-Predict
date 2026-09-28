@@ -7,8 +7,9 @@ import pandas as pd
 
 # First season of each technical-regulation era. Form from a previous era
 # says little about a new car: counting those races at a tenth of their
-# weight cut held-out finish error 3.287 -> 3.268 and qualifying 0.735 -> 0.715
-# (tested 0.05 to 0.6; 0.05-0.15 were equally good).
+# weight cut held-out finish error after qualifying 3.287 -> 3.263 places and
+# pre-practice qualifying error 0.735 -> 0.715% (weights 0.05 to 0.6 were
+# tested; 0.05-0.15 were equally good).
 ERA_STARTS = (2022, 2026)
 CROSS_ERA_WEIGHT = 0.1
 

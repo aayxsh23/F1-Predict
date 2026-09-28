@@ -139,7 +139,7 @@ components:
 
 **Creative North Star: "The Night Garage"**
 
-The product is one surface: a pit-garage telemetry wall after dark. A 92px season ribbon runs across the top, three procedurally built cars stand on a lit stage, and a four-tab dossier of tools sits beneath them. The ground is obsidian carbon, the only light is one laser teal, and every piece of type is etched silver. Depth comes from light and material (weave, micro-grid, radial glow), not from shadowed cards.
+The product is one surface: a pit-garage telemetry wall after dark. A 92px season ribbon runs across the top, three procedurally built cars stand on a lit stage, and a five-tab dossier sits beneath them: Forecast, Why this prediction, Strategy & analyst, Title race, Rules & rulings. The ground is obsidian carbon, the only light is one laser teal, and every piece of type is etched silver. Depth comes from light and material (weave, micro-grid, radial glow), not from shadowed cards.
 
 Density is HUD density: small caps labels, mono numbers, hairline frames cut at the corners. Every number is one click from its explanation, so the chrome stays quiet and the teal is spent on what is live, selected, or actionable. The cars carry no liveries; team identity is a thin line of colour, and teal reaches the cars only as light.
 
@@ -165,7 +165,7 @@ A single-accent dark palette: five obsidian steps, a silver type ramp, one laser
 - **Laser Wash** (laser-wash): text selection and the selected race card's glow.
 
 ### Tertiary
-- **Pending Amber** (signal-amber): pending and warning only. "Simulator offline", replay caveats, archive view, the API waking LED.
+- **Pending Amber** (signal-amber): pending and warning only. The API waking LED and other not-ready states.
 - **Loss Coral** (signal-coral): negative delta and failure only. Lost grid places, SHAP features pushing the wrong way, an errored chat message, API down.
 
 ### Data: tyre compounds
@@ -271,7 +271,7 @@ Engraved and quiet; teal outline when it acts.
 ### Inputs / Fields
 - **Style:** square, 1px line-strong border, obsidian-900 fill, body-small silver-100 text, silver-400 placeholder, 40px minimum height.
 - **Focus:** border shifts to laser-500 plus the global laser focus ring.
-- **Disabled:** silver-500 HUD label, line border, not-allowed cursor. The strategy scenario controls are drawn but disabled under an amber "Simulator offline" tag; no control pretends to change a prediction.
+- **Disabled:** silver-500 HUD label, line border, not-allowed cursor. No control pretends to change a prediction: the safety-car lap slider in the strategy panel is live, and re-runs the real strategy model.
 
 ### Navigation
 - **Season ribbon:** obsidian-950 header, 92px at md. Brand wordmark in Chakra Petch 700 at 0.2em tracking with a teal interpunct; season stepper; draggable, wheel-scrollable race track; API LED and race step arrows at the end. Race cards show round in mono, circuit plate, a SPRINT tag on sprint weekends, race name, date and a status mark (check for completed, pulsing teal dot for live, hollow dot for upcoming). Selected card: laser frame, laser-900 fill, 2px lift and glow.
@@ -281,7 +281,7 @@ Engraved and quiet; teal outline when it acts.
 A cut-all frame over 88% obsidian-900 pinned above each car: P-rank in laser-300 label, driver code in Chakra Petch, car number in mono, a 2px team accent line with the team name, a row of telemetry pills, and a "Why this call" link. Hover lights the frame laser and the car together.
 
 ### Source Chip (signature)
-A HUD label with a status dot that states where the numbers come from. "Live forecast" (teal, pulsing) appears only when the forecast is under 36 hours old; older forecasts say "Latest forecast"; replays of decided races carry the amber caveat that a replay flatters the model.
+A HUD label with a status dot that states where the numbers come from. "Live forecast" (teal, pulsing) appears only when the forecast is under 36 hours old; older forecasts say "Latest forecast" and name the session the forecast has seen ("after FP2"); past races say "Past race · predicted vs result", because they are predicted by a model trained only on earlier races.
 
 ### Motion
 Entrances rise 14px and fade over 0.4s on an expo-out curve (cubic-bezier(0.16, 1, 0.3, 1)), sections staggered 50ms apart; the dossier sheet swaps with a 30px rise. Loading uses a scanning sheen across skeleton rows, never a spinner. Reduced motion sets transition-duration to 0s, not the common 0.01ms: the 0.01ms version still transitioned layout widths.
@@ -294,7 +294,7 @@ Entrances rise 14px and fade over 0.4s on an expo-out curve (cubic-bezier(0.16, 
 - **Do** keep team colour to a 2px accent line or small car trim; fall back to silver (#94A3B8) for an unmatched team.
 - **Do** set every number in JetBrains Mono, tabular where figures align.
 - **Do** draw a telemetry pill only when its data is real: tyre once a starting compound is known, odds once probabilities exist, result once the race is decided.
-- **Do** say "Live forecast" only under 36 hours old, and mark replays of decided races with the amber caveat.
+- **Do** say "Live forecast" only under 36 hours old, and label past races as predicted-vs-result.
 - **Do** default phones and constrained devices to the lite stage, with a visible 3D / Lite toggle.
 - **Do** use transition-duration 0s under prefers-reduced-motion.
 

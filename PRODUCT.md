@@ -24,18 +24,18 @@ Most prediction content (broadcast graphics, punter tip sites) states a number w
 
 ## Operating Context
 
-- Predictions update automatically on a schedule (GitHub Actions, every 30 min) and sharpen through a race weekend as real practice/qualifying/grid data becomes available — a fan checking Thursday and checking Saturday should see a visibly more informed prediction, not the same static number.
-- The qualifying-gap prediction is available before qualifying happens; the other three predictions exist from the moment a race is added to the calendar and only get more accurate as the weekend progresses — there's no "not available yet" state for any of the four, only "less informed yet."
-- Historical/backtest data lets a fan check the model's track record on already-decided races, not just trust an unfalsifiable live number.
-- A live-standings agent answers open-ended, scenario-based championship questions in the same session, with memory for follow-ups.
+- Forecasts refresh automatically (GitHub Actions: every 30 minutes Thursday to Sunday, daily otherwise) and sharpen through a race weekend as practice, qualifying and grid data arrive. A fan checking Thursday and again Saturday night sees a visibly better-informed forecast, and the "Why" tab shows how it moved session by session.
+- Every prediction exists from the moment a race is next on the calendar; there is no "not available yet", only "less informed yet". Qualifying is predicted before it happens.
+- Past races show what the model predicted before the race next to what happened, from a model trained only on earlier races, so the track record can be checked, not taken on trust.
+- The analyst chat answers open questions (forecasts, strategy, the title fight, the rules) with every number drawn from the app's own data.
 
 ## Capabilities and Constraints
 
-- Backend: FastAPI, already built (`src/api/main.py`) — prediction payloads also carry sampled win/podium/top-10 probabilities and a P10–P90 finishing band (`src/api/enrich.py`); `/races`, `/predictions/latest`, `/predictions/{season}/{round}`, `/predictions/{season}/{round}/explain` (per-driver SHAP numbers), `/backtest/races`, `/backtest/{season}/{round}`, `POST /explain` (full natural-language explanation, real — not a stub), `POST /ask-agent` (real live-standings agent with conversation memory via `conversation_id`).
-- All four predictions and the natural-language explanation are real and working end to end today, verified against live 2026 season data — nothing in this product is a "coming soon" placeholder, unlike the state phase7-ui-backend-plan.md was originally written against.
-- No user accounts, no write actions anywhere in the product — everything is read-only public F1 data.
-- Free-tier hosting: the backend cold-starts after idling: the frontend must not blank the screen or read as broken while a first request wakes it.
-- No live telemetry/timing feed (lap-by-lap, sector times) — the product operates at the level of session results and rolling form, not live race telemetry.
+- Backend: FastAPI (`src/api/main.py`) deployed as one Vercel serverless function beside the static frontend (`vercel.json`, `api/index.py`). It serves precomputed JSON (forecasts with their SHAP breakdowns, the walk-forward archive, the regulations index) and does light live work: odds sampling, the strategy simulator, championship odds and the Gemini-backed assistant (`POST /chat`, server-sent events). Full route list: README.md.
+- Predictions: qualifying (gap and lap time, pole/Q3/Q1-exit odds), finishing position (win/podium/points odds, likely range, retirement risk, beats-teammate), places gained, and gap to the winner with an estimated race length; tyre strategy with pit windows and a safety-car scenario; championship title odds.
+- No user accounts and nothing written by users; the only user input is chat text, rate-limited per IP and never stored (the conversation lives in the browser).
+- Free-tier hosting cold-starts after idling: the frontend must never blank the screen or read as broken while the first request wakes it.
+- No live timing feed: the product works at the level of sessions, stints and rolling form, not lap-by-lap telemetry during a session.
 
 ## Brand Commitments
 
@@ -43,7 +43,7 @@ No existing name, logo, or visual identity beyond the working title "F1 Race Pre
 
 ## Evidence on Hand
 
-Real trained XGBoost models (4 targets, metrics in `src/models/saved/*_metrics.json`), a real historical backtest across 105 races (2022–2026), a real RAG corpus (FIA regulations, steward decisions, 25 circuit write-ups), and real live 2026-season data verified end-to-end (see PROGRESS.md's Phase 6/7 entries) — no invented sample data, testimonials, or case studies; every number the UI will show has a real backing source.
+Real trained XGBoost models (4 targets, held-out metrics in `src/models/saved/*_metrics.json`, explained in docs/MODELS.md), a walk-forward archive of 97 races (2022–2026), lap-by-lap stint data behind the strategy model, a regulations index (FIA 2026 regulations, steward decisions, 27 circuit write-ups), and live 2026-season data verified end to end — no invented sample data, testimonials, or case studies; every number the UI will show has a real backing source.
 
 ## Product Principles
 
@@ -51,7 +51,7 @@ Real trained XGBoost models (4 targets, metrics in `src/models/saved/*_metrics.j
 2. Every prediction is one click from its own reasoning — the SHAP breakdown and the natural-language explanation are always reachable from wherever a prediction is shown, not buried behind a separate flow.
 3. Design for a fan's vocabulary, not a data scientist's — "grid position," "quali gap," "recent form" over "feature," "SHAP value," "target variable."
 4. Currency is a first-class fact, not a footnote — every prediction view states when it was generated, since the product's core promise is that it updates through the weekend.
-5. The four predictions and history/backtest are the product; the agent chat is a real, secondary surface, not a gimmick bolted on — it gets a genuine, uncluttered space, not a corner widget.
+5. The predictions and their track record are the product; the analyst chat is a real way into them, not a gimmick: it gets its own uncluttered space, answers only from the app's data, and cites the rules it uses.
 
 ## Accessibility & Inclusion
 

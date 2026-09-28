@@ -6,6 +6,66 @@ Read this file first when picking up work in a new session — it tells you what
 
 ---
 
+## 2026-09-28: audit, then "start all": honest models, new predictions, Gemini chat, Vercel-ready
+
+User asked for a full review, then approved everything. They chose the Gemini API for the chat and Vercel for hosting. Scope changes are recorded in AGENTS.md (strategy simulator now in scope; Gemini replaces local-only for the chat).
+
+- **Commits (branch `UI`, not pushed):**
+  - `5505006`: the pending 09-25 workbench snapshot
+  - `b29f931`: data, models, strategy, chat, API
+  - `add2f8b`: frontend, serving, CI
+  - The docs and README go with the final commit.
+- **Data.** All 107 races re-ingested from the FastF1 cache, adding:
+  - lap-by-lap stints (`data/raw/laps/`, committed)
+  - absolute practice and pole times
+  - a lapped-car-aware race gap (FastF1's lapped-car `Time` is a within-lap gap)
+  - winner duration, safety-car laps
+  - the Open-Meteo race-start forecast
+
+  Ingest now skips races that haven't started.
+- **New venue.** Round 16 (the "Bahrain GP") runs at Sepang per Jolpica; FastF1 labels it "Kuala Lumpur". Added a hand-curated circuit row, a write-up and coordinates.
+- **Models.**
+  - `src/models/train.py` replaces the four `train_*.py` files and `training_common.py`.
+  - Stage-augmented training; tuning on the first 60% of races; walk-forward evaluation.
+  - Era weighting 0.1; targets in %.
+  - Held-out on 43 races: finish 3.26 vs 3.43 baseline after qualifying (3.71 vs 3.82 before practice, previously 4.09, worse than baseline); race gap 0.64% vs 0.85%.
+  - Weak spot: qualifying before practice is 0.715% vs a 0.703% baseline (a residual variant helped there but hurt after practice, so not adopted).
+  - Tried and dropped: long-run pace, `rank:pairwise`.
+- **New outputs.**
+  - `estimates.py`: pole lap, race length, safety-car chance
+  - `probabilities.py`: per-stage calibration, pole/Q3/Q1-exit odds, retirement risk, beats-teammate
+  - `scenarios.title_odds`: championship odds
+  - `src/strategy/model.py`: tyre-wear fit plus simulator
+  - forecast timeline snapshots
+- **Chat.**
+  - `src/agent/chat.py` + `tools.py`: LangGraph `create_agent` on Gemini (`GEMINI_MODEL`, default `gemini-3.8-flash`), 13 tools, SSE via `POST /chat`, stateless.
+  - Removed `graph.py` (keyword router) and `/ask-agent`.
+  - `src/rag/corpus.py`: article-chunked BM25 index (`data/corpus/index.json`) replaces Chroma at serving time.
+  - The local Llama path still works offline via `requirements-llm.txt`.
+- **Serving.** SHAP breakdowns precomputed into forecasts. The API imports no pandas/XGBoost/torch/FastF1; its Linux bundle is 179 MB, down from 480 MB. `api/index.py`, `vercel.json`, `.vercelignore`. Requirements split and pinned.
+- **Automation.**
+  - `ci.yml`
+  - `retrain.yml`: weekly, gated on beating baselines plus the tests
+  - `refresh-predictions.yml`: pinned deps, concurrency group, dense Thu-Sun, writes nothing when the forecast is unchanged
+- **Frontend.**
+  - Five tabs: Forecast (race/qualifying), Why, Strategy & analyst, Title race, Rules.
+  - Streaming Markdown chat with lookup steps and citations that deep-link to the article.
+  - Tyre colours added to DESIGN.md.
+- **Bugs found and fixed:**
+  - quali detection counted a not-yet-run session as "happened"
+  - the JSON cache read files as cp1252 on Windows ("MontrÃ©al")
+  - race gaps all blanked when one car had none
+  - `_points` crashed with fewer cars than points places
+  - the mobile chat column overflowed
+- **Verified:**
+  - `pytest`: 49 passed.
+  - `tsc` and `vite build` clean.
+  - Live refresh for round 16; a second run is a no-op.
+  - Playwright on real Chrome at 1440x900 and 390x844: every tab, a safety-car scenario, a chat round-trip through the real SSE endpoint with a scripted model, a citation deep link, and no horizontal overflow.
+- **Not verified here:** a real Gemini call (no key on this machine) and a real Vercel deploy. Next: add `GEMINI_API_KEY` to `.env`, try `python -m src.agent.cli`, then deploy (README, "Deploy to Vercel").
+
+---
+
 ## 2026-09-25 — Frontend replaced with the "Night Garage" workbench; real win/podium probabilities added to the API
 
 User asked for a Mercedes-AMG-Petronas-inspired single surface (the brief pinned the palette and a three-zone layout). When asked, they chose: build real probabilities for the HUD, a real chat with the race-strategy simulator visibly locked, replace the whole app, and author the cars procedurally.

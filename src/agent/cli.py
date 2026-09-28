@@ -6,6 +6,9 @@ from src.agent.chat import stream_chat
 
 
 def main():
+    from dotenv import load_dotenv
+
+    load_dotenv()
     sys.stdout.reconfigure(encoding="utf-8")
     history: list[dict] = []
     print("Ask about forecasts, strategy, standings or the rules (blank line to quit).\n")

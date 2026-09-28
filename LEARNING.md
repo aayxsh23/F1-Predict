@@ -10,6 +10,83 @@ Agents: update this file per AGENTS.md's "Multi-agent coordination" section — 
 
 ---
 
+## Phase 8: making the predictions honest, then making them useful
+
+### "XGBoost handles missing values" is true, and not enough
+
+A live forecast on Thursday has no grid and no qualifying times, so those columns are NaN. The old design leaned on XGBoost's missing-value handling to cope. Each tree split learns a default direction to send NaNs.
+
+The catch: a default direction is learned from the NaNs seen in training, and there were almost none. The grid was known for 99% of historical rows, so the split had never meaningfully learned what "no grid" should mean. The measured result: before qualifying, the finish model's error was 4.09 places, worse than just guessing each driver's recent average finish (3.62).
+
+The fix is to show the model the situation it will face. Each historical race appears four times in training, once per weekend stage, with the columns not yet known at that stage blanked (`features.mask_for_stage`). That cut the pre-qualifying error to 3.71 and cost almost nothing after qualifying.
+
+**The general lesson:** if a feature can be missing at prediction time for a structural reason, it has to be missing in training in the same way. Otherwise the training data simply doesn't contain the question you will ask.
+
+The same idea caught two more mismatches:
+- **Weather.** The model trained on the race's *measured* weather, but a live forecast only ever has a *forecast*. Both now use Open-Meteo forecasts; its archive makes historical forecasts available back to 2022.
+- **Starting tyres.** "Past results on this tyre here" was a top feature, but the starting tyre is never known when the forecast runs. The feature now goes blank when the tyre is unknown, instead of being looked up under the key `"nan"`.
+
+### Three ways to fool yourself about accuracy, and what replaced them
+
+1. **In-sample replay.** The History view showed the final model predicting races it was trained on. That measures memory, not forecasting. It now shows walk-forward predictions: race N is predicted by a model trained on races 1 to N-1 only.
+2. **Tuning on the test set.** `RandomizedSearchCV` picked hyperparameters on the same folds the error was then reported on, so the reported error was the best of 40 tries on that data. Now hyperparameters are chosen on the first 60% of races, and the headline numbers come only from the later 43 races, which influenced neither the weights nor the settings.
+3. **No baseline.** An error of 3.26 places means nothing alone. Next to "finish where you start" (3.43) it means the model adds about 5%, modest but real. Every model card and every accuracy line in the app carries its baseline, and the weekly retrain refuses to ship a model that loses to it (`train.py --gate`).
+
+### Choosing targets that mean the same thing everywhere
+
+A 0.7-second qualifying gap is large at Monaco (a 70 s lap) and small at Spa (a 104 s lap). The model had to learn that from circuit columns. Predicting the gap as a % of the pole lap removes the problem at the source, and the app converts back to seconds with a pole-time estimate.
+
+The race gap had a subtler bug. FastF1's `Time` for a lapped car is only its gap *within the last lap*. Bottas, one lap down at Melbourne 2024, showed as "+42 s", ahead of cars on the lead lap. The target is now a time-equivalent gap:
+
+> the car's finishing time minus the winner's, plus one average winner lap per lap down
+
+It is clamped so it never contradicts the official classification (a VSC finish can otherwise invert it).
+
+### Old form after a rule change
+
+In 2026 the cars changed completely, but a team's "recent form" still averaged in its 2025 results. Weighting races from a previous rules era at 0.1 lowered the error at every stage. Weights from 0.05 to 0.15 were equally good, and 0.6 was clearly worse. It's a small change with a clear story: form doesn't transfer across a rule reset, so the model shouldn't pretend it does.
+
+Two ideas that sounded good and didn't help were measured and dropped: a ranking objective (`rank:pairwise`), and FP2 long-run pace as an input. Recording the failures is part of honest modelling.
+
+### Why keyword search beat embeddings for a rulebook
+
+The old retrieval embedded 1,000-character chunks with a small sentence model (MiniLM) and stored them in Chroma. Its fine-tuning data showed an "explain Austin" query retrieving the Le Castellet and Madrid write-ups. The embedding matched the *shape* of the text ("overtaking difficulty was moderate..."), not the circuit.
+
+For regulations, exact terms carry the meaning: "unsafe release", "B1.6.2", "power unit elements". BM25 (term frequency weighted by rarity) is built for exactly that. Three structural fixes then mattered more than the search algorithm:
+- Chunks are cut on the regulations' own article numbers, so every hit can be cited as "Article B1.6.2".
+- Circuit write-ups carry their circuit, and a search for one circuit filters out the others.
+- The LLM writes the search queries, turning a vague question into keywords.
+
+And the whole index is one JSON file, so serving needs no vector database.
+
+### An agent that can't make numbers up
+
+A 1B local model couldn't call tools, so the old "agent" was a keyword router with templated answers. With Gemini, the agent (LangGraph's `create_agent`) chooses among 13 tools itself: forecast, explanation, head-to-head, standings and title odds, strategy, timeline, rules search, circuit guide, driver history, past predictions, accuracy, calendar.
+
+The design rule that keeps it trustworthy is in the system prompt and the tools together: every number must come from a tool result. The tools return compact JSON with fan-readable labels ("Recent results", not `driver_recent_form`), so the model has no reason to invent anything. When a tool fails (an unknown driver, say), the error goes back to the model as a message it can recover from, instead of ending the conversation (`_tool_errors_to_model`).
+
+The chat is **stateless** on the server: the browser sends the recent conversation each time. That's what lets it run on serverless functions, which may be a fresh instance on every request, and it means nothing a user types is stored.
+
+### Precompute to serve
+
+Vercel caps a Python function at 250 MB. With pandas, XGBoost and SciPy (a hard dependency of XGBoost), the API came to 480 MB. The heavy libraries were only needed to compute SHAP breakdowns at request time. But a forecast changes only when the scheduled job runs, so the job now computes every driver's breakdown for all four targets and stores them in the forecast file. The API went down to 179 MB and imports nothing heavy, which also makes cold starts faster.
+
+This is the same idea the project already used for freshness ("the scheduled job does the slow work; the server only reads"), pushed one step further.
+
+### A strategy model small enough to reason about
+
+For one set of tyres, fuel burns off at the same rate whatever the plan, so the fuel effect cancels when comparing plans. With linear tyre wear, a stint of n laps on a compound costs
+
+> n × (compound pace offset) + (wear per lap) × n(n+1)/2
+
+A plan's cost is the sum over its stints plus the pit stops, which is exact arithmetic, so every legal one- and two-stop plan can be costed in well under a second. The inputs are fitted from real laps, with a separate baseline per driver per race, so a slow car on hard tyres doesn't make the hard tyre look slow.
+
+A circuit with little data on a compound is pulled toward the all-circuit fit. Without that, Baku's handful of soft-tyre laps produced a soft slower than the medium.
+
+Safety cars enter through simulation: a plan whose pit window contains the safety car pits under it at about half the time loss, and "chance fastest" is how often each plan wins across 2,000 races.
+
+---
+
 ## Turning a point prediction into probabilities without training a new model
 
 ### Why a regressor's output can't just be relabelled as a chance
