@@ -10,6 +10,32 @@ Agents: update this file per AGENTS.md's "Multi-agent coordination" section — 
 
 ---
 
+## Turning a design mock-up into the real app: the "Night Session" pit wall
+
+**In plain terms.** A designer's file and an app look alike but are different things. The design file is a single, very wide page showing three example screens filled with frozen numbers (Baku, round 15). The app has to show *whatever race is current*, cope with missing data, work on a phone, and stay correct when the numbers change. So "implement the design" means: keep its look and its ideas, and rebuild every number from the app's own data.
+
+### Getting the design at all
+
+The design tool's connector couldn't log in from this session, but the repo root held an exported copy, `Pit Wall - Night Session.html`. That file is a self-unpacking bundle: a JSON manifest of gzip+base64 assets (fonts, icons, the design runtime `support.js`) plus a JSON-encoded template, which is the original `.dc.html`. Decoding those two pieces gave back the exact source, including the small script that generates the mock numbers. Lesson: an "exported HTML" is often a container, and the source is usually recoverable without the original tool.
+
+### What changed from mock to real
+
+- **Every number has a real source.** Circuit facts come from the forecast's `feature_row` (track length, safety-car frequency, pit-lane loss...). The confidence rail is driven only by `known_sessions` booleans, never a timer or an invented percentage. The force ledger is the SHAP breakdown from `/predictions/.../explain`.
+- **Units follow what exists.** The mock showed quali gaps in seconds. Before qualifying has run, seconds don't exist; the model predicts a *percentage of the pole lap*. Showing `0.52%` is honest; converting with a guessed pole time would invent precision. So `RaceDriver` gained `qualiGapPct`, `raceGapPct` and `modelDelta`, filled from both the live forecast and the walk-forward archive, so the same screens work for past races too.
+- **"Linked prose" needed text we control.** The design highlights a sentence when you hover a ledger row. That only works if you know which words belong to which factor. Free-form text from Gemini can't promise that, so the linked sentence is built in code from the top SHAP rows ("Helping ANT most: recent results and team's recent results. What holds it back: ..."), and the Gemini write-up stays one click away underneath. It also keeps a paid model call off every page view.
+
+### Techniques worth knowing
+
+- **Type sized to its container.** The race name is set up to 236px tall, but "Kuala Lumpur" is four times longer than "Baku". The `Mega` component makes its wrapper a CSS *size container* and sets `font-size: min(236px, 100cqw / (letters x 0.5))`: condensed capitals are about half an em wide, so the word fills the width without overflowing. A wrong version (a fixed 236px) simply runs off the screen. One trap: a size container has *no* intrinsic width, so inside an `auto`-width grid column it collapses to zero and the text vanishes; the driver page uses a plain `clamp()` instead for that reason.
+- **Re-sorting a list smoothly (FLIP).** When the lens changes, the 22 rows re-order. Framer Motion's `layout="position"` measures each row's old and new position and animates the difference, which is the FLIP technique (First, Last, Invert, Play) without hand-written maths.
+- **Lanes for crowded dots.** In the prediction field seven drivers can sit within a few pixels. Each label goes in the lowest "lane" whose last label is far enough to the left (a greedy interval scheduling), and the gap is computed from the measured width, so labels never overlap on a phone.
+- **State in the URL.** The lens is `?lens=quali_delta` and the race is in the path, so any view can be shared as a link. That matches the workbench, whose whole selection already lived in URL params.
+- **A layout route instead of a wrapper per page.** The first version wrapped each page in its own shell component, which looked identical but had a hidden cost: navigating unmounted the shell, and the chat conversation inside it was thrown away on every click. A layout route (`<Route element={<PitWallLayout/>}>` with an `<Outlet/>`) mounts the shell once; pages only *describe* their chrome (`useChrome({...})`), and the layout renders it. The rule of thumb: state that should outlive a page belongs above the router outlet.
+- **Reading PDFs as clauses.** Regulation text comes out of a PDF as broken lines with the page header and footer repeated on every page. `clauses()` in `lib/regulations.ts` drops any line that appears 8+ times (that's furniture, not content) and starts a new clause at a line opening with an article number like `B6.2.1`. A bare number ("5") is deliberately *not* an article: in a table it's a cell, and treating it as one shattered the penalty guidelines into nonsense. A citation jump picks the *last* clause with that number, because the table of contents lists every article before the body does.
+- **Shared chat across two worlds.** `ChatProvider` used to read the workbench's selection itself. It now receives its context (season, round, race, driver) as a prop, so the pit wall and the workbench drive the same assistant code without depending on each other's state.
+
+---
+
 ## Phase 8: making the predictions honest, then making them useful
 
 ### "XGBoost handles missing values" is true, and not enough

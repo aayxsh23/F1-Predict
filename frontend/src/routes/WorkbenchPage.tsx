@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, type ReactNode } from 'react'
 
 import { TelemetryFolderDeck } from '@/components/deck/TelemetryFolderDeck'
 import { PodiumHero } from '@/components/hero/PodiumHero'
@@ -24,12 +24,25 @@ function Shortcuts() {
   return null
 }
 
+/** The assistant follows the race and driver selected on the workbench. */
+function WorkbenchChat({ children }: { children: ReactNode }) {
+  const sel = useSelection()
+  const race = sel.calendar.find((r) => r.round === sel.selectedRace?.round)
+  const context = {
+    season: sel.selectedRace?.season,
+    round: sel.selectedRace?.round,
+    race_name: race?.eventName,
+    driver: sel.driver ?? undefined,
+  }
+  return <ChatProvider context={context}>{children}</ChatProvider>
+}
+
 /** The whole product on one surface: season ribbon on top, the predicted podium
  *  on stage, and the dossier of tools below. Everything reads one selected race. */
 export function WorkbenchPage() {
   return (
     <SelectionProvider>
-      <ChatProvider>
+      <WorkbenchChat>
         <Shortcuts />
         <a
           href="#dossier-sheet"
@@ -44,7 +57,7 @@ export function WorkbenchPage() {
             <TelemetryFolderDeck />
           </main>
         </div>
-      </ChatProvider>
+      </WorkbenchChat>
     </SelectionProvider>
   )
 }

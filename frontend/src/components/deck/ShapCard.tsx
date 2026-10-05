@@ -269,7 +269,7 @@ function ExplainInWords({ season, round, driver, target }: { season: number; rou
         </div>
       ) : q.isError ? (
         <div>
-          <p className="text-sm text-silver-300">{q.error.message.includes('GEMINI') ? "Written explanations aren't set up on this server yet." : "The explanation service isn't reachable right now."} The breakdown on the left still holds.</p>
+          <p className="text-sm text-silver-300">{q.error.message.includes('local model') ? "Written explanations aren't set up on this server yet." : "The explanation service isn't reachable right now."} The breakdown on the left still holds.</p>
           <button type="button" onClick={() => q.refetch()} className="hud-label mt-2 border border-laser-500 px-3 py-1.5 text-laser-300 hover:bg-laser-900">Try again</button>
         </div>
       ) : (

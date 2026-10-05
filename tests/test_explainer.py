@@ -18,17 +18,16 @@ except ImportError:
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from src.rag.corpus import search
 from src.rag.explain import explain
-from src.rag.ingest_corpus import load_vector_store
 
 DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "processed" / "model_matrix.parquet"
 
 
-def test_vector_store_is_populated():
-    store = load_vector_store()
-    results = store.similarity_search("overtaking difficulty and safety car frequency", k=3)
-    assert len(results) == 3
-    assert all(r.page_content.strip() for r in results)
+def test_corpus_is_populated():
+    hits = search("overtaking difficulty and safety car frequency", k=3)
+    assert len(hits) == 3
+    assert all(h["text"].strip() for h in hits)
 
 
 _STOPWORDS = {"the", "this", "how", "a", "an", "of", "to", "at", "on", "and", "or",

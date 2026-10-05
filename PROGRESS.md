@@ -6,6 +6,27 @@ Read this file first when picking up work in a new session — it tells you what
 
 ---
 
+## 2026-10-06: "Pit Wall - Night Session App" implemented: the pit wall becomes the whole app
+
+The user asked to implement the follow-up design, `Pit Wall - Night Session App.dc.html` (recovered from the exported `Pit Wall - Night Session App.html` in the repo root, left untracked; the design MCP still can't authorize here). It turns the three screens into one app.
+
+- **Layout route.** `frontend/src/pitwall/Layout.tsx` (replaces `Shell.tsx`) wraps every pit-wall page, so Pit Radio's conversation, the palette and settings survive navigation (before, each page remounted the chat). Pages declare crumbs, freshness and Pit Radio's context with `useChrome()` (`pitwall/chrome.ts`). Below 860px (`wide:` breakpoint token) a bottom tab bar and a radio FAB replace the rail.
+- **New pages.** `/history` (seasons × races from the backtest index) and `/history/:season/:round` (actual vs. predicted per driver, four lenses, mean/biggest miss, "ask why" per row); `/regulations` (search, grouped list, reader with article margin and `?article=` jump; steward decisions shown as Fact/Decision/Reason); a 404 page. Old `/history` and `/regulations` links now land here; `/agent` still goes to the workbench.
+- **Shell features.** ⌘/Ctrl+K opens a command palette (pages, drivers, past races, documents); Ctrl+\ toggles Pit Radio; settings hold the ambient glow level (Full/Subtle/Off, localStorage) and shortcuts. Driver page gains surname (from `/championship`), prev/next driver, "Ask Pit Radio". Grid field dots open and flash their row; the tower sizes by container query.
+- **Shared code moved:** `paragraphs`, `parseDecision`, `useDebounced` etc. from `RulesCard.tsx` into `lib/regulations.ts`, plus a new `clauses()` splitter for regulation PDFs.
+- **Deviations:** no light theme (the design's theme switch would have been a dead control; settings offer the ambient level instead); "Workbench" is reachable from the palette and settings for strategy and title odds, which the design doesn't cover.
+- **Checked:** `tsc -b --force`, oxlint, `vite build`, and a puppeteer pass (scratch-only) over palette → driver, Pit Radio toggle, field-dot → row, a decision, a regulation article jump, five pages at 390px, and the 404. Only console errors were the expected `/backtest/2026/16` 404s (the current race isn't decided). `clauses()` was run against the real sporting regulations (753 clauses, B6.2.1 found) and penalty guidelines.
+
+## 2026-10-05: "Pit Wall - Night Session" design implemented as the front door
+
+The user asked to import and implement the Claude Design file `Pit Wall - Night Session.dc.html`. The design MCP couldn't authorize in this session; the design was recovered instead from the exported bundle `Pit Wall - Night Session.html` the user had put in the repo root (left untracked).
+
+- **Routes.** `/` is now S1 Race Weekend (latest forecast), `/race/:season/:round` S2 Full Grid, `/race/:season/:round/driver/:code` S3 Driver Why. The Night Garage workbench moved to `/workbench` (lazy-loaded) and keeps the archive, strategy, title odds and rules; `/history`, `/regulations`, `/agent` redirect into its tabs.
+- **Code.** `frontend/src/pitwall/` (Shell + Pit Radio, three pages, `data.ts` for lenses/phase/specs), `lib/motion.ts`. Night Session tokens added beside the Night Garage ones; fonts `@fontsource/big-shoulders-display`, `@fontsource/instrument-serif`, JetBrains Mono 600/700.
+- **Data changes:** `RaceDriver` gains `modelDelta`, `qualiGapPct`, `raceGapPct` (the gaps are shown in the model's own % unit: seconds don't exist before the session runs). `ChatProvider` now takes its `context` as a prop so both worlds share it.
+- **Deviations from the design:** the S3 prose is a deterministic sentence built from the SHAP rows (so its phrases can link to ledger rows) with the Gemini write-up on request below it, not auto-generated; no settings icon (no settings exist); quali/time gaps in % not seconds.
+- **Checked:** `tsc -b`, oxlint (no new warnings beyond the existing only-export-components class), `vite build`, and headless-Chrome screenshots of all three screens at 1440px and ~520px against the local API. Chat replies not exercised (needs `GEMINI_API_KEY`).
+
 ## 2026-09-28: audit, then "start all": honest models, new predictions, Gemini chat, Vercel-ready
 
 User asked for a full review, then approved everything. They chose the Gemini API for the chat and Vercel for hosting. Scope changes are recorded in AGENTS.md (strategy simulator now in scope; Gemini replaces local-only for the chat).

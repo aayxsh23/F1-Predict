@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Vite + React + TypeScript (static SPA, no server-rendering need — all data comes from a separate FastAPI backend). react-router-dom for routing. TanStack Query as the data layer (no Redux/Zustand — the query cache is the state). Tailwind CSS v4 with hand-built components (no component library), Framer Motion for sheet and tab motion, React Three Fiber + drei for the podium stage (lazy-loaded, with a CSS 3D fallback); charts are hand-drawn SVG/CSS. All workbench state lives in URL params. The original stack was decided in [phase7-ui-backend-plan.md](phase7-ui-backend-plan.md); the 2026-09-25 workbench rebuild replaced shadcn/Radix/Recharts (see PROGRESS.md).
+Vite + React + TypeScript (static SPA, no server-rendering need — all data comes from a separate FastAPI backend). react-router-dom for routing. TanStack Query as the data layer (no Redux/Zustand — the query cache is the state). Tailwind CSS v4 with hand-built components (no component library), Framer Motion for sheet and tab motion, React Three Fiber + drei for the podium stage (lazy-loaded, with a CSS 3D fallback); charts are hand-drawn SVG/CSS. All workbench state lives in URL params, and so does the pit wall's (the race in the path, `?lens=` for the target). The original stack was decided in [phase7-ui-backend-plan.md](phase7-ui-backend-plan.md); the 2026-09-25 workbench rebuild replaced shadcn/Radix/Recharts (see PROGRESS.md).
 
 ## Users
 
@@ -31,7 +31,7 @@ Most prediction content (broadcast graphics, punter tip sites) states a number w
 
 ## Capabilities and Constraints
 
-- Backend: FastAPI (`src/api/main.py`) deployed as one Vercel serverless function beside the static frontend (`vercel.json`, `api/index.py`). It serves precomputed JSON (forecasts with their SHAP breakdowns, the walk-forward archive, the regulations index) and does light live work: odds sampling, the strategy simulator, championship odds and the Gemini-backed assistant (`POST /chat`, server-sent events). Full route list: README.md.
+- Backend: FastAPI (`src/api/main.py`), deployable as one Vercel serverless function beside the static frontend (`vercel.json`, `api/index.py`) or self-hosted. It serves precomputed JSON (forecasts with their SHAP breakdowns, the walk-forward archive, the regulations index) and does light live work: odds sampling, the strategy simulator, championship odds and the assistant (`POST /chat`, server-sent events) -- a deterministic LangGraph router for almost every intent, with a local, LoRA-fine-tuned Llama 3.2 1B for exactly two ("why is this predicted?" and open-ended questions), used only to write prose around numbers the router already computed, never to choose data or do arithmetic. No external LLM API anywhere in the product. Full route list: README.md.
 - Predictions: qualifying (gap and lap time, pole/Q3/Q1-exit odds), finishing position (win/podium/points odds, likely range, retirement risk, beats-teammate), places gained, and gap to the winner with an estimated race length; tyre strategy with pit windows and a safety-car scenario; championship title odds.
 - No user accounts and nothing written by users; the only user input is chat text, rate-limited per IP and never stored (the conversation lives in the browser).
 - Free-tier hosting cold-starts after idling: the frontend must never blank the screen or read as broken while the first request wakes it.

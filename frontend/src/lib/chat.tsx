@@ -1,7 +1,6 @@
 import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from 'react'
 
 import { ApiError, streamChat } from './api'
-import { useSelection } from './selection'
 import type { ChatContext, ChatEvent, ChatMessage } from './types'
 
 const HISTORY_SENT = 16 // recent messages the server gets; it keeps nothing between requests
@@ -36,21 +35,13 @@ function applyEvent(m: ChatMessage, e: ChatEvent): ChatMessage {
   }
 }
 
-/** The assistant's conversation. Lives above the tabs so it survives switching
- *  them, and sends the selected race and driver along so "why is he P3?" works. */
-export function ChatProvider({ children }: { children: ReactNode }) {
-  const sel = useSelection()
+/** The assistant's conversation. Lives above the views so it survives switching
+ *  them, and sends the race and driver on screen along so "why is he P3?" works. */
+export function ChatProvider({ context, children }: { context: ChatContext; children: ReactNode }) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isPending, setPending] = useState(false)
   const controller = useRef<AbortController | null>(null)
 
-  const race = sel.calendar.find((r) => r.round === sel.selectedRace?.round)
-  const context: ChatContext = {
-    season: sel.selectedRace?.season,
-    round: sel.selectedRace?.round,
-    race_name: race?.eventName,
-    driver: sel.driver ?? undefined,
-  }
   const run = useCallback(async (history: ChatMessage[], ctx: ChatContext) => {
     const ctrl = new AbortController()
     controller.current = ctrl

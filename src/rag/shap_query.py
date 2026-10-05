@@ -1,11 +1,22 @@
 """Turn a single prediction's SHAP feature attributions into a natural-language
 retrieval query -- this is the bridge the project plan describes: SHAP output
-IS the query into the RAG layer, not a separate hand-written question."""
-import pandas as pd
-import xgboost as xgb
+IS the query into the RAG layer, not a separate hand-written question.
 
-from src.models.features import PREPARE_FN
-from src.models.predict import contributions
+Only top_shap_features() needs pandas/XGBoost (it runs a model), so that
+import is lazy, inside the function -- everything else here is plain string
+logic the chat router can use on an already-computed SHAP breakdown (read
+straight from a stored forecast) without pulling in either dependency."""
+
+# the one prompt both real inference (chat.py, explain.py) and the Phase 5
+# fine-tuning dataset (build_finetune_dataset.py) use, so the fine-tuned
+# adapter is always prompted the same way it was trained
+EXPLAIN_SYSTEM_PROMPT = (
+    "You are an F1 race-prediction analyst. Explain a model's prediction in "
+    "plain English, in 3-5 sentences, using ONLY the retrieved context provided "
+    "below plus the listed feature contributions. Do not invent facts, "
+    "regulation article numbers, or incidents that are not in the context. "
+    "If the context doesn't cover something, don't mention it."
+)
 
 # feature name -> plain-English topic, used to phrase the top SHAP features as
 # a query rather than dumping raw column names at the retriever/LLM
@@ -52,8 +63,13 @@ FEATURE_PHRASES = {
 }
 
 
-def top_shap_features(model: xgb.XGBRegressor, row: pd.DataFrame, target: str = "finish_position", top_k: int = 5) -> list[dict]:
-    """The top_k features driving THIS prediction, by |SHAP value|, each with its signed contribution."""
+def top_shap_features(model, row, target: str = "finish_position", top_k: int = 5) -> list[dict]:
+    """The top_k features driving THIS prediction, by |SHAP value|, each with its signed contribution.
+    model: xgb.XGBRegressor, row: pd.DataFrame -- typed loosely so this file doesn't need xgboost/pandas
+    at import time; only a caller that actually calls this function does."""
+    from src.models.features import PREPARE_FN
+    from src.models.predict import contributions
+
     contrib, _ = contributions(model, PREPARE_FN[target](row))
     c = contrib.iloc[0]
     c = c.reindex(c.abs().sort_values(ascending=False).index)
@@ -77,6 +93,17 @@ TARGET_INFO = {
 }
 
 
+def format_context(hits: list[dict], max_chars: int = 600) -> str:
+    """The retrieved-context block of the user prompt, shared by chat.py,
+    explain.py and build_finetune_dataset.py so training and inference never
+    see a different shape. Each hit is capped at max_chars -- a shorter,
+    more focused context is faster to train and run and still carries the
+    citation plus the grounding fact that actually matters; the uncapped
+    version was the main driver of a 2555-token worst case that made
+    retraining too slow for a 4GB GPU to finish in one sitting."""
+    return "\n\n".join(f"[{h['source']}{' art. ' + h['article'] if h['article'] else ''}]\n{h['text'][:max_chars]}" for h in hits)
+
+
 def build_retrieval_query(circuit_name: str, prediction: float, target: str, top_features: list[dict]) -> str:
     """One natural-language paragraph summarizing what mattered most for this
     prediction, used as the semantic search query against the corpus."""
@@ -89,12 +116,24 @@ def build_retrieval_query(circuit_name: str, prediction: float, target: str, top
 
 
 def build_user_prompt(prediction: float, target: str, circuit_name: str, top_features: list[dict], context: str) -> str:
-    """The exact user-prompt shape both real inference (explain.py) and the
-    Phase 5 fine-tuning dataset (build_finetune_dataset.py) must use -- one
-    implementation so the two can never silently drift apart on prompt shape,
-    which would reintroduce a train/inference skew."""
-    target_label = TARGET_INFO[target][0]
-    feature_lines = "\n".join(f"- {f['phrase']}: SHAP contribution {f['shap_value']:+.2f}" for f in top_features)
+    """The exact user-prompt shape both real inference (chat.py, explain.py)
+    and the Phase 5 fine-tuning dataset (build_finetune_dataset.py) must use
+    -- one implementation so the two can never silently drift apart on
+    prompt shape, which would reintroduce a train/inference skew.
+
+    Each feature line states its own direction in words ("pushed the
+    prediction toward a better finish"), not just the signed number. A real
+    generation test caught the model inventing the wrong target's direction
+    vocabulary (quali_delta's "fewer positions gained" on a finish_position
+    explanation) when it had to infer which wording applied to which target
+    from only ~27 fine-tuning examples per target; stating it plainly removes
+    that inference step rather than hoping a small model gets it right."""
+    target_label, worse_word, better_word = TARGET_INFO[target]
+    feature_lines = "\n".join(
+        f"- {f['phrase']}: SHAP contribution {f['shap_value']:+.2f} "
+        f"(pushed the prediction {worse_word if f['shap_value'] > 0 else better_word})"
+        for f in top_features
+    )
     return (
         f"Prediction: {prediction:.1f} ({target_label}) at {circuit_name}.\n\n"
         f"Top feature contributions:\n{feature_lines}\n\n"

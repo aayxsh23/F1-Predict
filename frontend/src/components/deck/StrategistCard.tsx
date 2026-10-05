@@ -15,7 +15,7 @@ import type { ChatMessage, Compound, StrategyPlan, Stint } from '@/lib/types'
 import { rise, stagger } from './parts'
 
 // what each lookup is doing, in words a fan reads while waiting
-const TOOL_LABELS: Record<string, string> = {
+export const TOOL_LABELS: Record<string, string> = {
   race_forecast: 'Reading the forecast',
   explain_prediction: 'Breaking down the prediction',
   head_to_head: 'Simulating the head-to-head',

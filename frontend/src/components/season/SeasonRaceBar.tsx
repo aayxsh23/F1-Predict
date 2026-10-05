@@ -1,5 +1,6 @@
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
+import { Link } from 'react-router-dom'
 
 import type { CalendarRace, RaceStatus } from '@/lib/calendar'
 import { cn } from '@/lib/cn'
@@ -234,9 +235,9 @@ export function SeasonRaceBar() {
   return (
     <header className="relative z-20 flex shrink-0 flex-wrap items-stretch border-b border-line bg-obsidian-950 md:h-[92px] md:flex-nowrap">
       <div className="flex h-12 w-full shrink-0 items-center justify-between gap-3 border-b border-line px-4 md:h-auto md:w-auto md:justify-start md:border-b-0 md:border-r lg:gap-5 lg:px-6">
-        <p className="font-display text-base font-bold leading-none tracking-[0.2em] text-silver-100 lg:text-lg">
+        <Link to="/" title="Back to the pit wall" className="font-display text-base font-bold leading-none tracking-[0.2em] text-silver-100 lg:text-lg">
           F1<span className="text-laser-400">·</span>PREDICT
-        </p>
+        </Link>
         <div className="flex items-center gap-1" role="group" aria-label="Season">
           <button
             type="button"

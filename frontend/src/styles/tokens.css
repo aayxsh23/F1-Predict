@@ -53,6 +53,31 @@
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --tracking-hud: 0.14em;
+
+  /* "Night Session" -- the pit wall (/, /race/...): asphalt canvas, glass
+     panels, one signal red. Contrast on asphalt: ink 17.4:1, ink-2 9.5:1,
+     ink-3 5.2:1 (the floor for any text). Signal fills, signal-ink is the red
+     that text uses. Gain, pending and live are state, never decoration. */
+  --font-headline: 'Big Shoulders Display', 'Barlow', sans-serif;
+  --font-editorial: 'Instrument Serif', Georgia, serif;
+
+  --color-asphalt: #0a0b0d;
+  --color-carbon: #121418;
+  --color-ink: #f2f1ed;
+  --color-ink-2: #b3b5b9;
+  --color-ink-3: #82858b;
+  --color-signal: #ff5a47;
+  --color-signal-ink: #ff7a6a;
+  --color-gain: #3ddc97;
+  --color-pending: #f2b544;
+  --color-live: #4cc9f0;
+  --color-hairline: rgb(255 255 255 / 0.09);
+  --color-hairline-strong: rgb(255 255 255 / 0.18);
+
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* the pit wall's one layout switch: below it, a bottom tab bar replaces the rail */
+  --breakpoint-wide: 53.75rem; /* 860px */
 }
 
 :root {

@@ -203,8 +203,8 @@ def championship():
 @app.post("/explain")
 def explain_endpoint(req: ExplainRequest, request: Request):
     """A plain-English paragraph on why the model predicts what it does: the
-    SHAP breakdown is the query into the corpus, and Gemini writes from both."""
-    from src.agent.chat import ChatNotConfigured, explain_text
+    SHAP breakdown is the query into the corpus, and the local model writes from both."""
+    from src.agent.chat import ExplainerUnavailable, explain_text
 
     _limit(request)
     payload = _forecast(req.season, req.round)
@@ -223,7 +223,7 @@ def explain_endpoint(req: ExplainRequest, request: Request):
              + "\n\n".join(f"[{h['source']}{' art. ' + h['article'] if h['article'] else ''}]\n{h['text'][:1200]}" for h in hits))
     try:
         text = explain_text(facts)
-    except ChatNotConfigured as exc:
+    except ExplainerUnavailable as exc:
         raise HTTPException(503, str(exc))
     return {
         "prediction": exp["predicted_value"], "target": req.target, "circuit": circuit,

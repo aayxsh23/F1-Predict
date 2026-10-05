@@ -135,6 +135,8 @@ components:
 
 # Design System: F1 Predict
 
+> **Two worlds since 2026-10-05.** The front door (`/`, `/race/:season/:round`, `/race/:season/:round/driver/:code`) is the **Night Session** pit wall, specified at the end of this file. Everything from here to that section describes the **Night Garage** workbench, which now lives at `/workbench` and keeps the archive, tyre strategy, title odds and the rulebook. The two share data hooks and the chat state, not tokens.
+
 ## Overview
 
 **Creative North Star: "The Night Garage"**
@@ -306,3 +308,26 @@ Entrances rise 14px and fade over 0.4s on an expo-out curve (cubic-bezier(0.16, 
 - **Don't** add box shadows, rounded cards, or a light theme.
 - **Don't** wire scenario controls that change nothing; unavailable tools are drawn disabled and say why.
 - **Don't** let weave or grid rise above material contrast (3% / 7%).
+
+## Night Session: the pit wall
+
+**Creative North Star: "the timing tower, set like a race-day magazine read under floodlights."** Source: the Claude Design project *Pit Wall - Night Session* (concept, three screen blueprints S1-S3, components C1-C3, implementation specs) and its follow-up *Pit Wall - Night Session App* (the whole app: history, regulations, palette, settings, phone layout). Code: `frontend/src/pitwall/`.
+
+**App shell.** One layout route (`Layout.tsx`) around every page: a 72px rail (Predictions, History, Regulations; ⌘K, Pit Radio, Settings at the foot) and a 56px top bar with crumbs on the left and freshness + API state on the right. Below 860px (the `wide` breakpoint) the rail becomes a 64px bottom tab bar, the top bar shows "PW Pit Wall", the API state and a search button, and Pit Radio opens full screen from a signal-filled FAB. Pages enter with an 8px rise; loading is a shimmering skeleton shaped like the page, never a spinner; an unreachable API gets its own state with a retry. Settings offer the ambient glow (Full / Subtle / Off).
+
+**Kept from the Night Garage:** mono numerals that never jitter (tabular-nums on every column), one accent spent only on P1, action and links, fan vocabulary (never "SHAP"), freshness stated on every view, no hover shadow-lift.
+
+**Tokens** (`styles/tokens.css`): asphalt #0A0B0D (canvas), carbon #121418 (raised), ink #F2F1ED (17.4:1), ink-2 #B3B5B9 (9.5:1), ink-3 #82858B (5.2:1, the floor for any text), signal #FF5A47 (fills; text uses signal-ink #FF7A6A), gain #3DDC97 (better-for-driver, known), pending #F2B544 (next session, waking API), live #4CC9F0 (freshness), hairline white 9% / 18%. Ambient mesh only: ember 16%, coolant 7%. Glass panels (`.pw-glass`) are white 5.5%→1.8% with an 18px blur and a 1px inset highlight.
+
+**Type ramp** (deliberately literal pixel sizes, from the design spec):
+- Mega: Big Shoulders Display 900, up to 236px (race) / 168px (driver code), leading .78, sized to its container (`Mega` in `pitwall/parts.tsx`). One identity per screen.
+- Display: Big Shoulders 800, 50-104px, driver codes on the podium tiles.
+- Readout: Big Shoulders 700, 26-44px, single values (circuit facts, input tiles, phase title). Never columns.
+- Editorial: Instrument Serif 400 and italic, 15-23px, the "why", phase copy and Pit Radio replies.
+- Data: JetBrains Mono 500-600, 12-18px, tabular-nums.
+- Label: JetBrains Mono 500, 10-11px, caps, +0.12-0.14em (`.pw-label`).
+
+**Components.** C1 Weekend Confidence Rail: four nodes from `known_sessions` only (known = gain fill, next = pulsing amber ring and dashed segment, pending = hollow). C2 Target Lens + Prediction Field: a `role="tablist"` with a spring pill (`layoutId`), URL state `?lens=`, driving the beeswarm field (labels stacked in lanes) and the timing tower (rows re-sort with Framer `layout`). C3 Force Ledger: a waterfall from the model average to the prediction on the target's own axis; colour means good or bad for the driver, never the sign; a visually hidden table carries the same rows. Pit Radio: the chat as a 392px column (open by default on the driver page) that collapses to a floating ⌘K bar; Ctrl/⌘+K or Ctrl/⌘+\ toggles it, and driver codes in replies link to that driver's page.
+
+**Motion.** Hover: translateY(-3px) on a spring curve, border 9%→18%. Magnetic primary CTA (`useMagnet`, `lib/motion.ts`). Cursor glow from CSS variables written once a frame. Driver codes share a `view-transition-name` between the grid, the podium and the driver page (320ms). `MotionConfig reducedMotion="user"` plus the global reduced-motion rule.
+

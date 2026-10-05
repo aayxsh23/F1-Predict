@@ -8,6 +8,13 @@
 @import '@fontsource/barlow/600.css';
 @import '@fontsource/jetbrains-mono/400.css';
 @import '@fontsource/jetbrains-mono/500.css';
+@import '@fontsource/jetbrains-mono/600.css';
+@import '@fontsource/jetbrains-mono/700.css';
+@import '@fontsource/big-shoulders-display/700';
+@import '@fontsource/big-shoulders-display/800';
+@import '@fontsource/big-shoulders-display/900';
+@import '@fontsource/instrument-serif/400';
+@import '@fontsource/instrument-serif/400-italic';
 @import './styles/tokens.css';
 
 @layer base {
@@ -187,6 +194,82 @@
   .scroll-none::-webkit-scrollbar {
     display: none;
   }
+}
+
+@layer components {
+  /* Night Session glass: a lit panel over the asphalt, never a shadow lift */
+  .pw-glass {
+    border: 1px solid var(--color-hairline);
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.055), rgb(255 255 255 / 0.018));
+    backdrop-filter: blur(18px);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
+  }
+
+  /* metadata: mono caps, the one label voice on the pit wall */
+  .pw-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+  }
+
+  .pw-shell :focus-visible {
+    outline-color: var(--color-signal);
+  }
+
+  .pw-shell ::selection {
+    background: rgb(255 90 71 / 0.35);
+  }
+}
+
+/* the next session to land: an amber ring breathing out */
+@keyframes pw-pulse {
+  from {
+    box-shadow: 0 0 0 0 rgb(242 181 68 / 0.6);
+  }
+  to {
+    box-shadow: 0 0 0 9px rgb(242 181 68 / 0);
+  }
+}
+
+@keyframes pw-live {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* skeleton shimmer and the rise a page enters with */
+@keyframes pw-shim {
+  from {
+    background-position: -400px 0;
+  }
+  to {
+    background-position: 400px 0;
+  }
+}
+
+@keyframes pw-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* a driver code morphs between the grid and its "why" page */
+::view-transition-group(*) {
+  animation-duration: 320ms;
+  animation-timing-function: var(--ease-out-expo);
 }
 
 @keyframes pulse-dot {

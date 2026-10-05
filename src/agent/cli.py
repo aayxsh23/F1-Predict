@@ -1,14 +1,13 @@
 """Chat with the assistant in a terminal: `python -m src.agent.cli`.
-Needs GEMINI_API_KEY (and optionally GEMINI_MODEL) in the environment or .env."""
+Most answers are deterministic and need nothing installed beyond the dev
+requirements; "why" questions and anything unmatched use the local model if
+requirements-llm.txt is installed, else a plain fallback (see chat.py)."""
 import sys
 
 from src.agent.chat import stream_chat
 
 
 def main():
-    from dotenv import load_dotenv
-
-    load_dotenv()
     sys.stdout.reconfigure(encoding="utf-8")
     history: list[dict] = []
     print("Ask about forecasts, strategy, standings or the rules (blank line to quit).\n")

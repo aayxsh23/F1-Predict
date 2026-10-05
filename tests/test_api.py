@@ -1,12 +1,15 @@
 """The FastAPI routes, against fixture forecast files plus the repo's committed
-models, corpus index and strategy params. No network and no LLM: the chat and
-explanation routes are checked for validation, the unconfigured-key path and
-rate limiting. Run with `python tests/test_api.py`."""
+models, corpus index and strategy params. No real local-model load anywhere
+here (the local-model-unavailable branch is mocked): the chat route is
+deterministic and needs nothing beyond this fixture data; /explain's
+graceful-unavailable path and the shared rate limiter are checked with the
+local model mocked off. A real generation is tested in test_chat_llm.py.
+Run with `python tests/test_api.py`."""
 import json
-import os
 import sys
 import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 import pandas as pd
 from fastapi.testclient import TestClient
@@ -15,7 +18,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import src.api.cache as cache
 import src.api.main as main
-from src.agent import chat
 from src.models.explain import _native, shap_explanation
 from src.models.features import FEATURE_COLS, row_from_dict
 from src.models.predict import TARGETS, load_model
@@ -136,23 +138,31 @@ def test_model_card_and_regulations():
 
 
 @_with_fixture_dir
-def test_llm_routes_validate_fail_clearly_and_rate_limit():
-    saved = {k: os.environ.pop(k, None) for k in ("GEMINI_API_KEY", "GOOGLE_API_KEY")}
-    chat._model.cache_clear()
+def test_chat_route_validates_and_answers_deterministically():
     main._calls.clear()
-    try:
-        bad = client.post("/chat", json={"messages": [{"role": "assistant", "content": "hi"}]})
-        assert bad.status_code == 400
-        assert client.post("/chat", json={"messages": [{"role": "user", "content": "x" * 5000}]}).status_code == 422
-        r = client.post("/chat", json={"messages": [{"role": "user", "content": "Who wins?"}], "context": {"season": 2026, "round": 14}})
-        assert r.status_code == 200 and r.headers["content-type"].startswith("text/event-stream")
-        assert json.loads(r.text.strip().removeprefix("data: "))["type"] == "error"
+    bad = client.post("/chat", json={"messages": [{"role": "assistant", "content": "hi"}]})
+    assert bad.status_code == 400
+    assert client.post("/chat", json={"messages": [{"role": "user", "content": "x" * 5000}]}).status_code == 422
+
+    r = client.post("/chat", json={"messages": [{"role": "user", "content": "Who wins this race?"}], "context": {"season": 2026, "round": 14}})
+    assert r.status_code == 200 and r.headers["content-type"].startswith("text/event-stream")
+    events = [json.loads(line.removeprefix("data: ")) for line in r.text.strip().split("\n\n") if line.strip()]
+    assert events[0]["type"] == "tool_start" and events[0]["name"] == "race_forecast"
+    assert events[-1]["type"] == "done"
+    main._calls.clear()
+
+
+@_with_fixture_dir
+def test_explain_route_unavailable_without_the_local_model_and_rate_limited():
+    main._calls.clear()
+    with patch("src.rag.llm.is_available", return_value=False):
         assert client.post("/explain", json={"season": 2026, "round": 14, "driver": "VER"}).status_code == 503
+        # general-intent chat still answers (the deterministic fallback), just not as prose
+        r = client.post("/chat", json={"messages": [{"role": "user", "content": "what colour is the sky"}]})
+        assert r.status_code == 200
         codes = [client.post("/chat", json={"messages": [{"role": "user", "content": "hi"}]}).status_code for _ in range(main.LLM_LIMIT)]
-        assert codes[-1] == 429, "the limiter should cut in after LLM_LIMIT calls"
-    finally:
-        os.environ.update({k: v for k, v in saved.items() if v})
-        main._calls.clear()
+    assert codes[-1] == 429, "the limiter should cut in after LLM_LIMIT calls"
+    main._calls.clear()
 
 
 if __name__ == "__main__":

@@ -17,6 +17,9 @@ export interface RaceDriver {
   number: number | null
   rank: number // predicted finishing order, 1-based; the model's raw number only orders it
   modelFinish: number | null
+  modelDelta: number | null // predicted places gained from the grid
+  qualiGapPct: number | null // predicted gap to pole, % of the pole lap
+  raceGapPct: number | null // predicted gap to the winner, % of the winner's race time
   grid: number | null
   delta: number | null // grid minus predicted rank; positive = gains places
   gapToLeader: number | null // seconds, monotone in rank
@@ -104,6 +107,9 @@ function fromForecast(p: PredictionPayload, isLatest: boolean, actuals: Map<stri
       number: d.driver_number ?? null,
       rank,
       modelFinish: d.predicted_finish_position,
+      modelDelta: d.predicted_quali_to_race_delta,
+      qualiGapPct: d.predicted_qualifying_gap_pct ?? null,
+      raceGapPct: d.predicted_race_gap_pct ?? null,
       grid: d.grid_position,
       delta: d.grid_position === null ? null : d.grid_position - rank,
       gapToLeader: gaps[i],
@@ -163,6 +169,9 @@ function fromBacktest(b: BacktestRacePayload): RaceView {
       number: d.driver_number ?? null,
       rank,
       modelFinish: d.finish_position.predicted,
+      modelDelta: d.quali_delta.predicted,
+      qualiGapPct: d.qualifying.predicted,
+      raceGapPct: d.race_time.predicted,
       grid,
       delta: grid === null ? null : grid - rank,
       gapToLeader: gaps[i],

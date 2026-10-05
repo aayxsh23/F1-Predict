@@ -3,20 +3,12 @@ import { ArrowLeft, FileText, Search } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { cn } from '@/lib/cn'
+import { ARTICLE, paragraphs, parseDecision, SPORTING_REGS, useDebounced } from '@/lib/regulations'
 import { useRegulationDetail, useRegulationsList, useRegulationsSearch } from '@/lib/queries'
 import { useSelection } from '@/lib/selection'
 import type { RegulationDocument } from '@/lib/types'
 
 import { rise, SheetMessage, SheetSkeleton, stagger } from './parts'
-
-function useDebounced<T>(value: T, ms: number): T {
-  const [debounced, setDebounced] = useState(value)
-  useEffect(() => {
-    const id = setTimeout(() => setDebounced(value), ms)
-    return () => clearTimeout(id)
-  }, [value, ms])
-  return debounced
-}
 
 function Highlighted({ text, query }: { text: string; query: string }) {
   const q = query.trim()
@@ -59,53 +51,6 @@ function DocRow({ doc, selected, onOpen }: { doc: RegulationDocument; selected: 
       </span>
     </button>
   )
-}
-
-const SPORTING_REGS = 'fia_2026_sporting_regulations.pdf'
-const ARTICLE = /\b[A-C]\d+(?:\.\d+)+\b/g
-const FIELDS = ['Session', 'Fact', 'Infringement', 'Decision', 'Reason'] as const
-type Field = (typeof FIELDS)[number]
-
-/** A steward decision's PDF text is a letterhead, then labelled fields. Pull out the
- *  fields so the reader opens on the ruling, not on "From The Stewards / To The Team Manager". */
-function parseDecision(text: string): { driver: string | null; fields: Partial<Record<Field, string>> } | null {
-  // FIA PDFs join words with non-breaking spaces; left in, a whole ruling is one unbreakable line
-  const lines = text.replace(/ /g, ' ').split(/\r?\n/)
-  const fields: Partial<Record<Field, string>> = {}
-  let driver: string | null = null
-  let current: Field | null = null
-  for (const line of lines) {
-    if (/^Competitors are reminded/.test(line)) break
-    const d = line.match(/^No \/ Driver\s+(.*)$/)
-    if (d) driver = d[1].trim()
-    const f = FIELDS.find((name) => line.startsWith(`${name} `))
-    if (f) {
-      current = f
-      fields[f] = line.slice(f.length + 1).trim()
-    } else if (current === 'Reason') {
-      fields.Reason += `\n${line}`
-    } else if (current && current !== 'Session' && line.trim() && !/^(Time|Competitor|No \/ Driver)\b/.test(line)) {
-      fields[current] += ` ${line.trim()}`
-    }
-  }
-  return fields.Decision ? { driver, fields } : null
-}
-
-/** PDF text breaks lines mid-sentence; a short line ending a sentence ends a paragraph. */
-function paragraphs(text: string): string[] {
-  const lines = text.split('\n').map((l) => l.trim()).filter(Boolean)
-  const width = Math.max(...lines.map((l) => l.length))
-  const out: string[] = []
-  let buf = ''
-  for (const line of lines) {
-    buf = buf ? `${buf} ${line}` : line
-    if (/[.:]$/.test(line) && line.length < width * 0.8) {
-      out.push(buf)
-      buf = ''
-    }
-  }
-  if (buf) out.push(buf)
-  return out
 }
 
 function Ruling({ text, onCite }: { text: string; onCite: (article: string) => void }) {

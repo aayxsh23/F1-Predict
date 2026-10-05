@@ -20,16 +20,19 @@ from transformers import AutoTokenizer
 
 from src.features.circuit_reference import LOCATION_ALIASES
 from src.models.predict import load_model, predict
+from src.rag.corpus import search
 from src.rag.explain import SYSTEM_PROMPT
-from src.rag.ingest_corpus import format_retrieved_context, load_vector_store
 from src.rag.llm import BASE_MODEL
-from src.rag.shap_query import TARGET_INFO, build_retrieval_query, build_user_prompt, top_shap_features
+from src.rag.shap_query import TARGET_INFO, build_retrieval_query, build_user_prompt, format_context, top_shap_features
 
 DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "processed" / "model_matrix.parquet"
 OUT_PATH = Path(__file__).resolve().parent / "training_data" / "explanations.jsonl"
 # comfortably above the dataset's observed max token length -- finetune.py
 # imports this same constant so the two can't silently drift apart, and
-# main() below asserts no example actually exceeds it before training ever sees it
+# main() below asserts no example actually exceeds it before training ever sees it.
+# format_context()'s per-chunk cap keeps the real max at ~1150 tokens even
+# after build_user_prompt() started stating each feature's direction in words
+# (that alone, uncapped, had pushed the observed max to 2555 tokens).
 MAX_LENGTH = 1536
 TARGET_COLS = {
     "finish_position": "target_finish_position", "quali_delta": "target_quali_to_race_delta",
@@ -67,6 +70,7 @@ CIRCUIT_FACTS = {
     "Yas Island": "a circuit reprofiled in 2021 to improve overtaking, now rating a moderate ~0.55, with one of the lowest DNF rates in the calendar (~0.08)",
     "Shanghai": "a circuit with a long decreasing-radius opening complex and one of the longest back straights in the calendar (~1,170m), keeping overtaking moderate (~0.4)",
     "Madrid": "a new 2026 street circuit whose reference-table values are explicitly flagged as a rougher inaugural estimate rather than data-backed numbers",
+    "Kuala Lumpur": "a permanent circuit (Sepang), not a street track, with two long straights into heavy braking zones that keep overtaking relatively easy (~0.35) and one of the highest tyre degradation ratings in the calendar (~4/5); no race in this project's data has actually been run there, so its reference-table values are an estimate from the layout and its pre-2018 history",
 }
 
 # per-feature sentence template, parameterized by the SHAP direction phrase
@@ -160,7 +164,6 @@ def compose_explanation(target: str, prediction: float, circuit: str, features: 
 
 def build_examples(rows_per_combo: int = 1) -> list[dict]:
     df = pd.read_parquet(DATA_PATH)
-    store = load_vector_store()
     examples = []
 
     for target, target_col in TARGET_COLS.items():
@@ -173,9 +176,8 @@ def build_examples(rows_per_combo: int = 1) -> list[dict]:
                 prediction = float(predict(model, row, target=target).iloc[0])
                 features = top_shap_features(model, row, target=target, top_k=5)
                 query = build_retrieval_query(circuit, prediction, target, features)
-                retrieved = store.similarity_search(query, k=4)
-                context = format_retrieved_context(retrieved)
-                user_prompt = build_user_prompt(prediction, target, circuit, features, context)
+                hits = search(query, k=4, circuit=circuit)
+                user_prompt = build_user_prompt(prediction, target, circuit, features, format_context(hits))
                 completion = compose_explanation(target, prediction, circuit, features)
                 examples.append({
                     "messages": [

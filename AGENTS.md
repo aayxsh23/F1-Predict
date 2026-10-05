@@ -8,7 +8,7 @@ Start with [README.md](README.md) for what the app does and how to run it, and [
 
 ## What this is
 
-An F1 race-weekend forecaster: four XGBoost predictors (qualifying, finishing position, places gained, gap to the winner), odds and ranges sampled from them, a tyre-strategy simulator fitted on real stint data, championship title odds, and a Gemini-backed analyst chat that answers only from the app's own data and cites the FIA rules it uses.
+An F1 race-weekend forecaster: four XGBoost predictors (qualifying, finishing position, places gained, gap to the winner), odds and ranges sampled from them, a tyre-strategy simulator fitted on real stint data, championship title odds, and a local, deterministic-first analyst chat that answers only from the app's own data and cites the FIA rules it uses.
 
 ## Hard scope constraints (do not violate without the user explicitly changing scope)
 
@@ -21,9 +21,10 @@ An F1 race-weekend forecaster: four XGBoost predictors (qualifying, finishing po
 - **One model serves every weekend stage.** Training stacks one copy of each row per stage with not-yet-known columns blanked (`features.mask_for_stage`). Don't add per-stage models, and don't train on columns a live forecast never has.
 - **Evaluate honestly.** Hyperparameters are tuned on the earliest 60% of races; reported accuracy is walk-forward on later races (each predicted by a model trained only on earlier ones). Never report or display in-sample numbers as accuracy.
 - **No deep learning in the predictors**: XGBoost only. The fine-tuned local Llama explainer (`src/rag/llm.py`, `finetune.py`) stays as an optional offline mode.
-- **Scope changes, 2026-09-28 (user: "start all"):** the strategy simulator, previously deferred, is in scope and built. The chat uses the **Gemini API** (the user's choice; `GEMINI_API_KEY`, model `GEMINI_MODEL`, default `gemini-3.8-flash`), replacing the local-only rule for the chat and the written explanations. Hosting is **Vercel** (frontend and API in one project).
-- The chat agent must be built on **LangGraph** (via `langchain.agents.create_agent`) with LangChain tools; every number it states must come from a tool.
-- **Serving stays light:** the API must not import pandas, XGBoost, torch, FastF1 or a PDF parser (Vercel's function size limit). Anything needing them is precomputed by the scheduled jobs and shipped as JSON. `requirements.txt` is the serving set; keep it that way.
+- **Scope changes, 2026-09-28 (user: "start all"):** the strategy simulator, previously deferred, is in scope and built.
+- **Scope changes, 2026-10-06 (user: "I want to stick to local"):** reverses the Gemini decision above. The chat is **local-first again, permanently** -- a 4GB consumer GPU cannot be fine-tuned to match a frontier hosted model (this was explained to the user directly: it's a scale/training-compute gap, not an effort gap), so the design instead makes the local model's job as small and as reliable as possible. **Every number in every chat answer must come from deterministic Python** (`src/agent/router.py` dispatches by keyword to `src/agent/tools.py`'s plain data functions -- no LLM chooses a tool, no LLM computes a number). The local, LoRA-fine-tuned Llama 3.2 1B (`src/rag/llm.py`) is used for exactly two things, both "write prose around numbers already computed": `explain_prediction` and the `general` catch-all. Neither Gemini nor `langchain-google-genai`/`langchain`'s `create_agent` are used anywhere; `GEMINI_API_KEY`/`GEMINI_MODEL` no longer exist. See LEARNING.md's "2026-10-06" chapter for the full reasoning and a real grounding bug this design change caught and fixed.
+- The chat router is a **LangGraph** `StateGraph` (classify -> dispatch nodes; see router.py) over the plain functions in tools.py -- genuine orchestration-framework usage, not a Gemini tool-calling agent.
+- **Serving stays light where it can.** `requirements.txt` (the API) imports no pandas, XGBoost, torch or FastF1 -- the scheduled jobs precompute everything that needs them (SHAP breakdowns included) and ship it as JSON, so every chat intent except the two LLM-backed ones runs on `requirements.txt` alone and would fit a size-limited serverless function. `src/rag/llm.py` imports torch/transformers lazily, inside its functions, specifically so importing it (and everything that imports it) stays cheap when the local-LLM extras (`requirements-llm.txt`) aren't installed: `is_available()` says whether they are, and every LLM-backed code path degrades to a deterministic fallback (not an error) when they aren't. This means: deploy `requirements.txt` alone anywhere (Vercel included) for full deterministic chat; add `requirements-llm.txt` on a machine with a GPU for the written-prose paths too. There is no tier where the chat is unavailable, only "with or without prose."
 - Automation via **GitHub Actions** only (`refresh-predictions.yml`, `retrain.yml`, `ci.yml`), no paid scheduler.
 
 ## Repo layout
@@ -43,7 +44,7 @@ src/
   features/               # feature layers + circuit reference table
   models/                 # train.py, predict, probabilities, estimates, refresh_job, backtest_export, catalog
   strategy/               # tyre-wear fit + strategy simulator (params.json committed)
-  agent/                  # chat (LangGraph + Gemini), tools, championship maths, Jolpica client
+  agent/                  # chat router (LangGraph classify/dispatch), tools, championship maths, Jolpica client
   rag/                    # corpus index + BM25 search; local Llama explainer (optional, offline)
   api/                    # FastAPI routes, read-time enrichment, JSON cache
 frontend/                 # React app (see frontend/DESIGN.md, PRODUCT.md)
