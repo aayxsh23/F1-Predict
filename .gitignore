@@ -44,6 +44,15 @@ data/raw/races/*
 data/raw/laps/*
 !data/raw/laps/*.parquet
 
+# Phase 9 chat knowledge: the Wikipedia index is big and regenerable
+# (python -m src.data.wiki); data/history/ IS committed (small, and the
+# Jolpica fetch behind it takes ~1.5 hours). Raw caches under data/raw/ are
+# already ignored above. Training data, adapters and model files never go in git.
+data/corpus/wiki_index.json
+training/data/
+training/out/
+*.gguf
+
 # Trained models & serialized artifacts
 models/saved/
 src/rag/saved/
@@ -64,10 +73,6 @@ src/models/saved/*
 !src/models/saved/*_xgb.json
 !src/models/saved/pl_calibration.json
 !src/models/saved/*_metrics.json
-
-# Vector store (Phase 4 RAG)
-chroma_db/
-.chroma/
 
 # Notebooks
 .ipynb_checkpoints/
@@ -100,3 +105,20 @@ desktop.ini
 # Logs
 *.log
 logs/
+
+# Local-only project notes: the owner's working documents (build log, tutorial, plans,
+# product notes, agent instructions). Kept on disk, never published. They are still
+# read by Claude/Gemini from disk each session; they just aren't in git.
+/AGENTS.md
+/CLAUDE.md
+/GEMINI.md
+/PRODUCT.md
+/PROGRESS.md
+/LEARNING.md
+/phase*-plan.md
+/f1-race-predictor-explainer-project-plan.md
+
+# Design-tool exports and scratch
+/Pit Wall*
+*.zip
+nohup.out

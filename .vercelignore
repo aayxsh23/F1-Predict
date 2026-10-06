@@ -9,3 +9,7 @@ src/rag/saved
 frontend/node_modules
 frontend/dist
 **/__pycache__
+# the history tools and Wikipedia index only run next to a local model (Ollama), never in the serverless API
+data/history
+data/corpus/wiki_index.json
+training

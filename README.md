@@ -71,7 +71,7 @@ A LangGraph router matches a question to one of **15 intents** by keyword. **13 
 
 Only two — *"why is this predicted?"* and anything unmatched — hand the already-computed numbers to a local, LoRA-fine-tuned **Llama 3.2 1B** to turn into prose. The *"why"* answer cites the regulation articles it grounds on; an open-ended answer that mentions any number or name it wasn't given is replaced with a plain data answer before you see it.
 
-A 1B model fine-tuned on a consumer GPU can write a good paragraph around numbers it's handed, but can't be trusted to choose which numbers to fetch or to compute them. See [docs/MODELS.md](docs/MODELS.md) and [AGENTS.md](AGENTS.md).
+A 1B model fine-tuned on a consumer GPU can write a good paragraph around numbers it's handed, but can't be trusted to choose which numbers to fetch or to compute them. See [docs/MODELS.md](docs/MODELS.md).
 
 </details>
 
@@ -179,12 +179,7 @@ The API needs no model, no API key and no GPU to serve 13 of 15 chat intents plu
 | Document | What's in it |
 |---|---|
 | [docs/MODELS.md](docs/MODELS.md) | Model cards — targets, inputs, accuracy, limits |
-| [PRODUCT.md](PRODUCT.md) | Who it's for and the product principles |
 | [frontend/DESIGN.md](frontend/DESIGN.md) | The visual design system |
-| [AGENTS.md](AGENTS.md) | Rules for anyone — or any AI agent — changing the code |
-| [LEARNING.md](LEARNING.md) | A tutorial on every concept and decision, written to learn from |
-| [PROGRESS.md](PROGRESS.md) | The build log |
-| [Project plan](f1-race-predictor-explainer-project-plan.md) | The original plan and phase history |
 
 <br>
 

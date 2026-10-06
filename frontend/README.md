@@ -17,4 +17,4 @@ Requires the backend running (`python -m uvicorn src.api.main:app` from the repo
 npm run build
 ```
 
-Static output in `dist/` — no server-rendering, deployable to any static host (Cloudflare Pages/Netlify/Vercel per phase7-ui-backend-plan.md).
+Static output in `dist/` — no server-rendering, deployable to any static host (Cloudflare Pages, Netlify or Vercel).
