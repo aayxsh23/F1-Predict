@@ -20,10 +20,9 @@ from transformers import AutoTokenizer
 
 from src.features.circuit_reference import LOCATION_ALIASES
 from src.models.predict import load_model, predict
-from src.rag.corpus import search
 from src.rag.explain import SYSTEM_PROMPT
 from src.rag.llm import BASE_MODEL
-from src.rag.shap_query import TARGET_INFO, build_retrieval_query, build_user_prompt, format_context, top_shap_features
+from src.rag.shap_query import TARGET_INFO, build_retrieval_query, build_user_prompt, format_context, retrieve_context, top_shap_features
 
 DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "processed" / "model_matrix.parquet"
 OUT_PATH = Path(__file__).resolve().parent / "training_data" / "explanations.jsonl"
@@ -176,7 +175,7 @@ def build_examples(rows_per_combo: int = 1) -> list[dict]:
                 prediction = float(predict(model, row, target=target).iloc[0])
                 features = top_shap_features(model, row, target=target, top_k=5)
                 query = build_retrieval_query(circuit, prediction, target, features)
-                hits = search(query, k=4, circuit=circuit)
+                hits = retrieve_context(circuit, query)
                 user_prompt = build_user_prompt(prediction, target, circuit, features, format_context(hits))
                 completion = compose_explanation(target, prediction, circuit, features)
                 examples.append({

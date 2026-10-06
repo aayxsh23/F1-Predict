@@ -93,6 +93,27 @@ TARGET_INFO = {
 }
 
 
+def retrieve_context(circuit_name: str, query: str, k: int = 4) -> list[dict]:
+    """Hits for an explanation's retrieved-context block: the circuit's own
+    write-up always takes one slot, the rest go to the top regulation/steward
+    hits for this specific query.
+
+    A real generation test caught why the circuit can't just compete in the
+    same BM25 ranking as everything else: a query built from driver/team-form
+    feature names (no circuit-specific words in it at all) lost its one
+    relevant circuit chunk to a penalty-guidelines PDF, because that table
+    repeats "Grid Place" dozens of times and the query happened to include
+    "starting grid slot" -- a term-frequency score no single circuit mention
+    can match. The circuit is relevant to every explanation at that circuit
+    regardless of which features top the list, so it shouldn't have to win
+    that contest; it's just always included."""
+    from src.rag.corpus import search
+
+    circuit_hits = search(circuit_name, k=1, doc_types={"circuit_summary"}, circuit=circuit_name)
+    rule_hits = search(query, k=max(k - len(circuit_hits), 1), doc_types={"regulation", "steward_decision"})
+    return circuit_hits + rule_hits
+
+
 def format_context(hits: list[dict], max_chars: int = 600) -> str:
     """The retrieved-context block of the user prompt, shared by chat.py,
     explain.py and build_finetune_dataset.py so training and inference never

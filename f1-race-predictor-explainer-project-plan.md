@@ -198,6 +198,14 @@ User-requested after an audit ("start all"; chat on Gemini; deploy on Vercel). F
   - Requirements are split and pinned.
   - CI, a gated weekly retrain, and a refresh job that commits only when the forecast changes.
 
+### Phase 9 (2026-10-06): chat reversed to local-only, deterministic-first
+
+User asked why Gemini and the local model differed, then: "I want to stick to local... train and modify it so well it should be on par with online models." Told directly that a 1B model on a 4GB GPU can't reach frontier-model parity by fine-tuning (a training-scale gap, not an effort gap); offered four local-only shapes the chat could take; the user picked deterministic-first. Full detail in PROGRESS.md, the why (including two real bugs found by actually generating text, not just reading code) in LEARNING.md.
+
+- Gemini, `langchain-google-genai` and `langchain`'s `create_agent` removed entirely. `src/agent/router.py`: a LangGraph `StateGraph` (classify -> dispatch) matches a question to 1 of 15 intents by keyword; 13 are pure data lookups with no model involved. Only `explain_prediction` and a `general` catch-all hand already-computed numbers to the local, LoRA-fine-tuned Llama 3.2 1B to turn into prose.
+- `src/rag/llm.py` imports torch lazily; every LLM-backed path degrades to a plain data answer, never an error, when the local-LLM extras aren't installed. `requirements.txt` (no pandas/XGBoost/torch) now answers 13 of 15 chat intents anywhere, Vercel included.
+- Retraining the LoRA adapter on a corrected prompt (each feature's SHAP direction stated in words, not just its signed number -- the model had been inferring the wrong target's vocabulary) and testing the result for real caught two further bugs: a retrieval-ranking issue that let an irrelevant penalty-guidelines table outscore the one relevant circuit write-up, and a `general`-intent gap that only fetched circuit context when the question named the circuit by text. Both fixed; re-verified with real generations, not just re-reading the code.
+
 ---
 
 ## Future phases (stretch goals, not required for v1)

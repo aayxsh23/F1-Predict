@@ -19,8 +19,7 @@ stored.
 from collections.abc import Iterator
 
 from src.agent.router import route
-from src.rag.corpus import search as corpus_search
-from src.rag.shap_query import EXPLAIN_SYSTEM_PROMPT, build_retrieval_query, build_user_prompt, format_context
+from src.rag.shap_query import EXPLAIN_SYSTEM_PROMPT, build_retrieval_query, build_user_prompt, format_context, retrieve_context
 
 GENERAL_SYSTEM_PROMPT = (
     "You are the F1 Predict app's assistant. Answer the user's question using ONLY the facts given "
@@ -49,7 +48,7 @@ def _explain_prompt(exp: dict) -> tuple[str, list[dict]]:
     from an already-computed SHAP breakdown -- no pandas/XGBoost needed here."""
     features = _as_shap_features(exp["contributions"])
     query = build_retrieval_query(exp["circuit"], exp["predicted"], exp["target"], features)
-    hits = corpus_search(query, k=4, circuit=exp["circuit"])
+    hits = retrieve_context(exp["circuit"], query)
     return build_user_prompt(exp["predicted"], exp["target"], exp["circuit"], features, format_context(hits)), hits
 
 

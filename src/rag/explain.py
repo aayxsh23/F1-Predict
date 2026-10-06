@@ -7,9 +7,8 @@ embedding similarity does."""
 import pandas as pd
 
 from src.models.predict import load_model, predict
-from src.rag.corpus import search
 from src.rag.llm import generate
-from src.rag.shap_query import EXPLAIN_SYSTEM_PROMPT, build_retrieval_query, build_user_prompt, format_context, top_shap_features
+from src.rag.shap_query import EXPLAIN_SYSTEM_PROMPT, build_retrieval_query, build_user_prompt, format_context, retrieve_context, top_shap_features
 
 SYSTEM_PROMPT = EXPLAIN_SYSTEM_PROMPT  # kept as a module-level name for backward compatibility
 
@@ -23,7 +22,7 @@ def explain(row: pd.DataFrame, target: str = "finish_position", top_k_features: 
     circuit_name = row["location"].iloc[0]
 
     query = build_retrieval_query(circuit_name, prediction, target, features)
-    hits = search(query, k=top_k_context, circuit=circuit_name)
+    hits = retrieve_context(circuit_name, query, k=top_k_context)
     user_prompt = build_user_prompt(prediction, target, circuit_name, features, format_context(hits))
 
     return {

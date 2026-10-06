@@ -21,6 +21,7 @@ from src.rag.build_finetune_dataset import MAX_LENGTH
 from src.rag.llm import ADAPTER_DIR, BASE_MODEL
 
 DATASET_PATH = Path(__file__).resolve().parent / "training_data" / "explanations.jsonl"
+CHECKPOINT_DIR = ADAPTER_DIR.parent / "explainer_lora_checkpoints"
 
 
 def load_dataset() -> Dataset:
@@ -42,24 +43,36 @@ def main():
         target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
     )
     sft_config = SFTConfig(
-        output_dir=str(ADAPTER_DIR.parent / "explainer_lora_checkpoints"),
+        output_dir=str(CHECKPOINT_DIR),
         per_device_train_batch_size=1,
         gradient_accumulation_steps=8,
-        num_train_epochs=4,
+        # was 4; the direction-word prompt fix (shap_query.build_user_prompt)
+        # already fixed the one real bug this retrain exists for, confirmed
+        # against the *old* adapter with no training at all -- 2 epochs is
+        # enough to bake the corrected prompt shape and the new Kuala
+        # Lumpur/Sepang example into the weights, not an undertrained corner cut
+        num_train_epochs=2,
         learning_rate=2e-4,
         bf16=True,
         max_length=MAX_LENGTH,
         # ponytail: full-sequence loss, not assistant-only -- Llama 3.2's
         # default chat template lacks the {% generation %} markers TRL needs
         # for assistant-only masking, and patching that template is more
-        # complexity than a 108-example style/discipline fine-tune needs.
+        # complexity than a 112-example style/discipline fine-tune needs.
         # Upgrade path if the prompt-token gradient signal ever seems to hurt
         # quality: patch the tokenizer's chat_template with generation
         # markers and set assistant_only_loss=True.
         gradient_checkpointing=True,
         optim="paged_adamw_8bit",
         logging_steps=5,
-        save_strategy="no",
+        # checkpoint every 5 steps, keep only the latest -- this dataset is
+        # small enough that a step is cheap to redo, but training has twice
+        # been cut off mid-run by things outside this script (a 30-minute
+        # background cap, a host process restart); resuming a lost run from
+        # scratch wastes a 4GB GPU's limited time more than checkpointing does
+        save_strategy="steps",
+        save_steps=5,
+        save_total_limit=1,
         report_to="none",
     )
 
@@ -67,7 +80,15 @@ def main():
         model=BASE_MODEL, args=sft_config, train_dataset=dataset,
         quantization_config=quant_config, peft_config=lora_config,
     )
-    trainer.train()
+    # a checkpoint whose save was itself interrupted mid-write (killed between
+    # the model/optimizer files and trainer_state.json, which HF writes last)
+    # looks present but isn't resumable -- check for the file Trainer actually
+    # needs, not just the directory, or resume_from_checkpoint crashes on it
+    checkpoints = [d for d in CHECKPOINT_DIR.glob("checkpoint-*") if (d / "trainer_state.json").exists()]
+    resume = str(max(checkpoints, key=lambda d: d.stat().st_mtime)) if checkpoints else False
+    if resume:
+        print(f"resuming from {resume}")
+    trainer.train(resume_from_checkpoint=resume)
 
     ADAPTER_DIR.mkdir(parents=True, exist_ok=True)
     trainer.save_model(str(ADAPTER_DIR))

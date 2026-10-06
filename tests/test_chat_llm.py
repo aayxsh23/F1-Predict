@@ -41,17 +41,25 @@ def _distinctive_word(phrase: str) -> str:
 
 
 def test_explain_prediction_is_grounded_real_generation():
+    from src.agent.router import dispatch
+
     code = _top_driver()
+    payload = dispatch("explain_prediction", f"why is {code} predicted there", {})["llm_payload"]
     events = _events(f"why is {code} predicted there")
     assert events[0]["name"] == "explain_prediction" and events[1]["ok"] is True
     explanation = "".join(e["text"] for e in events if e["type"] == "token").strip()
     print(f"\n  [{code}] {explanation}")
     assert len(explanation) > 40, f"explanation suspiciously short: {explanation!r}"
 
-    # the sources came from the SHAP-driven retrieval, which this test doesn't
-    # re-derive -- instead check the explanation references the driver and
-    # circuit it's actually about, a cheap but real grounding signal
-    assert code in explanation
+    # same bar as test_explainer.py: at least 2 of the top-3 contributions'
+    # distinctive words actually show up -- a much harder bar to clear by
+    # accident than matching any single common word, and doesn't require the
+    # model to literally restate the driver code (it often says "the car"/
+    # "the team" instead, which is fine)
+    top3 = [c["input"] for c in payload["contributions"][:3]]
+    keywords = [_distinctive_word(p) for p in top3]
+    matches = sum(1 for kw in keywords if kw in explanation.lower())
+    assert matches >= 2, f"explanation references only {matches}/3 top inputs (keywords={keywords}): {explanation!r}"
     word_count = len(explanation.split())
     assert word_count <= 180, f"explanation is unusually long/rambling ({word_count} words): {explanation!r}"
 

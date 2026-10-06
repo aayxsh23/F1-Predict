@@ -365,14 +365,21 @@ def _handle_season_schedule(question: str, ctx: dict) -> dict:
 
 
 def _handle_general(question: str, ctx: dict) -> dict:
+    """Facts handed to the local model for an unmatched question. The current
+    race's own circuit guide is always included, not just when the question
+    happens to name the circuit -- a real generation test showed the model
+    guessing "street circuit" from nothing when it wasn't given this, for a
+    question that was obviously about the current race weekend without
+    naming the circuit (e.g. "what's going on this weekend")."""
     facts: dict = {"question": question}
+    circuit = _circuit_in(question.lower())
     try:
         data = t.forecast(ctx.get("season"), ctx.get("round"))
         facts["current_forecast_top3"] = [{"driver": d["driver"], "team": d["team"], "win": d.get("win")} for d in data["drivers"][:3]]
         facts["race"] = data["race"]
+        circuit = circuit or data["circuit"]
     except Exception:
         pass
-    circuit = _circuit_in(question.lower())
     if circuit:
         facts["circuit_guide"] = t.circuit_guide(circuit)
     return {"tool": "general", "llm": True, "llm_payload": facts, "sources": None}
