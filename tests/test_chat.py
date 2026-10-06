@@ -75,6 +75,16 @@ def test_context_resolves_the_selected_driver_without_naming_them(_mock):
     assert end["ok"] is True
 
 
+def test_invented_numbers_and_names_are_caught():
+    from src.agent.chat import ungrounded
+
+    # both from real local-model answers
+    facts = "Current race: Singapore Grand Prix\nTop of the forecast: ANT (Mercedes), VER (Red Bull)\nsafety cars (0.9), pit lane (24s)"
+    assert ungrounded("Singapore sits over 300m above sea level.", facts) == ["300"]
+    assert ungrounded("The current driver to beat is António Félix da Costa.", facts) == ["António", "Félix", "Costa"]
+    assert ungrounded("Safety cars are common (0.9) here. ANT of Mercedes leads VER.", facts) == []
+
+
 if __name__ == "__main__":
     tests = [v for k, v in list(globals().items()) if k.startswith("test_")]
     for t in tests:

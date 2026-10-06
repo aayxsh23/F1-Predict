@@ -54,6 +54,17 @@ def test_rule_article_number_triggers_search_rules():
     assert classify_intent(_msgs("what does B1.6.2 say")) == "search_rules"
 
 
+def test_circuit_questions_get_the_written_guide_not_the_model():
+    # a real "is overtaking hard at Singapore" went to the local model, which
+    # invented a 300m elevation; country names must resolve to the circuit too
+    for q in ("Is overtaking hard at Singapore?", "why is overtaking hard at singapore", "what is Marina Bay like"):
+        assert classify_intent(_msgs(q)) == "circuit_guide", q
+    assert classify_intent(_msgs("why is NOR predicted to win at Singapore")) == "explain_prediction"
+    assert classify_intent(_msgs("who wins in Singapore")) == "race_forecast"
+    r = dispatch("circuit_guide", "is overtaking hard at singapore", {})
+    assert r["ok"] and "Marina Bay" in r["text"] and not r["llm"]
+
+
 def test_plain_win_question_is_race_forecast():
     assert classify_intent(_msgs("who's going to win this race")) == "race_forecast"
 

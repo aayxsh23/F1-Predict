@@ -1,127 +1,193 @@
-# F1 Predict
+<p align="center">
+  <img src="docs/readme/hero.png" alt="F1 Predict — forecasts every race weekend, explains why, and shows how accurate it has really been." width="100%">
+</p>
 
-**Forecasts every Formula 1 race weekend, explains why, and shows how accurate it has really been.**
+<p align="center">
+  <img src="https://img.shields.io/badge/python-3.12+-F2F1ED?style=flat-square&labelColor=0A0B0D" alt="Python 3.12+">
+  <img src="https://img.shields.io/badge/node-24-F2F1ED?style=flat-square&labelColor=0A0B0D" alt="Node 24">
+  <img src="https://img.shields.io/badge/models-XGBoost%20×%204-F2F1ED?style=flat-square&labelColor=0A0B0D" alt="4 XGBoost models">
+  <img src="https://img.shields.io/badge/api-FastAPI-F2F1ED?style=flat-square&labelColor=0A0B0D" alt="FastAPI">
+  <img src="https://img.shields.io/badge/app-React%2019-F2F1ED?style=flat-square&labelColor=0A0B0D" alt="React 19">
+  <img src="https://img.shields.io/badge/api%20keys-none-FF5A47?style=flat-square&labelColor=0A0B0D" alt="No API keys">
+</p>
 
-![The "Why this prediction" tab: a plain-language summary, the inputs that pushed the prediction up or down, and the teammate comparison](docs/why-tab.png)
+<p align="center">
+  <a href="#what-it-does"><b>What it does</b></a> &nbsp;·&nbsp;
+  <a href="#how-it-works"><b>How it works</b></a> &nbsp;·&nbsp;
+  <a href="#accuracy"><b>Accuracy</b></a> &nbsp;·&nbsp;
+  <a href="#run-it-locally"><b>Run it</b></a> &nbsp;·&nbsp;
+  <a href="#deploying"><b>Deploy</b></a> &nbsp;·&nbsp;
+  <a href="#api"><b>API</b></a> &nbsp;·&nbsp;
+  <a href="#documentation"><b>Docs</b></a>
+</p>
 
-## What it does
+<br>
 
-For the next race, and for every race since 2022, the app shows:
+> *Most prediction content states a number with no reasoning. F1 Predict's "why" comes from the same model that made the prediction — every number traceable to real feature contributions and real FIA regulations, not vibes.*
 
-| Question | What you see |
-|---|---|
-| Who will be on pole? | Predicted qualifying order and lap times, with each driver's chance of pole, of reaching Q3, and of going out in Q1 |
-| Who will win? | Predicted finishing order, chances to win / finish on the podium / score points, a likely finishing range, retirement risk, and gap to the winner |
-| Why? | The inputs that pushed each prediction up or down (recent results, grid slot, practice pace, circuit, weather forecast...), in plain words, plus a written explanation |
-| What's the best strategy? | The fastest tyre plans, pit windows, and what a safety car on a given lap changes |
-| Who wins the title? | Live standings with each driver's and team's chance of the championship |
-| Anything else? | An analyst chat that answers from the app's own numbers and cites the FIA rules it uses |
-| Can I trust it? | For every past race: what it predicted beforehand next to what happened, and its average error against simple guesses |
+<br>
 
-Forecasts refresh automatically through the weekend, getting sharper after each practice session and after qualifying.
+<a id="what-it-does"></a>
+<img src="docs/readme/section-01.png" alt="01 — What it does" width="100%">
 
-## How it works
+For the next race, and for every race since 2022:
 
-```
-FastF1 (timing data) --+
-Open-Meteo (forecasts) +--> per-race tables --> features --> 4 XGBoost models --+--> odds, ranges, lap times, race length
-Jolpica (standings) ---+    (form, team, circuit,           (qualifying,       |--> strategy simulator (fitted on real stints)
-                            practice, grid, weather)         finish, places     |--> championship simulation
-                                                             gained, gap)       v
-                             GitHub Actions: refresh every 30 min on race weekends,   JSON in data/predictions/
-                             retrain weekly (only if the models still beat their      |
-                             baselines)                                               v
-                                                              FastAPI on Vercel --> React app
-                                                              + local analyst (LangGraph router, 15 intents, 13 deterministic)
-```
-
-1. **Data.** One row per driver per race since 2022: grid, qualifying and practice times, the race-start weather forecast, result, gap to the winner, plus lap-by-lap tyre stints.
-2. **Features.** Each driver's recent form, their history at this circuit, the team's form and pace, the teammate comparison and the circuit's characteristics. Every one is computed only from earlier races, so nothing leaks from the future.
-3. **Four models, one per question.** XGBoost gradient-boosted trees for qualifying gap, finishing position, places gained and gap to the winner. Each serves every weekend stage: it was trained on copies of past races with the not-yet-known information hidden.
-4. **Derived outputs.**
-   - Odds and ranges come from simulating each race 10,000 times around the model's order.
-   - Lap times and race length come from circuit history.
-   - Strategy comes from a tyre-wear model fitted on real stints.
-5. **Explanations.** SHAP values show how much each input moved each prediction. The chat is deterministic-first: a LangGraph router matches a question to one of 15 intents by keyword, 13 of them a pure data lookup and renders the answer from the real result -- no LLM chooses a tool or computes a number, so there's nothing for a model to get wrong on any of those. Only two things ("why is this predicted?" and anything unmatched) hand the already-computed numbers to a local, LoRA-fine-tuned Llama 3.2 1B to turn into prose, and both cite the regulation articles they ground on. See [docs/MODELS.md](docs/MODELS.md) and [AGENTS.md](AGENTS.md) for why: a 1B model fine-tuned on a consumer GPU can write a good paragraph around numbers it's handed, but can't be trusted to choose which numbers to fetch or compute them correctly itself.
-
-## Accuracy
-
-Measured on the latest 43 races (Nov 2024 to Sep 2026). Each was predicted by a model trained only on earlier races, the way a live forecast is.
-
-| Prediction | After qualifying | Simple guess |
+| | Question | What you see |
 |---|---|---|
-| Finishing position | off by **3.26** places on average | 3.43 (finish where you start) |
-| Qualifying gap (after practice) | **0.64%** of a lap (~0.6 s) | 0.70% (team's usual gap) |
-| Gap to winner | **0.64%** of race time (~35 s) | 0.85% |
-| Win odds (Brier, lower is better) | **0.033** | 0.047 (everyone equal) |
+| `01` | **Who takes pole?** | Predicted qualifying order and lap times, with each driver's chance of pole, of reaching Q3, and of going out in Q1 |
+| `02` | **Who wins?** | Predicted finishing order; chances to win, podium and score; a likely finishing range, retirement risk, and gap to the winner |
+| `03` | **Why?** | The inputs that pushed each prediction up or down — recent results, grid slot, practice pace, circuit, weather forecast — in plain words, plus a written explanation |
+| `04` | **Best strategy?** | The fastest tyre plans, pit windows, and what a safety car on a given lap changes |
+| `05` | **Who wins the title?** | Live standings with each driver's and team's chance of the championship |
+| `06` | **Anything else?** | Pit Radio — an analyst chat that answers from the app's own numbers and cites the FIA rules it uses |
+| `07` | **Can I trust it?** | For every past race: what it predicted beforehand next to what happened, and its error against simple guesses |
 
-The full model cards, including where the models are weak, are in [docs/MODELS.md](docs/MODELS.md).
+Forecasts refresh automatically through the weekend, sharpening after every practice session and again after qualifying. There's no *"not available yet"* — only *"less informed yet."*
 
-## Run it locally
+<p align="center">
+  <img src="docs/why-tab.png" alt="The Why tab: a plain-language summary, the inputs that pushed the prediction up or down, and the teammate comparison" width="100%">
+  <br>
+  <sub><i>The Why tab — every prediction is one click from its own reasoning.</i></sub>
+</p>
 
-Requires Python 3.12+ and Node 24.
+<br>
+
+<a id="how-it-works"></a>
+<img src="docs/readme/section-02.png" alt="02 — How it works" width="100%">
+
+<img src="docs/readme/pipeline.png" alt="Pipeline: FastF1, Open-Meteo and Jolpica feed per-race tables and features into four XGBoost models; odds, strategy, title odds and SHAP are derived; GitHub Actions publish JSON served by FastAPI on Vercel to the React app and Pit Radio." width="100%">
+
+1. **Data** — One row per driver per race since 2022: grid, qualifying and practice times, the race-start weather forecast, result, gap to the winner, plus lap-by-lap tyre stints.
+2. **Features** — Recent form, circuit history, team form and pace, the teammate comparison and circuit characteristics. Every one is computed only from earlier races, so nothing leaks from the future.
+3. **Four models, one per question** — XGBoost for qualifying gap, finishing position, places gained and gap to the winner. Each serves every weekend stage: trained on copies of past races with the not-yet-known information hidden.
+4. **Derived outputs** — Odds and ranges from 10,000 simulated races around the model's order. Lap times and race length from circuit history. Strategy from a tyre-wear model fitted on real stints.
+5. **Explanations** — SHAP values show how much each input moved each prediction.
+
+<details>
+<summary><b>Why the chat is deterministic-first</b></summary>
+<br>
+
+A LangGraph router matches a question to one of **15 intents** by keyword. **13 of them are pure data lookups** rendered from the real result — no LLM chooses a tool or computes a number, so there's nothing for a model to get wrong.
+
+Only two — *"why is this predicted?"* and anything unmatched — hand the already-computed numbers to a local, LoRA-fine-tuned **Llama 3.2 1B** to turn into prose. The *"why"* answer cites the regulation articles it grounds on; an open-ended answer that mentions any number or name it wasn't given is replaced with a plain data answer before you see it.
+
+A 1B model fine-tuned on a consumer GPU can write a good paragraph around numbers it's handed, but can't be trusted to choose which numbers to fetch or to compute them. See [docs/MODELS.md](docs/MODELS.md) and [AGENTS.md](AGENTS.md).
+
+</details>
+
+<br>
+
+<a id="accuracy"></a>
+<img src="docs/readme/section-03.png" alt="03 — Accuracy" width="100%">
+
+<img src="docs/readme/accuracy.png" alt="Accuracy over 43 walk-forward races: finishing position 3.26 places vs 3.43; qualifying gap 0.64% vs 0.70%; gap to winner 0.64% vs 0.85%; win-odds Brier 0.033 vs 0.047." width="100%">
+
+Measured on the latest **43 races** (Nov 2024 → Sep 2026), each predicted by a model trained only on earlier races — exactly the way a live forecast is. The window includes the 2026 rule reset, the hardest period to predict.
+
+| Prediction | Model | Simple guess |
+|---|---|---|
+| Finishing position *(after quali)* | **3.26** places | 3.43 · finish where you start |
+| Qualifying gap *(after practice)* | **0.64%** of a lap · ~0.6 s | 0.70% · team's usual gap |
+| Gap to winner | **0.64%** of race time · ~35 s | 0.85% · typical past gap |
+| Win odds *(Brier)* | **0.033** | 0.047 · everyone equal |
+
+The weekly retrain refuses to ship a model that doesn't beat its baseline. Full model cards — including where the models are weak — live in [docs/MODELS.md](docs/MODELS.md).
+
+<br>
+
+<a id="run-it-locally"></a>
+<img src="docs/readme/section-04.png" alt="04 — Run it locally" width="100%">
+
+Requires **Python 3.12+** and **Node 24**.
 
 ```bash
 python -m venv .venv
 .venv/Scripts/pip install -r requirements-dev.txt     # macOS/Linux: .venv/bin/pip
 .venv/Scripts/python -m uvicorn src.api.main:app --reload
 
-cd frontend && npm ci && npm run dev                  # http://localhost:5173
+cd frontend && npm ci && npm run dev                  # → http://localhost:5173
 ```
 
-That's it -- no API key needed anywhere, and every chat intent except "why is this predicted?" and open-ended questions already works. For those two to answer in written prose instead of a plain data list, also install the local model (needs an NVIDIA GPU, 4-bit inference fits in ~4GB VRAM):
+That's it — no API key anywhere, and every chat intent except *"why is this predicted?"* and open-ended questions already works.
+
+<details>
+<summary><b>Optional — written prose from the local model</b></summary>
+<br>
+
+Needs an NVIDIA GPU; 4-bit inference fits in ~4 GB VRAM.
 
 ```bash
 .venv/Scripts/pip install -r requirements-llm.txt
 ```
 
-No restart wiring needed -- the backend detects it automatically (`src/rag/llm.py`'s `is_available()`).
+No wiring needed — the backend detects it automatically (`src/rag/llm.py` → `is_available()`).
+
+</details>
+
+<details>
+<summary><b>Pipeline commands</b></summary>
+<br>
 
 | Task | Command |
 |---|---|
 | Forecast the next race now | `python -m src.models.refresh_job` |
 | Ingest newly finished races | `python -m src.data.ingest --seasons 2026` |
 | Rebuild the feature table | `python -m src.features.build_dataset` |
-| Retrain and evaluate all four models | `python -m src.models.train` (about 10 min) |
-| Refit odds, history view, strategy | `python -m src.models.probabilities`, `python -m src.models.backtest_export`, `python -m src.strategy.model` |
+| Retrain and evaluate all four models | `python -m src.models.train` *(~10 min)* |
+| Refit odds, history view, strategy | `python -m src.models.probabilities` · `python -m src.models.backtest_export` · `python -m src.strategy.model` |
 | Rebuild the regulations index | `python -m src.rag.corpus` |
 | Chat in the terminal | `python -m src.agent.cli` |
-| Tests | `python -m src.features.build_dataset` once, then `pytest`; `npm run lint && npm run build` in `frontend/` |
+| Tests | `python -m src.features.build_dataset` once, then `pytest` · `npm run lint && npm run build` in `frontend/` |
 
-## Deploying
+</details>
 
-The API needs no model, no API key, and no GPU to serve 13 of the chat's 15 intents plus every other route -- only `explain_prediction`'s prose and the `general` catch-all need the local model, and both degrade to a plain data answer when it isn't there (never an error). That splits deployment into two honest options:
+<br>
 
-**Static + serverless (Vercel), no local model.** One Vercel project serves both the app and the API (`vercel.json`: the frontend builds to static files, `api/index.py` runs FastAPI as a Python function). Import the repo, keep the root directory as the repo root, and deploy -- no environment variables are required. The API imports no pandas, XGBoost or torch; everything heavy is precomputed by the scheduled jobs, which keeps the function around 180 MB (Vercel's cap is 250 MB) and its cold starts short. The scheduled GitHub Actions commit fresh forecasts to the repo, and each commit redeploys; to serve new forecasts without redeploying, set `PREDICTIONS_DATA_SOURCE` to the raw GitHub URL of `data/predictions` (see `.env.example`).
+<a id="deploying"></a>
+<img src="docs/readme/section-05.png" alt="05 — Deploying" width="100%">
 
-**Self-hosted, with the local model.** For "why is this predicted?" and open-ended questions to answer in written prose, run the backend somewhere with an NVIDIA GPU and `requirements-llm.txt` installed -- your own machine, or a small VPS/GPU host. There's no separate inference service to stand up: the same FastAPI process serves everything, the model just loads on first use.
+The API needs no model, no API key and no GPU to serve 13 of 15 chat intents plus every other route. The other two degrade to a plain data answer — never an error.
 
-## API
+**▸ Static + serverless (Vercel)** — One project serves the app and the API: the frontend builds to static files, `api/index.py` runs FastAPI as a Python function. Import the repo, keep the root as the repo root, deploy. No environment variables required. The API imports no pandas, XGBoost or torch — everything heavy is precomputed — so the function stays around 180 MB (cap: 250 MB) with short cold starts. Scheduled GitHub Actions commit fresh forecasts, and each commit redeploys; to serve new forecasts without redeploying, point `PREDICTIONS_DATA_SOURCE` at the raw GitHub URL of `data/predictions` (see `.env.example`).
+
+**▸ Self-hosted, with the local model** — For written prose on *"why"* and open-ended questions, run the backend on any machine with an NVIDIA GPU and `requirements-llm.txt` installed. No separate inference service: the same FastAPI process serves everything, and the model loads on first use.
+
+<br>
+
+<a id="api"></a>
+<img src="docs/readme/section-06.png" alt="06 — API" width="100%">
 
 | Route | Returns |
 |---|---|
-| `GET /predictions/latest`, `/predictions/{season}/{round}` | The forecast with odds, ranges, qualifying odds and lap times |
+| `GET /predictions/latest` · `/predictions/{season}/{round}` | The forecast with odds, ranges, qualifying odds and lap times |
 | `GET /predictions/{season}/{round}/explain?driver=&target=` | The SHAP breakdown behind one prediction |
 | `GET /predictions/{season}/{round}/timeline` | How the forecast moved through the weekend |
 | `GET /strategy/{season}/{round}?sc_lap=` | Tyre strategies, pit windows, safety-car scenario |
 | `GET /championship` | Standings with simulated title odds |
-| `GET /backtest/races`, `/backtest/{season}/{round}`, `/backtest/summary` | Past races, predicted vs actual, and accuracy by season |
+| `GET /backtest/races` · `/backtest/{season}/{round}` · `/backtest/summary` | Past races, predicted vs actual, accuracy by season |
 | `GET /model` | Held-out accuracy of each model |
 | `GET /races?season=` | The calendar |
-| `GET /regulations`, `/regulations/search?query=`, `/regulations/{file}` | FIA regulations and steward decisions |
-| `POST /explain` | A written explanation of one prediction (local model; 503 if it isn't installed) |
-| `POST /chat` | The analyst, streamed as server-sent events -- deterministic for 13 of 15 intents |
+| `GET /regulations` · `/regulations/search?query=` · `/regulations/{file}` | FIA regulations and steward decisions |
+| `POST /explain` | A written explanation of one prediction *(local model; 503 if absent)* |
+| `POST /chat` | Pit Radio, streamed as server-sent events — deterministic for 13 of 15 intents |
 
-## Documentation map
+<br>
+
+<a id="documentation"></a>
+<img src="docs/readme/section-07.png" alt="07 — Documentation" width="100%">
 
 | Document | What's in it |
 |---|---|
-| [docs/MODELS.md](docs/MODELS.md) | Model cards: targets, inputs, accuracy, limits |
+| [docs/MODELS.md](docs/MODELS.md) | Model cards — targets, inputs, accuracy, limits |
 | [PRODUCT.md](PRODUCT.md) | Who it's for and the product principles |
 | [frontend/DESIGN.md](frontend/DESIGN.md) | The visual design system |
-| [AGENTS.md](AGENTS.md) | Rules for anyone (or any AI agent) changing the code |
+| [AGENTS.md](AGENTS.md) | Rules for anyone — or any AI agent — changing the code |
 | [LEARNING.md](LEARNING.md) | A tutorial on every concept and decision, written to learn from |
 | [PROGRESS.md](PROGRESS.md) | The build log |
-| [f1-race-predictor-explainer-project-plan.md](f1-race-predictor-explainer-project-plan.md) | The original plan and phase history |
+| [Project plan](f1-race-predictor-explainer-project-plan.md) | The original plan and phase history |
 
-Not affiliated with Formula 1, the FIA or any team. Timing data from FastF1, standings from Jolpica-F1, weather from Open-Meteo.
+<br>
+
+<p align="center">
+  <img src="docs/readme/footer.png" alt="An independent analysis tool, built by a fan. Not affiliated with Formula 1, the FIA or any team. Timing from FastF1, standings from Jolpica-F1, weather from Open-Meteo." width="100%">
+</p>

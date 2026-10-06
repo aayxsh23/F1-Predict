@@ -69,11 +69,27 @@ def _known_circuits() -> list[str]:
     return sorted({c["circuit"] for c in load_index()["chunks"] if c.get("circuit")})
 
 
+# What fans actually type for a circuit whose corpus name is its location.
+# Only unambiguous ones: "Spain", "Italy", "USA" each have several venues.
+CIRCUIT_NICKNAMES = {
+    "singapore": "Marina Bay", "sepang": "Kuala Lumpur", "malaysia": "Kuala Lumpur", "bahrain": "Sakhir",
+    "abu dhabi": "Yas Island", "yas marina": "Yas Island", "qatar": "Lusail", "brazil": "São Paulo",
+    "interlagos": "São Paulo", "cota": "Austin", "hungary": "Budapest", "hungaroring": "Budapest",
+    "austria": "Spielberg", "red bull ring": "Spielberg", "japan": "Suzuka", "china": "Shanghai",
+    "australia": "Melbourne", "albert park": "Melbourne", "canada": "Montréal", "montreal": "Montréal",
+    "mexico": "Mexico City", "netherlands": "Zandvoort", "dutch": "Zandvoort", "azerbaijan": "Baku",
+    "saudi": "Jeddah", "vegas": "Las Vegas", "british": "Silverstone", "belgium": "Spa-Francorchamps",
+    "belgian": "Spa-Francorchamps", "spa": "Spa-Francorchamps", "sao paulo": "São Paulo", "paul ricard": "Le Castellet",
+}
+_NICKNAME_RE = re.compile(r"\b(" + "|".join(map(re.escape, CIRCUIT_NICKNAMES)) + r")\b")
+
+
 def _circuit_in(question_lower: str) -> str | None:
     for name in _known_circuits():
         if name.lower() in question_lower:
             return name
-    return None
+    m = _NICKNAME_RE.search(question_lower)
+    return CIRCUIT_NICKNAMES[m.group(1)] if m else None
 
 
 def _target_in(question_lower: str) -> str:
@@ -102,6 +118,10 @@ def _by_name_or_code(drivers: list[dict], question: str, code_key: str = "driver
 
 # --- intent classification: pure keyword matching, no network, no LLM ---
 
+CIRCUIT_TOPIC_WORDS = ("overtak", "pass", "track", "circuit", "layout", "corner", "difficult", "hard", "tricky",
+                       "tell me about", "what's", "what is", "like", "special", "unique", "elevation", "straight")
+_FORECAST_WORDS_RE = re.compile(r"\b(predict\w*|win\w*|podium|pole|finish\w*|forecast|odds|chance|p\d{1,2})\b")
+
 def _classify_specific(q: str) -> str | None:
     if any(p in q for p in ("need to do to win", "clinch", "mathematically", "still in contention", "win the title", "win the championship")):
         return "title_scenario"
@@ -127,6 +147,11 @@ def _classify_specific(q: str) -> str | None:
         return "forecast_timeline"
     if any(p in q for p in ("schedule", "calendar", "next race", "upcoming race", "when is the", "when's the")):
         return "season_schedule"
+    # a question about the track itself gets the written guide verbatim, never
+    # the local model: a real "is overtaking hard at Singapore" answer from it
+    # invented a 300m elevation and corners that don't exist
+    if not _FORECAST_WORDS_RE.search(q) and any(w in q for w in CIRCUIT_TOPIC_WORDS) and _circuit_in(q):
+        return "circuit_guide"
     if any(p in q for p in (" vs ", " versus ", "head to head", "head-to-head", "beat ", "ahead of", " against ")):
         return "head_to_head"
     if any(p in q for p in ("why", "explain", "reason", "what's pushing", "what is pushing", "what's driving",

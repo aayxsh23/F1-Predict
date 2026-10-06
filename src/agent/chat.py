@@ -16,6 +16,7 @@ stored.
   {"type": "sources", "items"}               rules/rulings a lookup cited
   {"type": "done"} or {"type": "error", "message"}
 """
+import re
 from collections.abc import Iterator
 
 from src.agent.router import route
@@ -74,6 +75,32 @@ def _general_prompt(facts: dict) -> str:
     return "\n".join(lines)
 
 
+_NUMBER_RE = re.compile(r"\d+(?:\.\d+)?")
+# a capitalised word that doesn't start a sentence: a name, a place, a team
+_NAME_RE = re.compile(r"(?<![.!?:]\s)(?<!^)\b[A-ZÀ-Þ][\wÀ-ÿ'-]+")
+
+
+def ungrounded(answer: str, given: str) -> list[str]:
+    """Numbers and names in a generated answer that appear nowhere in what the
+    model was given. AGENTS.md: every number in a chat answer comes from
+    Python, and every name should too. Real answers caught by this: Singapore
+    "over 300m above sea level", and ANT expanded to "António Félix da Costa"
+    (a Formula E driver). It can't catch a wrong description in plain words
+    ("long, sweeping corners"); that's why circuit questions skip the model."""
+    numbers = set(_NUMBER_RE.findall(given))
+    words = set(given.lower().split()) | set(re.findall(r"[\wÀ-ÿ'-]+", given.lower()))
+    return ([n for n in _NUMBER_RE.findall(answer) if n not in numbers]
+            + [w for w in _NAME_RE.findall(answer) if w.lower() not in words])
+
+
+def _general_fallback(facts: dict) -> str:
+    top = facts.get("current_forecast_top3") or []
+    if "race" not in facts or not top:
+        return GENERAL_FALLBACK
+    front = ", ".join(f"**{d['driver']}** ({d['team']})" for d in top)
+    return f"{facts['race']}: the forecast has {front} at the front.\n\n{GENERAL_FALLBACK}"
+
+
 def _llm_source_items(hits: list[dict]) -> list[dict]:
     return [{"filename": h["source"], "title": h["title"], "article": h["article"], "doc_type": h["doc_type"]} for h in hits]
 
@@ -108,8 +135,18 @@ def stream_chat(history: list[dict], context: dict | None = None) -> Iterator[di
             system_prompt, user_prompt = GENERAL_SYSTEM_PROMPT, _general_prompt(result["llm_payload"])
 
         if not is_available():
-            fallback = _explain_fallback_text(result["llm_payload"]) if tool == "explain_prediction" else GENERAL_FALLBACK
+            fallback = _explain_fallback_text(result["llm_payload"]) if tool == "explain_prediction" else _general_fallback(result["llm_payload"])
             yield {"type": "token", "text": fallback}
+            yield {"type": "done"}
+            return
+
+        if tool == "general":
+            # short (2-4 sentences), so check it whole before showing it; the
+            # explain path rewords its numbers (-4.1479 -> "about 4 places") and
+            # streams, its grounding is pinned by the prompt shape instead
+            answer = "".join(generate_stream(system_prompt, user_prompt))
+            invented = ungrounded(answer, system_prompt + "\n" + user_prompt)
+            yield {"type": "token", "text": _general_fallback(result["llm_payload"]) if invented else answer}
             yield {"type": "done"}
             return
 

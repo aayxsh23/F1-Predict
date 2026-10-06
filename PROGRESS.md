@@ -6,6 +6,16 @@ Read this file first when picking up work in a new session — it tells you what
 
 ---
 
+## 2026-10-06: chat invented Singapore facts; circuit questions now skip the model, general answers are checked
+
+User reported a real answer: Singapore "over 300m above sea level", "long, sweeping corners", pit lane as the overtaking problem. All false. Causes, all in routing:
+
+- **"Singapore" wasn't a known circuit.** `_circuit_in` only matched corpus location names ("Marina Bay"), so "is overtaking hard at Singapore" never reached `circuit_guide` and fell to `general` (the local 1B model). Added `CIRCUIT_NICKNAMES` in router.py (country/GP/track nicknames to location, unambiguous ones only).
+- **Circuit questions went to the model at all.** New rule ahead of head-to-head/explain: names a circuit + a track word (overtak, layout, corner, hard, like...) + no forecast word (predict, win, pole, finish...) -> `circuit_guide`, the written guide verbatim. "why is overtaking hard at singapore" used to go to `explain_prediction` because of "why".
+- **Backstop on `general`:** `chat.ungrounded()` flags numbers and capitalised names in the answer that appear nowhere in what the model was given; a flagged answer is replaced by a deterministic one (current race + forecast top 3 + capability list). `general` is buffered, not streamed, so the check runs first. Generation-testing it caught a second real fabrication: the model expanded "ANT" to "António Félix da Costa" (Formula E).
+- **Honest residual:** sampled `general` answers are often wrong in plain words the check can't see ("the sky is always blue... because of the extreme heat at Marina Bay"). Recommended to the user: make `general` deterministic too (a scope change to AGENTS.md's "LLM for exactly two things", so not done without them).
+- 77 tests pass (new: circuit classification + guide dispatch, and the grounding check on both real fabrications).
+
 ## 2026-10-06: Kuala Lumpur ingested, models retrained; a latent `round` shadowing crash fixed
 
 User asked why the History grid stopped at Baku. That grid is the walk-forward backtest, which only `retrain.yml` updates (ingest -> rebuild -> gated train -> exports), and that workflow had never run on a schedule (it lived only on `UI` until the merge above). Ran the same pipeline locally instead of waiting for Tuesday: ingested round 16, gate passed, backtest now includes 2026 R16, Singapore re-forecast with the new models.

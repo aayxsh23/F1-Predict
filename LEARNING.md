@@ -10,6 +10,22 @@ Agents: update this file per AGENTS.md's "Multi-agent coordination" section — 
 
 ---
 
+## "Only use the facts given" is a request, not a guarantee: catching a small model making things up
+
+### What happened
+
+Asked whether overtaking is hard at Singapore, the chat said the circuit is "over 300m above sea level" (it's at sea level), has "long, sweeping corners" (it has slow, tight ones), and that the pit lane makes passing hard. The written circuit guide it had been handed said none of this. The system prompt literally says "Do not invent... numbers, or facts". A 1B model doesn't reliably follow that instruction: it learned to write fluent F1-sounding sentences, and fluency is all it guarantees.
+
+### Fix the routing first, then add a check
+
+The real bug was that the question reached the model at all. The app already had a correct, deterministic answer, the circuit guide, but the router only recognised "Marina Bay", not "Singapore", so the question fell through to the catch-all. And "*why* is overtaking hard at Singapore" matched the "why" rule, which means "explain a driver's prediction". Two fixes: a nickname table (Singapore -> Marina Bay, Interlagos -> São Paulo, ...), and a rule that a question naming a circuit plus a track word, with no forecast word, gets the guide verbatim. The lesson: in a deterministic-first design, every question that can be answered from data should be, and a fall-through to the model is a routing bug, not a feature.
+
+The check is defence in depth for what still reaches the model. `ungrounded(answer, given)` lists every number and every capitalised mid-sentence word (a name, a place, a team) in the answer that doesn't appear in the prompt. A real invention is usually a specific: a figure, a driver, a comparison circuit. Those are exactly the tokens a model can't produce from the facts unless it copies them. Testing it on real generations caught a second fabrication right away: "ANT (Mercedes)" became "António Félix da Costa", a Formula E driver whose initials happen to spell ANT.
+
+### What the check can't do
+
+It can't catch a wrong *description* made of ordinary words ("long, sweeping corners"), or nonsense with no specifics in it ("the sky is always blue... because of the extreme heat at Marina Bay", a real sample). Checking meaning would take another model, and a second 1B model judging the first has the same weakness. So the real protection is the routing: keep the model's job as small as possible, and treat everything it writes as untrusted until it's checked against the data.
+
 ## A green workflow that never delivered: two ways a scheduled job can "succeed" at nothing
 
 ### The `||` chain that skips its own second half
