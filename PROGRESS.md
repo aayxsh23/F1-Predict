@@ -6,6 +6,15 @@ Read this file first when picking up work in a new session — it tells you what
 
 ---
 
+## 2026-10-06: auto-refresh fixed by merging UI into master; forecast rolled to Singapore
+
+The app was stuck on the 28 Sep pre-weekend forecast for round 16 (Bahrain GP at Kuala Lumpur) after that race ran on 4 Oct. Two causes, both on `master`, which is the only branch GitHub runs scheduled workflows from:
+
+- **master's old `refresh-predictions.yml` never pushed.** It ran `git diff --cached --quiet || git commit ...` then `git diff --cached --quiet || git push`: once the commit succeeds the index is clean again, so the second check is "quiet" and the push is skipped. Every run since the schedule was added "succeeded" (green in the Actions tab) and threw its forecast away with the runner.
+- **The rewritten workflows and refresh job lived only on the `UI` branch** (`refresh-predictions.yml` with a proper `if ... then commit; pull --rebase; push fi`, plus `retrain.yml` and `ci.yml`), so they never ran on a schedule.
+
+Fix: fast-forwarded `master` to `UI` (master had no commits UI lacked) and pushed both. Ran `python -m src.models.refresh_job` locally to verify it end to end: it rolls over to round 17 (Singapore, Marina Bay, "Before practice"); committed that output so the app updates now instead of at the next cron. Note round 16's result isn't ingested yet: Tuesday's `retrain.yml` ingests it, retrains under the gate, and the refresh after it re-forecasts Singapore with Sepang in everyone's form.
+
 ## 2026-10-06: chat reversed back to local-only, deterministic-first; a real grounding bug found and fixed by generation-testing the fine-tune
 
 User asked how Gemini and the local model differed, then said plainly: "I want to stick to local... train and modify it so well it should be on par with online models." Told them directly that a 1B model on a 4GB laptop GPU can't be fine-tuned to frontier-model parity (a training-scale gap, not an effort gap) and offered four shapes the local-only chat could take; they picked the deterministic-first one. This entry is that rebuild. Full reasoning in LEARNING.md's "2026-10-06" chapter; the scope reversal is recorded in AGENTS.md.

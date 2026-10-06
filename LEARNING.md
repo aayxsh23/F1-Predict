@@ -10,6 +10,41 @@ Agents: update this file per AGENTS.md's "Multi-agent coordination" section — 
 
 ---
 
+## A green workflow that never delivered: two ways a scheduled job can "succeed" at nothing
+
+### The `||` chain that skips its own second half
+
+master's refresh workflow ended like this:
+
+```sh
+git diff --cached --quiet || git commit -m "chore: refresh predictions"
+git diff --cached --quiet || git push
+```
+
+Read each line on its own and it looks right: "if something is staged, commit; if something is staged, push." But the lines aren't independent. `git commit` *empties* the staging area, so by the time the second line runs, `git diff --cached --quiet` finds nothing staged and exits 0, and `||` means "only run the right side if the left side failed." The push is skipped exactly when there is something to push. The job exits 0, the Actions tab shows a green tick on every run, and the commit vanishes with the throwaway runner. The fix is to make one decision and act on it as a block:
+
+```sh
+if ! git diff --cached --quiet; then
+  git commit -m "..."; git pull --rebase; git push
+fi
+```
+
+The general lesson: when a condition is re-checked after a step that *changes the thing being checked*, the second check answers a different question. Green CI only means "no command returned non-zero," not "the job did its job." The way to catch this kind of bug is to check the job's *effect* (are there bot commits in `git log origin/master`?), not its status.
+
+### Scheduled workflows only run from the default branch
+
+GitHub runs `schedule:` triggers using the workflow file on the repository's **default branch** (here `master`). A perfectly good workflow on a feature branch never fires on a timer, however long it sits there. The rewritten refresh job, the weekly retrain and CI had all been built on `UI`, so the cron kept running master's old, broken file. Merging to the default branch is the deploy step for automation, the same way it is for code.
+
+### Bahrain at Kuala Lumpur: what the model actually used
+
+The 2026 "Bahrain Grand Prix" was held at Sepang. Nothing in the model looks at the event *name*: every circuit-dependent input is keyed by **location**, so Sakhir's history was never used. For Kuala Lumpur:
+
+- The circuit columns (overtaking difficulty, safety-car frequency, pit-lane loss, straight length, braking zones, and so on) come from a hand-curated `circuit_reference.csv` row, because there's no recent race to measure them from. (The resolver raises on an unmapped venue rather than borrowing another track's numbers.)
+- `driver_track_form` (each driver's past results at this circuit) is blank: F1 last raced at Sepang in 2017 and the training data starts in 2022. XGBoost handles a missing value by sending it down the branch it learned for "unknown," so the forecast leans on what *is* known.
+- What carried the prediction was rolling form: driver and team recent form, team qualifying pace, and team form at *permanent* circuits as a group (`team_track_type_form`). Antonelli's P1 came mostly from `driver_recent_form` (SHAP about -4.1 places).
+
+So it was neither "Bahrain data" nor a guess: it was a generic permanent-circuit forecast driven by current form, with Sepang's layout described by hand. That's also why the confidence strip said "less informed yet": with no practice, grid or track history, the forecast is as general as it gets.
+
 ## Why the chat went back to local-only, and what "train it well" actually means on a 4GB GPU
 
 ### The question that started it: "why can't we just train the local model to match Gemini?"
