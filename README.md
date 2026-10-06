@@ -45,7 +45,7 @@ For the next race, and for every race since 2022:
 Forecasts refresh automatically through the weekend, sharpening after every practice session and again after qualifying. There's no *"not available yet"* — only *"less informed yet."*
 
 <p align="center">
-  <img src="docs/why-tab.png" alt="A driver's Why page: the model average, each input that moved the predicted finish up or down, and a plain-language summary" width="100%">
+  <img src="docs/readme/why-page.png" alt="A driver's Why page: the model average, each input that moved the predicted finish up or down, and a plain-language summary" width="100%">
   <br>
   <sub><i>A driver's Why page: every prediction is one click from what moved it.</i></sub>
 </p>
