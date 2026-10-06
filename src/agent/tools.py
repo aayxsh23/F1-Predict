@@ -6,6 +6,7 @@ calls an LLM: see src/agent/router.py for how a question is matched to one
 of these, and src/agent/chat.py for the two places (and only two) a local
 model is used to turn a result into prose.
 """
+import builtins
 import json
 from datetime import datetime, timezone
 from typing import Literal
@@ -62,7 +63,7 @@ def forecast(season: int | None = None, round: int | None = None) -> dict:
         "season": p["season"], "round": p["round"], "race": p.get("event_name") or p["location"], "circuit": p["location"],
         "race_start_utc": p.get("race_start_utc"), "forecast_as_of": p.get("session_label") or p.get("stage"),
         "generated_at": p.get("generated_at"), "laps": race.get("laps"),
-        "expected_race_duration_min": None if race.get("expected_duration_s") is None else round(race["expected_duration_s"] / 60, 1),
+        "expected_race_duration_min": None if race.get("expected_duration_s") is None else builtins.round(race["expected_duration_s"] / 60, 1),  # the `round` param shadows the builtin
         "predicted_pole_lap_s": race.get("pole_time_estimate_s"), "safety_car_chance": pct(race.get("safety_car_probability")),
         "drivers": drivers,
     }

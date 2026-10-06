@@ -34,7 +34,7 @@ def test_safety_car_pulls_the_stop_onto_it():
 
 
 def test_unknown_venue_falls_back_to_the_all_circuit_model():
-    r = simulate("Kuala Lumpur", 56)
+    r = simulate("Nowhere", 56)  # a venue with no stint data
     assert r["strategies"] and r["races_of_data"] == 0
 
 

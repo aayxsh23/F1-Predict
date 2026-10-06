@@ -6,6 +6,15 @@ Read this file first when picking up work in a new session — it tells you what
 
 ---
 
+## 2026-10-06: Kuala Lumpur ingested, models retrained; a latent `round` shadowing crash fixed
+
+User asked why the History grid stopped at Baku. That grid is the walk-forward backtest, which only `retrain.yml` updates (ingest -> rebuild -> gated train -> exports), and that workflow had never run on a schedule (it lived only on `UI` until the merge above). Ran the same pipeline locally instead of waiting for Tuesday: ingested round 16, gate passed, backtest now includes 2026 R16, Singapore re-forecast with the new models.
+
+- **Real bug, surfaced by the new forecast:** `tools.forecast()` has a parameter named `round` that shadows the builtin, so `round(duration / 60, 1)` was `None(...)` -> `TypeError` whenever the race had a known duration. Kuala Lumpur had none (no history), so it never ran; Singapore does, so the live chat's race-forecast answers ("who wins this race") all crashed. Fixed with `builtins.round`. Caught by 9 failing tests in the retrain's own test step.
+- `test_unknown_venue_falls_back_to_the_all_circuit_model` used Kuala Lumpur as its never-raced venue; it now has stint data, so the test uses a made-up venue.
+- Windows only: `src/strategy/model.py`'s summary print crashes on a cp1252 console (the arrow character) after `params.json` is written. Harmless on CI (UTF-8); set `PYTHONIOENCODING=utf-8` locally.
+- 75 tests pass.
+
 ## 2026-10-06: auto-refresh fixed by merging UI into master; forecast rolled to Singapore
 
 The app was stuck on the 28 Sep pre-weekend forecast for round 16 (Bahrain GP at Kuala Lumpur) after that race ran on 4 Oct. Two causes, both on `master`, which is the only branch GitHub runs scheduled workflows from:

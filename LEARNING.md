@@ -35,6 +35,10 @@ The general lesson: when a condition is re-checked after a step that *changes th
 
 GitHub runs `schedule:` triggers using the workflow file on the repository's **default branch** (here `master`). A perfectly good workflow on a feature branch never fires on a timer, however long it sits there. The rewritten refresh job, the weekly retrain and CI had all been built on `UI`, so the cron kept running master's old, broken file. Merging to the default branch is the deploy step for automation, the same way it is for code.
 
+### A bug that waited for the right data: shadowing `round`
+
+`tools.forecast(season=None, round=None)` names a parameter `round`, which hides Python's builtin `round()` inside the function. With the default `None`, the line `round(duration_s / 60, 1)` becomes `None(...)`, a `TypeError`. It shipped unnoticed because it sat behind `if expected_duration_s is None`: Kuala Lumpur had no race history, so its duration was `None` and that line never ran. The first forecast for a circuit *with* history (Singapore) hit it immediately. Two lessons: a bug in a branch that real data hasn't reached yet is still a bug, and naming parameters after builtins (`round`, `type`, `id`, `list`) is a trap. A linter rule like Ruff's `A002` flags it. Renaming the parameter would have changed a public signature used by the router, so the fix calls `builtins.round` explicitly.
+
 ### Bahrain at Kuala Lumpur: what the model actually used
 
 The 2026 "Bahrain Grand Prix" was held at Sepang. Nothing in the model looks at the event *name*: every circuit-dependent input is keyed by **location**, so Sakhir's history was never used. For Kuala Lumpur:

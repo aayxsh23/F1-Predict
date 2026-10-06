@@ -3,60 +3,60 @@
   "column": "target_quali_to_race_delta",
   "unit": "places",
   "baseline": "no change from the grid",
-  "n_rows": 2166,
-  "n_races": 107,
-  "data_through": "2026-09-26",
-  "evaluation": "43 races from 2024-11-03 to 2026-09-26, each predicted by a model trained only on earlier races; none of them was used to pick hyperparameters",
+  "n_rows": 2188,
+  "n_races": 108,
+  "data_through": "2026-10-04",
+  "evaluation": "44 races from 2024-11-03 to 2026-10-04, each predicted by a model trained only on earlier races; none of them was used to pick hyperparameters",
   "stages": {
     "pre_weekend": {
-      "mae": 3.4339,
-      "baseline_mae": 3.4263,
-      "n": 889,
-      "mean_race_spearman": 0.0101
+      "mae": 3.4395,
+      "baseline_mae": 3.438,
+      "n": 911,
+      "mean_race_spearman": 0.0347
     },
     "post_practice": {
-      "mae": 3.4302,
-      "baseline_mae": 3.4263,
-      "n": 889,
-      "mean_race_spearman": 0.0195
+      "mae": 3.4342,
+      "baseline_mae": 3.438,
+      "n": 911,
+      "mean_race_spearman": 0.0538
     },
     "post_quali": {
-      "mae": 3.1763,
-      "baseline_mae": 3.4263,
-      "n": 889,
-      "mean_race_spearman": 0.4077
+      "mae": 3.1838,
+      "baseline_mae": 3.438,
+      "n": 911,
+      "mean_race_spearman": 0.4097
     },
     "race_day": {
-      "mae": 3.1763,
-      "baseline_mae": 3.4263,
-      "n": 889,
-      "mean_race_spearman": 0.4077
+      "mae": 3.1838,
+      "baseline_mae": 3.438,
+      "n": 911,
+      "mean_race_spearman": 0.41
     }
   },
   "all_walk_forward_stages": {
     "pre_weekend": {
-      "mae": 3.4903,
-      "baseline_mae": 3.4652,
-      "n": 1967,
-      "mean_race_spearman": -0.0023
+      "mae": 3.4914,
+      "baseline_mae": 3.4701,
+      "n": 1989,
+      "mean_race_spearman": 0.0167
     },
     "post_practice": {
-      "mae": 3.4883,
-      "baseline_mae": 3.4652,
-      "n": 1967,
-      "mean_race_spearman": 0.0056
+      "mae": 3.4889,
+      "baseline_mae": 3.4701,
+      "n": 1989,
+      "mean_race_spearman": 0.0269
     },
     "post_quali": {
-      "mae": 3.0823,
-      "baseline_mae": 3.4652,
-      "n": 1967,
-      "mean_race_spearman": 0.4761
+      "mae": 3.0879,
+      "baseline_mae": 3.4701,
+      "n": 1989,
+      "mean_race_spearman": 0.4769
     },
     "race_day": {
-      "mae": 3.0823,
-      "baseline_mae": 3.4652,
-      "n": 1967,
-      "mean_race_spearman": 0.4761
+      "mae": 3.0879,
+      "baseline_mae": 3.4701,
+      "n": 1989,
+      "mean_race_spearman": 0.477
     }
   },
   "best_params": {
@@ -70,16 +70,16 @@
     "subsample": 0.602208846849441
   },
   "top_features": {
-    "grid_vs_expected_position": 1.0907000303268433,
-    "grid_position": 0.24539999663829803,
-    "grid_x_overtaking_difficulty": 0.08259999752044678,
-    "teammate_quali_gap": 0.04780000075697899,
-    "driver_positions_gained_form": 0.04529999941587448,
-    "team_recent_form": 0.043800000101327896,
-    "driver_dnf_rate": 0.03889999911189079,
-    "quali_gap_pct": 0.03799999877810478,
-    "driver_track_form": 0.03400000184774399,
-    "practice_pace": 0.033900000154972076
+    "grid_vs_expected_position": 1.072100043296814,
+    "grid_position": 0.27059999108314514,
+    "grid_x_overtaking_difficulty": 0.07270000129938126,
+    "driver_positions_gained_form": 0.04919999837875366,
+    "quali_gap_pct": 0.042399998754262924,
+    "driver_dnf_rate": 0.04019999876618385,
+    "team_recent_form": 0.03229999914765358,
+    "teammate_quali_gap": 0.031599998474121094,
+    "driver_track_form": 0.0272000003606081,
+    "practice_pace": 0.02669999934732914
   },
-  "trained_at": "2026-09-28T15:21:09+00:00"
+  "trained_at": "2026-10-06T11:24:46+00:00"
 }
