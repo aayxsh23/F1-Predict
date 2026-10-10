@@ -57,7 +57,7 @@ function PlainSummary({ exp, target, me }: { exp: ShapExplanation; target: Targe
   const hurts = exp.top_contributions.find((c) => !good(c.shap))
   const headline =
     target === 'finish_position' && me
-      ? `${me.code} is predicted to finish P${me.rank}${me.band ? `, most likely between P${me.band[0]} and P${me.band[1]}` : ''}.`
+      ? `${me.code} is predicted to finish P${me.rank}${me.band ? `, most likely between P${me.band[0]} and P${me.band[1]} if they finish` : ''}.`
       : target === 'qualifying' && me
         ? `${me.code} is predicted to qualify P${me.qualiRank}${me.qualiGapPredicted ? `, ${formatNumber(me.qualiGapPredicted, 3, 's')} off pole` : ''}.`
         : `${TARGET_LABELS[target]}: ${formatNumber(exp.predicted_value, 2, TARGET_UNITS[target])} (an average driver here: ${formatNumber(exp.base_value, 2, TARGET_UNITS[target])}).`

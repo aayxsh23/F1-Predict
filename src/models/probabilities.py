@@ -16,7 +16,10 @@ fitted, separately per weekend stage and on the tuning-window races only, for
 the probabilities it produces, then checked on the held-out races:
   tau_top    win and podium (Brier score)
   tau_field  top ten (Brier score); also expected position and beats-teammate
-  tau_band   the likely range: its P10-P90 should hold the result 80% of the time
+  tau_band   the likely range if the car finishes: its P10-P90 should hold
+             a finisher's result 80% of the time. (With every car's
+             retirement chance above 10%, a range that counted retirements
+             would end at last place for everyone.)
 Until 2026-10-11 tau_top was a Plackett-Luce likelihood fit to the whole top
 three, which left favourites under-stated: drivers given 40-60% to win won 87%
 of the time. In qualifying, tau is fitted for pole and Q3 the same way, and a
@@ -84,7 +87,7 @@ def race_probabilities(predicted_finish, stage: str = "post_quali", teams=None, 
     p = np.full(len(score), cal["dnf_prior"] if p_dnf is None else p_dnf)
     top = sample_positions(score, t["tau_top"], p, seed=seed)
     field = sample_positions(score, t["tau_field"], p, seed=seed + 1)
-    band = sample_positions(score, t.get("tau_band", t["tau_field"]), p, n=4000, seed=seed + 2)
+    band = sample_positions(score, t.get("tau_band", t["tau_field"]), 0.0, n=4000, seed=seed + 2)  # if it finishes
     beats = np.full(len(score), np.nan)
     if teams is not None:
         teams = list(teams)
@@ -154,11 +157,13 @@ def _race_brier(g, tau: float, n: int = FIT_SAMPLES) -> np.ndarray:
 
 
 def _coverage(g, tau: float, n: int = 1500) -> float:
+    """Share of finishers whose result fell inside their P10-P90 range (drawn without retirements)."""
     inside = []
     for i, (_, r) in enumerate(g.groupby(["season", "round"])):
-        pos = sample_positions(-r["pred"].to_numpy(), tau, float(r["p_dnf"].iloc[0]), n=n, seed=i)
+        pos = sample_positions(-r["pred"].to_numpy(), tau, 0.0, n=n, seed=i)
         lo, hi = np.percentile(pos, [10, 90], axis=0)
-        inside += list((r["actual"].to_numpy() >= lo) & (r["actual"].to_numpy() <= hi))
+        fin = ~r["dnf"].astype(bool).to_numpy()
+        inside += list(((r["actual"].to_numpy() >= lo) & (r["actual"].to_numpy() <= hi))[fin])
     return float(np.mean(inside))
 
 
@@ -230,7 +235,8 @@ def calibrate() -> dict:
             a = r["actual"].to_numpy()
             P.append(np.c_[pr["win"], pr["podium"], pr["top10"]])
             Y.append(np.c_[a == 1, a <= 3, a <= 10])
-            inside += list((a >= pr["band"][:, 0]) & (a <= pr["band"][:, 1]))
+            fin = ~r["dnf"].astype(bool).to_numpy()
+            inside += list(((a >= pr["band"][:, 0]) & (a <= pr["band"][:, 1]))[fin])
         if not P:
             continue
         P, Y = np.vstack(P), np.vstack(Y).astype(float)
@@ -240,7 +246,7 @@ def calibrate() -> dict:
             "held_out_races": int(held.groupby(["season", "round"]).ngroups),
             "brier": dict(zip(["win", "podium", "top10"], ((P - Y) ** 2).mean(axis=0).round(4).tolist())),
             "brier_if_guessing_evenly": dict(zip(["win", "podium", "top10"], ((np.array([1, 3, 10]) / n_cars - Y) ** 2).mean(axis=0).round(4).tolist())),
-            "range_p10_p90_coverage": round(float(np.mean(inside)), 3),
+            "range_p10_p90_coverage_finishers": round(float(np.mean(inside)), 3),
             "retirement_brier": round(float(((held_cars["p_dnf"] - held_cars["dnf"].astype(float)) ** 2).mean()), 4),
             "win_reliability": _reliability(P[:, 0], Y[:, 0]),
         }

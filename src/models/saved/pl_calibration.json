@@ -6,32 +6,32 @@
     "post_practice": {
       "tau_top": 1.3458376549595814,
       "tau_field": 2.595293157033005,
-      "tau_band": 1.1711133647812755
+      "tau_band": 1.8862129392508673
     },
     "post_quali": {
       "tau_top": 1.0157031137913146,
       "tau_field": 2.3628951879861035,
-      "tau_band": 1.0065091257907115
+      "tau_band": 1.8099281024284672
     },
     "post_sprint": {
       "tau_top": 1.0157031137913146,
       "tau_field": 2.3628951879861035,
-      "tau_band": 1.059668498733319
+      "tau_band": 1.655930331326687
     },
     "post_sprint_quali": {
       "tau_top": 1.2253233551272587,
       "tau_field": 2.3628951879861035,
-      "tau_band": 1.1605068968924914
+      "tau_band": 2.00612455102077
     },
     "pre_weekend": {
       "tau_top": 1.4782049047934707,
       "tau_field": 2.3628951879861035,
-      "tau_band": 1.1067994891772799
+      "tau_band": 1.8521267799189904
     },
     "race_day": {
       "tau_top": 1.0157031137913146,
       "tau_field": 2.3628951879861035,
-      "tau_band": 0.9549938571659169
+      "tau_band": 1.781978329025653
     }
   },
   "qualifying": {
@@ -61,7 +61,7 @@
         "podium": 0.1244,
         "top10": 0.2498
       },
-      "range_p10_p90_coverage": 0.806,
+      "range_p10_p90_coverage_finishers": 0.802,
       "retirement_brier": 0.1302,
       "win_reliability": [
         {
@@ -102,7 +102,7 @@
         "podium": 0.1244,
         "top10": 0.2498
       },
-      "range_p10_p90_coverage": 0.816,
+      "range_p10_p90_coverage_finishers": 0.822,
       "retirement_brier": 0.1302,
       "win_reliability": [
         {
@@ -149,7 +149,7 @@
         "podium": 0.1239,
         "top10": 0.2497
       },
-      "range_p10_p90_coverage": 0.752,
+      "range_p10_p90_coverage_finishers": 0.709,
       "retirement_brier": 0.1524,
       "win_reliability": [
         {
@@ -196,7 +196,7 @@
         "podium": 0.1239,
         "top10": 0.2497
       },
-      "range_p10_p90_coverage": 0.766,
+      "range_p10_p90_coverage_finishers": 0.759,
       "retirement_brier": 0.1524,
       "win_reliability": [
         {
@@ -237,7 +237,7 @@
         "podium": 0.1244,
         "top10": 0.2498
       },
-      "range_p10_p90_coverage": 0.802,
+      "range_p10_p90_coverage_finishers": 0.795,
       "retirement_brier": 0.1302,
       "win_reliability": [
         {
@@ -278,7 +278,7 @@
         "podium": 0.1244,
         "top10": 0.2498
       },
-      "range_p10_p90_coverage": 0.81,
+      "range_p10_p90_coverage_finishers": 0.816,
       "retirement_brier": 0.1302,
       "win_reliability": [
         {
@@ -449,5 +449,5 @@
     }
   },
   "method": "temperatures per weekend stage chosen on tuning-window walk-forward predictions for the Brier score of what they produce (tau_top: win + podium; tau_field: top 10; qualifying: pole + Q3), tau_band for 80% range coverage; retirements: the field rate over the last DNF_WINDOW races; checks on held-out races",
-  "fitted_at": "2026-10-10T22:01:54+00:00"
+  "fitted_at": "2026-10-10T22:18:59+00:00"
 }

@@ -39,7 +39,7 @@ function OddsCell({ p, best, className }: { p: number | null; best: number; clas
 function RangeBar({ band, expected, field }: { band: [number, number]; expected: number | null; field: number }) {
   const x = (p: number) => ((p - 1) / Math.max(1, field - 1)) * 100
   return (
-    <svg viewBox="0 0 100 10" className="h-2.5 w-24" role="img" aria-label={`Finishes between P${band[0]} and P${band[1]} in 8 of 10 simulated races`}>
+    <svg viewBox="0 0 100 10" className="h-2.5 w-24" role="img" aria-label={`If they finish: between P${band[0]} and P${band[1]} in 8 of 10 simulated races`}>
       <line x1="0" y1="5" x2="100" y2="5" className="stroke-line-strong" />
       <rect x={x(band[0])} y="2" width={Math.max(2, x(band[1]) - x(band[0]))} height="6" className="fill-laser-500/60" />
       {expected !== null && <line x1={x(expected)} x2={x(expected)} y1="0" y2="10" className="stroke-silver-100" strokeWidth="1.5" />}
