@@ -331,13 +331,15 @@ def testing_pace(season: int) -> pd.DataFrame | None:
         for day in (1, 2, 3):
             try:
                 s = fastf1.get_testing_session(season, test, day)
-                for _ in range(400):  # same courtesy-limit patience as load_session
+                for _ in range(36):  # same courtesy-limit patience as load_session
                     try:
                         s.load(laps=True, telemetry=False, weather=False, messages=False)
                         break
                     except RateLimitExceededError:
                         import time
-                        time.sleep(9)
+
+                        from src.data.fastf1_client import RATE_LIMIT_WAIT_S
+                        time.sleep(RATE_LIMIT_WAIT_S)
                 laps = s.laps
             except Exception as exc:
                 log.info("  no testing %s test %s day %s (%s)", season, test, day, exc)

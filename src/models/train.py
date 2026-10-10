@@ -72,6 +72,7 @@ class Target:
     baseline_name: str
     baseline: Callable[[pd.DataFrame, pd.DataFrame, str], pd.Series]  # (train, rows, stage) -> naive guess
     finishers_only: bool = False  # train on cars that finished (scored on all)
+    first_season: int | None = None  # learn only from this season on (None: everything loaded)
 
 
 def _finish_baseline(train, rows, stage):
@@ -101,7 +102,9 @@ TARGETS = {
         "the team's recent qualifying gap (the driver's own Sprint Qualifying gap once it has run)", _quali_baseline),
     "race_time": Target(
         "target_race_gap_pct", RACE_STAGES, "% of the winner's race time", "the typical gap in past races",
-        lambda train, rows, stage: pd.Series(train["target_race_gap_pct"].median(), index=rows.index)),
+        lambda train, rows, stage: pd.Series(train["target_race_gap_pct"].median(), index=rows.index),
+        # 2021's gaps (a different car generation) made tuning-window error 0.536% -> 0.646%
+        first_season=2022),
 }
 
 
@@ -200,6 +203,8 @@ def _stage_metrics(wf: pd.DataFrame, position_target: bool) -> dict:
 
 def train_target(name: str, df: pd.DataFrame, n_iter: int) -> tuple[dict, pd.DataFrame]:
     t = TARGETS[name]
+    if t.first_season:
+        df = df[df["season"] >= t.first_season]
     df = df.dropna(subset=[t.column]).sort_values("race_date").reset_index(drop=True)
     races = race_order(df)
     cut = int(len(races) * TUNE_SHARE)

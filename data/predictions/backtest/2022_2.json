@@ -1,0 +1,430 @@
+{
+  "season": 2022,
+  "round": 2,
+  "location": "Jeddah",
+  "method": "walk-forward: predicted by a model trained only on earlier races",
+  "pole_time_s": 88.2,
+  "race_duration_s": 5059.293,
+  "drivers": [
+    {
+      "driver": "ALB",
+      "team": "Williams",
+      "driver_number": 23,
+      "finish_position": {
+        "actual": 14.0,
+        "predicted": 14.4118
+      },
+      "quali_delta": {
+        "actual": 2.0,
+        "predicted": 2.42
+      },
+      "qualifying": {
+        "actual": 2.5986,
+        "predicted": 2.0284
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "ALO",
+      "team": "Alpine",
+      "driver_number": 14,
+      "finish_position": {
+        "actual": 16.0,
+        "predicted": 6.5861
+      },
+      "quali_delta": {
+        "actual": -9.0,
+        "predicted": 0.2793
+      },
+      "qualifying": {
+        "actual": 1.0737,
+        "predicted": 0.8967
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "BOT",
+      "team": "Alfa Romeo",
+      "driver_number": 77,
+      "finish_position": {
+        "actual": 15.0,
+        "predicted": 6.527
+      },
+      "quali_delta": {
+        "actual": -7.0,
+        "predicted": 1.233
+      },
+      "qualifying": {
+        "actual": 1.1145,
+        "predicted": 0.9452
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "GAS",
+      "team": "AlphaTauri",
+      "driver_number": 10,
+      "finish_position": {
+        "actual": 8.0,
+        "predicted": 9.1134
+      },
+      "quali_delta": {
+        "actual": 1.0,
+        "predicted": -0.433
+      },
+      "qualifying": {
+        "actual": 1.195,
+        "predicted": 1.3355
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "HAM",
+      "team": "Mercedes",
+      "driver_number": 44,
+      "finish_position": {
+        "actual": 10.0,
+        "predicted": 8.8436
+      },
+      "quali_delta": {
+        "actual": 5.0,
+        "predicted": 5.2475
+      },
+      "qualifying": {
+        "actual": 2.4297,
+        "predicted": 0.4002
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "HUL",
+      "team": "Aston Martin",
+      "driver_number": 27,
+      "finish_position": {
+        "actual": 12.0,
+        "predicted": 15.5295
+      },
+      "quali_delta": {
+        "actual": 5.0,
+        "predicted": 1.8503
+      },
+      "qualifying": {
+        "actual": 2.6565,
+        "predicted": 1.9503
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "LAT",
+      "team": "Williams",
+      "driver_number": 6,
+      "finish_position": {
+        "actual": 18.0,
+        "predicted": 16.3957
+      },
+      "quali_delta": {
+        "actual": 0.0,
+        "predicted": 2.1438
+      },
+      "qualifying": {
+        "actual": 4.1009,
+        "predicted": 2.1093
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "LEC",
+      "team": "Ferrari",
+      "driver_number": 16,
+      "finish_position": {
+        "actual": 2.0,
+        "predicted": 2.0227
+      },
+      "quali_delta": {
+        "actual": 0.0,
+        "predicted": -0.2152
+      },
+      "qualifying": {
+        "actual": 0.0283,
+        "predicted": 0.4467
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "MAG",
+      "team": "Haas F1 Team",
+      "driver_number": 20,
+      "finish_position": {
+        "actual": 9.0,
+        "predicted": 8.0588
+      },
+      "quali_delta": {
+        "actual": 1.0,
+        "predicted": 1.5453
+      },
+      "qualifying": {
+        "actual": 1.5261,
+        "predicted": 0.5638
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "MSC",
+      "team": "Haas F1 Team",
+      "driver_number": 47,
+      "finish_position": {
+        "actual": null,
+        "predicted": null
+      },
+      "quali_delta": {
+        "actual": null,
+        "predicted": null
+      },
+      "qualifying": {
+        "actual": 1.9501,
+        "predicted": 1.4262
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "NOR",
+      "team": "McLaren",
+      "driver_number": 4,
+      "finish_position": {
+        "actual": 7.0,
+        "predicted": 10.1837
+      },
+      "quali_delta": {
+        "actual": 4.0,
+        "predicted": 0.7822
+      },
+      "qualifying": {
+        "actual": 1.6451,
+        "predicted": 1.4714
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "OCO",
+      "team": "Alpine",
+      "driver_number": 31,
+      "finish_position": {
+        "actual": 6.0,
+        "predicted": 5.8786
+      },
+      "quali_delta": {
+        "actual": -1.0,
+        "predicted": -0.2471
+      },
+      "qualifying": {
+        "actual": 0.9841,
+        "predicted": 0.9013
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "PER",
+      "team": "Red Bull Racing",
+      "driver_number": 11,
+      "finish_position": {
+        "actual": 4.0,
+        "predicted": 3.7265
+      },
+      "quali_delta": {
+        "actual": -3.0,
+        "predicted": -0.8038
+      },
+      "qualifying": {
+        "actual": 0.0,
+        "predicted": 1.1252
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "RIC",
+      "team": "McLaren",
+      "driver_number": 3,
+      "finish_position": {
+        "actual": 17.0,
+        "predicted": 11.2716
+      },
+      "quali_delta": {
+        "actual": -3.0,
+        "predicted": 0.8852
+      },
+      "qualifying": {
+        "actual": 1.7834,
+        "predicted": 1.6129
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "RUS",
+      "team": "Mercedes",
+      "driver_number": 63,
+      "finish_position": {
+        "actual": 5.0,
+        "predicted": 6.2875
+      },
+      "quali_delta": {
+        "actual": 1.0,
+        "predicted": -0.1936
+      },
+      "qualifying": {
+        "actual": 1.0249,
+        "predicted": 0.8663
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "SAI",
+      "team": "Ferrari",
+      "driver_number": 55,
+      "finish_position": {
+        "actual": 3.0,
+        "predicted": 2.449
+      },
+      "quali_delta": {
+        "actual": 0.0,
+        "predicted": 0.4384
+      },
+      "qualifying": {
+        "actual": 0.229,
+        "predicted": 0.4792
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "STR",
+      "team": "Aston Martin",
+      "driver_number": 18,
+      "finish_position": {
+        "actual": 13.0,
+        "predicted": 13.135
+      },
+      "quali_delta": {
+        "actual": 0.0,
+        "predicted": 2.0036
+      },
+      "qualifying": {
+        "actual": 2.3311,
+        "predicted": 1.7647
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "TSU",
+      "team": "AlphaTauri",
+      "driver_number": 22,
+      "finish_position": {
+        "actual": 19.0,
+        "predicted": 13.2851
+      },
+      "quali_delta": {
+        "actual": 0.0,
+        "predicted": 4.8498
+      },
+      "qualifying": {
+        "actual": null,
+        "predicted": null
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "VER",
+      "team": "Red Bull Racing",
+      "driver_number": 1,
+      "finish_position": {
+        "actual": 1.0,
+        "predicted": 5.6345
+      },
+      "quali_delta": {
+        "actual": 3.0,
+        "predicted": -1.0656
+      },
+      "qualifying": {
+        "actual": 0.2959,
+        "predicted": 1.1194
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    },
+    {
+      "driver": "ZHO",
+      "team": "Alfa Romeo",
+      "driver_number": 24,
+      "finish_position": {
+        "actual": 11.0,
+        "predicted": 10.6543
+      },
+      "quali_delta": {
+        "actual": 1.0,
+        "predicted": 2.223
+      },
+      "qualifying": {
+        "actual": 1.8356,
+        "predicted": 1.2545
+      },
+      "race_time": {
+        "actual": null,
+        "predicted": null
+      }
+    }
+  ]
+}
