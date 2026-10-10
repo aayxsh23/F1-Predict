@@ -24,6 +24,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from fastf1.exceptions import DataNotLoadedError
+
 from src.data.fastf1_client import enable_cache, event_schedule, load_session
 from src.data.weather import race_forecast
 from src.features.build_dataset import SPRINT_COLS
@@ -222,7 +224,15 @@ def ingest_race(season: int, round_number: int, location: str, race_date, start_
         log.warning("  skipping, no results")
         return None
 
-    laps = race.laps
+    try:
+        laps = race.laps
+    except DataNotLoadedError as exc:
+        # FastF1 can fail to build a race's lap timing while the result itself
+        # is fine (2018 Monza: an IndexError in its tyre-stint repair). Keep the
+        # result; the lap-derived columns (race pace, stops, gaps of lapped
+        # cars, safety-car laps) stay NaN for that race.
+        log.warning("  no lap timing (%s), keeping the result without it", exc)
+        laps = None
     clean = _clean_race_laps(laps)
     if clean is not None and not clean.empty:
         race_pace = _race_pace(laps).rename("race_pace_pct")

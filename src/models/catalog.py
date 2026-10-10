@@ -73,4 +73,6 @@ FEATURE_LABELS = {
     "sprint_quali_gap_pct": "Sprint qualifying gap to pole",
     "sprint_finish_position": "Sprint result",
     "sprint_race_pace_pct": "Sprint race pace",
+    "team_performance_upgrades": "Car upgrades this weekend",
+    "team_upgrades_recent": "Car upgrades in the last three races",
 }

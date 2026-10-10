@@ -10,7 +10,8 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.models import blend
-from src.models.features import QUALI_COLS, QUALI_SAFE_FEATURE_COLS, RACE_STAGES, SPRINT_STAGES, mask_for_stage, stage_of
+from src.models.features import (FEATURE_COLS, QUALI_COLS, QUALI_SAFE_FEATURE_COLS, RACE_STAGES, SPRINT_STAGES,
+                                  mask_for_stage, stage_of)
 from src.models.predict import CANONICAL_PRED_COLS, load_model, predict
 from src.models.refresh_job import overdue_sessions, session_label
 from src.models.train import _train_rows, augment
@@ -63,6 +64,13 @@ def test_position_models_train_on_finishers_only():
     df = pd.read_parquet(DATA_PATH)
     assert df["dnf"].any() and not _train_rows("finish_position", df)["dnf"].any()
     assert _train_rows("race_time", df)["dnf"].any()  # race_time's target is blank for retirements anyway
+
+
+def test_every_model_input_has_a_fan_label():
+    # AGENTS.md: the app never shows a column name; two upgrade inputs once shipped without one
+    from src.models.catalog import FEATURE_LABELS
+
+    assert not [c for c in [*FEATURE_COLS, *QUALI_SAFE_FEATURE_COLS, "grid_x_overtaking_difficulty"] if c not in FEATURE_LABELS]
 
 
 def test_shipped_blend_weights_are_committed():
