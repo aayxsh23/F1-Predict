@@ -131,3 +131,6 @@ logs/
 /Pit Wall*
 *.zip
 nohup.out
+
+# hindsight forecast snapshots of past weekends, for training data only (python -m training.snapshots)
+data/predictions/snapshots/

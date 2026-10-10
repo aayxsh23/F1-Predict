@@ -22,6 +22,7 @@ from pathlib import Path
 
 CORPUS_DIR = Path(__file__).resolve().parents[2] / "data" / "corpus"
 INDEX_PATH = CORPUS_DIR / "index.json"
+WIKI_INDEX_PATH = CORPUS_DIR / "wiki_index.json"  # built by src/data/wiki.py; big, gitignored, never loaded by the API
 DOC_TYPES = {"regulations": "regulation", "steward_decisions": "steward_decision", "race_summaries": "circuit_summary"}
 BROWSABLE = {"regulation", "steward_decision"}  # circuit write-ups feed the chat, not the Rules tab
 
@@ -112,40 +113,44 @@ def build_index() -> dict:
     return index
 
 
-@lru_cache(maxsize=1)
-def load_index() -> dict:
-    return json.loads(INDEX_PATH.read_text(encoding="utf-8"))
+@lru_cache(maxsize=2)
+def load_index(path: Path = INDEX_PATH) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _tokens(text: str) -> list[str]:
     return [t for t in re.findall(r"[a-z0-9]+(?:\.[0-9]+)*", text.lower()) if t not in _STOP]
 
 
-@lru_cache(maxsize=1)
-def _bm25():
-    chunks = load_index()["chunks"]
+@lru_cache(maxsize=2)
+def _bm25(path: Path = INDEX_PATH):
+    chunks = load_index(path)["chunks"]
     tfs = [Counter(_tokens(c["title"] + " " + (c["article"] or "") + " " + c["text"])) for c in chunks]
     df = Counter(t for tf in tfs for t in tf)
     lengths = [sum(tf.values()) for tf in tfs]
     avg = sum(lengths) / max(1, len(lengths))
     idf = {t: math.log(1 + (len(tfs) - n + 0.5) / (n + 0.5)) for t, n in df.items()}
-    return chunks, tfs, lengths, avg, idf
+    titles = [frozenset(_tokens(c["title"])) for c in chunks]
+    return chunks, tfs, lengths, avg, idf, titles
 
 
-def search(query: str, k: int = 5, doc_types: set[str] | None = None, circuit: str | None = None) -> list[dict]:
+def search(query: str, k: int = 5, doc_types: set[str] | None = None, circuit: str | None = None,
+           index_path: Path = INDEX_PATH) -> list[dict]:
     """Top-k chunks by BM25 (k1=1.5, b=0.75). `circuit` keeps circuit
-    write-ups to that circuit only (rules and rulings always pass)."""
-    chunks, tfs, lengths, avg, idf = _bm25()
+    write-ups to that circuit only (rules and rulings always pass).
+    `index_path` picks the index (the Wikipedia one lives in its own file)."""
+    chunks, tfs, lengths, avg, idf, titles = _bm25(index_path)
     terms = set(_tokens(query))
     scored = []
-    for c, tf, n in zip(chunks, tfs, lengths):
+    for c, tf, n, title in zip(chunks, tfs, lengths, titles):
         if doc_types and c["doc_type"] not in doc_types:
             continue
         if c["doc_type"] == "circuit_summary" and circuit and c["circuit"] != circuit:
             continue
         s = sum(idf[t] * tf[t] * 2.5 / (tf[t] + 1.5 * (0.25 + 0.75 * n / avg)) for t in terms if t in tf)
         if s > 0:
-            scored.append((s, c))
+            # every word of the page's title is in the query: the user named this page ("Max Verstappen" over "Jos Verstappen")
+            scored.append((s * 2 if title and title <= terms else s, c))
     scored.sort(key=lambda x: -x[0])
     return [{**c, "score": round(s, 3)} for s, c in scored[:k]]
 

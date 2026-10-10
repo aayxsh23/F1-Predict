@@ -19,6 +19,7 @@ stored.
 import re
 from collections.abc import Iterator
 
+from src.agent.grounding import ungrounded  # noqa: F401  (also re-exported for tests)
 from src.agent.router import route
 from src.rag.shap_query import EXPLAIN_SYSTEM_PROMPT, build_retrieval_query, build_user_prompt, format_context, retrieve_context
 
@@ -73,24 +74,6 @@ def _general_prompt(facts: dict) -> str:
     if "circuit_guide" in facts:
         lines.append(f"\nCircuit notes:\n{facts['circuit_guide'][:1500]}")
     return "\n".join(lines)
-
-
-_NUMBER_RE = re.compile(r"\d+(?:\.\d+)?")
-# a capitalised word that doesn't start a sentence: a name, a place, a team
-_NAME_RE = re.compile(r"(?<![.!?:]\s)(?<!^)\b[A-ZÀ-Þ][\wÀ-ÿ'-]+")
-
-
-def ungrounded(answer: str, given: str) -> list[str]:
-    """Numbers and names in a generated answer that appear nowhere in what the
-    model was given. AGENTS.md: every number in a chat answer comes from
-    Python, and every name should too. Real answers caught by this: Singapore
-    "over 300m above sea level", and ANT expanded to "António Félix da Costa"
-    (a Formula E driver). It can't catch a wrong description in plain words
-    ("long, sweeping corners"); that's why circuit questions skip the model."""
-    numbers = set(_NUMBER_RE.findall(given))
-    words = set(given.lower().split()) | set(re.findall(r"[\wÀ-ÿ'-]+", given.lower()))
-    return ([n for n in _NUMBER_RE.findall(answer) if n not in numbers]
-            + [w for w in _NAME_RE.findall(answer) if w.lower() not in words])
 
 
 def _general_fallback(facts: dict) -> str:
