@@ -27,10 +27,11 @@ RACE_INFO_COLS = ["race_start_utc", "practice_fastest_s", "quali_pole_s", "race_
 # the fastest lap). Same-weekend facts known before the Grand Prix qualifying.
 SPRINT_COLS = ["sprint_quali_gap_pct", "sprint_finish_position", "sprint_race_pace_pct"]
 KEY = ["season", "round", "driver"]
-# the first season loaded: the models' history and (see train.Target.first_season)
-# their training rows. 2021 was added on 2026-10-10 after a tuning-window test;
-# raw files from earlier seasons may sit in data/raw/races without being used.
-FIRST_SEASON = 2021
+# the first season loaded: every model's history, and its training rows unless
+# train.Target.first_season starts later. Chosen per model on the tuning window
+# (2026-10-11): qualifying learns from 2018, finish and places gained from
+# 2021, gap to the winner from 2022.
+FIRST_SEASON = 2018
 
 
 def _load_dir(path: Path) -> pd.DataFrame:

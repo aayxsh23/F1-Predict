@@ -1,6 +1,6 @@
 # Model cards
 
-What each model predicts, what it looks at, how accurate it is on races it had never seen, and where it falls short. Numbers are from the training run of 2026-10-10 (data from 2021 through the 2026 Bahrain GP at Kuala Lumpur; gap-to-winner from 2022). The source of truth is `src/models/saved/*_metrics.json` and `blend.json`; the API serves them at `GET /model`.
+What each model predicts, what it looks at, how accurate it is on races it had never seen, and where it falls short. Numbers are from the training run of 2026-10-11 (data through the 2026 Bahrain GP at Kuala Lumpur). Each model learns from the seasons that helped it on the tuning races: qualifying from 2018, finishing position and places gained from 2021, gap to the winner from 2022. The source of truth is `src/models/saved/*_metrics.json` and `blend.json`; the API serves them at `GET /model`.
 
 ## How to read the accuracy numbers
 
@@ -9,8 +9,8 @@ What each model predicts, what it looks at, how accurate it is on races it had n
 Every model is compared with a **naive baseline**: the simple guess a fan could make without any model. The weekly retrain refuses to ship a model that doesn't beat its baseline at the most informed stage.
 
 The numbers are **honest**:
-- Hyperparameters, blend weights and every other setting were chosen using only the earliest 60% of races (2021 to mid-2024).
-- The remaining 52 races (Jul 2024 to Oct 2026; 44 from Nov 2024 for gap-to-winner) were each predicted by a model trained only on the races before it, exactly as a live forecast would have been.
+- Hyperparameters, blend weights and every other setting were chosen using only the earliest 60% of each model's races.
+- The remaining races were each predicted by a model trained only on the races before it, exactly as a live forecast would have been: 52 races from Jul 2024 for finishing position and places gained, 75 from Jul 2023 for qualifying, 44 from Nov 2024 for gap to the winner.
 - Differences come with a 95% interval from resampling whole races. With ~50 races, a gap under about 0.05 places is usually noise; changes whose interval said "worse" were not shipped.
 - The window includes the 2026 rule reset, the hardest period to predict.
 
@@ -33,10 +33,10 @@ Three predictions are a weighted average of a model and a simple anchor, each we
 
 | What | Mix | Weight | Effect on the 44 held-out races |
 |---|---|---|---|
-| Finish, after qualifying | finish model and "grid minus predicted places gained" | 0.6 | MAE 3.19 → **3.05** (interval −0.19 to −0.09); winner picked 46% → **52%**; podium 1.94 → **2.08** of 3 |
-| Finish, after the Sprint | finish model and Sprint result | 0.05 | MAE 3.73 → 3.69 (interval −0.06 to −0.01) |
-| Qualifying, after Sprint Qualifying | qualifying model and the Sprint Qualifying gap | 0.25 | MAE 0.745% → **0.715%** (interval −0.052 to −0.005) |
-| Qualifying, before practice | qualifying model and the team's recent qualifying gap | 0.45 | MAE 0.696% → **0.671%** (interval −0.041 to −0.010) |
+| Finish, after qualifying | finish model and "grid minus predicted places gained" | 0.55 | MAE 3.19 → **3.05** (interval −0.18 to −0.09); winner picked 44% → **52%**; podium 1.96 → **2.02** of 3 |
+| Finish, after the Sprint | finish model and Sprint result | 0.15 | MAE 3.73 → **3.65** (interval −0.16 to −0.01); Sprint-weekend winner 21% → 43% |
+| Qualifying, after Sprint Qualifying | qualifying model and the Sprint Qualifying gap | 0.1 | MAE 0.868% → **0.853%** (interval −0.026 to −0.005) |
+| Qualifying, before practice | qualifying model and the team's recent qualifying gap | 0.35 | MAE 0.790% → **0.780%** (interval −0.019 to −0.002) |
 
 The explanation behind each shown number is still an exact sum: the model's own contributions scaled by its weight, plus the anchor's.
 
@@ -51,7 +51,7 @@ The explanation behind each shown number is still an exact sum: the model's own 
 | After qualifying | **3.05** | 3.29 | finish where you qualified | 0.69 |
 | Official grid | **3.07** | 3.38 | finish where you start | 0.69 |
 
-Among cars that finished (the order the app shows), MAE is **2.68** before practice (baseline 2.99) and **2.14** after qualifying (baseline 2.69).
+Among cars that finished (the order the app shows), MAE is **2.68** before practice (baseline 2.99) and **2.14** after qualifying (baseline 2.69). Training on 2018-2020 as well made it worse on the tuning races (+0.05 places), so it learns from 2021 on.
 
 \* Mean Spearman correlation between predicted and actual order per race (1 = perfect, 0 = random).
 
@@ -67,13 +67,13 @@ Among cars that finished (the order the app shows), MAE is **2.68** before pract
 
 | Stage | Shown MAE | Baseline MAE | Baseline |
 |---|---|---|---|
-| Before practice | **0.671%** | 0.676% | team's recent qualifying gap |
-| After practice | **0.637%** | 0.676% | same |
-| After Sprint Qualifying | **0.715%** | 0.825% | the driver's Sprint Qualifying gap |
+| Before practice | **0.780%** | 0.792% | team's recent qualifying gap |
+| After practice | **0.738%** | 0.792% | same |
+| After Sprint Qualifying | **0.853%** | 0.949% | the driver's Sprint Qualifying gap |
 
-On laps that were real attempts (within 107% of pole), the after-practice error is **0.516%** (baseline 0.554%). About 4% of qualifying results are crashes or no-time runs; their chance enters the odds instead (below).
+These cover 75 races from mid-2023, a longer and harder window than before (the averages include crashes and no-time runs). On laps that were real attempts (within 107% of pole), the after-practice error is **0.517%** (baseline 0.570%). It learns from 2018: on the same races, 2018-2020 cut the after-practice error by 0.013% (interval −0.022 to −0.005). About 4% of qualifying results are crashes or no-time runs; their chance enters the odds instead (below).
 
-**Honest weak spot:** before any practice it's only level with the team's recent gap (interval −0.016 to +0.007). That baseline itself got better on 2026-10-10: it now counts only representative laps and includes pre-season testing.
+**Honest weak spot:** before any practice it's only level with the team's recent gap (interval −0.024 to +0.001). That baseline itself got better on 2026-10-10: it now counts only representative laps and includes pre-season testing.
 
 **Leans on most:** team's qualifying pace, recent results, best practice lap.
 
@@ -86,7 +86,7 @@ On laps that were real attempts (within 107% of pole), the after-practice error 
 | After qualifying | **3.20** | 3.38 | no change from the grid |
 | Official grid | **3.09** | 3.38 | same |
 
-Without a grid there's nothing to gain places from, so before qualifying it only matches the baseline. Among finishers, after qualifying: 2.33 vs 2.79.
+Without a grid there's nothing to gain places from, so before qualifying it only matches the baseline. Among finishers, after qualifying: 2.33 vs 2.79. Learns from 2021 on.
 
 ## Gap to the winner
 
@@ -95,21 +95,21 @@ Without a grid there's nothing to gain places from, so before qualifying it only
 | Stage | MAE | Baseline MAE | Baseline |
 |---|---|---|---|
 | Before practice | **0.66%** | 0.85% | typical gap in past races |
-| After qualifying | **0.63%** | 0.85% | same |
+| After qualifying | **0.64%** | 0.85% | same |
 
-On a 90-minute race, 0.63% is about 34 seconds. It learns from 2022 on: adding 2021 (a different car generation) made it clearly worse on the early races (0.536% → 0.646%).
+On a 90-minute race, 0.64% is about 35 seconds. It learns from 2022 on: adding 2021 (a different car generation) made it clearly worse on the early races (0.536% → 0.646%). Since its form inputs are now built on history back to 2018, its held-out error drifted 0.627% → 0.641%; the tuning races showed no difference (0.528% vs 0.523%), so this is within noise, but worth watching.
 
 ## Sprint weekends
 
 A sprint weekend runs one practice session, then Sprint Qualifying, the Sprint, Grand Prix qualifying and the race; the forecast updates after each. The models read a calendar flag (one practice session, not three), the Sprint Qualifying gap, the Sprint result and Sprint pace, blank on other weekends; the two sprint stages are trained and scored on sprint weekends only. A Sprint Qualifying lap more than 7% off the fastest counts as "no representative lap". The 2022 format (Friday qualifying set the Sprint grid) is left out.
 
-On the 15 held-out sprint weekends:
+On the held-out sprint weekends (15 for finishing position, 20 for qualifying since mid-2023):
 
 | Stage | Finishing position MAE | Qualifying gap MAE |
 |---|---|---|
-| After practice (FP1) | 3.73 | 0.753% |
-| After Sprint Qualifying | 3.73 | **0.715%** |
-| After the Sprint | **3.69** | 0.715% |
+| After practice (FP1) | 3.73 | 0.874% |
+| After Sprint Qualifying | 3.73 | **0.853%** |
+| After the Sprint | **3.65** | 0.855% |
 | After qualifying | 3.24 | — |
 
 The models alone barely use sprint columns (one weekend in five, shallow trees); the blends above are what turns the sprint sessions into real changes.
@@ -127,7 +127,8 @@ The models alone barely use sprint columns (one weekend in five, shallow trees);
 | Wet-weather driver skill | Finish after qualifying +0.007 worse (+0.002 to +0.013) | no |
 | 2021 season as training data (finish, places gained, qualifying) | Same 44 races: finish before practice −0.036 (−0.063 to −0.011), after practice −0.030; qualifying before practice −0.018 (−0.033 to −0.005); nothing significantly worse | yes |
 | 2021 for gap to the winner | Early races 0.536% → 0.646% (worse) | no |
-| 2018-2020 | Downloading (FastF1's courtesy limit, ~10 races an hour); to be tested the same way | pending |
+| 2018-2020 for qualifying | Tuning races: after practice −0.019% (−0.036 to −0.002); held-out −0.013% (−0.022 to −0.005) | yes |
+| 2018-2020 for finishing position | Tuning races: +0.05 places worse (+0.017 to +0.099) | no |
 | Dropping >107% qualifying results from training | Slightly worse even on representative laps | no |
 
 ## Derived outputs (not extra models)
@@ -135,7 +136,7 @@ The models alone barely use sprint columns (one weekend in five, shallow trees);
 **Win / podium / points odds, likely range, retirement risk, beats-teammate, head-to-head** (`src/models/probabilities.py`)
 - 10,000 simulated races, each a random finishing order drawn around the shown ranking. Each car also retires with a probability from its driver's and team's recent reliability.
 - How spread out the order is ("temperature") was fitted on the walk-forward predictions, separately for each stage.
-- The likely range has its own temperature, fitted on the early races so the P10-P90 range holds the result 80% of the time. On the held-out races it holds 80% after qualifying and 74-80% at other stages (it was 87%: needlessly wide).
+- The likely range has its own temperature, fitted on the early races so the P10-P90 range holds the result 80% of the time. On the held-out races it holds 80% before practice and after qualifying (it was 87%: needlessly wide).
 - Check, after qualifying:
 
 | Event | Brier score | Before 2026-10-10 | Guessing evenly |
@@ -144,11 +145,11 @@ The models alone barely use sprint columns (one weekend in five, shallow trees);
 | Podium | **0.068** | 0.074 | 0.126 |
 | Points | **0.154** | 0.156 | 0.250 |
 
-(Measured over 52 races now versus 43 before; on the identical 44 races the 2022-only version of tonight's model scored 0.028 for the win.)
+(Measured over 52 races now versus 43 before.)
 
 **Pole / Q3 / out-in-Q1 odds**
 - The same method on the qualifying model, plus each driver's chance of no representative lap (recent record, field rate about 4%).
-- Brier score for pole is 0.041; for reaching Q3 it is 0.141 (guessing evenly: 0.25); after Sprint Qualifying 0.038 and 0.121.
+- Brier score after practice: pole 0.039, reaching Q3 0.136 (guessing evenly: 0.25); after Sprint Qualifying 0.038 and 0.127.
 
 **Predicted qualifying lap and race length** (`src/models/estimates.py`)
 - Pole lap = fastest practice lap × this circuit's usual ratio of pole to fastest practice lap.

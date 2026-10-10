@@ -42,7 +42,7 @@ def export_all() -> list[dict]:
     for _, r in races.iterrows():
         season, rnd = int(r["season"]), int(r["round"])
         race = wf[(wf["season"] == season) & (wf["round"] == rnd)]
-        if race.empty:
+        if race[race["target"] == "finish_position"].empty:  # e.g. 2018-2020: only qualifying learns from them
             continue
         drivers = []
         for driver, g in race.groupby("driver"):

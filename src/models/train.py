@@ -93,10 +93,11 @@ TARGETS = {
     "finish_position": Target(
         "target_finish_position", RACE_STAGES, "places",
         "the driver's recent average finish before qualifying (their Sprint result once the Sprint has run), "
-        "their grid slot after it", _finish_baseline, finishers_only=True),
+        "their grid slot after it", _finish_baseline, finishers_only=True,
+        first_season=2021),  # 2018-2020 rows made tuning-window error worse (+0.05)
     "quali_delta": Target(
         "target_quali_to_race_delta", RACE_STAGES, "places", "no change from the grid",
-        lambda train, rows, stage: pd.Series(0.0, index=rows.index), finishers_only=True),
+        lambda train, rows, stage: pd.Series(0.0, index=rows.index), finishers_only=True, first_season=2021),
     "qualifying": Target(
         "target_qualifying_gap_pct", QUALI_STAGES, "% of the pole lap",
         "the team's recent qualifying gap (the driver's own Sprint Qualifying gap once it has run)", _quali_baseline),

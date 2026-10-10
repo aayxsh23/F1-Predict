@@ -9,193 +9,193 @@
   "evaluation": "44 races from 2024-11-03 to 2026-10-04, each predicted by a model trained only on earlier races; none of them was used to pick hyperparameters",
   "stages": {
     "pre_weekend": {
-      "mae": 0.6613,
+      "mae": 0.6784,
       "baseline_mae": 0.8499,
       "n": 761,
       "vs_baseline_ci95": [
-        -0.2434,
-        -0.1336
+        -0.2351,
+        -0.1052
       ]
     },
     "post_practice": {
-      "mae": 0.6515,
+      "mae": 0.6677,
       "baseline_mae": 0.8499,
       "n": 761,
       "vs_baseline_ci95": [
-        -0.2626,
-        -0.1321
+        -0.2542,
+        -0.1079
       ]
     },
     "post_sprint_quali": {
-      "mae": 0.565,
+      "mae": 0.5899,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.3042,
-        -0.0955
+        -0.2737,
+        -0.0716
       ]
     },
     "post_sprint": {
-      "mae": 0.565,
+      "mae": 0.5873,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.3042,
-        -0.0955
+        -0.2805,
+        -0.0707
       ]
     },
     "post_quali": {
-      "mae": 0.627,
+      "mae": 0.6409,
       "baseline_mae": 0.8499,
       "n": 761,
       "vs_baseline_ci95": [
-        -0.2976,
-        -0.1448
+        -0.2934,
+        -0.1133
       ]
     },
     "race_day": {
-      "mae": 0.6265,
+      "mae": 0.6405,
       "baseline_mae": 0.8499,
       "n": 761,
       "vs_baseline_ci95": [
-        -0.2984,
-        -0.145
+        -0.2938,
+        -0.1149
       ]
     }
   },
   "all_walk_forward_stages": {
     "pre_weekend": {
-      "mae": 0.5948,
+      "mae": 0.613,
       "baseline_mae": 0.7957,
       "n": 1701,
       "vs_baseline_ci95": [
-        -0.2387,
-        -0.1621
+        -0.2262,
+        -0.1367
       ]
     },
     "post_practice": {
-      "mae": 0.5851,
+      "mae": 0.6018,
       "baseline_mae": 0.7957,
       "n": 1701,
       "vs_baseline_ci95": [
-        -0.2517,
-        -0.1656
+        -0.2399,
+        -0.1439
       ]
     },
     "post_sprint_quali": {
-      "mae": 0.4772,
+      "mae": 0.4994,
       "baseline_mae": 0.7057,
       "n": 394,
       "vs_baseline_ci95": [
-        -0.2961,
-        -0.1597
+        -0.2738,
+        -0.1336
       ]
     },
     "post_sprint": {
-      "mae": 0.4772,
+      "mae": 0.4984,
       "baseline_mae": 0.7057,
       "n": 394,
       "vs_baseline_ci95": [
-        -0.2961,
-        -0.1597
+        -0.2764,
+        -0.1325
       ]
     },
     "post_quali": {
-      "mae": 0.5641,
+      "mae": 0.5787,
       "baseline_mae": 0.7957,
       "n": 1701,
       "vs_baseline_ci95": [
-        -0.277,
-        -0.1814
+        -0.2689,
+        -0.1588
       ]
     },
     "race_day": {
-      "mae": 0.5639,
+      "mae": 0.5778,
       "baseline_mae": 0.7957,
       "n": 1701,
       "vs_baseline_ci95": [
-        -0.2772,
-        -0.1817
+        -0.2697,
+        -0.1599
       ]
     }
   },
   "sprint_weekends": {
     "pre_weekend": {
-      "mae": 0.5795,
+      "mae": 0.6049,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.2641,
-        -0.1057
+        -0.2297,
+        -0.0847
       ]
     },
     "post_practice": {
-      "mae": 0.5651,
+      "mae": 0.5848,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.3041,
-        -0.0955
+        -0.2802,
+        -0.0779
       ]
     },
     "post_sprint_quali": {
-      "mae": 0.565,
+      "mae": 0.5899,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.3042,
-        -0.0955
+        -0.2737,
+        -0.0716
       ]
     },
     "post_sprint": {
-      "mae": 0.565,
+      "mae": 0.5873,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.3042,
-        -0.0955
+        -0.2805,
+        -0.0707
       ]
     },
     "post_quali": {
-      "mae": 0.5385,
+      "mae": 0.562,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.3382,
-        -0.1147
+        -0.3126,
+        -0.0913
       ]
     },
     "race_day": {
-      "mae": 0.5388,
+      "mae": 0.5621,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.3379,
-        -0.1146
+        -0.3124,
+        -0.0914
       ]
     }
   },
   "best_params": {
-    "colsample_bytree": 0.6914200087189198,
-    "learning_rate": 0.04499098541918724,
-    "max_depth": 2,
-    "min_child_weight": 4,
-    "n_estimators": 159,
-    "reg_alpha": 0.521658349660818,
-    "reg_lambda": 3.488761099273773,
-    "subsample": 0.9861677405155175
+    "colsample_bytree": 0.730383562080754,
+    "learning_rate": 0.054048209513109666,
+    "max_depth": 3,
+    "min_child_weight": 3,
+    "n_estimators": 246,
+    "reg_alpha": 0.6973319745834587,
+    "reg_lambda": 0.7885296532742623,
+    "subsample": 0.9762093057958416
   },
   "top_features": {
-    "driver_recent_form": 0.22609999775886536,
-    "team_quali_pace": 0.15950000286102295,
-    "expected_stops": 0.05299999937415123,
-    "practice_pace": 0.04879999905824661,
-    "team_track_type_form": 0.0478999987244606,
-    "team_recent_form": 0.04580000042915344,
-    "grid_x_overtaking_difficulty": 0.044199999421834946,
-    "rain_race_frequency": 0.04360000044107437,
-    "grid_vs_expected_position": 0.0364999994635582,
-    "rain_mm_forecast": 0.0333000011742115
+    "driver_recent_form": 0.2371000051498413,
+    "team_quali_pace": 0.14509999752044678,
+    "expected_stops": 0.07569999992847443,
+    "team_recent_form": 0.06499999761581421,
+    "rain_race_frequency": 0.05979999899864197,
+    "practice_pace": 0.05950000137090683,
+    "grid_x_overtaking_difficulty": 0.051100000739097595,
+    "grid_vs_expected_position": 0.04670000076293945,
+    "team_track_type_form": 0.04190000146627426,
+    "rain_mm_forecast": 0.040800001472234726
   },
-  "trained_at": "2026-10-10T17:05:21+00:00"
+  "trained_at": "2026-10-10T21:21:40+00:00"
 }
