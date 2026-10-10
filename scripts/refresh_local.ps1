@@ -3,7 +3,8 @@ Race-weekend jobs that have to run from a home connection: F1's live-timing
 server refuses GitHub's runners, so FastF1 can't load a session there.
 
   refresh_local.ps1 -Python <python.exe>            refresh the forecast (no-op outside a race weekend)
-  refresh_local.ps1 -Python <python.exe> -Ingest    ingest finished races for Tuesday's retrain
+  refresh_local.ps1 -Python <python.exe> -Ingest    ingest finished races, pre-season testing pace and
+                                                     the FIA's car-upgrade lists for Tuesday's retrain
   refresh_local.ps1 -Python <python.exe> -Register  install both as Windows scheduled tasks:
                                                      refresh every 30 min, ingest Mondays 15:00
 
@@ -36,15 +37,17 @@ if ($Register) {
 # native tools write progress to stderr; judge them by exit code, not by stderr
 $ErrorActionPreference = "Continue"
 function Step([string]$exe) {
-    "[$(Get-Date -Format s)] $exe $args" | Out-File -Append $log
-    & $exe @args 2>&1 | Out-File -Append $log
-    if ($LASTEXITCODE) { "[$(Get-Date -Format s)] failed ($LASTEXITCODE)" | Out-File -Append $log; exit $LASTEXITCODE }
+    "[$(Get-Date -Format s)] $exe $args" | Out-File -Append -Encoding utf8 $log
+    & $exe @args 2>&1 | Out-File -Append -Encoding utf8 $log
+    if ($LASTEXITCODE) { "[$(Get-Date -Format s)] failed ($LASTEXITCODE)" | Out-File -Append -Encoding utf8 $log; exit $LASTEXITCODE }
 }
 
 Step git pull --rebase --quiet
 if ($Ingest) {
-    Step $Python -m src.data.ingest --seasons (Get-Date).ToUniversalTime().Year
-    $paths, $message = @("data/raw/races", "data/raw/laps"), "chore: ingest finished races"
+    $year = (Get-Date).ToUniversalTime().Year
+    Step $Python -m src.data.ingest --seasons $year
+    Step $Python -m src.data.fia --seasons $year
+    $paths, $message = @("data/raw/races", "data/raw/laps", "data/raw/testing", "data/raw/upgrades"), "chore: ingest finished races"
 } else {
     Step $Python -m src.models.refresh_job --weekend-only
     $paths, $message = @("data/predictions"), "chore: refresh predictions"

@@ -14,8 +14,19 @@ race predicted by a model that never saw it), separately per weekend stage,
 because a Thursday forecast is less certain than a Saturday-night one. Two
 taus per race stage: tau_top (fitted on the first three places) drives
 win/podium, tau_field (whole order) drives top-10 and the range, since the
-midfield shuffles far more than the front. `python -m src.models.probabilities`
-refits and prints the honest check (Brier scores vs guessing evenly).
+midfield shuffles far more than the front. A third, tau_band, sets only the
+likely-finishing range: fitted on the tuning-window races so that the
+10th-90th percentile range holds the real result 80% of the time (tau_field
+alone gave 87%: honest but needlessly wide), and checked on held-out races.
+
+In qualifying a car can also fail to set a representative lap (a crash, a
+failure, track limits); it then classifies at the back, with a probability
+from the driver's recent record (`driver_quali_nolap_rate`, shrunk toward
+the field's rate).
+
+Predictions are the ones the app shows: the blends (blend.py) applied.
+`python -m src.models.probabilities` refits and prints the honest check
+(Brier scores vs guessing evenly).
 """
 import json
 from datetime import datetime, timezone
@@ -26,6 +37,8 @@ import numpy as np
 
 CALIBRATION_PATH = Path(__file__).resolve().parent / "saved" / "pl_calibration.json"
 N_SAMPLES = 10_000
+BAND_TARGET = 0.80  # the P10-P90 range should hold the result this often
+NOLAP_SHRINK = 5  # qualifying sessions of a driver's own record worth the field's rate
 _DNF_FLOOR, _DNF_CEIL = 0.01, 0.5
 Q3_SIZE = 10
 
@@ -78,6 +91,7 @@ def race_probabilities(predicted_finish, driver_dnf_rate, team_reliability, stag
     score = -np.asarray(predicted_finish, dtype=float)
     top = sample_positions(score, t["tau_top"], p_dnf, seed=seed)
     field = sample_positions(score, t["tau_field"], p_dnf, seed=seed + 1)
+    band = sample_positions(score, t.get("tau_band", t["tau_field"]), p_dnf, n=4000, seed=seed + 2)
     beats = np.full(len(score), np.nan)
     if teams is not None:
         teams = list(teams)
@@ -90,19 +104,27 @@ def race_probabilities(predicted_finish, driver_dnf_rate, team_reliability, stag
         "podium": (top <= 3).mean(axis=0),
         "top10": (field <= 10).mean(axis=0),
         "expected_position": field.mean(axis=0),
-        "band": np.percentile(field, [10, 90], axis=0).T,
+        "band": np.percentile(band, [10, 90], axis=0).T,
         "retire": p_dnf,
         "beats_teammate": beats,
         "samples": field,
     }
 
 
-def quali_probabilities(predicted_gap_pct, stage: str = "post_practice", seed: int = 0, cal: dict | None = None) -> dict:
+def nolap_probability(driver_nolap_rate, prior: float) -> np.ndarray:
+    r = np.asarray(driver_nolap_rate, dtype=float)
+    return np.clip(np.where(np.isnan(r), prior, r), 0.0, 0.5)
+
+
+def quali_probabilities(predicted_gap_pct, stage: str = "post_practice", seed: int = 0, cal: dict | None = None,
+                        nolap_rate=None) -> dict:
     """predicted_gap_pct: predicted qualifying gap to pole per car (lower =
     better). Per-car arrays: pole, q3, q1_out, expected_position."""
     cal = cal or load_calibration()
     tau = _stage_cal(cal, "qualifying", stage)["tau"]
-    pos = sample_positions(-np.asarray(predicted_gap_pct, dtype=float), tau, seed=seed)
+    gaps = np.asarray(predicted_gap_pct, dtype=float)
+    p_nolap = 0.0 if nolap_rate is None else nolap_probability(nolap_rate, cal.get("nolap_prior", 0.0))
+    pos = sample_positions(-gaps, tau, p_nolap, seed=seed)
     n = pos.shape[1]
     return {
         "pole": (pos == 1).mean(axis=0),
@@ -136,23 +158,49 @@ def _ordered_scores(g) -> list[np.ndarray]:
     return [-r.sort_values("actual")["pred"].to_numpy() for _, r in g.groupby(["season", "round"]) if len(r) >= 3]
 
 
+def _coverage(g, tau: float, dnf_prior: float, n: int = 1500) -> float:
+    inside = []
+    for i, (_, r) in enumerate(g.groupby(["season", "round"])):
+        p_dnf = dnf_probability(r["driver_dnf_rate"], r["team_reliability"], dnf_prior)
+        pos = sample_positions(-r["pred"].to_numpy(), tau, p_dnf, n=n, seed=i)
+        lo, hi = np.percentile(pos, [10, 90], axis=0)
+        inside += list((r["actual"].to_numpy() >= lo) & (r["actual"].to_numpy() <= hi))
+    return float(np.mean(inside))
+
+
+def fit_tau_band(g, dnf_prior: float, start: float) -> float:
+    """tau whose P10-P90 range holds BAND_TARGET of results (coverage falls as tau shrinks)."""
+    lo, hi = 0.05 * start, start
+    if _coverage(g, hi, dnf_prior) <= BAND_TARGET:
+        return start
+    for _ in range(12):
+        mid = (lo + hi) / 2
+        lo, hi = (lo, mid) if _coverage(g, mid, dnf_prior) > BAND_TARGET else (mid, hi)
+    return hi
+
+
 def calibrate() -> dict:
     import pandas as pd
 
     from src.features.build_dataset import OUT_PATH, load_raw
+    from src.models.blend import apply_walkforward
     from src.models.train import WALKFORWARD_PATH
 
-    wf = pd.read_parquet(WALKFORWARD_PATH)
+    full_matrix = pd.read_parquet(OUT_PATH)
+    wf = apply_walkforward(pd.read_parquet(WALKFORWARD_PATH).drop(columns=["dnf"], errors="ignore"), full_matrix)
     raw = load_raw()[["season", "round", "driver", "dnf"]]
-    matrix = pd.read_parquet(OUT_PATH, columns=["season", "round", "driver", "driver_dnf_rate", "team_reliability"])
+    matrix = full_matrix[["season", "round", "driver", "driver_dnf_rate", "team_reliability", "driver_quali_nolap_rate"]]
     dnf_prior = float(raw["dnf"].mean())
-    cal: dict = {"dnf_prior": dnf_prior, "race": {}, "qualifying": {}, "checks": {}}
+    q = full_matrix["quali_position"].notna()
+    nolap_prior = float((full_matrix.loc[q, "quali_gap_pct"].isna() | (full_matrix.loc[q, "quali_gap_pct"] > 7)).mean())
+    cal: dict = {"dnf_prior": dnf_prior, "nolap_prior": nolap_prior, "race": {}, "qualifying": {}, "checks": {}}
 
     race = wf[wf["target"] == "finish_position"].merge(raw, on=["season", "round", "driver"]).merge(
         matrix, on=["season", "round", "driver"], how="left")
     for stage, g in race.groupby("stage"):
         finishers = g[~g["dnf"].astype(bool)]
         taus = {"tau_top": fit_tau(_ordered_scores(finishers), k=3), "tau_field": fit_tau(_ordered_scores(finishers))}
+        taus["tau_band"] = fit_tau_band(g[~g["after_tuning_window"]], dnf_prior, taus["tau_field"])
         cal["race"][stage] = taus
         P, Y, inside = [], [], []
         for i, (_, r) in enumerate(g.groupby(["season", "round"])):
@@ -161,7 +209,8 @@ def calibrate() -> dict:
             a = r["actual"].to_numpy()
             P.append(np.c_[pr["win"], pr["podium"], pr["top10"]])
             Y.append(np.c_[a == 1, a <= 3, a <= 10])
-            inside += list((a >= pr["band"][:, 0]) & (a <= pr["band"][:, 1]))
+            if r["after_tuning_window"].all():  # range coverage: held-out races only
+                inside += list((a >= pr["band"][:, 0]) & (a <= pr["band"][:, 1]))
         P, Y = np.vstack(P), np.vstack(Y).astype(float)
         n_cars = len(g) / g.groupby(["season", "round"]).ngroups
         cal["checks"][f"race_{stage}"] = {
@@ -170,13 +219,18 @@ def calibrate() -> dict:
             "range_p10_p90_coverage": round(float(np.mean(inside)), 3),
         }
 
+    # ranked by the official qualifying order, with each car's no-lap chance in the draw
     quali = wf[wf["target"] == "qualifying"]
+    quali_all = full_matrix[q][["season", "round", "driver", "quali_position"]].merge(
+        quali.drop(columns=["actual"]), on=["season", "round", "driver"]).merge(
+        matrix[["season", "round", "driver", "driver_quali_nolap_rate"]], on=["season", "round", "driver"], how="left")
     for stage, g in quali.groupby("stage"):
         cal["qualifying"][stage] = {"tau": fit_tau(_ordered_scores(g))}
         P, Y = [], []
-        for i, (_, r) in enumerate(g.groupby(["season", "round"])):
-            pr = quali_probabilities(r["pred"], stage, seed=i, cal={"qualifying": cal["qualifying"]})
-            order = r["actual"].rank(method="first").to_numpy()
+        for i, (_, r) in enumerate(quali_all[quali_all["stage"] == stage].groupby(["season", "round"])):
+            pr = quali_probabilities(r["pred"].fillna(r["pred"].max()), stage, seed=i, cal=cal,
+                                     nolap_rate=r["driver_quali_nolap_rate"])
+            order = r["quali_position"].rank(method="first").to_numpy()
             P.append(np.c_[pr["pole"], pr["q3"]])
             Y.append(np.c_[order == 1, order <= Q3_SIZE])
         P, Y = np.vstack(P), np.vstack(Y).astype(float)

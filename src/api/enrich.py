@@ -41,7 +41,7 @@ def _simulate(payload: dict) -> dict | None:
     quali = None
     gaps = [d.get("predicted_qualifying_gap_pct") for d in drivers]
     if not payload.get("known_sessions", {}).get("qualifying") and all(g is not None for g in gaps):
-        quali = quali_probabilities(gaps, stage, seed=seed)
+        quali = quali_probabilities(gaps, stage, seed=seed, nolap_rate=[_num(d.get("quali_nolap_rate")) for d in drivers])
     if len(_cache) >= 16:
         _cache.clear()
     _cache[key] = {"race": race, "quali": quali}

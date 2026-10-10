@@ -5,18 +5,23 @@ one more race appended, built from whatever session data exists right now, run
 through the exact same feature layers as training. Sessions that haven't
 happened yet simply leave their columns NaN.
 
-Two things can't be known early however much has happened: the official grid
-(post-qualifying penalties) and the starting tyres. Both accept overrides.
+Two FIA documents join in when published (src/data/fia.py): the teams' car
+upgrades (Friday, before practice) and the official starting grid with
+penalties applied (race morning). Until the grid is out, the qualifying order
+stands in for it, as it does in training at that stage. `grid_overrides`
+still lets a known grid be forced.
 """
 import fastf1
 import numpy as np
 import pandas as pd
 
+from src.data import fia
 from src.data.fastf1_client import event_schedule, load_session
 from src.data.ingest import add_sprint, practice_features, quali_features, race_start
 from src.data.weather import race_forecast
 from src.features import build_dataset
 from src.features.circuit_reference import coords
+from src.models.catalog import TEAM_LINEAGE
 
 # a session that hasn't happened yet is the normal case here, not an error
 fastf1.set_log_level("CRITICAL")
@@ -43,7 +48,6 @@ def build_live_rows(
     round_number: int,
     lineup_overrides: dict[str, str] | None = None,
     grid_overrides: dict[str, float] | None = None,
-    compound_overrides: dict[str, str] | None = None,
 ) -> tuple[pd.DataFrame, list[str]]:
     """One feature row per driver for (season, round), plus the sessions that
     have data so far, in weekend order (e.g. ["FP1", "FP2"] or ["FP1", "SQ", "S"])."""
@@ -70,15 +74,25 @@ def build_live_rows(
     if quali["quali_gap_pct"].notna().any():  # a not-yet-run session loads fine, just empty
         sessions = sessions + ["Q"]
     weather = race_forecast(*coords(location, season), start)
-    grid = {**quali.set_index("Abbreviation").get("quali_position", pd.Series(dtype=float)).to_dict(), **(grid_overrides or {})}
+    quali_pos = quali.set_index("Abbreviation").get("quali_position", pd.Series(dtype=float))
+    grid = lineup["driver"].map(quali_pos.to_dict())
+    official = fia.starting_grid(season, event["EventName"]) if "Q" in sessions else None
+    if official:
+        numbers = pd.to_numeric(lineup["driver_number"], errors="coerce")
+        grid = numbers.map(official)
+        grid[grid.isna()] = len(official) + grid.isna().cumsum()[grid.isna()]  # pit-lane starters: the back
+    grid = grid.where(~lineup["driver"].isin(list(grid_overrides or {})), lineup["driver"].map(grid_overrides or {}))
+    upgrades = fia.upgrades(season, event["EventName"]) or {}
 
     live = lineup.assign(
-        grid_position=lineup["driver"].map(grid), starting_compound=lineup["driver"].map(compound_overrides or {}),
+        grid_position=grid, grid_official=1.0 if official else 0.0,
+        performance_upgrades=lineup["team"].replace(TEAM_LINEAGE).map({TEAM_LINEAGE.get(k, k): v for k, v in upgrades.items()})
+        if upgrades else np.nan,
         finish_position=np.nan, points=np.nan, status=np.nan, dnf=False, race_pace_pct=np.nan, num_pit_stops=np.nan,
         practice_fastest_s=practice_fastest, season=season, round=round_number, location=location,
         race_date=pd.Timestamp(event["EventDate"]), race_start_utc=pd.Timestamp(start), **weather,
     )
-    live = live.merge(quali.rename(columns={"Abbreviation": "driver"}).drop(columns=["quali_position"], errors="ignore"), on="driver", how="left")
+    live = live.merge(quali.rename(columns={"Abbreviation": "driver"}), on="driver", how="left")
     live = live.merge(practice.rename(columns={"Driver": "driver"}), on="driver", how="left")
     live = live.merge(sprint, on="driver", how="left")
 

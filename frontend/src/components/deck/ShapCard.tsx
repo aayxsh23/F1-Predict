@@ -207,7 +207,7 @@ const STAGE_WORDS: Record<Stage, string> = {
   post_sprint_quali: 'after Sprint Qualifying',
   post_sprint: 'after the Sprint',
   post_quali: 'after qualifying',
-  race_day: 'on race day',
+  race_day: 'with the official grid',
 }
 
 /** The honest numbers: error on races the model had never seen, next to a naive guess. */

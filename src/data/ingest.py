@@ -12,6 +12,10 @@ Resumable: re-running skips races that already have a cached raw file. Races
 that haven't started yet are always skipped, so --force never chases future
 sessions into FastF1's rate limit. `--sprint-backfill` adds the sprint columns
 to raw files written before they existed, without re-pulling the races.
+
+Each run also records every listed season's pre-season testing pace once the
+test has run (data/raw/testing/<season>.parquet): per team, the best lap of
+the season's last test as % over the fastest team.
 """
 import argparse
 import logging
@@ -20,13 +24,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from src.data.fastf1_client import event_schedule, load_session
+from src.data.fastf1_client import enable_cache, event_schedule, load_session
 from src.data.weather import race_forecast
 from src.features.build_dataset import SPRINT_COLS
 from src.features.circuit_reference import coords
 
 RAW_DIR = Path(__file__).resolve().parents[2] / "data" / "raw" / "races"
 LAPS_DIR = RAW_DIR.parent / "laps"
+TESTING_DIR = RAW_DIR.parent / "testing"
 DEFAULT_SEASONS = [2022, 2023, 2024, 2025, 2026]
 LONG_RUN_MIN_LAPS = 6
 # FastF1 EventFormat of a sprint weekend where Sprint Qualifying and the Sprint
@@ -303,14 +308,74 @@ def sprint_backfill(seasons: list[int]) -> None:
             df.to_parquet(path, index=False)
 
 
+def testing_pace(season: int) -> pd.DataFrame | None:
+    """Per team: best lap across the days of the season's last pre-season
+    test, as % over the fastest team, and that test's last day. None if FastF1
+    has no test for the season (it starts in 2020)."""
+    import fastf1
+    from fastf1.exceptions import RateLimitExceededError
+
+    from src.models.catalog import TEAM_LINEAGE
+
+    enable_cache()
+    for test in (3, 2, 1):
+        try:
+            fastf1.get_testing_event(season, test)
+        except Exception:
+            continue
+        frames, last_day = [], None
+        for day in (1, 2, 3):
+            try:
+                s = fastf1.get_testing_session(season, test, day)
+                for _ in range(400):  # same courtesy-limit patience as load_session
+                    try:
+                        s.load(laps=True, telemetry=False, weather=False, messages=False)
+                        break
+                    except RateLimitExceededError:
+                        import time
+                        time.sleep(9)
+                laps = s.laps
+            except Exception as exc:
+                log.info("  no testing %s test %s day %s (%s)", season, test, day, exc)
+                continue
+            if laps is not None and not laps.empty:
+                frames.append(laps)
+                last_day = pd.Timestamp(s.date)
+        if frames:
+            laps = pd.concat(frames, ignore_index=True).dropna(subset=["LapTime"])
+            laps = laps[laps["Team"].fillna("").str.strip() != ""]
+            best = _secs(laps.groupby("Team")["LapTime"].min())
+            out = pd.DataFrame({"season": season, "team": best.index.map(lambda t: TEAM_LINEAGE.get(t, t)),
+                                "testing_gap_pct": ((best / best.min() - 1) * 100).to_numpy(), "date": last_day.normalize()})
+            return out
+    return None
+
+
+def testing_backfill(seasons: list[int]) -> None:
+    TESTING_DIR.mkdir(parents=True, exist_ok=True)
+    now = pd.Timestamp.utcnow().tz_localize(None)
+    for season in seasons:
+        path = TESTING_DIR / f"{season}.parquet"
+        first_race = event_schedule(season)["Session1DateUtc"].min()
+        if path.exists() or not first_race < now:
+            continue
+        pace = testing_pace(season)
+        if pace is not None:
+            pace.to_parquet(path, index=False)
+            log.info("testing %s: %s", season, pace.sort_values("testing_gap_pct")[["team", "testing_gap_pct"]].round(2).values.tolist())
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--seasons", type=int, nargs="+", default=DEFAULT_SEASONS)
     parser.add_argument("--force", action="store_true", help="re-pull races even if cached")
     parser.add_argument("--sprint-backfill", action="store_true", help="add sprint columns to existing raw files")
+    parser.add_argument("--testing-only", action="store_true", help="only record pre-season testing pace")
     args = parser.parse_args()
     if args.sprint_backfill:
         return sprint_backfill(args.seasons)
+    if args.testing_only:
+        return testing_backfill(args.seasons)
 
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     LAPS_DIR.mkdir(parents=True, exist_ok=True)
@@ -338,6 +403,7 @@ def main():
                 if not lap_table.empty:
                     lap_table.to_parquet(LAPS_DIR / name, index=False)
                 log.info("  wrote %s (%d rows, %d laps)", name, len(df), len(lap_table))
+    testing_backfill(args.seasons)
 
 
 if __name__ == "__main__":

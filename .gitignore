@@ -43,6 +43,14 @@ data/raw/races/*
 !data/raw/laps/
 data/raw/laps/*
 !data/raw/laps/*.parquet
+# per-team car upgrades (FIA car presentations) and pre-season testing pace,
+# both small and slow to rebuild; the FIA PDFs behind them stay local
+!data/raw/upgrades/
+data/raw/upgrades/*
+!data/raw/upgrades/*.parquet
+!data/raw/testing/
+data/raw/testing/*
+!data/raw/testing/*.parquet
 
 # Phase 9 chat knowledge: the Wikipedia index is big and regenerable
 # (python -m src.data.wiki); data/history/ IS committed (small, and the

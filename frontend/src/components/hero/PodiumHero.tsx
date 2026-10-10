@@ -21,8 +21,7 @@ const SESSIONS: Array<[keyof KnownSessions, string]> = [
   ['sprint_qualifying', 'Sprint quali'],
   ['sprint', 'Sprint'],
   ['qualifying', 'Quali'],
-  ['grid', 'Grid'],
-  ['compound', 'Compound'],
+  ['grid', 'Official grid'],
 ]
 
 function SessionStrip({ known }: { known: KnownSessions }) {

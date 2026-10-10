@@ -29,7 +29,7 @@ function ConfidenceRail({ known }: { known: KnownSessions }) {
           Information <span className="text-ink">{phase.count}/{phase.nodes.length}</span>
         </span>
       </div>
-      <ol className={cn('grid grid-cols-2 gap-x-1.5 gap-y-4', phase.nodes.length > 4 ? 'sm:grid-cols-3 lg:grid-cols-6' : 'sm:grid-cols-4')}>
+      <ol className={cn('grid grid-cols-2 gap-x-1.5 gap-y-4', phase.nodes.length > 3 ? 'sm:grid-cols-3 lg:grid-cols-5' : 'sm:grid-cols-3')}>
         {phase.nodes.map((n, i) => {
           const isKnown = known[n.key]
           const isNext = i === phase.next

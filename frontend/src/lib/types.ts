@@ -41,8 +41,10 @@ export interface KnownSessions {
   sprint_qualifying?: boolean
   sprint?: boolean
   qualifying: boolean
+  /** the FIA's official grid (penalties applied) is in; before that the qualifying order stands in */
   grid: boolean
-  compound: boolean
+  /** older forecasts only: starting tyres stopped being an input on 2026-10-10 */
+  compound?: boolean
 }
 
 export interface DriverPrediction {

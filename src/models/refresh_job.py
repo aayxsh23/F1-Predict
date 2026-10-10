@@ -29,10 +29,10 @@ from src.data.fastf1_client import event_schedule
 from src.data.ingest import race_start
 from src.features.build_dataset import load_raw
 from src.models import estimates
-from src.models.explain import shap_explanation
+from src.models.explain import shown_explanation
 from src.models.features import FEATURE_COLS, stage_of
 from src.models.live_predict import build_live_rows, event_info
-from src.models.predict import MODEL_DIR, TARGETS, load_model, predict_all
+from src.models.predict import MODEL_DIR, TARGETS, predict_all
 
 OUT_DIR = Path(__file__).resolve().parents[2] / "data" / "predictions"
 RACE_OVER_AFTER = pd.Timedelta(hours=3)
@@ -63,7 +63,7 @@ def next_or_current_round(season: int) -> int:
 
 def session_label(sessions: list[str], stage: str) -> str:
     if stage == "race_day":
-        return "Race day"
+        return "Official grid"
     for code, label in LABELS.items():
         if code in sessions:
             return label
@@ -121,7 +121,8 @@ def build_prediction_payload(season: int, round_number: int) -> dict:
             "predicted_race_time_gap": _clean(r_rel[i] / 100 * duration_s),
             "feature_row": {c: row[c] if isinstance(row[c], str) else _clean(row[c]) for c in FEATURE_COLS},
             # the "why" behind each prediction, precomputed so serving needs no XGBoost
-            "explanations": {t: shap_explanation(load_model(t), p.iloc[[i]], target=t, top_n=10) for t in TARGETS},
+            "quali_nolap_rate": _clean(row.get("driver_quali_nolap_rate")),
+            "explanations": {t: shown_explanation(t, stage, p.iloc[[i]], p, top_n=10) for t in TARGETS},
         })
 
     trained = json.loads((MODEL_DIR / "finish_position_metrics.json").read_text()).get("trained_at")
@@ -138,8 +139,7 @@ def build_prediction_payload(season: int, round_number: int) -> dict:
             **({"sprint_qualifying": bool(p["sprint_quali_gap_pct"].notna().any()),
                 "sprint": bool(p["sprint_finish_position"].notna().any())} if sprint_weekend else {}),
             "qualifying": bool(p["quali_gap_pct"].notna().any()),
-            "grid": bool(p["grid_position"].notna().any()),
-            "compound": bool(p["starting_tire_compound"].notna().any()),
+            "grid": bool(p["grid_official"].eq(1).any()),  # the FIA's official grid, penalties applied
         },
         "model_trained_at": trained,
         "race": {

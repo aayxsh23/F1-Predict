@@ -26,7 +26,10 @@ def _clean(v):
 
 
 def export_all() -> list[dict]:
-    wf = pd.read_parquet(WALKFORWARD_PATH)
+    from src.features.build_dataset import OUT_PATH
+    from src.models.blend import apply_walkforward
+
+    wf = apply_walkforward(pd.read_parquet(WALKFORWARD_PATH), pd.read_parquet(OUT_PATH))  # what the app would have shown
     wf = pd.concat([wf[(wf["target"] == t) & (wf["stage"] == s)] for t, s in SHOWN_STAGE.items()])
     raw = load_raw()
     info = raw.drop_duplicates(["season", "round", "driver"]).set_index(["season", "round", "driver"])

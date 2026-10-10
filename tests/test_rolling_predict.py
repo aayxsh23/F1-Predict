@@ -9,11 +9,11 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.models.features import (QUALI_COLS, QUALI_SAFE_FEATURE_COLS, RACE_DAY_COLS, RACE_STAGES, SPRINT_STAGES,
-                                  mask_for_stage, stage_of)
-from src.models.predict import load_model, predict
+from src.models import blend
+from src.models.features import QUALI_COLS, QUALI_SAFE_FEATURE_COLS, RACE_STAGES, SPRINT_STAGES, mask_for_stage, stage_of
+from src.models.predict import CANONICAL_PRED_COLS, load_model, predict
 from src.models.refresh_job import overdue_sessions, session_label
-from src.models.train import augment
+from src.models.train import _train_rows, augment
 
 DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "processed" / "model_matrix.parquet"
 
@@ -26,7 +26,7 @@ TARGETS = [  # (target, column, plausible range)
 
 def _row(col, sprint=False):
     df = pd.read_parquet(DATA_PATH)
-    ok = df[col].notna() & df["practice_pace"].notna() & df["starting_tire_compound"].notna()
+    ok = df[col].notna() & df["practice_pace"].notna() & df["grid_position"].notna() & df["quali_position"].notna()
     if sprint:
         ok &= df["sprint_quali_gap_pct"].notna() & df["sprint_finish_position"].notna()
     return df[ok].sample(1, random_state=7)
@@ -48,6 +48,39 @@ def test_stage_is_read_off_what_is_filled_in():
     row = _row("target_finish_position").assign(is_sprint_weekend=0.0, sprint_quali_gap_pct=None, sprint_finish_position=None,
                                               sprint_race_pace_pct=None)
     assert {stage_of(mask_for_stage(row, s)) for s in SPRINT_STAGES} == {"post_practice"}
+
+
+def test_grid_is_the_qualifying_order_until_race_day():
+    df = pd.read_parquet(DATA_PATH)
+    row = df[df["grid_position"] != df["quali_position"]].dropna(subset=["quali_position", "driver_recent_form"]).iloc[[0]]
+    sat, sun = mask_for_stage(row, "post_quali"), mask_for_stage(row, "race_day")
+    assert sat["grid_position"].iloc[0] == row["quali_position"].iloc[0] and sat["grid_official"].iloc[0] == 0
+    assert sun["grid_position"].iloc[0] == row["grid_position"].iloc[0] and sun["grid_official"].iloc[0] == 1
+    assert sat["grid_vs_expected_position"].iloc[0] == row["quali_position"].iloc[0] - row["driver_recent_form"].iloc[0]
+
+
+def test_position_models_train_on_finishers_only():
+    df = pd.read_parquet(DATA_PATH)
+    assert df["dnf"].any() and not _train_rows("finish_position", df)["dnf"].any()
+    assert _train_rows("race_time", df)["dnf"].any()  # race_time's target is blank for retirements anyway
+
+
+def test_blends_are_weighted_averages_and_explanations_stay_exact():
+    fin, delta = CANONICAL_PRED_COLS["finish_position"], CANONICAL_PRED_COLS["quali_delta"]
+    rows = pd.DataFrame({fin: [4.0, 9.0], delta: [1.0, -2.0], "grid_position": [3.0, None],
+                         CANONICAL_PRED_COLS["qualifying"]: [0.3, 0.5]})
+    out = blend.apply_rows(rows, "post_quali", {"finish_grid": 0.5})
+    assert out[fin].tolist() == [0.5 * 4 + 0.5 * (3 - 1), 9.0]  # no grid: unchanged
+    assert blend.apply_rows(rows, "post_practice", {"finish_grid": 0.5})[fin].tolist() == [4.0, 9.0]
+
+    df = pd.read_parquet(DATA_PATH)
+    race = df[(df["season"] == 2025) & (df["round"] == 10)]
+    race = mask_for_stage(race, "post_quali").reset_index(drop=True)
+    w = {"finish_grid": 0.6}
+    raw = race.assign(**{c: predict(load_model(t), race, target=t).to_numpy() for t, c in CANONICAL_PRED_COLS.items()})
+    shown = blend.apply_rows(raw, "post_quali", w)
+    c, base = blend.contributions("finish_position", "post_quali", race.iloc[[0]], race, w)
+    assert abs((c.sum() + base) - shown[fin].iloc[0]) < 1e-3
 
 
 def test_sprint_stages_train_on_sprint_weekends_only():
@@ -73,7 +106,7 @@ def test_a_session_that_ran_but_did_not_load_fails_the_refresh():
 
 
 def test_qualifying_model_is_leakage_safe_and_plausible():
-    assert not (set(QUALI_COLS) | set(RACE_DAY_COLS)) & set(QUALI_SAFE_FEATURE_COLS)
+    assert not set(QUALI_COLS) & set(QUALI_SAFE_FEATURE_COLS)
     assert not {"air_temp_forecast", "rain_mm_forecast", "wind_kph_forecast"} & set(QUALI_SAFE_FEATURE_COLS), \
         "Sunday's forecast isn't Saturday's weather"
     pred = float(predict(load_model("qualifying"), _row("target_qualifying_gap_pct"), target="qualifying").iloc[0])

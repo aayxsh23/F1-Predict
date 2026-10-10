@@ -43,6 +43,7 @@ SC_PIT_FACTOR = 0.5  # pitting under a safety car costs about half the usual tim
 SHRINK_LAPS = 400  # a compound needs about this many laps here before its own fit outweighs the all-circuit one
 MIN_STINT = 5
 N_SIMS = 2000
+MIN_SEASON = 2022  # 18-inch tyres and the current compound names; older laps are a different tyre
 WINDOW_S = 2.0  # a pit lap is "in the window" if it costs at most this much more than the best lap
 
 
@@ -56,6 +57,8 @@ def _load_laps():
     frames = []
     for f in sorted(LAPS_DIR.glob("*.parquet")):
         season, rnd, location = f.stem.split("_", 2)
+        if int(season) < MIN_SEASON:
+            continue
         frames.append(pd.read_parquet(f).assign(race=f"{season}_{rnd}", location=_canon(location)))
     return pd.concat(frames, ignore_index=True)
 

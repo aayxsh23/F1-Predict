@@ -13,6 +13,11 @@ Sprint weekends (2023 on) have two extra stages between practice and
 qualifying: after Sprint Qualifying and after the Sprint. Their columns are
 NaN on every other weekend, so those two stages are only trained and
 evaluated on sprint-weekend rows (SPRINT_STAGES).
+
+After qualifying the grid is the qualifying order: that is all a Saturday-
+night forecast has. Penalties move a fifth of the field, so on race day, once
+the FIA publishes the official grid, the forecast switches to it
+(`race_day`). Training sees both, exactly as a live forecast would.
 """
 import numpy as np
 import pandas as pd
@@ -24,7 +29,8 @@ from src.models.catalog import FEATURE_LABELS  # noqa: F401  (re-exported for ol
 # (held-out MAE 3.749 vs 3.744 without it); it stays in the payload for fans.
 PRACTICE_COLS = ["practice_pace"]
 QUALI_COLS = ["grid_position", "quali_gap_pct", "teammate_quali_gap", "grid_vs_expected_position"]
-RACE_DAY_COLS = ["starting_tire_compound", "historical_compound_performance"]
+# this weekend's car upgrades: the FIA publishes them on the Friday, before practice
+EVENT_COLS = ["team_performance_upgrades"]
 SPRINT_QUALI_COLS = ["sprint_quali_gap_pct"]
 SPRINT_RACE_COLS = ["sprint_finish_position", "sprint_race_pace_pct"]
 assert SPRINT_QUALI_COLS + SPRINT_RACE_COLS == SPRINT_COLS
@@ -33,17 +39,23 @@ DRIVER_COLS = [
     "grid_position", "quali_gap_pct", *PRACTICE_COLS, "driver_recent_form",
     "driver_track_form", "driver_positions_gained_form", "driver_dnf_rate",
 ]
-TEAM_COLS = ["team_recent_form", "team_quali_pace", "team_race_pace", "team_reliability", "team_track_type_form"]
+# A wet-weather skill input (each driver's finish vs form in past wet races)
+# was tried on 2026-10-10 and made held-out finishing error worse (+0.007
+# places, 95% CI +0.002 to +0.013): too few wet races to learn from.
+TEAM_COLS = ["team_recent_form", "team_quali_pace", "team_race_pace", "team_reliability", "team_track_type_form",
+             "team_upgrades_recent", *EVENT_COLS]
 RELATIVE_COLS = ["teammate_quali_gap", "teammate_race_pace_gap", "grid_vs_expected_position"]
-STRATEGY_COLS = ["starting_tire_compound", "expected_stops", "historical_compound_performance"]
+# Starting tyres were inputs once; they are never known before a live race
+# starts, so they only ever filled the race_day copies (2026-10-10: identical
+# accuracy with and without them) and were dropped.
+STRATEGY_COLS = ["expected_stops"]
 
 # is_sprint_weekend is known from the calendar: it tells the model a weekend
 # has one practice session, not three
 SPRINT_FEATURE_COLS = ["is_sprint_weekend", *SPRINT_COLS]
 
-FEATURE_COLS = CIRCUIT_COLS + WEATHER_COLS + DRIVER_COLS + TEAM_COLS + RELATIVE_COLS + STRATEGY_COLS + SPRINT_FEATURE_COLS
-# fixed category list (not inferred per batch) so a row with no compound yet still has the full category set
-COMPOUND_CATEGORIES = ["SOFT", "MEDIUM", "HARD", "INTERMEDIATE", "WET"]
+FEATURE_COLS = list(dict.fromkeys(
+    CIRCUIT_COLS + WEATHER_COLS + DRIVER_COLS + TEAM_COLS + RELATIVE_COLS + STRATEGY_COLS + SPRINT_FEATURE_COLS))
 
 # The qualifying model predicts qualifying itself, so it may only see what is
 # known before qualifying: no grid, no quali times, nothing decided on race
@@ -59,15 +71,16 @@ QUALI_SAFE_FEATURE_COLS = (
 
 # Weekend stages, in order, and what is still unknown at each.
 UNKNOWN_AT = {
-    "pre_weekend": PRACTICE_COLS + SPRINT_QUALI_COLS + SPRINT_RACE_COLS + QUALI_COLS + RACE_DAY_COLS,
-    "post_practice": SPRINT_QUALI_COLS + SPRINT_RACE_COLS + QUALI_COLS + RACE_DAY_COLS,
-    "post_sprint_quali": SPRINT_RACE_COLS + QUALI_COLS + RACE_DAY_COLS,
-    "post_sprint": QUALI_COLS + RACE_DAY_COLS,
-    "post_quali": RACE_DAY_COLS,
-    "race_day": [],
+    "pre_weekend": EVENT_COLS + PRACTICE_COLS + SPRINT_QUALI_COLS + SPRINT_RACE_COLS + QUALI_COLS,
+    "post_practice": SPRINT_QUALI_COLS + SPRINT_RACE_COLS + QUALI_COLS,
+    "post_sprint_quali": SPRINT_RACE_COLS + QUALI_COLS,
+    "post_sprint": QUALI_COLS,
+    "post_quali": [],  # the grid is the qualifying order (mask_for_stage)
+    "race_day": [],  # the official grid, penalties applied
 }
 STAGES = list(UNKNOWN_AT)
 SPRINT_STAGES = ["post_sprint_quali", "post_sprint"]
+GRID_STAGES = ["post_quali", "race_day"]
 RACE_STAGES = STAGES
 QUALI_STAGES = ["pre_weekend", "post_practice", *SPRINT_STAGES]
 
@@ -79,12 +92,18 @@ def mask_for_stage(rows: pd.DataFrame, stage: str) -> pd.DataFrame:
     for col in UNKNOWN_AT[stage]:
         if col in rows.columns:
             rows[col] = np.nan
+    if stage != "race_day":
+        rows["grid_official"] = 0.0
+    if stage == "post_quali" and "quali_position" in rows:
+        rows["grid_position"] = rows["quali_position"]
+        if "driver_recent_form" in rows:
+            rows["grid_vs_expected_position"] = rows["grid_position"] - rows["driver_recent_form"]
     return rows
 
 
 def stage_of(rows: pd.DataFrame) -> str:
     """The stage a live row set is actually at, read off what's filled in."""
-    if rows["starting_tire_compound"].notna().any():
+    if rows.reindex(columns=["grid_official"])["grid_official"].eq(1).any():
         return "race_day"
     if rows["grid_position"].notna().any() or rows["quali_gap_pct"].notna().any():
         return "post_quali"
@@ -102,16 +121,15 @@ def row_from_dict(feature_row: dict) -> pd.DataFrame:
     makes pandas type the column `object`, which XGBoost rejects -- so coerce
     every numeric feature back to float."""
     row = pd.DataFrame([feature_row])
-    numeric_cols = [c for c in FEATURE_COLS if c != "starting_tire_compound" and c in row.columns]
+    numeric_cols = [c for c in FEATURE_COLS if c in row.columns]
     row[numeric_cols] = row[numeric_cols].apply(pd.to_numeric, errors="coerce")
     return row
 
 
 def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
-    X = df.reindex(columns=FEATURE_COLS).copy()
+    X = df.reindex(columns=FEATURE_COLS).astype(float)
     # grid slot matters more where passing is hard; spelled out so explanations can name it
     X["grid_x_overtaking_difficulty"] = X["grid_position"] * X["overtaking_difficulty"]
-    X["starting_tire_compound"] = pd.Categorical(X["starting_tire_compound"], categories=COMPOUND_CATEGORIES)
     return X
 
 

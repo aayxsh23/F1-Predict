@@ -16,6 +16,13 @@ columns unknown at that stage blanked (see features.mask_for_stage). The two
 sprint stages exist only on sprint weekends, so only those rows are copied
 for them, and only those races are evaluated at them; metrics also report
 every stage on sprint weekends alone (`sprint_weekends`).
+
+The finishing-position and places-gained models learn the order of the cars
+that finish: a retirement isn't a 20th-place pace, and the odds sampler
+(probabilities.py) already models retirements on its own. They are still
+scored on every car, retirements included, next to a `finishers` block.
+Every MAE comes with a 95% interval for (model - baseline) from resampling
+whole races, because 44 races leave differences under ~0.05 within noise.
 Outputs: saved/<target>_xgb.json, saved/<target>_metrics.json and
 data/processed/walkforward.parquet (per race, driver, stage: prediction,
 naive baseline, actual), which the History view and the odds calibration use.
@@ -33,6 +40,7 @@ import xgboost as xgb
 from scipy.stats import randint, spearmanr, uniform
 from sklearn.model_selection import RandomizedSearchCV, TimeSeriesSplit
 
+from src.features.driver_features import QUALI_MAX_GAP
 from src.models.features import PREPARE_FN, QUALI_STAGES, RACE_STAGES, SPRINT_STAGES, STAGES, mask_for_stage
 from src.models.predict import MODEL_DIR, contributions
 
@@ -63,6 +71,7 @@ class Target:
     unit: str
     baseline_name: str
     baseline: Callable[[pd.DataFrame, pd.DataFrame, str], pd.Series]  # (train, rows, stage) -> naive guess
+    finishers_only: bool = False  # train on cars that finished (scored on all)
 
 
 def _finish_baseline(train, rows, stage):
@@ -83,10 +92,10 @@ TARGETS = {
     "finish_position": Target(
         "target_finish_position", RACE_STAGES, "places",
         "the driver's recent average finish before qualifying (their Sprint result once the Sprint has run), "
-        "their grid slot after it", _finish_baseline),
+        "their grid slot after it", _finish_baseline, finishers_only=True),
     "quali_delta": Target(
         "target_quali_to_race_delta", RACE_STAGES, "places", "no change from the grid",
-        lambda train, rows, stage: pd.Series(0.0, index=rows.index)),
+        lambda train, rows, stage: pd.Series(0.0, index=rows.index), finishers_only=True),
     "qualifying": Target(
         "target_qualifying_gap_pct", QUALI_STAGES, "% of the pole lap",
         "the team's recent qualifying gap (the driver's own Sprint Qualifying gap once it has run)", _quali_baseline),
@@ -123,15 +132,19 @@ def race_folds(df: pd.DataFrame, n_splits: int = N_SPLITS):
         yield np.flatnonzero(key.isin(rkey[tr])), np.flatnonzero(key.isin(rkey[te]))
 
 
+def _train_rows(name: str, rows: pd.DataFrame) -> pd.DataFrame:
+    return rows[~rows["dnf"].astype(bool)] if TARGETS[name].finishers_only else rows
+
+
 def fit(name: str, rows: pd.DataFrame, params: dict) -> xgb.XGBRegressor:
     t = TARGETS[name]
-    aug = augment(rows, t.stages)
+    aug = augment(_train_rows(name, rows), t.stages)
     return xgb.XGBRegressor(**BASE_PARAMS, **params).fit(PREPARE_FN[name](aug), aug[t.column])
 
 
 def tune(name: str, rows: pd.DataFrame, n_iter: int) -> dict:
     t = TARGETS[name]
-    aug = augment(rows, t.stages)
+    aug = augment(_train_rows(name, rows), t.stages)
     search = RandomizedSearchCV(
         xgb.XGBRegressor(**BASE_PARAMS), PARAM_DIST, n_iter=n_iter, scoring="neg_mean_absolute_error",
         cv=list(race_folds(aug)), random_state=42, refit=False, n_jobs=-1,
@@ -155,10 +168,20 @@ def walk_forward(name: str, df: pd.DataFrame, params: dict) -> pd.DataFrame:
             rows = mask_for_stage(test, stage)
             out.append(pd.DataFrame({
                 "season": test["season"], "round": test["round"], "race_index": i, "driver": test["driver"],
-                "sprint_weekend": sprint, "target": name, "stage": stage, "pred": model.predict(PREPARE_FN[name](rows)),
+                "dnf": test["dnf"].astype(bool), "sprint_weekend": sprint, "target": name, "stage": stage, "pred": model.predict(PREPARE_FN[name](rows)),
                 "baseline": t.baseline(train, rows, stage).to_numpy(), "actual": test[t.column],
             }))
     return pd.concat(out, ignore_index=True)
+
+
+def diff_ci95(g: pd.DataFrame, a: str = "pred", b: str = "baseline", n_boot: int = 2000, seed: int = 0) -> list[float]:
+    """95% interval of MAE(a) - MAE(b), resampling whole races (cars in one
+    race aren't independent)."""
+    per_race = g.assign(_d=(g[a] - g["actual"]).abs() - (g[b] - g["actual"]).abs()).groupby(["season", "round"])["_d"].agg(["sum", "count"])
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, len(per_race), size=(n_boot, len(per_race)))
+    boot = per_race["sum"].to_numpy()[idx].sum(axis=1) / per_race["count"].to_numpy()[idx].sum(axis=1)
+    return [round(float(x), 4) for x in np.percentile(boot, [2.5, 97.5])]
 
 
 def _stage_metrics(wf: pd.DataFrame, position_target: bool) -> dict:
@@ -166,7 +189,8 @@ def _stage_metrics(wf: pd.DataFrame, position_target: bool) -> dict:
     for stage in [s for s in STAGES if s in set(wf["stage"])]:
         g = wf[wf["stage"] == stage]
         m = {"mae": float((g["pred"] - g["actual"]).abs().mean()),
-             "baseline_mae": float((g["baseline"] - g["actual"]).abs().mean()), "n": int(len(g))}
+             "baseline_mae": float((g["baseline"] - g["actual"]).abs().mean()), "n": int(len(g)),
+             "vs_baseline_ci95": diff_ci95(g)}
         if position_target:
             rho = [spearmanr(r["pred"], r["actual"])[0] for _, r in g.groupby(["season", "round"]) if len(r) > 2]
             m["mean_race_spearman"] = float(np.nanmean(rho))
@@ -202,6 +226,10 @@ def train_target(name: str, df: pd.DataFrame, n_iter: int) -> tuple[dict, pd.Dat
         "all_walk_forward_stages": _stage_metrics(wf, name in ("finish_position", "quali_delta")),
         # the same held-out races, sprint weekends only: what each sprint session adds
         "sprint_weekends": _stage_metrics(held_out[held_out["sprint_weekend"]], name in ("finish_position", "quali_delta")),
+        **({"finishers": _stage_metrics(held_out[~held_out["dnf"]], True)} if t.finishers_only else {}),
+        # qualifying on laps that were real attempts (within 107% of pole)
+        **({"representative_laps": _stage_metrics(held_out[held_out["actual"] <= QUALI_MAX_GAP], False)}
+           if name == "qualifying" else {}),
         "best_params": params,
         "top_features": contrib.abs().mean().sort_values(ascending=False).head(10).round(4).to_dict(),
         "trained_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),

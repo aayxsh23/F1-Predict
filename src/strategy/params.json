@@ -780,5 +780,173 @@
     "sc_probability": 0.7857142857142857,
     "races": 5,
     "green_laps": 5252
+  },
+  "Hockenheim": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.28772821148508715,
+        "deg_s_per_lap": 0.049674963152589506,
+        "laps": 12417
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.03495986149418071,
+        "laps": 35934
+      },
+      "HARD": {
+        "offset_s": 0.016151734610146004,
+        "deg_s_per_lap": 0.03040004952673514,
+        "laps": 45496
+      }
+    },
+    "max_stint": {
+      "SOFT": 25,
+      "MEDIUM": 31,
+      "HARD": 42
+    },
+    "pit_loss_s": 17.0,
+    "sc_probability": 0.75,
+    "races": 0,
+    "green_laps": 0
+  },
+  "Sochi": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.28772821148508715,
+        "deg_s_per_lap": 0.049674963152589506,
+        "laps": 12417
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.03495986149418071,
+        "laps": 35934
+      },
+      "HARD": {
+        "offset_s": 0.016151734610146004,
+        "deg_s_per_lap": 0.03040004952673514,
+        "laps": 45496
+      }
+    },
+    "max_stint": {
+      "SOFT": 25,
+      "MEDIUM": 31,
+      "HARD": 42
+    },
+    "pit_loss_s": 25.0,
+    "sc_probability": 0.75,
+    "races": 0,
+    "green_laps": 0
+  },
+  "Mugello": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.28772821148508715,
+        "deg_s_per_lap": 0.049674963152589506,
+        "laps": 12417
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.03495986149418071,
+        "laps": 35934
+      },
+      "HARD": {
+        "offset_s": 0.016151734610146004,
+        "deg_s_per_lap": 0.03040004952673514,
+        "laps": 45496
+      }
+    },
+    "max_stint": {
+      "SOFT": 25,
+      "MEDIUM": 31,
+      "HARD": 42
+    },
+    "pit_loss_s": 22.0,
+    "sc_probability": 0.75,
+    "races": 0,
+    "green_laps": 0
+  },
+  "Nürburgring": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.28772821148508715,
+        "deg_s_per_lap": 0.049674963152589506,
+        "laps": 12417
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.03495986149418071,
+        "laps": 35934
+      },
+      "HARD": {
+        "offset_s": 0.016151734610146004,
+        "deg_s_per_lap": 0.03040004952673514,
+        "laps": 45496
+      }
+    },
+    "max_stint": {
+      "SOFT": 25,
+      "MEDIUM": 31,
+      "HARD": 42
+    },
+    "pit_loss_s": 21.0,
+    "sc_probability": 0.75,
+    "races": 0,
+    "green_laps": 0
+  },
+  "Portimão": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.28772821148508715,
+        "deg_s_per_lap": 0.049674963152589506,
+        "laps": 12417
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.03495986149418071,
+        "laps": 35934
+      },
+      "HARD": {
+        "offset_s": 0.016151734610146004,
+        "deg_s_per_lap": 0.03040004952673514,
+        "laps": 45496
+      }
+    },
+    "max_stint": {
+      "SOFT": 25,
+      "MEDIUM": 31,
+      "HARD": 42
+    },
+    "pit_loss_s": 20.0,
+    "sc_probability": 0.75,
+    "races": 0,
+    "green_laps": 0
+  },
+  "Istanbul": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.28772821148508715,
+        "deg_s_per_lap": 0.049674963152589506,
+        "laps": 12417
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.03495986149418071,
+        "laps": 35934
+      },
+      "HARD": {
+        "offset_s": 0.016151734610146004,
+        "deg_s_per_lap": 0.03040004952673514,
+        "laps": 45496
+      }
+    },
+    "max_stint": {
+      "SOFT": 25,
+      "MEDIUM": 31,
+      "HARD": 42
+    },
+    "pit_loss_s": 22.0,
+    "sc_probability": 0.75,
+    "races": 0,
+    "green_laps": 0
   }
 }

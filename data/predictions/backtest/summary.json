@@ -6,33 +6,33 @@
     "by_season": {
       "2022": {
         "races": 12,
-        "mae": 3.215,
-        "baseline_mae": 4.117,
-        "called_the_winner": 0.25
+        "mae": 3.048,
+        "baseline_mae": 3.467,
+        "called_the_winner": 0.583
       },
       "2023": {
         "races": 22,
-        "mae": 3.324,
-        "baseline_mae": 3.822,
-        "called_the_winner": 0.727
+        "mae": 3.189,
+        "baseline_mae": 3.688,
+        "called_the_winner": 0.818
       },
       "2024": {
         "races": 24,
-        "mae": 2.792,
-        "baseline_mae": 2.906,
-        "called_the_winner": 0.375
+        "mae": 2.699,
+        "baseline_mae": 2.827,
+        "called_the_winner": 0.5
       },
       "2025": {
         "races": 24,
-        "mae": 3.153,
-        "baseline_mae": 3.344,
-        "called_the_winner": 0.417
+        "mae": 3.047,
+        "baseline_mae": 3.349,
+        "called_the_winner": 0.583
       },
       "2026": {
         "races": 16,
-        "mae": 3.443,
-        "baseline_mae": 3.528,
-        "called_the_winner": 0.562
+        "mae": 3.294,
+        "baseline_mae": 3.382,
+        "called_the_winner": 0.625
       }
     }
   },
@@ -43,27 +43,27 @@
     "by_season": {
       "2022": {
         "races": 12,
-        "mae": 3.494,
-        "baseline_mae": 4.117
+        "mae": 4.05,
+        "baseline_mae": 3.975
       },
       "2023": {
         "races": 22,
-        "mae": 3.173,
-        "baseline_mae": 3.822
+        "mae": 3.318,
+        "baseline_mae": 3.763
       },
       "2024": {
         "races": 24,
-        "mae": 2.623,
-        "baseline_mae": 2.906
+        "mae": 2.781,
+        "baseline_mae": 2.894
       },
       "2025": {
         "races": 24,
-        "mae": 3.091,
+        "mae": 3.092,
         "baseline_mae": 3.344
       },
       "2026": {
         "races": 16,
-        "mae": 3.349,
+        "mae": 3.508,
         "baseline_mae": 3.528
       }
     }
@@ -75,32 +75,32 @@
     "by_season": {
       "2022": {
         "races": 12,
-        "mae": 0.755,
-        "baseline_mae": 1.052,
-        "called_pole": 0.25
+        "mae": 0.74,
+        "baseline_mae": 0.786,
+        "called_pole": 0.333
       },
       "2023": {
         "races": 22,
-        "mae": 1.317,
-        "baseline_mae": 1.739,
-        "called_pole": 0.136
+        "mae": 1.308,
+        "baseline_mae": 1.344,
+        "called_pole": 0.273
       },
       "2024": {
         "races": 24,
-        "mae": 0.703,
-        "baseline_mae": 0.849,
-        "called_pole": 0.5
+        "mae": 0.699,
+        "baseline_mae": 0.762,
+        "called_pole": 0.542
       },
       "2025": {
         "races": 23,
-        "mae": 0.569,
-        "baseline_mae": 0.633,
-        "called_pole": 0.261
+        "mae": 0.56,
+        "baseline_mae": 0.594,
+        "called_pole": 0.217
       },
       "2026": {
         "races": 16,
-        "mae": 0.566,
-        "baseline_mae": 0.569,
+        "mae": 0.522,
+        "baseline_mae": 0.529,
         "called_pole": 0.188
       }
     }
@@ -112,27 +112,27 @@
     "by_season": {
       "2022": {
         "races": 12,
-        "mae": 0.631,
+        "mae": 0.598,
         "baseline_mae": 0.758
       },
       "2023": {
         "races": 22,
-        "mae": 0.45,
+        "mae": 0.453,
         "baseline_mae": 0.672
       },
       "2024": {
         "races": 24,
-        "mae": 0.5,
+        "mae": 0.505,
         "baseline_mae": 0.796
       },
       "2025": {
         "races": 24,
-        "mae": 0.476,
+        "mae": 0.475,
         "baseline_mae": 0.649
       },
       "2026": {
         "races": 16,
-        "mae": 0.901,
+        "mae": 0.888,
         "baseline_mae": 1.211
       }
     }

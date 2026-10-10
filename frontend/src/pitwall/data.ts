@@ -86,9 +86,8 @@ const SPRINT: Node[] = [
   { key: 'sprint', label: 'Sprint', title: 'Sprint done', copy: 'A real race result is in: race pace and racecraft, not just practice laps.' },
 ]
 const LATER: Node[] = [
-  { key: 'qualifying', label: 'Qualifying', title: 'Qualifying done', copy: 'Qualifying gaps are known, the single biggest sharpening of the weekend.' },
-  { key: 'grid', label: 'Grid', title: 'Grid set', copy: 'Grid set. Finish and grid-to-finish lock onto real starting slots.' },
-  { key: 'compound', label: 'Compound', title: 'Race day', copy: 'Starting compounds known: as informed as this prediction gets.' },
+  { key: 'qualifying', label: 'Qualifying', title: 'Qualifying done', copy: 'Qualifying gaps are known, the single biggest sharpening of the weekend. The qualifying order stands in for the grid until the official one is out.' },
+  { key: 'grid', label: 'Official grid', title: 'Grid set', copy: "The FIA's official grid, penalties applied: as informed as this prediction gets." },
 ]
 
 /** The weekend's information steps; a sprint weekend has two more (the payload only sends their keys then). */

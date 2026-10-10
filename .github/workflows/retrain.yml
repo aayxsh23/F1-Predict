@@ -37,8 +37,9 @@ jobs:
       - name: Retrain (fails if a model no longer beats its baseline)
         run: python -m src.models.train --gate
 
-      - name: Refit odds, history, strategy
+      - name: Refit blends, odds, history, strategy
         run: |
+          python -m src.models.blend
           python -m src.models.probabilities
           python -m src.models.backtest_export
           python -m src.strategy.model
