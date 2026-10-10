@@ -9,193 +9,193 @@
   "evaluation": "44 races from 2024-11-03 to 2026-10-04, each predicted by a model trained only on earlier races; none of them was used to pick hyperparameters",
   "stages": {
     "pre_weekend": {
-      "mae": 0.6609,
+      "mae": 0.6613,
       "baseline_mae": 0.8499,
       "n": 761,
       "vs_baseline_ci95": [
-        -0.2547,
-        -0.1167
+        -0.2434,
+        -0.1336
       ]
     },
     "post_practice": {
-      "mae": 0.6486,
+      "mae": 0.6515,
       "baseline_mae": 0.8499,
       "n": 761,
       "vs_baseline_ci95": [
-        -0.2747,
-        -0.1215
+        -0.2626,
+        -0.1321
       ]
     },
     "post_sprint_quali": {
-      "mae": 0.5573,
+      "mae": 0.565,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.2868,
-        -0.121
+        -0.3042,
+        -0.0955
       ]
     },
     "post_sprint": {
-      "mae": 0.5575,
+      "mae": 0.565,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.2866,
-        -0.1215
+        -0.3042,
+        -0.0955
       ]
     },
     "post_quali": {
-      "mae": 0.6205,
+      "mae": 0.627,
       "baseline_mae": 0.8499,
       "n": 761,
       "vs_baseline_ci95": [
-        -0.3135,
-        -0.1374
+        -0.2976,
+        -0.1448
       ]
     },
     "race_day": {
-      "mae": 0.6208,
+      "mae": 0.6265,
       "baseline_mae": 0.8499,
       "n": 761,
       "vs_baseline_ci95": [
-        -0.3133,
-        -0.1369
+        -0.2984,
+        -0.145
       ]
     }
   },
   "all_walk_forward_stages": {
     "pre_weekend": {
-      "mae": 0.5921,
+      "mae": 0.5948,
       "baseline_mae": 0.7957,
       "n": 1701,
       "vs_baseline_ci95": [
-        -0.2463,
-        -0.1559
+        -0.2387,
+        -0.1621
       ]
     },
     "post_practice": {
-      "mae": 0.5832,
+      "mae": 0.5851,
       "baseline_mae": 0.7957,
       "n": 1701,
       "vs_baseline_ci95": [
-        -0.2579,
-        -0.1617
+        -0.2517,
+        -0.1656
       ]
     },
     "post_sprint_quali": {
-      "mae": 0.4752,
+      "mae": 0.4772,
       "baseline_mae": 0.7057,
       "n": 394,
       "vs_baseline_ci95": [
-        -0.2915,
-        -0.1686
+        -0.2961,
+        -0.1597
       ]
     },
     "post_sprint": {
-      "mae": 0.4754,
+      "mae": 0.4772,
       "baseline_mae": 0.7057,
       "n": 394,
       "vs_baseline_ci95": [
-        -0.2909,
-        -0.1686
+        -0.2961,
+        -0.1597
       ]
     },
     "post_quali": {
-      "mae": 0.5602,
+      "mae": 0.5641,
       "baseline_mae": 0.7957,
       "n": 1701,
       "vs_baseline_ci95": [
-        -0.2842,
-        -0.1789
+        -0.277,
+        -0.1814
       ]
     },
     "race_day": {
-      "mae": 0.5601,
+      "mae": 0.5639,
       "baseline_mae": 0.7957,
       "n": 1701,
       "vs_baseline_ci95": [
-        -0.2845,
-        -0.1795
+        -0.2772,
+        -0.1817
       ]
     }
   },
   "sprint_weekends": {
     "pre_weekend": {
-      "mae": 0.5855,
+      "mae": 0.5795,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.2429,
-        -0.1092
+        -0.2641,
+        -0.1057
       ]
     },
     "post_practice": {
-      "mae": 0.5607,
+      "mae": 0.5651,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.2839,
-        -0.1164
+        -0.3041,
+        -0.0955
       ]
     },
     "post_sprint_quali": {
-      "mae": 0.5573,
+      "mae": 0.565,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.2868,
-        -0.121
+        -0.3042,
+        -0.0955
       ]
     },
     "post_sprint": {
-      "mae": 0.5575,
+      "mae": 0.565,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.2866,
-        -0.1215
+        -0.3042,
+        -0.0955
       ]
     },
     "post_quali": {
-      "mae": 0.5374,
-      "baseline_mae": 0.7639,
-      "n": 218,
-      "vs_baseline_ci95": [
-        -0.3106,
-        -0.1426
-      ]
-    },
-    "race_day": {
       "mae": 0.5385,
       "baseline_mae": 0.7639,
       "n": 218,
       "vs_baseline_ci95": [
-        -0.3103,
-        -0.1418
+        -0.3382,
+        -0.1147
+      ]
+    },
+    "race_day": {
+      "mae": 0.5388,
+      "baseline_mae": 0.7639,
+      "n": 218,
+      "vs_baseline_ci95": [
+        -0.3379,
+        -0.1146
       ]
     }
   },
   "best_params": {
-    "colsample_bytree": 0.7879778055963772,
-    "learning_rate": 0.06591206835935172,
-    "max_depth": 4,
-    "min_child_weight": 9,
-    "n_estimators": 136,
-    "reg_alpha": 1.8566371251754508,
-    "reg_lambda": 1.784552444951943,
-    "subsample": 0.9866619276174678
+    "colsample_bytree": 0.6914200087189198,
+    "learning_rate": 0.04499098541918724,
+    "max_depth": 2,
+    "min_child_weight": 4,
+    "n_estimators": 159,
+    "reg_alpha": 0.521658349660818,
+    "reg_lambda": 3.488761099273773,
+    "subsample": 0.9861677405155175
   },
   "top_features": {
-    "driver_recent_form": 0.24379999935626984,
-    "team_quali_pace": 0.14990000426769257,
-    "expected_stops": 0.0778999999165535,
-    "rain_race_frequency": 0.07370000332593918,
-    "team_recent_form": 0.05429999902844429,
-    "practice_pace": 0.050999999046325684,
-    "grid_position": 0.04360000044107437,
-    "grid_x_overtaking_difficulty": 0.041099999099969864,
-    "rain_mm_forecast": 0.04089999943971634,
-    "grid_vs_expected_position": 0.039400000125169754
+    "driver_recent_form": 0.22609999775886536,
+    "team_quali_pace": 0.15950000286102295,
+    "expected_stops": 0.05299999937415123,
+    "practice_pace": 0.04879999905824661,
+    "team_track_type_form": 0.0478999987244606,
+    "team_recent_form": 0.04580000042915344,
+    "grid_x_overtaking_difficulty": 0.044199999421834946,
+    "rain_race_frequency": 0.04360000044107437,
+    "grid_vs_expected_position": 0.0364999994635582,
+    "rain_mm_forecast": 0.0333000011742115
   },
-  "trained_at": "2026-10-10T15:11:09+00:00"
+  "trained_at": "2026-10-10T17:05:21+00:00"
 }
