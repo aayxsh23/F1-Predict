@@ -1,7 +1,10 @@
 """Derived corrections on top of the four models, each a single weight w:
 
   finish_grid    finishing position once a grid exists:
-                 (1 - w) * finish model + w * (grid - places-gained model)
+                 (1 - w) * finish model + w * (grid - places-gained model),
+                 with its own weight for the front three grid slots
+                 ("finish_grid_front"): the finish model kept demoting
+                 pole-sitters on form, and was nearly always wrong to
   finish_sprint  finishing position after the Sprint:
                  (1 - w) * finish model + w * Sprint result
   quali_sprint   qualifying gap after Sprint Qualifying:
@@ -34,6 +37,7 @@ from src.models.catalog import CANONICAL_PRED_COLS, MODEL_DIR
 from src.models.features import GRID_STAGES, SPRINT_STAGES
 
 BLEND_PATH = MODEL_DIR / "blend.json"
+FRONT_ROWS = 3  # grid slots with their own finish_grid weight
 WEIGHT_GRID = np.round(np.arange(0, 1.0001, 0.05), 2)
 BLENDS = {  # name: (target, stages, anchor column)
     "finish_grid": ("finish_position", GRID_STAGES, "grid_position"),
@@ -56,13 +60,24 @@ def anchor(name: str, rows: pd.DataFrame, delta_pred: pd.Series | None = None) -
     return a - delta_pred if name == "finish_grid" else a
 
 
-def _mix(pred: pd.Series, a: pd.Series, w: float) -> pd.Series:
+def _mix(pred: pd.Series, a: pd.Series, w) -> pd.Series:
     return pred.where(a.isna(), (1 - w) * pred + w * a)
 
 
-def active(target: str, stage: str, weights: dict | None = None) -> list[tuple[str, float]]:
+def active(target: str, stage: str, weights: dict | None = None) -> list[str]:
     weights = load_weights() if weights is None else weights
-    return [(n, weights[n]) for n, (t, stages, _) in BLENDS.items() if t == target and stage in stages and weights.get(n)]
+    return [n for n, (t, stages, _) in BLENDS.items()
+            if t == target and stage in stages and (weights.get(n) or weights.get(f"{n}_front"))]
+
+
+def row_weight(name: str, rows: pd.DataFrame, weights: dict | None = None):
+    """A blend's weight for each row: one number, except finish_grid, whose
+    front FRONT_ROWS grid slots use finish_grid_front when it's fitted."""
+    weights = load_weights() if weights is None else weights
+    w = weights.get(name, 0.0)
+    if name == "finish_grid" and "finish_grid_front" in weights and "grid_position" in rows:
+        return pd.Series(np.where(rows["grid_position"] <= FRONT_ROWS, weights["finish_grid_front"], w), index=rows.index)
+    return w
 
 
 def apply_rows(rows: pd.DataFrame, stage: str, weights: dict | None = None) -> pd.DataFrame:
@@ -70,9 +85,9 @@ def apply_rows(rows: pd.DataFrame, stage: str, weights: dict | None = None) -> p
     rows = rows.copy()
     for target in ("finish_position", "qualifying"):
         col = CANONICAL_PRED_COLS[target]
-        for name, w in active(target, stage, weights):
+        for name in active(target, stage, weights):
             delta = rows[CANONICAL_PRED_COLS["quali_delta"]] if name == "finish_grid" else None
-            rows[col] = _mix(rows[col], anchor(name, rows, delta), w).round(4)
+            rows[col] = _mix(rows[col], anchor(name, rows, delta), row_weight(name, rows, weights)).round(4)
     return rows
 
 
@@ -98,8 +113,8 @@ def apply_walkforward(wf: pd.DataFrame, matrix: pd.DataFrame, weights: dict | No
             if not sel.any():
                 continue
             rows = wf.loc[sel, key + ["pred"]].merge(inputs, on=key, how="left").merge(delta, on=key, how="left")
-            for name, w in active(target, stage, weights):
-                rows["pred"] = _mix(rows["pred"], anchor(name, rows, rows["_delta"]), w)
+            for name in active(target, stage, weights):
+                rows["pred"] = _mix(rows["pred"], anchor(name, rows, rows["_delta"]), row_weight(name, rows, weights))
             wf.loc[sel, "pred"] = rows["pred"].to_numpy()
     return wf
 
@@ -115,11 +130,13 @@ def contributions(target: str, stage: str, row: pd.DataFrame, field: pd.DataFram
 
     c, b = predict.contributions(predict.load_model(target), PREPARE_FN[target](row))
     c, b = c.iloc[0], float(b.iloc[0])
-    for name, w in active(target, stage, weights):
+    for name in active(target, stage, weights):
         col = BLENDS[name][2]
         value = float(row[col].iloc[0]) if col in row else np.nan
         if np.isnan(value):
             continue
+        w = row_weight(name, row, weights)
+        w = float(w.iloc[0]) if isinstance(w, pd.Series) else float(w)
         mean = float(field[col].mean())
         c, b = c * (1 - w), b * (1 - w)
         if name == "finish_grid":
@@ -128,6 +145,17 @@ def contributions(target: str, stage: str, row: pd.DataFrame, field: pd.DataFram
         c[col] = c.get(col, 0.0) + w * (value - mean)
         b += w * mean
     return c, b
+
+
+def _grid_at_stage(rows: pd.DataFrame, matrix: pd.DataFrame) -> pd.Series:
+    """The grid slot each walk-forward row had at its stage (qualifying order
+    after qualifying, the official grid on race day), aligned to rows."""
+    out = pd.Series(np.nan, index=rows.index)
+    for stage in set(rows["stage"]):
+        sel = rows["stage"] == stage
+        inputs = _stage_inputs(matrix, stage)[["season", "round", "driver", "grid_position"]]
+        out[sel] = rows.loc[sel, ["season", "round", "driver"]].merge(inputs, on=["season", "round", "driver"], how="left")["grid_position"].to_numpy()
+    return out
 
 
 def _report(wf: pd.DataFrame, name: str) -> dict:
@@ -168,15 +196,23 @@ def fit() -> dict:
     for name, (target, stages, _) in BLENDS.items():
         # the places-gained predictions ride along: finish_grid's anchor is built from them
         pool = wf[wf["target"].isin([target, "quali_delta"]) & wf["stage"].isin(stages) & ~wf["after_tuning_window"]]
-        errs = {}
-        for w in WEIGHT_GRID:
-            b = apply_walkforward(pool, matrix, {name: float(w)})
-            b = b[b["target"] == target]
-            if target == "finish_position":
-                b = b[~b["dnf"].astype(bool)]  # retirements are the odds sampler's job
-            errs[float(w)] = float((b["pred"] - b["actual"]).abs().mean()) if len(b) else np.inf
-        weights[name] = min(errs, key=lambda w: (round(errs[w], 4), w))  # ties: the smaller correction
-        print(f"{name}: w={weights[name]} (tuning-window MAE {errs[0.0]:.3f} -> {errs[weights[name]]:.3f})")
+        # finish_grid gets a separate weight for the front grid slots; each row
+        # only depends on its own weight, so the two are fitted independently
+        groups = {name: None}
+        if name == "finish_grid":
+            groups = {name: False, f"{name}_front": True}
+        blended = {float(w): apply_walkforward(pool, matrix, {name: float(w)}) for w in WEIGHT_GRID}
+        for key, front in groups.items():
+            errs = {}
+            for w, b in blended.items():
+                b = b[b["target"] == target]
+                if target == "finish_position":
+                    b = b[~b["dnf"].astype(bool)]  # retirements are the odds sampler's job
+                if front is not None:
+                    b = b[_grid_at_stage(b, matrix).le(FRONT_ROWS).to_numpy() == front]
+                errs[w] = float((b["pred"] - b["actual"]).abs().mean()) if len(b) else np.inf
+            weights[key] = min(errs, key=lambda w: (round(errs[w], 4), w))  # ties: the smaller correction
+            print(f"{key}: w={weights[key]} (tuning-window MAE {errs[0.0]:.3f} -> {errs[weights[key]]:.3f})")
 
     blended = apply_walkforward(wf, matrix, weights)
     report = {n: _report(blended, n) for n in BLENDS}
@@ -201,7 +237,8 @@ def fit() -> dict:
             m["finishers"] = _stage_metrics(g[~g["dnf"]], True)
         if target == "qualifying":
             m["representative_laps"] = _stage_metrics(g[g["actual"] <= QUALI_MAX_GAP], False)
-        m["blends"] = {n: {"weight": weights[n], "held_out": report[n]} for n, (t, _, _) in BLENDS.items() if t == target}
+        m["blends"] = {n: {"weight": weights[n], **({"front_weight": weights[f"{n}_front"]} if f"{n}_front" in weights else {}),
+                           "held_out": report[n]} for n, (t, _, _) in BLENDS.items() if t == target}
         path.write_text(json.dumps(m, indent=2))
     return {"weights": weights, "held_out": report}
 

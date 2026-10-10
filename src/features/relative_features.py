@@ -26,5 +26,10 @@ def build(df: pd.DataFrame) -> pd.DataFrame:
     out["teammate_quali_gap"] = out["quali_gap_pct"] - out["_tm_quali"]
     out["teammate_race_pace_gap"] = out["_hist_race_pace"] - out["_tm_pace"]
     out["grid_vs_expected_position"] = out["grid_position"] - out["driver_recent_form"]
+    # how a driver has been qualifying against his teammate lately (prior races;
+    # a no-time run can't swing it by more than 3%)
+    out["driver_quali_vs_teammate_form"] = recent_form(
+        out.assign(_t=out["teammate_quali_gap"].clip(-3, 3)), "driver", "race_date", "_t")
 
-    return out[["season", "round", "driver", "teammate_quali_gap", "teammate_race_pace_gap", "grid_vs_expected_position"]]
+    return out[["season", "round", "driver", "teammate_quali_gap", "teammate_race_pace_gap", "grid_vs_expected_position",
+                "driver_quali_vs_teammate_form"]]

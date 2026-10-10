@@ -2,13 +2,20 @@ name: Retrain models
 
 # Tuesdays, after the weekend's race is in the data: retrain all four models
 # and commit them only if every model still beats its naive baseline on races
-# it never saw and the test suite passes. The race itself is ingested on
-# Monday by scripts/refresh_local.ps1 -Ingest from a home connection (F1's
-# live-timing server refuses GitHub's runners) and committed as raw data.
+# it never saw, is not clearly worse than the models it replaces, and the test
+# suite passes. The race itself is ingested on Monday by
+# scripts/refresh_local.ps1 -Ingest from a home connection (F1's live-timing
+# server refuses GitHub's runners) and committed as raw data.
+# Run by hand with dry_run to time it or try a change without committing.
 on:
   schedule:
     - cron: "0 4 * * 2"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Train and check, but commit nothing"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -37,21 +44,28 @@ jobs:
       - name: Retrain (fails if a model no longer beats its baseline)
         run: python -m src.models.train --gate
 
-      - name: Refit blends, odds, history, strategy
+      - name: Refit blends
+        run: python -m src.models.blend
+
+      - name: No worse than the shipped models (fails if clearly worse on recent races)
+        run: python -m src.models.regression_check
+
+      - name: Refit odds, history, strategy; score published forecasts
         run: |
-          python -m src.models.blend
           python -m src.models.probabilities
           python -m src.models.backtest_export
           python -m src.strategy.model
+          python -m src.models.live_record
 
       - name: Tests against the new models
         run: pytest -q -p no:cacheprovider
 
       - name: Commit
+        if: ${{ !inputs.dry_run }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/raw/races data/raw/laps src/models/saved src/strategy/params.json data/predictions/backtest
+          git add data/raw/races data/raw/laps src/models/saved src/strategy/params.json data/predictions/backtest data/predictions/live_record.json
           if ! git diff --cached --quiet; then
             git commit -m "chore: weekly retrain"
             git pull --rebase

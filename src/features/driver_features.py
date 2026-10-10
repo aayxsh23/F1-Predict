@@ -18,6 +18,11 @@ def build(df: pd.DataFrame) -> pd.DataFrame:
     df["driver_dnf_rate"] = recent_form(df, "driver", "race_date", "_dnf_f", decay=0.9)
     df["driver_track_form"] = track_form(df, "driver", "location", "season", "race_date", "finish_position")
 
+    # the driver's own recent qualifying pace (representative laps only); the
+    # team's is team_quali_pace, and pole is usually decided between teammates
+    df["_q"] = df["quali_gap_pct"].where(df["quali_gap_pct"] <= QUALI_MAX_GAP)
+    df["driver_quali_form"] = recent_form(df, "driver", "race_date", "_q")
+
     # how often a driver ends qualifying without a representative lap; the
     # qualifying odds use it, the models don't
     nolap = df["quali_gap_pct"].isna() | (df["quali_gap_pct"] > QUALI_MAX_GAP)
@@ -27,5 +32,5 @@ def build(df: pd.DataFrame) -> pd.DataFrame:
     return df.reindex(columns=[
         "season", "round", "driver", "grid_position", "quali_gap_pct", "practice_pace", "practice_long_run_pace",
         "driver_recent_form", "driver_track_form", "driver_positions_gained_form", "driver_dnf_rate",
-        "driver_quali_nolap_rate",
+        "driver_quali_form", "driver_quali_nolap_rate",
     ])

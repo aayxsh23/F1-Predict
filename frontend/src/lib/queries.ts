@@ -45,6 +45,10 @@ export function useBacktestForRace(season: number, round: number, enabled = true
   return useQuery({ queryKey: ['backtest', season, round], queryFn: () => api.backtestForRace(season, round), enabled })
 }
 
+export function useLiveRecord() {
+  return useQuery({ queryKey: ['live-record'], queryFn: api.liveRecord, staleTime: 10 * 60_000, retry: false })
+}
+
 export function useModelCard() {
   return useQuery({ queryKey: ['model'], queryFn: api.modelCard, staleTime: Infinity })
 }

@@ -75,7 +75,7 @@ def test_every_model_input_has_a_fan_label():
 
 def test_shipped_blend_weights_are_committed():
     # blend.json was once gitignored, so serving silently ran without blends
-    assert set(blend.load_weights()) == set(blend.BLENDS)
+    assert set(blend.BLENDS) <= set(blend.load_weights())
 
 
 def test_blends_are_weighted_averages_and_explanations_stay_exact():
@@ -84,16 +84,19 @@ def test_blends_are_weighted_averages_and_explanations_stay_exact():
                          CANONICAL_PRED_COLS["qualifying"]: [0.3, 0.5]})
     out = blend.apply_rows(rows, "post_quali", {"finish_grid": 0.5})
     assert out[fin].tolist() == [0.5 * 4 + 0.5 * (3 - 1), 9.0]  # no grid: unchanged
+    front = blend.apply_rows(rows, "post_quali", {"finish_grid": 0.5, "finish_grid_front": 0.8})
+    assert front[fin].tolist()[0] == round(0.2 * 4 + 0.8 * (3 - 1), 4)  # grid slot 3 uses the front weight
     assert blend.apply_rows(rows, "post_practice", {"finish_grid": 0.5})[fin].tolist() == [4.0, 9.0]
 
     df = pd.read_parquet(DATA_PATH)
     race = df[(df["season"] == 2025) & (df["round"] == 10)]
     race = mask_for_stage(race, "post_quali").reset_index(drop=True)
-    w = {"finish_grid": 0.6}
+    w = {"finish_grid": 0.6, "finish_grid_front": 0.8}
     raw = race.assign(**{c: predict(load_model(t), race, target=t).to_numpy() for t, c in CANONICAL_PRED_COLS.items()})
     shown = blend.apply_rows(raw, "post_quali", w)
-    c, base = blend.contributions("finish_position", "post_quali", race.iloc[[0]], race, w)
-    assert abs((c.sum() + base) - shown[fin].iloc[0]) < 1e-3
+    for i in (0, int(race["grid_position"].idxmin())):  # a front-row car and another
+        c, base = blend.contributions("finish_position", "post_quali", race.iloc[[i]], race, w)
+        assert abs((c.sum() + base) - shown[fin].iloc[i]) < 1e-3
 
 
 def test_sprint_stages_train_on_sprint_weekends_only():

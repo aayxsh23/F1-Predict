@@ -134,6 +134,12 @@ def backtest_for_race(season: int, round: int):
     return _json(f"backtest/{season}_{round}.json", "No backtest for this race.")
 
 
+@app.get("/live-record")
+def live_record():
+    """The forecasts the app published, scored against the results (src/models/live_record.py)."""
+    return _json("live_record.json", "No published forecast has been scored yet.")
+
+
 @app.get("/model")
 def model_card():
     """Held-out accuracy of each model (the numbers the track-record view shows)."""

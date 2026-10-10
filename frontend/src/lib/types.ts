@@ -178,6 +178,29 @@ export interface ModelCardEntry {
 
 export type ModelCard = Record<Target, ModelCardEntry>
 
+export interface LiveSnapshotScore {
+  label: string
+  stage: Stage | null
+  generated_at: string | null
+  cars: number
+  finish_mae: number | null
+  finish_mae_finishers: number | null
+  order_agreement: number | null
+  winner_called?: boolean
+  podium_called?: number
+  grid_baseline_mae?: number | null
+  quali_mae?: number | null
+  pole_called?: boolean
+}
+
+/** GET /live-record: what the app actually published, scored once the race was run. */
+export interface LiveRecord {
+  method: string
+  generated_at: string
+  races: Array<{ season: number; round: number; location: string; snapshots: LiveSnapshotScore[] }>
+  by_stage: Array<{ label: string; races: number; finish_mae: number | null; finish_mae_finishers: number | null; winner_called_share: number | null; grid_baseline_mae?: number | null; quali_mae?: number | null }>
+}
+
 export type Compound = 'SOFT' | 'MEDIUM' | 'HARD'
 
 export interface Stint {

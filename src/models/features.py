@@ -63,10 +63,14 @@ FEATURE_COLS = list(dict.fromkeys(
 # sprint sessions run before Grand Prix qualifying from 2024, and in 2023
 # (when they ran after it) neither depended on it: the Sprint grid came from
 # the Shootout. So they are fair inputs.
+# The driver's own qualifying form (pace, and against the teammate) is for
+# this model only: on 2026-10-11 it helped qualifying on the tuning races but
+# made the finishing-position model worse on the held-out ones.
 QUALI_SAFE_FEATURE_COLS = (
     CIRCUIT_COLS + PRACTICE_COLS
     + ["driver_recent_form", "driver_track_form", "driver_positions_gained_form", "driver_dnf_rate"]
     + TEAM_COLS + ["teammate_race_pace_gap", "expected_stops"] + SPRINT_FEATURE_COLS
+    + ["driver_quali_form", "driver_quali_vs_teammate_form"]
 )
 
 # Weekend stages, in order, and what is still unknown at each.

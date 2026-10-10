@@ -5,6 +5,7 @@ import type {
   ChatContext,
   ChatEvent,
   ExplainResult,
+  LiveRecord,
   ModelCard,
   PredictionPayload,
   RaceSummary,
@@ -55,6 +56,7 @@ export const api = {
   backtestRaces: () => request<BacktestIndexEntry[]>('/backtest/races'),
   backtestForRace: (season: number, round: number) => request<BacktestRacePayload>(`/backtest/${season}/${round}`),
   modelCard: () => request<ModelCard>('/model'),
+  liveRecord: () => request<LiveRecord>('/live-record'),
   strategy: (season: number, round: number, scLap: number | null) =>
     request<StrategyResult>(`/strategy/${season}/${round}${scLap === null ? '' : `?sc_lap=${scLap}`}`),
   championship: () => request<Championship>('/championship'),

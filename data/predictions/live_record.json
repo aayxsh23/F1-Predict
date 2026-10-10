@@ -1,0 +1,36 @@
+{
+  "method": "every forecast snapshot the app published (data/predictions/timeline), scored against the race result",
+  "generated_at": "2026-10-10T22:00:16+00:00",
+  "races": [
+    {
+      "season": 2026,
+      "round": 16,
+      "location": "Kuala Lumpur",
+      "snapshots": [
+        {
+          "label": "Before practice",
+          "stage": "pre_weekend",
+          "generated_at": "2026-09-28T15:56:24.742081+00:00",
+          "cars": 22,
+          "finish_mae": 3.48,
+          "finish_mae_finishers": 2.553,
+          "order_agreement": 0.755,
+          "winner_called": false,
+          "podium_called": 1,
+          "quali_mae": 0.546,
+          "pole_called": false
+        }
+      ]
+    }
+  ],
+  "by_stage": [
+    {
+      "label": "Before practice",
+      "races": 1,
+      "finish_mae": 3.48,
+      "finish_mae_finishers": 2.553,
+      "winner_called_share": 0.0,
+      "quali_mae": 0.546
+    }
+  ]
+}

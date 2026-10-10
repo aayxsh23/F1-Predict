@@ -31,13 +31,9 @@ def _simulate(payload: dict) -> dict | None:
     predicted = [d.get("predicted_finish_position") for d in drivers]
     if len(drivers) < 3 or any(p is None for p in predicted):
         return None
-    rows = [d.get("feature_row", {}) for d in drivers]
     stage = stage_of_payload(payload)
     seed = payload["season"] * 100 + payload["round"]  # the same race always samples the same draws
-    race = race_probabilities(
-        predicted, [_num(r.get("driver_dnf_rate")) for r in rows], [_num(r.get("team_reliability")) for r in rows],
-        stage=stage, teams=[d["team"] for d in drivers], seed=seed,
-    )
+    race = race_probabilities(predicted, stage=stage, teams=[d["team"] for d in drivers], seed=seed)
     quali = None
     gaps = [d.get("predicted_qualifying_gap_pct") for d in drivers]
     if not payload.get("known_sessions", {}).get("qualifying") and all(g is not None for g in gaps):

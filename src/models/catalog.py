@@ -75,4 +75,6 @@ FEATURE_LABELS = {
     "sprint_race_pace_pct": "Sprint race pace",
     "team_performance_upgrades": "Car upgrades this weekend",
     "team_upgrades_recent": "Car upgrades in the last three races",
+    "driver_quali_form": "Driver's recent qualifying pace",
+    "driver_quali_vs_teammate_form": "Recent qualifying vs teammate",
 }

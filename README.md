@@ -132,11 +132,14 @@ No wiring needed — the backend detects it automatically (`src/rag/llm.py` → 
 |---|---|
 | Forecast the next race now | `python -m src.models.refresh_job` |
 | Ingest newly finished races | `python -m src.data.ingest --seasons 2026` |
-| Race-weekend refresh + Monday ingest from a home connection (F1 live timing refuses GitHub's runners) | `scripts/refresh_local.ps1 -Python <python.exe>` · `-Ingest` · `-Register` installs both as scheduled tasks |
+| Race-weekend refresh + Monday ingest from a home connection (F1 live timing refuses GitHub's runners); opens a GitHub issue if it keeps failing | `scripts/refresh_local.ps1 -Python <python.exe>` · `-Ingest` · `-Register` installs both as scheduled tasks |
+| Is the live forecast keeping up? (GitHub runs it every 2 h on race weekends, `freshness.yml`) | `python scripts/check_freshness.py` |
 | Rebuild the feature table | `python -m src.features.build_dataset` |
 | Retrain and evaluate all four models | `python -m src.models.train` *(~10 min)* |
 | Refit blends, odds, history view, strategy | `python -m src.models.blend` · `python -m src.models.probabilities` · `python -m src.models.backtest_export` · `python -m src.strategy.model` |
 | Car upgrades from the FIA's documents | `python -m src.data.fia --seasons 2026` |
+| Is a retrained model clearly worse than the shipped one? (run before the history export) | `python -m src.models.regression_check` |
+| Score every forecast the app published against the results | `python -m src.models.live_record` |
 | Rebuild the regulations index | `python -m src.rag.corpus` |
 | Chat in the terminal | `python -m src.agent.cli` |
 | Tests | `python -m src.features.build_dataset` once, then `pytest` · `npm run lint && npm run build` in `frontend/` |

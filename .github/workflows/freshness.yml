@@ -1,0 +1,40 @@
+name: Forecast freshness
+
+# Race weekends are refreshed from a home PC (scripts/refresh_local.ps1), which
+# can't raise an alert when it's switched off. Every two hours Friday to
+# Monday (UTC), this checks the published forecast against the calendar and
+# opens an issue (GitHub emails you) when a session that has run isn't in it,
+# or the forecast is for the wrong round. The issue closes itself once the
+# forecast catches up.
+on:
+  schedule:
+    - cron: "20 */2 * * 5,6,0,1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+
+      - id: check
+        run: python3 scripts/check_freshness.py | tee -a "$GITHUB_OUTPUT"
+
+      - name: Open or close the alert
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STALE: ${{ steps.check.outputs.stale }}
+          REASON: ${{ steps.check.outputs.reason }}
+        run: |
+          title="Live forecast is stale"
+          open=$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[0].number')
+          if [ "$STALE" = "true" ]; then
+            [ -n "$open" ] || gh issue create --title "$title" --body "$REASON"
+          elif [ -n "$open" ]; then
+            gh issue close "$open" --comment "Caught up: $REASON"
+          fi

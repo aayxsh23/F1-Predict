@@ -42,7 +42,11 @@ DATA_DUE_AFTER = pd.Timedelta(hours=2)
 SESSION_CODES = {"Practice 1": "FP1", "Practice 2": "FP2", "Practice 3": "FP3", "Sprint Qualifying": "SQ",
                  "Sprint Shootout": "SQ", "Sprint": "S", "Qualifying": "Q"}
 LABELS = {"Q": "After qualifying", "S": "After the Sprint", "SQ": "After Sprint Qualifying"}
-SCHEDULE_COLS = ["RoundNumber", "EventName", "Location", "Country", "EventFormat", "Session1DateUtc", "EventDate"]
+# every session's name and start, so scripts/check_freshness.py can tell from
+# GitHub (no FastF1 there) which sessions a live forecast should already include
+SESSION_TIME_COLS = [f"Session{n}DateUtc" for n in range(1, 6)]
+SCHEDULE_COLS = (["RoundNumber", "EventName", "Location", "Country", "EventFormat", "EventDate"]
+                 + [f"Session{n}" for n in range(1, 6)] + SESSION_TIME_COLS)
 
 
 def _clean(v):
@@ -186,7 +190,7 @@ def write_schedule(season: int) -> None:
     sched = event_schedule(season)
     out = sched[SCHEDULE_COLS].copy()
     out["RaceStartUtc"] = [race_start(e) for _, e in sched.iterrows()]
-    for c in ("Session1DateUtc", "EventDate", "RaceStartUtc"):
+    for c in ("EventDate", "RaceStartUtc", *SESSION_TIME_COLS):
         out[c] = out[c].apply(_iso)
     path = OUT_DIR / "schedule" / f"{season}.json"
     path.parent.mkdir(parents=True, exist_ok=True)

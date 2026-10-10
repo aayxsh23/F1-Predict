@@ -5,8 +5,8 @@ import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom'
 import { ApiError } from '@/lib/api'
 import { cn } from '@/lib/cn'
 import { spring } from '@/lib/motion'
-import { useBacktestForRace, useBacktestRaces } from '@/lib/queries'
-import type { BacktestDriverEntry, Target } from '@/lib/types'
+import { useBacktestForRace, useBacktestRaces, useLiveRecord } from '@/lib/queries'
+import type { BacktestDriverEntry, LiveRecord, Target } from '@/lib/types'
 
 import { useChrome, useChromeApi } from './chrome'
 import { lensOf, signed, useLens } from './data'
@@ -52,6 +52,8 @@ export function HistoryPage() {
         </span>
       </div>
 
+      <LiveTrackRecord />
+
       <div role="tablist" aria-label="Season" className="flex gap-[clamp(14px,3vw,36px)] overflow-x-auto border-b border-white/10 [scrollbar-width:none]">
         {seasons.map((y) => {
           const on = y === season
@@ -93,6 +95,53 @@ export function HistoryPage() {
         </ol>
       )}
     </div>
+  )
+}
+
+/** The forecasts the app actually showed, scored after each race: the last one published before the start. */
+function LiveTrackRecord() {
+  const record = useLiveRecord()
+  const races = record.data?.races ?? []
+  if (!races.length) return null
+  const last = (r: LiveRecord['races'][number]) => r.snapshots[r.snapshots.length - 1]
+  return (
+    <section aria-label="Live track record" className="pw-glass flex flex-col gap-3 rounded-[10px] px-[22px] py-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+        <h2 className="pw-label">Live track record</h2>
+        <span className="text-[12px] text-ink-3">What the app actually published, scored after the race. Not a simulation.</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[520px] text-left text-[13px] tabular-nums">
+          <thead className="text-[10px] uppercase tracking-[.12em] text-ink-3">
+            <tr>
+              <th className="py-1.5 pr-3 font-medium">Race</th>
+              <th className="py-1.5 pr-3 font-medium">Last forecast</th>
+              <th className="py-1.5 pr-3 font-medium">Off by (places)</th>
+              <th className="py-1.5 pr-3 font-medium">Grid guess</th>
+              <th className="py-1.5 pr-3 font-medium">Winner</th>
+              <th className="py-1.5 font-medium">Podium</th>
+            </tr>
+          </thead>
+          <tbody>
+            {races.map((r) => {
+              const s = last(r)
+              return (
+                <tr key={`${r.season}-${r.round}`} className="border-t border-white/[.07]">
+                  <td className="py-2 pr-3 font-semibold">
+                    {r.season} {r.location}
+                  </td>
+                  <td className="py-2 pr-3 text-ink-2">{s.label}</td>
+                  <td className="py-2 pr-3">{s.finish_mae?.toFixed(2) ?? '—'}</td>
+                  <td className="py-2 pr-3 text-ink-2">{s.grid_baseline_mae?.toFixed(2) ?? '—'}</td>
+                  <td className="py-2 pr-3">{s.winner_called === undefined ? '—' : s.winner_called ? 'Called' : 'Missed'}</td>
+                  <td className="py-2">{s.podium_called === undefined ? '—' : `${s.podium_called} of 3`}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
   )
 }
 
