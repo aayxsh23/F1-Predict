@@ -114,8 +114,12 @@ def practice_features(season: int, round_number: int) -> tuple[pd.DataFrame, flo
 
 def quali_features(season: int, round_number: int) -> pd.DataFrame:
     """Q1/Q2/Q3 times (s), gap to pole in seconds and as % of the pole lap
-    (the % travels between a 70 s Monaco lap and a 104 s Spa lap), pole time."""
-    res = load_session(season, round_number, "Q", laps=False, weather=False).results.copy()
+    (the % travels between a 70 s Monaco lap and a 104 s Spa lap), pole time.
+    Laps and race-control messages are loaded because for a session that has
+    only just run, Jolpica (Ergast) has no result yet and FastF1 derives the
+    classification and Q1/Q2/Q3 times from them; without them a live forecast
+    sat at "after the Sprint" for hours after qualifying (2026-10-10)."""
+    res = load_session(season, round_number, "Q", laps=True, weather=False, messages=True).results.copy()
     for col in ("Q1", "Q2", "Q3"):
         if col not in res.columns:
             res[col] = pd.NaT
