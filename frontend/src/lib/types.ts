@@ -33,13 +33,18 @@ export const TARGET_HIGHER_IS_BETTER: Record<Target, boolean> = {
   race_time: false,
 }
 
-export type Stage = 'pre_weekend' | 'post_practice' | 'post_quali' | 'race_day'
+export type Stage = 'pre_weekend' | 'post_practice' | 'post_sprint_quali' | 'post_sprint' | 'post_quali' | 'race_day'
 
 export interface KnownSessions {
   practice: boolean
+  /** present only on sprint weekends */
+  sprint_qualifying?: boolean
+  sprint?: boolean
   qualifying: boolean
+  /** the FIA's official grid (penalties applied) is in; before that the qualifying order stands in */
   grid: boolean
-  compound: boolean
+  /** older forecasts only: starting tyres stopped being an input on 2026-10-10 */
+  compound?: boolean
 }
 
 export interface DriverPrediction {
@@ -84,6 +89,7 @@ export interface PredictionPayload {
   generated_at: string
   stage?: Stage
   session_label?: string
+  sprint_weekend?: boolean
   known_sessions: KnownSessions
   model_trained_at?: string | null
   race?: RaceInfo

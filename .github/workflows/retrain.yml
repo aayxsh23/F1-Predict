@@ -1,8 +1,10 @@
 name: Retrain models
 
-# Tuesdays, after the weekend's race is in the data: ingest it, retrain all
-# four models, and commit them only if every model still beats its naive
-# baseline on races it never saw and the test suite passes.
+# Tuesdays, after the weekend's race is in the data: retrain all four models
+# and commit them only if every model still beats its naive baseline on races
+# it never saw and the test suite passes. The race itself is ingested on
+# Monday by scripts/refresh_local.ps1 -Ingest from a home connection (F1's
+# live-timing server refuses GitHub's runners) and committed as raw data.
 on:
   schedule:
     - cron: "0 4 * * 2"
@@ -30,16 +32,14 @@ jobs:
 
       - run: pip install -r requirements-dev.txt
 
-      - name: Ingest races finished since the last run
-        run: python -m src.data.ingest --seasons $(date -u +%Y)
-
       - run: python -m src.features.build_dataset
 
       - name: Retrain (fails if a model no longer beats its baseline)
         run: python -m src.models.train --gate
 
-      - name: Refit odds, history, strategy
+      - name: Refit blends, odds, history, strategy
         run: |
+          python -m src.models.blend
           python -m src.models.probabilities
           python -m src.models.backtest_export
           python -m src.strategy.model

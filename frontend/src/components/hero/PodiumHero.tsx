@@ -18,15 +18,16 @@ const PodiumStage3D = lazy(() => import('./PodiumStage3D'))
 
 const SESSIONS: Array<[keyof KnownSessions, string]> = [
   ['practice', 'Practice'],
+  ['sprint_qualifying', 'Sprint quali'],
+  ['sprint', 'Sprint'],
   ['qualifying', 'Quali'],
-  ['grid', 'Grid'],
-  ['compound', 'Compound'],
+  ['grid', 'Official grid'],
 ]
 
 function SessionStrip({ known }: { known: KnownSessions }) {
   return (
     <ul className="flex flex-wrap gap-x-3 gap-y-1" aria-label="Sessions this forecast has seen">
-      {SESSIONS.map(([key, label]) => (
+      {SESSIONS.filter(([key]) => key in known).map(([key, label]) => (
         <li key={key} className={cn('flex items-center gap-1.5', known[key] ? 'text-silver-200' : 'text-silver-400')}>
           <span className={cn('h-1.5 w-1.5 rounded-full', known[key] ? 'bg-laser-400' : 'border border-silver-400')} aria-hidden />
           <span className="hud-label">{label}</span>

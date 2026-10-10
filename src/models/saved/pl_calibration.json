@@ -1,97 +1,156 @@
 {
-  "dnf_prior": 0.14977168949771688,
+  "dnf_prior": 0.14714828897338403,
+  "nolap_prior": 0.03888677087304613,
   "race": {
     "post_practice": {
-      "tau_top": 1.8727361793762778,
-      "tau_field": 3.3176792064649705
+      "tau_top": 1.7559584460468425,
+      "tau_field": 3.214638928139782,
+      "tau_band": 1.7562790511208992
     },
     "post_quali": {
-      "tau_top": 1.5850922251789967,
-      "tau_field": 2.997545940832451
+      "tau_top": 1.4905383766869948,
+      "tau_field": 2.8973289892497904,
+      "tau_band": 1.5775447050353715
+    },
+    "post_sprint": {
+      "tau_top": 1.9502552969036626,
+      "tau_field": 3.4301037350564085,
+      "tau_band": 1.8342178249253056
+    },
+    "post_sprint_quali": {
+      "tau_top": 2.032204219253147,
+      "tau_field": 3.50149436602379,
+      "tau_band": 1.6807343928318783
     },
     "pre_weekend": {
-      "tau_top": 1.9155814116140062,
-      "tau_field": 3.3249344345643963
+      "tau_top": 1.7160418072256736,
+      "tau_field": 3.194885516434683,
+      "tau_band": 1.936665343934491
     },
     "race_day": {
-      "tau_top": 1.5850922251789967,
-      "tau_field": 2.997545940832451
+      "tau_top": 1.4960259987594626,
+      "tau_field": 2.8648452695580304,
+      "tau_band": 1.6063696607895332
     }
   },
   "qualifying": {
     "post_practice": {
-      "tau": 0.5848373760038991
+      "tau": 0.5796302294981057
+    },
+    "post_sprint": {
+      "tau": 0.5452299892966471
+    },
+    "post_sprint_quali": {
+      "tau": 0.5452299892966471
     },
     "pre_weekend": {
-      "tau": 0.5803233912668425
+      "tau": 0.6232138696336835
     }
   },
   "checks": {
     "race_post_practice": {
       "brier": {
-        "win": 0.0369,
-        "podium": 0.0834,
-        "top10": 0.1685
+        "win": 0.037,
+        "podium": 0.0839,
+        "top10": 0.173
       },
       "brier_if_guessing_evenly": {
-        "win": 0.0468,
-        "podium": 0.126,
-        "top10": 0.2499
+        "win": 0.047,
+        "podium": 0.1263,
+        "top10": 0.25
       },
-      "range_p10_p90_coverage": 0.868
+      "range_p10_p90_coverage": 0.785
     },
     "race_post_quali": {
       "brier": {
-        "win": 0.033,
-        "podium": 0.0734,
-        "top10": 0.1553
+        "win": 0.0298,
+        "podium": 0.0677,
+        "top10": 0.1536
       },
       "brier_if_guessing_evenly": {
-        "win": 0.0468,
-        "podium": 0.126,
+        "win": 0.047,
+        "podium": 0.1263,
+        "top10": 0.25
+      },
+      "range_p10_p90_coverage": 0.804
+    },
+    "race_post_sprint": {
+      "brier": {
+        "win": 0.0361,
+        "podium": 0.0842,
+        "top10": 0.1801
+      },
+      "brier_if_guessing_evenly": {
+        "win": 0.0465,
+        "podium": 0.1253,
         "top10": 0.2499
       },
-      "range_p10_p90_coverage": 0.872
+      "range_p10_p90_coverage": 0.766
+    },
+    "race_post_sprint_quali": {
+      "brier": {
+        "win": 0.0368,
+        "podium": 0.0857,
+        "top10": 0.1807
+      },
+      "brier_if_guessing_evenly": {
+        "win": 0.0465,
+        "podium": 0.1253,
+        "top10": 0.2499
+      },
+      "range_p10_p90_coverage": 0.741
     },
     "race_pre_weekend": {
       "brier": {
-        "win": 0.0385,
-        "podium": 0.0856,
-        "top10": 0.1704
+        "win": 0.0384,
+        "podium": 0.0859,
+        "top10": 0.175
       },
       "brier_if_guessing_evenly": {
-        "win": 0.0468,
-        "podium": 0.126,
-        "top10": 0.2499
+        "win": 0.047,
+        "podium": 0.1263,
+        "top10": 0.25
       },
-      "range_p10_p90_coverage": 0.87
+      "range_p10_p90_coverage": 0.795
     },
     "race_race_day": {
       "brier": {
-        "win": 0.033,
-        "podium": 0.0734,
-        "top10": 0.1553
+        "win": 0.0302,
+        "podium": 0.0674,
+        "top10": 0.1547
       },
       "brier_if_guessing_evenly": {
-        "win": 0.0468,
-        "podium": 0.126,
-        "top10": 0.2499
+        "win": 0.047,
+        "podium": 0.1263,
+        "top10": 0.25
       },
-      "range_p10_p90_coverage": 0.872
+      "range_p10_p90_coverage": 0.798
     },
     "qualifying_post_practice": {
       "brier": {
-        "pole": 0.0416,
-        "q3": 0.1393
+        "pole": 0.0408,
+        "q3": 0.1409
+      }
+    },
+    "qualifying_post_sprint": {
+      "brier": {
+        "pole": 0.0381,
+        "q3": 0.1209
+      }
+    },
+    "qualifying_post_sprint_quali": {
+      "brier": {
+        "pole": 0.0381,
+        "q3": 0.1209
       }
     },
     "qualifying_pre_weekend": {
       "brier": {
-        "pole": 0.0426,
-        "q3": 0.1488
+        "pole": 0.0419,
+        "q3": 0.1487
       }
     }
   },
   "method": "Plackett-Luce MLE on walk-forward predictions (src/models/train.py), per weekend stage",
-  "fitted_at": "2026-10-06T11:25:42+00:00"
+  "fitted_at": "2026-10-10T17:05:50+00:00"
 }

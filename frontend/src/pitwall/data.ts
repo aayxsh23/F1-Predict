@@ -78,26 +78,36 @@ export function lensRange(drivers: RaceDriver[], lens: Lens): [number, number] {
 
 // --- the weekend's information state ---
 
-export const NODES: Array<{ key: keyof KnownSessions; label: string }> = [
-  { key: 'practice', label: 'Practice' },
-  { key: 'qualifying', label: 'Qualifying' },
-  { key: 'grid', label: 'Grid' },
-  { key: 'compound', label: 'Compound' },
+type Node = { key: keyof KnownSessions; label: string; title: string; copy: string }
+
+const PRACTICE: Node = { key: 'practice', label: 'Practice', title: 'Practice', copy: 'Practice pace is in; the compressed pack starts to separate.' }
+const SPRINT: Node[] = [
+  { key: 'sprint_qualifying', label: 'Sprint quali', title: 'Sprint quali done', copy: 'One-lap pace from Sprint Qualifying is in: the best read on Saturday so far.' },
+  { key: 'sprint', label: 'Sprint', title: 'Sprint done', copy: 'A real race result is in: race pace and racecraft, not just practice laps.' },
+]
+const LATER: Node[] = [
+  { key: 'qualifying', label: 'Qualifying', title: 'Qualifying done', copy: 'Qualifying gaps are known, the single biggest sharpening of the weekend. The qualifying order stands in for the grid until the official one is out.' },
+  { key: 'grid', label: 'Official grid', title: 'Grid set', copy: "The FIA's official grid, penalties applied: as informed as this prediction gets." },
 ]
 
-const PHASES = [
-  ['Pre-weekend', 'Less informed yet: built from rolling form and circuit history alone.'],
-  ['Practice', 'Practice pace is in; the compressed pack starts to separate.'],
-  ['Qualifying done', 'Qualifying gaps are known, the single biggest sharpening of the weekend.'],
-  ['Grid set', 'Grid set. Finish and grid-to-finish lock onto real starting slots.'],
-  ['Race day', 'Starting compounds known: as informed as this prediction gets.'],
-] as const
+/** The weekend's information steps; a sprint weekend has two more (the payload only sends their keys then). */
+export function weekendNodes(known: KnownSessions): Node[] {
+  return [PRACTICE, ...('sprint' in known ? SPRINT : []), ...LATER]
+}
 
 export function weekendPhase(known: KnownSessions) {
-  const count = NODES.filter((n) => known[n.key]).length
-  const next = NODES.findIndex((n) => !known[n.key])
-  const [title, copy] = PHASES[count]
-  return { count, next, title, copy }
+  const nodes = weekendNodes(known)
+  const count = nodes.filter((n) => known[n.key]).length
+  const next = nodes.findIndex((n) => !known[n.key])
+  const last = [...nodes].reverse().find((n) => known[n.key])
+  const sprint = 'sprint' in known
+  const { title, copy } = last ?? {
+    title: 'Pre-weekend',
+    copy: sprint
+      ? 'Sprint weekend: one practice, then Sprint Qualifying and the Sprint. Built from rolling form and circuit history until they run.'
+      : 'Less informed yet: built from rolling form and circuit history alone.',
+  }
+  return { nodes, count, next, title, copy }
 }
 
 // --- circuit facts, straight from the forecast's feature row ---

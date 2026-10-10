@@ -8,7 +8,7 @@ import { useRaceView, type RaceDriver, type RaceView } from '@/lib/raceView'
 import type { KnownSessions } from '@/lib/types'
 
 import { useChrome } from './chrome'
-import { circuitSpecs, driverHref, isStreet, NODES, orDash, placePhrase, raceHref, signed, useDriverNames, weekendPhase } from './data'
+import { circuitSpecs, driverHref, isStreet, orDash, placePhrase, raceHref, signed, useDriverNames, weekendPhase } from './data'
 import { MagneticLink, Mega, Notice, Offline, PAGE, Skeleton } from './parts'
 
 const stats = (d: RaceDriver) => [
@@ -26,11 +26,11 @@ function ConfidenceRail({ known }: { known: KnownSessions }) {
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="pw-label">Weekend confidence</h2>
         <span className="pw-label">
-          Information <span className="text-ink">{phase.count}/4</span>
+          Information <span className="text-ink">{phase.count}/{phase.nodes.length}</span>
         </span>
       </div>
-      <ol className="grid grid-cols-2 gap-x-1.5 gap-y-4 sm:grid-cols-4">
-        {NODES.map((n, i) => {
+      <ol className={cn('grid grid-cols-2 gap-x-1.5 gap-y-4', phase.nodes.length > 3 ? 'sm:grid-cols-3 lg:grid-cols-5' : 'sm:grid-cols-3')}>
+        {phase.nodes.map((n, i) => {
           const isKnown = known[n.key]
           const isNext = i === phase.next
           const [status, color] = isKnown ? ['Known', 'var(--color-gain)'] : isNext ? ['Next', 'var(--color-pending)'] : ['Pending', 'var(--color-ink-3)']

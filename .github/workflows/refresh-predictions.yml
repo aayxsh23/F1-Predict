@@ -1,11 +1,13 @@
 name: Refresh predictions
 
-# Race weekends (Thursday to Sunday, UTC) every 30 minutes, so each session's
-# data reaches the forecast soon after it ends; other days once, to roll over
-# to the next race. A run whose forecast didn't change commits nothing.
+# Between race weekends only: once a day Monday to Wednesday, to roll the
+# forecast over to the next race. F1's live-timing server refuses GitHub's
+# runners, so session data can't be loaded here; race weekends are refreshed
+# from a home connection by scripts/refresh_local.ps1. If a session that has
+# run can't be loaded, the job fails rather than publish a forecast that
+# ignores it. A run whose forecast didn't change commits nothing.
 on:
   schedule:
-    - cron: "*/30 * * * 4,5,6,0"
     - cron: "0 6 * * 1,2,3"
   workflow_dispatch: {}
 

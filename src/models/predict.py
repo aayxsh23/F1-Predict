@@ -21,12 +21,17 @@ def predict(model: xgb.XGBRegressor, rows: pd.DataFrame, target: str = "finish_p
     return pd.Series(model.predict(PREPARE_FN[target](rows)), index=rows.index)
 
 
-def predict_all(rows: pd.DataFrame) -> pd.DataFrame:
-    """rows plus one prediction column per target (CANONICAL_PRED_COLS)."""
+def predict_all(rows: pd.DataFrame, blend: bool = True) -> pd.DataFrame:
+    """rows (one race) plus one prediction column per target
+    (CANONICAL_PRED_COLS), with the fitted blends applied (src/models/blend.py)
+    unless blend=False."""
+    from src.models import blend as blends
+    from src.models.features import stage_of
+
     rows = rows.copy()
     for target, col in CANONICAL_PRED_COLS.items():
         rows[col] = predict(load_model(target), rows, target=target).round(4)
-    return rows
+    return blends.apply_rows(rows, stage_of(rows)) if blend else rows
 
 
 def contributions(model: xgb.XGBRegressor, X: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:

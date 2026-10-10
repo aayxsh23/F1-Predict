@@ -1,37 +1,43 @@
 {
   "finish_position": {
     "unit": "places",
-    "baseline": "the driver's recent average finish before qualifying, their grid slot after it",
+    "baseline": "the driver's recent average finish before qualifying (their Sprint result once the Sprint has run), their grid slot after it",
     "stage_shown": "post_quali",
     "by_season": {
-      "2022": {
+      "2021": {
         "races": 12,
-        "mae": 3.218,
-        "baseline_mae": 4.117,
-        "called_the_winner": 0.25
+        "mae": 3.246,
+        "baseline_mae": 3.456,
+        "called_the_winner": 0.417
+      },
+      "2022": {
+        "races": 22,
+        "mae": 3.219,
+        "baseline_mae": 3.686,
+        "called_the_winner": 0.409
       },
       "2023": {
         "races": 22,
-        "mae": 3.319,
-        "baseline_mae": 3.822,
-        "called_the_winner": 0.727
+        "mae": 3.198,
+        "baseline_mae": 3.688,
+        "called_the_winner": 0.818
       },
       "2024": {
         "races": 24,
-        "mae": 2.785,
-        "baseline_mae": 2.906,
-        "called_the_winner": 0.375
+        "mae": 2.706,
+        "baseline_mae": 2.827,
+        "called_the_winner": 0.458
       },
       "2025": {
         "races": 24,
-        "mae": 3.153,
-        "baseline_mae": 3.344,
-        "called_the_winner": 0.375
+        "mae": 3.045,
+        "baseline_mae": 3.349,
+        "called_the_winner": 0.542
       },
       "2026": {
         "races": 16,
-        "mae": 3.418,
-        "baseline_mae": 3.528,
+        "mae": 3.267,
+        "baseline_mae": 3.382,
         "called_the_winner": 0.625
       }
     }
@@ -41,67 +47,78 @@
     "baseline": "no change from the grid",
     "stage_shown": "post_quali",
     "by_season": {
-      "2022": {
+      "2021": {
         "races": 12,
-        "mae": 3.515,
-        "baseline_mae": 4.117
+        "mae": 3.427,
+        "baseline_mae": 3.435
+      },
+      "2022": {
+        "races": 22,
+        "mae": 3.814,
+        "baseline_mae": 3.961
       },
       "2023": {
         "races": 22,
-        "mae": 3.156,
-        "baseline_mae": 3.822
+        "mae": 3.332,
+        "baseline_mae": 3.763
       },
       "2024": {
         "races": 24,
-        "mae": 2.64,
-        "baseline_mae": 2.906
+        "mae": 2.805,
+        "baseline_mae": 2.894
       },
       "2025": {
         "races": 24,
-        "mae": 3.08,
+        "mae": 3.081,
         "baseline_mae": 3.344
       },
       "2026": {
         "races": 16,
-        "mae": 3.331,
+        "mae": 3.478,
         "baseline_mae": 3.528
       }
     }
   },
   "qualifying": {
     "unit": "% of the pole lap",
-    "baseline": "the team's recent qualifying gap",
+    "baseline": "the team's recent qualifying gap (the driver's own Sprint Qualifying gap once it has run)",
     "stage_shown": "post_practice",
     "by_season": {
-      "2022": {
+      "2021": {
         "races": 12,
-        "mae": 0.753,
-        "baseline_mae": 1.052,
-        "called_pole": 0.25
+        "mae": 0.824,
+        "baseline_mae": 0.883,
+        "called_pole": 0.333
+      },
+      "2022": {
+        "races": 22,
+        "mae": 0.931,
+        "baseline_mae": 0.968,
+        "called_pole": 0.5
       },
       "2023": {
         "races": 22,
-        "mae": 1.324,
-        "baseline_mae": 1.739,
-        "called_pole": 0.136
+        "mae": 1.296,
+        "baseline_mae": 1.344,
+        "called_pole": 0.5
       },
       "2024": {
         "races": 24,
         "mae": 0.701,
-        "baseline_mae": 0.849,
+        "baseline_mae": 0.762,
         "called_pole": 0.5
       },
       "2025": {
         "races": 23,
-        "mae": 0.566,
-        "baseline_mae": 0.633,
+        "mae": 0.559,
+        "baseline_mae": 0.594,
         "called_pole": 0.261
       },
       "2026": {
         "races": 16,
-        "mae": 0.589,
-        "baseline_mae": 0.569,
-        "called_pole": 0.25
+        "mae": 0.511,
+        "baseline_mae": 0.529,
+        "called_pole": 0.188
       }
     }
   },
@@ -112,27 +129,27 @@
     "by_season": {
       "2022": {
         "races": 12,
-        "mae": 0.624,
+        "mae": 0.626,
         "baseline_mae": 0.758
       },
       "2023": {
         "races": 22,
-        "mae": 0.453,
+        "mae": 0.461,
         "baseline_mae": 0.672
       },
       "2024": {
         "races": 24,
-        "mae": 0.505,
+        "mae": 0.492,
         "baseline_mae": 0.796
       },
       "2025": {
         "races": 24,
-        "mae": 0.495,
+        "mae": 0.484,
         "baseline_mae": 0.649
       },
       "2026": {
         "races": 16,
-        "mae": 0.864,
+        "mae": 0.887,
         "baseline_mae": 1.211
       }
     }

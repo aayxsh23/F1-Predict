@@ -204,8 +204,10 @@ function WeekendTimeline({ view, code }: { view: RaceView; code: string }) {
 const STAGE_WORDS: Record<Stage, string> = {
   pre_weekend: 'before practice',
   post_practice: 'after practice',
+  post_sprint_quali: 'after Sprint Qualifying',
+  post_sprint: 'after the Sprint',
   post_quali: 'after qualifying',
-  race_day: 'on race day',
+  race_day: 'with the official grid',
 }
 
 /** The honest numbers: error on races the model had never seen, next to a naive guess. */

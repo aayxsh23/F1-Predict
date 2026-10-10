@@ -18,8 +18,20 @@ TARGETS = tuple(CANONICAL_PRED_COLS)
 # them to one canonical circuit name instead of duplicating circuit rows.
 LOCATION_ALIASES = {
     "Monte Carlo": "Monaco",
+    "Singapore": "Marina Bay",
     "Miami Gardens": "Miami",
     "Yas Marina": "Yas Island",
+}
+
+# Constructors that changed name (or owner) but kept the same factory, staff
+# and car lineage: form carries across the rename. The app still shows the
+# name each team raced under.
+TEAM_LINEAGE = {
+    "Toro Rosso": "Racing Bulls", "Scuderia Toro Rosso": "Racing Bulls", "AlphaTauri": "Racing Bulls",
+    "RB": "Racing Bulls",
+    "Sauber": "Audi", "Alfa Romeo Racing": "Audi", "Alfa Romeo": "Audi", "Kick Sauber": "Audi",
+    "Force India": "Aston Martin", "Racing Point": "Aston Martin",
+    "Renault": "Alpine",
 }
 
 # every model input in a fan's words; the API sends these, the app never shows a column name
@@ -57,4 +69,8 @@ FEATURE_LABELS = {
     "expected_stops": "Usual pit stops here",
     "historical_compound_performance": "Past results on this tyre here",
     "grid_x_overtaking_difficulty": "Grid slot on a hard-to-pass track",
+    "is_sprint_weekend": "Sprint weekend (one practice session)",
+    "sprint_quali_gap_pct": "Sprint qualifying gap to pole",
+    "sprint_finish_position": "Sprint result",
+    "sprint_race_pace_pct": "Sprint race pace",
 }
