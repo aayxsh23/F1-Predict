@@ -3,13 +3,15 @@ data/raw/races/<season>_<round>_<location>.parquet, plus that race's lap-by-lap
 stint data to data/raw/laps/ (the strategy model's input).
 
 Per driver: grid, qualifying times, practice pace (best lap and long run),
-outcome and time gap to the winner. Per race, repeated on every row: winner's
+outcome and time gap to the winner, and on sprint weekends the Sprint
+Qualifying gap, Sprint result and Sprint pace. Per race, repeated on every row: winner's
 race duration, lap count, safety-car laps, pole time, fastest practice lap, and
 the Open-Meteo forecast for race start.
 
 Resumable: re-running skips races that already have a cached raw file. Races
 that haven't started yet are always skipped, so --force never chases future
-sessions into FastF1's rate limit.
+sessions into FastF1's rate limit. `--sprint-backfill` adds the sprint columns
+to raw files written before they existed, without re-pulling the races.
 """
 import argparse
 import logging
@@ -20,12 +22,19 @@ import pandas as pd
 
 from src.data.fastf1_client import event_schedule, load_session
 from src.data.weather import race_forecast
+from src.features.build_dataset import SPRINT_COLS
 from src.features.circuit_reference import coords
 
 RAW_DIR = Path(__file__).resolve().parents[2] / "data" / "raw" / "races"
 LAPS_DIR = RAW_DIR.parent / "laps"
 DEFAULT_SEASONS = [2022, 2023, 2024, 2025, 2026]
 LONG_RUN_MIN_LAPS = 6
+# FastF1 EventFormat of a sprint weekend where Sprint Qualifying and the Sprint
+# stand on their own (2023 on): one practice session, and neither sprint
+# session sets the Grand Prix grid. 2022's format ("sprint": Friday's
+# qualifying set the Sprint grid, the Sprint set Sunday's) is left out.
+SPRINT_FORMATS = {"sprint_shootout": "SS", "sprint_qualifying": "SQ"}
+SPRINT_QUALI_MAX_GAP = 7.0  # % of the best lap: the 107% rule
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 log = logging.getLogger(__name__)
@@ -46,6 +55,15 @@ def _clean_race_laps(laps: pd.DataFrame) -> pd.DataFrame:
         & laps["LapTime"].notna()
     )
     return laps[mask]
+
+
+def _race_pace(laps: pd.DataFrame) -> pd.Series:
+    """Mean green-flag lap per driver, as % over the fastest such lap."""
+    clean = _clean_race_laps(laps)
+    if clean is None or clean.empty:
+        return pd.Series(dtype=float)
+    fastest = clean["LapTime"].min()
+    return clean.groupby("Driver")["LapTime"].mean().sub(fastest).div(fastest).mul(100)
 
 
 def _long_runs(laps: pd.DataFrame) -> pd.Series:
@@ -108,6 +126,35 @@ def quali_features(season: int, round_number: int) -> pd.DataFrame:
     })
 
 
+def sprint_features(season: int, round_number: int, event_format: str) -> pd.DataFrame:
+    """Per driver on a sprint weekend: Sprint Qualifying gap to its pole (% of
+    the pole lap), Sprint finishing position, and Sprint green-flag pace (% over
+    the fastest lap). A session that hasn't run yet leaves its columns NaN."""
+    out = pd.DataFrame({"driver": pd.Series(dtype=object)})
+    try:
+        # FastF1 has no segment times for Sprint Qualifying (Ergast never covered
+        # it), so read each driver's best valid lap off the laps instead
+        laps = load_session(season, round_number, SPRINT_FORMATS[event_format], laps=True, messages=True).laps
+        if "Deleted" in laps:  # track-limits laps don't count, as in real qualifying
+            laps = laps[~laps["Deleted"].fillna(False).astype(bool)]
+        best = _secs(laps.dropna(subset=["LapTime"]).groupby("Driver")["LapTime"].min())
+        if not best.empty:
+            gap = (best / best.min() - 1) * 100
+            # outside 107% is no representative lap (a crash, an out-lap only), not pace
+            sq = gap.where(gap <= SPRINT_QUALI_MAX_GAP).rename("sprint_quali_gap_pct").rename_axis("driver").reset_index()
+            out = out.merge(sq, on="driver", how="outer")
+    except Exception as exc:
+        log.info("  no sprint qualifying (%s)", exc)
+    try:
+        sprint = load_session(season, round_number, "S", laps=True, messages=True)
+        res = sprint.results[["Abbreviation", "Position"]].rename(columns={"Abbreviation": "driver", "Position": "sprint_finish_position"})
+        res = res.merge(_race_pace(sprint.laps).rename("sprint_race_pace_pct"), left_on="driver", right_index=True, how="left")
+        out = out.merge(res[res["sprint_finish_position"].notna()], on="driver", how="outer")
+    except Exception as exc:
+        log.info("  no sprint (%s)", exc)
+    return out.reindex(columns=["driver", *SPRINT_COLS]).astype({c: float for c in SPRINT_COLS})
+
+
 def _race_gaps(results: pd.DataFrame, laps: pd.DataFrame) -> tuple[pd.Series, float, int]:
     """Gap to the winner in seconds for every classified car, laps down
     included: a car k laps down is (its finish time - winner's finish time)
@@ -152,7 +199,8 @@ def race_start(event: pd.Series):
     return pd.NaT
 
 
-def ingest_race(season: int, round_number: int, location: str, race_date, start_utc) -> tuple[pd.DataFrame, pd.DataFrame] | None:
+def ingest_race(season: int, round_number: int, location: str, race_date, start_utc,
+                event_format: str = "conventional") -> tuple[pd.DataFrame, pd.DataFrame] | None:
     log.info("Ingesting %s round %s (%s)", season, round_number, location)
     try:
         race = load_session(season, round_number, "R", laps=True, weather=True)
@@ -168,8 +216,7 @@ def ingest_race(season: int, round_number: int, location: str, race_date, start_
     laps = race.laps
     clean = _clean_race_laps(laps)
     if clean is not None and not clean.empty:
-        fastest = clean["LapTime"].min()
-        race_pace = (clean.groupby("Driver")["LapTime"].mean().sub(fastest).div(fastest).mul(100)).rename("race_pace_pct")
+        race_pace = _race_pace(laps).rename("race_pace_pct")
         stops = (laps.groupby("Driver")["Stint"].max() - 1).rename("num_pit_stops")
     else:
         race_pace = pd.Series(dtype=float, name="race_pace_pct")
@@ -203,6 +250,8 @@ def ingest_race(season: int, round_number: int, location: str, race_date, start_
     practice, practice_fastest, _ = practice_features(season, round_number)
     df = df.merge(practice, left_on="driver", right_on="Driver", how="left").drop(columns=["Driver"])
 
+    df = add_sprint(df, season, round_number, event_format)
+
     # measured race weather, kept as raw data; the model uses the forecast below
     w = race.weather_data
     if w is not None and not w.empty:
@@ -228,11 +277,40 @@ def ingest_race(season: int, round_number: int, location: str, race_date, start_
     return df, lap_table
 
 
+def add_sprint(df: pd.DataFrame, season: int, round_number: int, event_format: str) -> pd.DataFrame:
+    """df with `sprint_weekend` and the SPRINT_COLS (NaN on other weekends)."""
+    df = df.drop(columns=["sprint_weekend", *SPRINT_COLS], errors="ignore").assign(sprint_weekend=event_format in SPRINT_FORMATS)
+    if event_format not in SPRINT_FORMATS:
+        return df.assign(**{c: np.nan for c in SPRINT_COLS})
+    return df.merge(sprint_features(season, round_number, event_format), on="driver", how="left")
+
+
+def sprint_backfill(seasons: list[int]) -> None:
+    """Add the sprint columns to raw files written before they existed."""
+    for season in seasons:
+        for _, row in event_schedule(season).iterrows():
+            path = RAW_DIR / f"{season}_{int(row['RoundNumber']):02d}_{row['Location']}.parquet"
+            if not path.exists():
+                continue
+            df = pd.read_parquet(path)
+            if "sprint_weekend" in df.columns:
+                continue
+            log.info("Sprint columns for %s", path.name)
+            df = add_sprint(df, season, int(row["RoundNumber"]), row["EventFormat"])
+            if df["sprint_weekend"].any() and df["sprint_finish_position"].isna().all():
+                log.warning("  sprint weekend but no sprint result loaded, leaving %s for a later run", path.name)
+                continue
+            df.to_parquet(path, index=False)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--seasons", type=int, nargs="+", default=DEFAULT_SEASONS)
     parser.add_argument("--force", action="store_true", help="re-pull races even if cached")
+    parser.add_argument("--sprint-backfill", action="store_true", help="add sprint columns to existing raw files")
     args = parser.parse_args()
+    if args.sprint_backfill:
+        return sprint_backfill(args.seasons)
 
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     LAPS_DIR.mkdir(parents=True, exist_ok=True)
@@ -250,7 +328,7 @@ def main():
                 log.info("Skipping cached %s", name)
                 continue
             try:
-                out = ingest_race(season, round_number, location, row["EventDate"], start)
+                out = ingest_race(season, round_number, location, row["EventDate"], start, row["EventFormat"])
             except Exception as exc:
                 log.warning("  skipping %s round %s, unexpected error: %s", season, round_number, exc)
                 continue

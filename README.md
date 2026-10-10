@@ -42,7 +42,7 @@ For the next race, and for every race since 2022:
 | `06` | **Anything else?** | Pit Radio — an analyst chat that answers from the app's own numbers and cites the FIA rules it uses |
 | `07` | **Can I trust it?** | For every past race: what it predicted beforehand next to what happened, and its error against simple guesses |
 
-Forecasts refresh automatically through the weekend, sharpening after every practice session and again after qualifying. There's no *"not available yet"* — only *"less informed yet."*
+Forecasts refresh automatically through the weekend, sharpening after every practice session and again after qualifying. On sprint weekends they also update after Sprint Qualifying and after the Sprint. There's no *"not available yet"* — only *"less informed yet."*
 
 <p align="center">
   <img src="docs/readme/why-page.png" alt="A driver's Why page: the model average, each input that moved the predicted finish up or down, and a plain-language summary" width="100%">
@@ -132,6 +132,7 @@ No wiring needed — the backend detects it automatically (`src/rag/llm.py` → 
 |---|---|
 | Forecast the next race now | `python -m src.models.refresh_job` |
 | Ingest newly finished races | `python -m src.data.ingest --seasons 2026` |
+| Race-weekend refresh + Monday ingest from a home connection (F1 live timing refuses GitHub's runners) | `scripts/refresh_local.ps1 -Python <python.exe>` · `-Ingest` · `-Register` installs both as scheduled tasks |
 | Rebuild the feature table | `python -m src.features.build_dataset` |
 | Retrain and evaluate all four models | `python -m src.models.train` *(~10 min)* |
 | Refit odds, history view, strategy | `python -m src.models.probabilities` · `python -m src.models.backtest_export` · `python -m src.strategy.model` |

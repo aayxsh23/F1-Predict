@@ -19,6 +19,10 @@ CIRCUIT_COLS = [
 WEATHER_COLS = ["air_temp_forecast", "rain_mm_forecast", "wind_kph_forecast"]
 # race-level facts carried through for the lap-time and race-duration estimates
 RACE_INFO_COLS = ["race_start_utc", "practice_fastest_s", "quali_pole_s", "race_winner_time_s", "race_laps", "sc_laps"]
+# sprint weekends only (NaN elsewhere): Sprint Qualifying gap to its pole as %
+# of the pole lap, Sprint finishing position, Sprint green-flag pace (% over
+# the fastest lap). Same-weekend facts known before the Grand Prix qualifying.
+SPRINT_COLS = ["sprint_quali_gap_pct", "sprint_finish_position", "sprint_race_pace_pct"]
 KEY = ["season", "round", "driver"]
 
 
@@ -41,7 +45,8 @@ def build(raw: pd.DataFrame | None = None) -> pd.DataFrame:
     relative = relative_features.build(raw.merge(driver[KEY + ["driver_recent_form"]], on=KEY))
     strategy = strategy_features.build(raw)
 
-    out = raw.reindex(columns=KEY + ["team", "location", "race_date"] + CIRCUIT_COLS + WEATHER_COLS + RACE_INFO_COLS).copy()
+    out = raw.reindex(columns=KEY + ["team", "location", "race_date"] + CIRCUIT_COLS + WEATHER_COLS + RACE_INFO_COLS + SPRINT_COLS).copy()
+    out["is_sprint_weekend"] = raw.reindex(columns=["sprint_weekend"])["sprint_weekend"].fillna(False).astype(float)
     # coarse steps: hourly forecast wobble shouldn't count as new information
     for col, step in zip(WEATHER_COLS, (1.0, 0.5, 5.0)):
         out[col] = (out[col] / step).round() * step

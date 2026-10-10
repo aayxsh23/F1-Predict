@@ -20,8 +20,25 @@ The numbers are **honest**:
 |---|---|
 | Before practice | Form, team, circuit, weather forecast |
 | After practice | + practice lap times |
+| After Sprint Qualifying *(sprint weekends)* | + each driver's Sprint Qualifying gap to the fastest lap |
+| After the Sprint *(sprint weekends)* | + Sprint result and Sprint race pace |
 | After qualifying | + grid and qualifying gaps |
 | Race day | + starting tyres (rarely known in time) |
+
+## Sprint weekends
+
+A sprint weekend runs one practice session, then Sprint Qualifying, the Sprint, Grand Prix qualifying and the race. Since 2026-10-10 the forecast updates after each of them. The same four models read four extra inputs: a calendar flag saying it's a sprint weekend (so the model knows practice was a single session), the Sprint Qualifying gap, the Sprint result, and Sprint race pace. They are blank on every other weekend. The two sprint stages are trained and scored only on sprint weekends. A Sprint Qualifying lap more than 7% off the fastest (the 107% rule) counts as "no representative lap", not as pace. The 2022 format, where Friday's qualifying set the Sprint grid and the Sprint set Sunday's, is left out.
+
+On the 14 held-out sprint weekends (Nov 2024 to Sep 2026), each predicted only from earlier races:
+
+| Stage | Finishing position MAE | Qualifying gap MAE |
+|---|---|---|
+| After practice (FP1) | 3.77 | 0.804% |
+| After Sprint Qualifying | 3.77 | 0.798% |
+| After the Sprint | 3.77 | 0.798% |
+| After qualifying | 3.42 | — |
+
+**Honest read: the sprint sessions add very little so far.** There are only 23 sprint weekends since 2023 (about 470 driver rows of 2,190), and the models are deliberately shallow, so they rarely split on columns that exist on one weekend in five. Before switching, six designs were tested walk-forward: plain sprint columns, "surprise vs form" differences, up-weighting sprint rows 3x and 6x, and treating Sprint Qualifying as the practice-pace input. All landed within about ±0.05 places / ±0.05% of each other; up-weighting made every stage worse. The naive guess "Sunday finishes where the Sprint finished" is *worse* than recent form (4.64 vs 3.97 places): a 100 km sprint is noisy. The information is real, though. On held-out rows where both laps were representative, averaging the qualifying model with the raw Sprint Qualifying gap cut the error from 0.59% to 0.54%, which suggests a calibrated blend is the next thing to test.
 
 ## Finishing position
 

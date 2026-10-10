@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 from src.data.fastf1_client import event_schedule, load_session
-from src.data.ingest import practice_features, quali_features, race_start
+from src.data.ingest import add_sprint, practice_features, quali_features, race_start
 from src.data.weather import race_forecast
 from src.features import build_dataset
 from src.features.circuit_reference import coords
@@ -45,8 +45,8 @@ def build_live_rows(
     grid_overrides: dict[str, float] | None = None,
     compound_overrides: dict[str, str] | None = None,
 ) -> tuple[pd.DataFrame, list[str]]:
-    """One feature row per driver for (season, round), plus the practice
-    sessions that exist so far (e.g. ["FP1", "FP2"])."""
+    """One feature row per driver for (season, round), plus the sessions that
+    have data so far, in weekend order (e.g. ["FP1", "FP2"] or ["FP1", "SQ", "S"])."""
     raw = build_dataset.load_raw()
     event = event_info(season, round_number)
     location, start = event["Location"], race_start(event)
@@ -59,6 +59,10 @@ def build_live_rows(
         practice, practice_fastest, sessions = practice_features(season, round_number)
     except Exception:
         practice, practice_fastest, sessions = pd.DataFrame(columns=["Driver"]), np.nan, []
+    # sprint weekends: Sprint Qualifying and the Sprint, NaN until each has run
+    sprint = add_sprint(lineup[["driver"]], season, round_number, event["EventFormat"])
+    sessions = sessions + [code for code, col in (("SQ", "sprint_quali_gap_pct"), ("S", "sprint_finish_position"))
+                           if sprint[col].notna().any()]
     try:
         quali = quali_features(season, round_number)
     except Exception:
@@ -76,6 +80,7 @@ def build_live_rows(
     )
     live = live.merge(quali.rename(columns={"Abbreviation": "driver"}).drop(columns=["quali_position"], errors="ignore"), on="driver", how="left")
     live = live.merge(practice.rename(columns={"Driver": "driver"}), on="driver", how="left")
+    live = live.merge(sprint, on="driver", how="left")
 
     full = build_dataset.build(raw=pd.concat([raw, live.astype({"dnf": bool})], ignore_index=True))
     rows = full[(full["season"] == season) & (full["round"] == round_number)].reset_index(drop=True)

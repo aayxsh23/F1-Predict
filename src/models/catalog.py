@@ -57,4 +57,8 @@ FEATURE_LABELS = {
     "expected_stops": "Usual pit stops here",
     "historical_compound_performance": "Past results on this tyre here",
     "grid_x_overtaking_difficulty": "Grid slot on a hard-to-pass track",
+    "is_sprint_weekend": "Sprint weekend (one practice session)",
+    "sprint_quali_gap_pct": "Sprint qualifying gap to pole",
+    "sprint_finish_position": "Sprint result",
+    "sprint_race_pace_pct": "Sprint race pace",
 }

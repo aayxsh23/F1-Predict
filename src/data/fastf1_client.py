@@ -22,15 +22,17 @@ def enable_cache() -> None:
     _enabled = True
 
 
-def load_session(season: int, round_number: int, session_code: str, laps: bool = True, weather: bool = False):
-    """Load a session with telemetry/messages always off (not needed for Phase 1 features).
+def load_session(season: int, round_number: int, session_code: str, laps: bool = True, weather: bool = False,
+                 messages: bool = False):
+    """Load a session with telemetry off; race-control messages only on request
+    (they mark deleted laps and let FastF1 classify a session Ergast lacks).
     Retries with a fixed backoff on FastF1's own rate limit instead of failing the race."""
     enable_cache()
     session = fastf1.get_session(season, round_number, session_code)
     max_attempts = 1200  # cap the retry loop at ~3h so a genuinely stuck race doesn't hang forever
     for attempt in range(max_attempts):
         try:
-            session.load(laps=laps, telemetry=False, weather=weather, messages=False)
+            session.load(laps=laps, telemetry=False, weather=weather, messages=messages)
             return session
         except RateLimitExceededError:
             log.warning("rate limited, waiting %ss (attempt %d/%d)", RATE_LIMIT_WAIT_S, attempt + 1, max_attempts)
