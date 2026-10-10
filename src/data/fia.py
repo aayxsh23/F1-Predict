@@ -71,8 +71,24 @@ def _season_path(season: int) -> str:
     return f"{CHAMPIONSHIP}/season/season-{season}-{max(ids)}"
 
 
+@lru_cache(maxsize=None)
+def _fia_event_name(season: int, event_name: str) -> str:
+    """The FIA's name for an event, which can differ from FastF1's
+    ("Barcelona Grand Prix" is "Barcelona-Catalunya Grand Prix"): the listed
+    event sharing the most words."""
+    from urllib.parse import unquote
+
+    html = requests.get(BASE + _season_path(season), headers=HEADERS, timeout=30).text
+    names = {unquote(n) for n in re.findall(r'/event/([^"]+)"', html)}
+    if event_name in names or not names:
+        return event_name
+    words = set(re.findall(r"\w+", event_name.lower()))
+    return max(sorted(names), key=lambda n: len(words & set(re.findall(r"\w+", n.lower()))))
+
+
 def event_documents(season: int, event_name: str) -> dict[str, str]:
     """{document title (lower case): absolute PDF url} for one Grand Prix."""
+    event_name = _fia_event_name(season, event_name)
     html = _get(f"{BASE}{_season_path(season)}/event/{quote(event_name)}").decode("utf-8", "ignore")
     docs = {}
     for href in re.findall(r'href="([^"]*decision-document/[^"]+\.pdf)"', html):
