@@ -65,6 +65,11 @@ def test_position_models_train_on_finishers_only():
     assert _train_rows("race_time", df)["dnf"].any()  # race_time's target is blank for retirements anyway
 
 
+def test_shipped_blend_weights_are_committed():
+    # blend.json was once gitignored, so serving silently ran without blends
+    assert set(blend.load_weights()) == set(blend.BLENDS)
+
+
 def test_blends_are_weighted_averages_and_explanations_stay_exact():
     fin, delta = CANONICAL_PRED_COLS["finish_position"], CANONICAL_PRED_COLS["quali_delta"]
     rows = pd.DataFrame({fin: [4.0, 9.0], delta: [1.0, -2.0], "grid_position": [3.0, None],
