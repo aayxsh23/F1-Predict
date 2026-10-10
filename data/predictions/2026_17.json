@@ -5,7 +5,7 @@
   "event_name": "Singapore Grand Prix",
   "country": "Singapore",
   "race_start_utc": "2026-10-11T12:00:00",
-  "generated_at": "2026-10-10T22:20:53.000590+00:00",
+  "generated_at": "2026-10-10T23:30:20.333924+00:00",
   "stage": "race_day",
   "sessions": [
     "FP1",
@@ -2571,8 +2571,8 @@
       "predicted_qualifying_gap_pct": 0.2779,
       "predicted_qualifying_gap": 0.0189,
       "predicted_quali_lap_s": 91.2445,
-      "predicted_finish_position": 9.4918,
-      "predicted_quali_to_race_delta": 8.3384,
+      "predicted_finish_position": 9.4368,
+      "predicted_quali_to_race_delta": 8.4484,
       "predicted_race_gap_pct": 1.0743,
       "predicted_race_time_gap": 52.4777,
       "feature_row": {
@@ -2609,7 +2609,7 @@
         "expected_stops": 1.2524,
         "is_sprint_weekend": 1.0,
         "sprint_quali_gap_pct": 0.1316,
-        "sprint_finish_position": 18.0,
+        "sprint_finish_position": 20.0,
         "sprint_race_pace_pct": null
       },
       "quali_nolap_rate": 0.0003,
@@ -2671,7 +2671,7 @@
           ]
         },
         "finish_position": {
-          "predicted_value": 9.492,
+          "predicted_value": 9.437,
           "base_value": 9.767,
           "top_contributions": [
             {
@@ -2715,19 +2715,19 @@
               "shap": -0.1925
             },
             {
+              "feature": "sprint_finish_position",
+              "value": 20.0,
+              "shap": -0.0441
+            },
+            {
               "feature": "quali_gap_pct",
               "value": 0.4093,
               "shap": -0.0419
-            },
-            {
-              "feature": "team_race_pace",
-              "value": 3.8646,
-              "shap": -0.0406
             }
           ]
         },
         "quali_delta": {
-          "predicted_value": 8.338,
+          "predicted_value": 8.448,
           "base_value": 1.003,
           "top_contributions": [
             {
@@ -2761,6 +2761,11 @@
               "shap": 0.1146
             },
             {
+              "feature": "sprint_finish_position",
+              "value": 20.0,
+              "shap": 0.0881
+            },
+            {
               "feature": "team_track_type_form",
               "value": 4.5654,
               "shap": 0.0867
@@ -2774,11 +2779,6 @@
               "feature": "quali_gap_pct",
               "value": 0.4093,
               "shap": 0.0573
-            },
-            {
-              "feature": "grid_x_overtaking_difficulty",
-              "value": 16.8,
-              "shap": 0.0331
             }
           ]
         },
@@ -3171,7 +3171,7 @@
         "expected_stops": 1.2524,
         "is_sprint_weekend": 1.0,
         "sprint_quali_gap_pct": 1.9648,
-        "sprint_finish_position": 19.0,
+        "sprint_finish_position": 18.0,
         "sprint_race_pace_pct": null
       },
       "quali_nolap_rate": 0.0528,
@@ -3976,8 +3976,8 @@
       "predicted_qualifying_gap_pct": 1.882,
       "predicted_qualifying_gap": 1.4822,
       "predicted_quali_lap_s": 92.7078,
-      "predicted_finish_position": 12.3703,
-      "predicted_quali_to_race_delta": 2.8322,
+      "predicted_finish_position": 12.4253,
+      "predicted_quali_to_race_delta": 2.7222,
       "predicted_race_gap_pct": 1.9947,
       "predicted_race_time_gap": 111.352,
       "feature_row": {
@@ -4014,7 +4014,7 @@
         "expected_stops": 1.2524,
         "is_sprint_weekend": 1.0,
         "sprint_quali_gap_pct": 2.2961,
-        "sprint_finish_position": 20.0,
+        "sprint_finish_position": 19.0,
         "sprint_race_pace_pct": null
       },
       "quali_nolap_rate": 0.0002,
@@ -4076,7 +4076,7 @@
           ]
         },
         "finish_position": {
-          "predicted_value": 12.37,
+          "predicted_value": 12.425,
           "base_value": 9.767,
           "top_contributions": [
             {
@@ -4115,24 +4115,24 @@
               "shap": 0.0687
             },
             {
-              "feature": "sprint_finish_position",
-              "value": 20.0,
-              "shap": -0.0441
-            },
-            {
               "feature": "driver_track_form",
               "value": 13.9412,
               "shap": 0.0402
             },
             {
-              "feature": "teammate_race_pace_gap",
-              "value": 0.2371,
-              "shap": -0.0333
+              "feature": "team_race_pace",
+              "value": 6.3085,
+              "shap": 0.0287
+            },
+            {
+              "feature": "team_track_type_form",
+              "value": 12.7413,
+              "shap": 0.0266
             }
           ]
         },
         "quali_delta": {
-          "predicted_value": 2.832,
+          "predicted_value": 2.722,
           "base_value": 1.003,
           "top_contributions": [
             {
@@ -4146,16 +4146,6 @@
               "shap": 0.2469
             },
             {
-              "feature": "sprint_finish_position",
-              "value": 20.0,
-              "shap": 0.0881
-            },
-            {
-              "feature": "teammate_race_pace_gap",
-              "value": 0.2371,
-              "shap": 0.0689
-            },
-            {
               "feature": "practice_pace",
               "value": 2.9358,
               "shap": 0.0559
@@ -4164,6 +4154,11 @@
               "feature": "teammate_quali_gap",
               "value": 1.1338,
               "shap": 0.049
+            },
+            {
+              "feature": "teammate_race_pace_gap",
+              "value": 0.2371,
+              "shap": 0.0475
             },
             {
               "feature": "is_street_circuit",
@@ -4184,6 +4179,11 @@
               "feature": "team_quali_pace",
               "value": 1.6963,
               "shap": -0.0203
+            },
+            {
+              "feature": "safety_car_frequency",
+              "value": 0.9,
+              "shap": 0.0179
             }
           ]
         },
@@ -5419,7 +5419,7 @@
         "expected_stops": 1.2524,
         "is_sprint_weekend": 1.0,
         "sprint_quali_gap_pct": 4.9432,
-        "sprint_finish_position": 21.0,
+        "sprint_finish_position": 22.0,
         "sprint_race_pace_pct": null
       },
       "quali_nolap_rate": 0.0014,
@@ -5572,7 +5572,7 @@
             },
             {
               "feature": "sprint_finish_position",
-              "value": 21.0,
+              "value": 22.0,
               "shap": 0.0881
             },
             {
@@ -5700,7 +5700,7 @@
         "expected_stops": 1.2524,
         "is_sprint_weekend": 1.0,
         "sprint_quali_gap_pct": null,
-        "sprint_finish_position": 22.0,
+        "sprint_finish_position": 21.0,
         "sprint_race_pace_pct": null
       },
       "quali_nolap_rate": 0.0007,
