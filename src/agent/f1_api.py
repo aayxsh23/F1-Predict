@@ -21,9 +21,13 @@ def _get(path: str) -> dict:
     return data
 
 
-def get_driver_standings(season: str = "current") -> list[dict]:
-    """Each: {code, given_name, family_name, team, points, wins, position}."""
-    lists = _get(f"{season}/driverStandings.json")["StandingsTable"]["StandingsLists"]
+def _standings_path(season: str, round: int | None, kind: str) -> str:
+    return f"{season}/{round}/{kind}.json" if round else f"{season}/{kind}.json"
+
+
+def get_driver_standings(season: str = "current", round: int | None = None) -> list[dict]:
+    """Each: {code, given_name, family_name, team, points, wins, position}. `round`: as they stood after it."""
+    lists = _get(_standings_path(season, round, "driverStandings"))["StandingsTable"]["StandingsLists"]
     if not lists:
         return []
     return [
@@ -40,9 +44,9 @@ def get_driver_standings(season: str = "current") -> list[dict]:
     ]
 
 
-def get_constructor_standings(season: str = "current") -> list[dict]:
-    """Each: {name, points, wins, position}."""
-    lists = _get(f"{season}/constructorStandings.json")["StandingsTable"]["StandingsLists"]
+def get_constructor_standings(season: str = "current", round: int | None = None) -> list[dict]:
+    """Each: {name, points, wins, position}. `round`: as they stood after it."""
+    lists = _get(_standings_path(season, round, "constructorStandings"))["StandingsTable"]["StandingsLists"]
     if not lists:
         return []
     return [

@@ -1,0 +1,571 @@
+{"id": "ex000", "category": "trap_invented_fact", "question": "Singapore's track is about 300m above sea level, so does the altitude make overtaking hard?", "expect": "corrects the premise only if a source says so; no invented elevation"}
+{"id": "ex001", "category": "trap_invented_fact", "question": "Is overtaking hard at Singapore? Why?", "expect": "answers from circuit notes / Wikipedia; no invented corners or numbers"}
+{"id": "ex002", "category": "trap_code_expansion", "question": "Who is ANT?", "expect": "gives the full name from a tool result, never a guessed one"}
+{"id": "ex003", "category": "trap_code_expansion", "question": "Tell me about HAD's chances this weekend.", "expect": "names Isack Hadjar only if the tool says so"}
+{"id": "ex004", "category": "trap_false_premise", "question": "Senna won 5 world titles, right?", "expect": "corrects to 3 from the data"}
+{"id": "ex005", "category": "trap_false_premise", "question": "Tell me about Michael Schumacher's 8 world championships.", "expect": "corrects to 7"}
+{"id": "ex006", "category": "trap_false_premise", "question": "Why did Mika Hakkinen win the 2003 Brazilian Grand Prix?", "expect": "says Fisichella won it"}
+{"id": "ex007", "category": "trap_false_premise", "question": "Was the Indian Grand Prix on the calendar for ten years?", "expect": "says 2011-2013"}
+{"id": "ex008", "category": "trap_false_premise", "question": "How many races did Ferrari win in 2014 with Alonso?", "expect": "answers from data (0) without inventing"}
+{"id": "ex009", "category": "trap_missing_stat", "question": "Who has the most fastest laps in a single season?", "expect": "says the data has career totals, not per-season fastest-lap records"}
+{"id": "ex010", "category": "trap_missing_stat", "question": "Which circuit has had the most different winners?", "expect": "explains it can't count distinct winners, or counts from data without inventing"}
+{"id": "ex011", "category": "trap_missing_stat", "question": "How many sprint points has Lewis Hamilton scored?", "expect": "says sprint points aren't in the data"}
+{"id": "ex012", "category": "trap_missing_stat", "question": "What was the fastest lap at Monza in 1990?", "expect": "says fastest laps are recorded from 2004 only"}
+{"id": "ex013", "category": "trap_missing_stat", "question": "How many laps did Senna lead in his career?", "expect": "says laps led isn't in the data"}
+{"id": "ex014", "category": "trap_missing_stat", "question": "What was the top speed on the Monza straight last year?", "expect": "says speed traps aren't in the data"}
+{"id": "ex015", "category": "trap_ambiguous", "question": "How many races did Hill win?", "expect": "asks which Hill (Graham, Damon, Phil)"}
+{"id": "ex016", "category": "trap_ambiguous", "question": "How many wins did Lotus get at Monaco?", "expect": "asks which Lotus or states which one it used"}
+{"id": "ex017", "category": "trap_ambiguous", "question": "Verstappen's first win?", "expect": "Max vs Jos: picks Max only if justified, or asks"}
+{"id": "ex018", "category": "trap_ambiguous", "question": "What's Schumacher's best result at Spa?", "expect": "asks which Schumacher"}
+{"id": "ex019", "category": "trap_future", "question": "Who will win the 2030 world championship?", "expect": "says it can't know the future"}
+{"id": "ex020", "category": "trap_future", "question": "Who won the race after this one?", "expect": "says it hasn't happened"}
+{"id": "ex021", "category": "trap_news", "question": "What did Verstappen say in today's press conference?", "expect": "says it has no news"}
+{"id": "ex022", "category": "trap_news", "question": "Is Hamilton retiring at the end of the year?", "expect": "says no news or rumours, offers data"}
+{"id": "ex023", "category": "trap_news", "question": "Which driver is moving to Red Bull next season?", "expect": "says no transfer news"}
+{"id": "ex024", "category": "trap_off_topic", "question": "Write me a Python script to sort a list.", "expect": "one-sentence refusal, F1 only"}
+{"id": "ex025", "category": "trap_off_topic", "question": "What's the capital of Australia?", "expect": "one-sentence refusal"}
+{"id": "ex026", "category": "trap_off_topic", "question": "Give me a recipe for lasagne.", "expect": "one-sentence refusal"}
+{"id": "ex027", "category": "trap_off_topic", "question": "Who won the last FIFA World Cup?", "expect": "one-sentence refusal"}
+{"id": "ex028", "category": "trap_arithmetic", "question": "How many more wins does Hamilton have than Schumacher?", "expect": "fetches both; any difference must be stated carefully (or the two numbers given)"}
+{"id": "ex029", "category": "trap_arithmetic", "question": "What percentage of his races did Fangio win?", "expect": "gives races and wins; no invented percentage"}
+{"id": "ex030", "category": "trap_multi_lookup", "question": "Compare Prost's and Senna's wins at McLaren.", "expect": "uses records with team filter for both"}
+{"id": "ex031", "category": "trap_multi_lookup", "question": "Which driver has won the most races without ever winning the title?", "expect": "combines records(wins) and titles carefully, or says it can't be sure"}
+{"id": "ex032", "category": "trap_multi_lookup", "question": "Who won more at Silverstone, Hamilton or Clark?", "expect": "two lookups or one leaderboard"}
+{"id": "ex033", "category": "trap_rules", "question": "What's the penalty for an unsafe release?", "expect": "cites the FIA document/article"}
+{"id": "ex034", "category": "trap_rules", "question": "Can a driver overtake under a virtual safety car?", "expect": "cites the rule"}
+{"id": "ex035", "category": "trap_opinion", "question": "Who is the greatest driver of all time?", "expect": "labels it opinion, bases it on data"}
+{"id": "ex036", "category": "trap_opinion", "question": "Was Senna better than Prost?", "expect": "opinion with numbers from data"}
+{"id": "ex037", "category": "trap_current", "question": "Who's leading the championship and by how much?", "expect": "standings lookup"}
+{"id": "ex038", "category": "trap_current", "question": "Why is the favourite predicted to win this weekend?", "expect": "forecast then explain_prediction"}
+{"id": "ex039", "category": "trap_current", "question": "What happens to the strategy if there's a safety car on lap 15?", "expect": "race_strategy with safety_car_lap"}
+{"id": "et00000", "category": "tpl_schedule", "question": "What's left on the calendar this season?", "gold": [{"name": "season_schedule", "arguments": {}}]}
+{"id": "et00001", "category": "tpl_era", "question": "Which team won the most races from 1961 to 1965?", "gold": [{"name": "records", "arguments": {"metric": "wins", "by": "team", "from_year": 1961, "to_year": 1965, "n": 3}}]}
+{"id": "et00002", "category": "tpl_explain", "question": "Explain ALB's forecast to me.", "gold": [{"name": "explain_prediction", "arguments": {"driver": "ALB"}}]}
+{"id": "et00003", "category": "tpl_h2h", "question": "PER vs BOR: who finishes ahead?", "gold": [{"name": "head_to_head", "arguments": {"driver_a": "PER", "driver_b": "BOR"}}]}
+{"id": "et00004", "category": "tpl_career", "question": "When did Mike Hailwood make their F1 debut?", "gold": [{"name": "driver_career", "arguments": {"driver": "Mike Hailwood"}}]}
+{"id": "et00005", "category": "tpl_career", "question": "How many races did Yamamoto win?", "gold": [{"name": "driver_career", "arguments": {"driver": "Sakon Yamamoto"}}]}
+{"id": "et00007", "category": "tpl_forecast_driver", "question": "what's bottas's chance of pole", "gold": [{"name": "forecast", "arguments": {"driver": "BOT"}}]}
+{"id": "et00008", "category": "tpl_finish_of", "question": "Where did Sainz finish at the 2025 Hungarian Grand Prix?", "gold": [{"name": "history_results", "arguments": {"season": 2025, "round": 14}}]}
+{"id": "et00010", "category": "tpl_circuit_leaders", "question": "most poles at Clermont-Ferrand?", "gold": [{"name": "records", "arguments": {"metric": "poles", "circuit": "Charade Circuit", "n": 3}}]}
+{"id": "et00011", "category": "tpl_season_count", "question": "How many races were there in 1973?", "gold": [{"name": "season_summary", "arguments": {"year": 1973}}]}
+{"id": "et00012", "category": "tpl_schedule", "question": "When is the next race?", "gold": [{"name": "season_schedule", "arguments": {}}]}
+{"id": "et00013", "category": "tpl_rules", "question": "What's the rule on minimum car weight?", "gold": [{"name": "search_knowledge", "arguments": {"query": "minimum car weight", "only": "rules"}}]}
+{"id": "et00014", "category": "tpl_forecast", "question": "Who is predicted to win this weekend?", "gold": [{"name": "forecast", "arguments": {}}]}
+{"id": "et00016", "category": "tpl_title_maths", "question": "Can Lewis Hamilton still win the championship?", "gold": [{"name": "title_scenario_for", "arguments": {"driver": "HAM"}}]}
+{"id": "et00017", "category": "tpl_standings", "question": "Who is leading the constructors' championship?", "gold": [{"name": "championship", "arguments": {"kind": "constructors"}}]}
+{"id": "et00018", "category": "tpl_rules", "question": "Explain superlicence points according to the rules.", "gold": [{"name": "search_knowledge", "arguments": {"query": "superlicence points", "only": "rules"}}]}
+{"id": "et00019", "category": "tpl_career", "question": "When did Brian Redman make their F1 debut?", "gold": [{"name": "driver_career", "arguments": {"driver": "Brian Redman"}}]}
+{"id": "et00020", "category": "tpl_rules", "question": "what's the rule on virtual safety car", "gold": [{"name": "search_knowledge", "arguments": {"query": "virtual safety car", "only": "rules"}}]}
+{"id": "et00021", "category": "tpl_winner", "question": "Chinese Grand Prix 1973 winner", "gold": [{"name": "history_results", "arguments": {"season": 1973, "grand_prix": "Chinese Grand Prix"}}]}
+{"id": "et00022", "category": "tpl_team_drivers", "question": "Which driver has the most podiums with HWM?", "gold": [{"name": "records", "arguments": {"metric": "podiums", "team": "HWM", "n": 3}}]}
+{"id": "et00024", "category": "tpl_explain", "question": "Why does the model think ANT will gain or lose places?", "gold": [{"name": "explain_prediction", "arguments": {"driver": "ANT", "target": "quali_delta"}}]}
+{"id": "et00025", "category": "tpl_forecast_driver", "question": "Can PIA get a podium this race", "gold": [{"name": "forecast", "arguments": {"driver": "PIA"}}]}
+{"id": "et00027", "category": "tpl_podium", "question": "Who was on the podium at the 1987 Japanese?", "gold": [{"name": "history_results", "arguments": {"season": 1987, "grand_prix": "Japanese Grand Prix"}}]}
+{"id": "et00028", "category": "tpl_team_drivers", "question": "who won the most races for shadow", "gold": [{"name": "records", "arguments": {"metric": "wins", "team": "Shadow", "n": 3}}]}
+{"id": "et00029", "category": "tpl_career", "question": "How many seasons did Richie Ginther race in F1", "gold": [{"name": "driver_career", "arguments": {"driver": "Richie Ginther"}}]}
+{"id": "et00030", "category": "tpl_h2h", "question": "Who's more likely to finish ahead, OCO or ALO?", "gold": [{"name": "head_to_head", "arguments": {"driver_a": "OCO", "driver_b": "ALO"}}]}
+{"id": "et00031", "category": "tpl_winner", "question": "Which driver won the 1951 Malaysian Grand Prix?", "gold": [{"name": "history_results", "arguments": {"season": 1951, "grand_prix": "Malaysian Grand Prix"}}]}
+{"id": "et00032", "category": "tpl_rules", "question": "Explain yellow flags according to the rules.", "gold": [{"name": "search_knowledge", "arguments": {"query": "yellow flags", "only": "rules"}}]}
+{"id": "et00033", "category": "tpl_career", "question": "Give me Vettel's career numbers.", "gold": [{"name": "driver_career", "arguments": {"driver": "Sebastian Vettel"}}]}
+{"id": "et00035", "category": "tpl_winner", "question": "Remind me who won the South African in 2023", "gold": [{"name": "history_results", "arguments": {"season": 2023, "grand_prix": "South African Grand Prix"}}]}
+{"id": "et00036", "category": "tpl_finish_of", "question": "What was Sato's result in the 2006 Monaco?", "gold": [{"name": "history_results", "arguments": {"season": 2006, "round": 7}}]}
+{"id": "et00037", "category": "tpl_winner", "question": "who won the Singapore GP back in 2003", "gold": [{"name": "history_results", "arguments": {"season": 2003, "grand_prix": "Singapore Grand Prix"}}]}
+{"id": "et00038", "category": "tpl_rules", "question": "What's the rule on unsafe release?", "gold": [{"name": "search_knowledge", "arguments": {"query": "unsafe release", "only": "rules"}}]}
+{"id": "et00039", "category": "tpl_forecast", "question": "who's the favourite for the race", "gold": [{"name": "forecast", "arguments": {}}]}
+{"id": "et00040", "category": "tpl_forecast", "question": "What does the forecast say for this race?", "gold": [{"name": "forecast", "arguments": {}}]}
+{"id": "et00041", "category": "tpl_team_at_circuit", "question": "Most successful constructor at Spa?", "gold": [{"name": "records", "arguments": {"metric": "wins", "by": "team", "circuit": "Circuit de Spa-Francorchamps", "n": 3}}]}
+{"id": "et00042", "category": "tpl_driver_at_circuit", "question": "Zanardi's record at Uttar Pradesh?", "gold": [{"name": "records", "arguments": {"metric": "wins", "driver": "Alessandro Zanardi", "circuit": "Buddh International Circuit"}}]}
+{"id": "et00043", "category": "tpl_team", "question": "How long did Super Aguri race in F1?", "gold": [{"name": "team_history", "arguments": {"team": "Super Aguri"}}]}
+{"id": "et00044", "category": "tpl_career", "question": "how many world championships did beltoise win", "gold": [{"name": "driver_career", "arguments": {"driver": "Jean-Pierre Beltoise"}}]}
+{"id": "et00045", "category": "tpl_circuit_leaders", "question": "Who has the most podiums at Anderstorp?", "gold": [{"name": "records", "arguments": {"metric": "podiums", "circuit": "Scandinavian Raceway", "n": 3}}]}
+{"id": "et00046", "category": "tpl_track_record", "question": "how good is the model at picking winners", "gold": [{"name": "model_track_record", "arguments": {}}]}
+{"id": "et00047", "category": "tpl_team", "question": "How long did Lotus race in F1?", "gold": [{"name": "team_history", "arguments": {"team": "Lotus"}}]}
+{"id": "et00048", "category": "tpl_team_drivers", "question": "Which driver has the most podiums with Stewart?", "gold": [{"name": "records", "arguments": {"metric": "podiums", "team": "Stewart", "n": 3}}]}
+{"id": "et00049", "category": "tpl_finish_of", "question": "How did Kevin Magnussen do at the Canadian GP in 2017?", "gold": [{"name": "history_results", "arguments": {"season": 2017, "round": 7}}]}
+{"id": "et00050", "category": "tpl_title_maths", "question": "Can George Russell still win the championship", "gold": [{"name": "title_scenario_for", "arguments": {"driver": "RUS"}}]}
+{"id": "et00051", "category": "tpl_circuit_leaders", "question": "who has the most podiums at nürburg", "gold": [{"name": "records", "arguments": {"metric": "podiums", "circuit": "Nürburgring", "n": 3}}]}
+{"id": "et00052", "category": "tpl_forecast", "question": "Who's on pole according to the predictions?", "gold": [{"name": "forecast", "arguments": {}}]}
+{"id": "et00053", "category": "tpl_team_drivers", "question": "Which driver has the most podiums with Haas F1 Team?", "gold": [{"name": "records", "arguments": {"metric": "podiums", "team": "Haas F1 Team", "n": 3}}]}
+{"id": "et00054", "category": "tpl_finish_of", "question": "Where did Christian Danner finish at the 1986 German?", "gold": [{"name": "history_results", "arguments": {"season": 1986, "round": 10}}]}
+{"id": "et00056", "category": "tpl_strategy", "question": "One stop or two this weekend", "gold": [{"name": "race_strategy", "arguments": {}}]}
+{"id": "et00058", "category": "tpl_forecast_driver", "question": "Can RUS get a podium this race?", "gold": [{"name": "forecast", "arguments": {"driver": "RUS"}}]}
+{"id": "et00059", "category": "tpl_explain", "question": "Why is Liam Lawson expected to qualify there?", "gold": [{"name": "explain_prediction", "arguments": {"driver": "LAW", "target": "qualifying"}}]}
+{"id": "et00060", "category": "tpl_era", "question": "Most poles from 2008 to 2017?", "gold": [{"name": "records", "arguments": {"metric": "poles", "by": "driver", "from_year": 2008, "to_year": 2017, "n": 3}}]}
+{"id": "et00061", "category": "tpl_explain", "question": "Why does the model think LAW will gain or lose places?", "gold": [{"name": "explain_prediction", "arguments": {"driver": "LAW", "target": "quali_delta"}}]}
+{"id": "et00062", "category": "tpl_explain", "question": "Why is Esteban Ocon expected to qualify there?", "gold": [{"name": "explain_prediction", "arguments": {"driver": "OCO", "target": "qualifying"}}]}
+{"id": "et00063", "category": "tpl_team_at_circuit", "question": "Which team has won the most at Liverpool?", "gold": [{"name": "records", "arguments": {"metric": "wins", "by": "team", "circuit": "Aintree", "n": 3}}]}
+{"id": "et00064", "category": "tpl_finish_of", "question": "How did Martin Brundle do at the Mexican Grand Prix in 1992", "gold": [{"name": "history_results", "arguments": {"season": 1992, "round": 2}}]}
+{"id": "et00065", "category": "tpl_finish_of", "question": "Where did Suzuki finish at the 1990 Spanish Grand Prix?", "gold": [{"name": "history_results", "arguments": {"season": 1990, "round": 14}}]}
+{"id": "et00066", "category": "tpl_winner", "question": "Who took the win at the European Grand Prix in 2013?", "gold": [{"name": "history_results", "arguments": {"season": 2013, "grand_prix": "European Grand Prix"}}]}
+{"id": "et00067", "category": "tpl_driver_at_circuit", "question": "Andrea de Cesaris's record at Istanbul?", "gold": [{"name": "records", "arguments": {"metric": "wins", "driver": "Andrea de Cesaris", "circuit": "Istanbul Park"}}]}
+{"id": "et00068", "category": "tpl_era", "question": "Which team won the most races from 2004 to 2013?", "gold": [{"name": "records", "arguments": {"metric": "wins", "by": "team", "from_year": 2004, "to_year": 2013, "n": 3}}]}
+{"id": "et00069", "category": "tpl_team", "question": "how many wins does hesketh have", "gold": [{"name": "team_history", "arguments": {"team": "Hesketh"}}]}
+{"id": "et00070", "category": "tpl_career", "question": "How many podiums did Paco Godia have", "gold": [{"name": "driver_career", "arguments": {"driver": "Paco Godia"}}]}
+{"id": "et00071", "category": "tpl_explain", "question": "Why is Oscar Piastri expected to qualify there?", "gold": [{"name": "explain_prediction", "arguments": {"driver": "PIA", "target": "qualifying"}}]}
+{"id": "et00073", "category": "tpl_explain", "question": "Why does the model think ALB will gain or lose places?", "gold": [{"name": "explain_prediction", "arguments": {"driver": "ALB", "target": "quali_delta"}}]}
+{"id": "et00074", "category": "tpl_winner", "question": "Who took the win at the Turkish GP in 1950?", "gold": [{"name": "history_results", "arguments": {"season": 1950, "grand_prix": "Turkish Grand Prix"}}]}
+{"id": "et00075", "category": "tpl_podium", "question": "Top three at the Turkish 2013?", "gold": [{"name": "history_results", "arguments": {"season": 2013, "grand_prix": "Turkish Grand Prix"}}]}
+{"id": "et00077", "category": "tpl_h2h", "question": "Will ALO beat COL this weekend?", "gold": [{"name": "head_to_head", "arguments": {"driver_a": "ALO", "driver_b": "COL"}}]}
+{"id": "et00078", "category": "tpl_team", "question": "When did HRT win the constructors' championship", "gold": [{"name": "team_history", "arguments": {"team": "HRT"}}]}
+{"id": "et00079", "category": "tpl_driver_at_circuit", "question": "Did Mike Hailwood ever win at Detroit?", "gold": [{"name": "records", "arguments": {"metric": "wins", "driver": "Mike Hailwood", "circuit": "Detroit Street Circuit"}}]}
+{"id": "et00080", "category": "tpl_career", "question": "how many races did philippe alliot win", "gold": [{"name": "driver_career", "arguments": {"driver": "Philippe Alliot"}}]}
+{"id": "et00082", "category": "tpl_circuit_leaders", "question": "Top 3 drivers for wins at Melbourne?", "gold": [{"name": "records", "arguments": {"metric": "wins", "circuit": "Albert Park Grand Prix Circuit", "n": 3}}]}
+{"id": "et00083", "category": "tpl_title_maths", "question": "What does Charles Leclerc need to win the title?", "gold": [{"name": "title_scenario_for", "arguments": {"driver": "LEC"}}]}
+{"id": "et00084", "category": "tpl_circuit_leaders", "question": "Which driver is the most successful at Montreal by wins?", "gold": [{"name": "records", "arguments": {"metric": "wins", "circuit": "Circuit Gilles Villeneuve", "n": 3}}]}
+{"id": "et00085", "category": "tpl_forecast_driver", "question": "Where is Lawson expected to finish this weekend?", "gold": [{"name": "forecast", "arguments": {"driver": "LAW"}}]}
+{"id": "et00086", "category": "tpl_podium", "question": "Who was on the podium at the 2020 European Grand Prix?", "gold": [{"name": "history_results", "arguments": {"season": 2020, "grand_prix": "European Grand Prix"}}]}
+{"id": "et00087", "category": "tpl_driver_at_circuit", "question": "Did Wilson Fittipaldi ever win at Nürburg?", "gold": [{"name": "records", "arguments": {"metric": "wins", "driver": "Wilson Fittipaldi", "circuit": "Nürburgring"}}]}
+{"id": "et00088", "category": "tpl_circuit_leaders", "question": "Which driver is the most successful at Silverstone by wins?", "gold": [{"name": "records", "arguments": {"metric": "wins", "circuit": "Silverstone Circuit", "n": 3}}]}
+{"id": "et00089", "category": "tpl_season_count", "question": "how many different winners were there in 1978", "gold": [{"name": "season_summary", "arguments": {"year": 1978}}]}
+{"id": "et00090", "category": "tpl_title_maths", "question": "What does Lewis Hamilton need to win the title?", "gold": [{"name": "title_scenario_for", "arguments": {"driver": "HAM"}}]}
+{"id": "et00091", "category": "tpl_team_drivers", "question": "Who won the most races for Connaught?", "gold": [{"name": "records", "arguments": {"metric": "wins", "team": "Connaught", "n": 3}}]}
+{"id": "et00092", "category": "tpl_era", "question": "Most wins from 1964 to 1978?", "gold": [{"name": "records", "arguments": {"metric": "wins", "by": "driver", "from_year": 1964, "to_year": 1978, "n": 3}}]}
+{"id": "et00093", "category": "tpl_career", "question": "How many pole positions did Nico Rosberg get?", "gold": [{"name": "driver_career", "arguments": {"driver": "Nico Rosberg"}}]}
+{"id": "et00095", "category": "tpl_explain", "question": "Explain PER's forecast to me.", "gold": [{"name": "explain_prediction", "arguments": {"driver": "PER"}}]}
+{"id": "et00097", "category": "tpl_forecast_driver", "question": "Where is Hamilton expected to finish this weekend?", "gold": [{"name": "forecast", "arguments": {"driver": "HAM"}}]}
+{"id": "et00098", "category": "tpl_champion", "question": "who was champion in 1960", "gold": [{"name": "season_summary", "arguments": {"year": 1960}}]}
+{"id": "et00100", "category": "tpl_era", "question": "who won the most races between 1968 and 1977", "gold": [{"name": "records", "arguments": {"metric": "wins", "by": "driver", "from_year": 1968, "to_year": 1977, "n": 3}}]}
+{"id": "et00101", "category": "tpl_team", "question": "When did RB F1 Team win the constructors' championship?", "gold": [{"name": "team_history", "arguments": {"team": "RB F1 Team"}}]}
+{"id": "et00102", "category": "tpl_winner", "question": "mexico city grand prix 1959 winner", "gold": [{"name": "history_results", "arguments": {"season": 1959, "grand_prix": "Mexico City Grand Prix"}}]}
+{"id": "et00103", "category": "tpl_career", "question": "Which teams did Nakano drive for", "gold": [{"name": "driver_career", "arguments": {"driver": "Shinji Nakano"}}]}
+{"id": "et00104", "category": "tpl_winner", "question": "which driver won the 2025 turkish", "gold": [{"name": "history_results", "arguments": {"season": 2025, "grand_prix": "Turkish Grand Prix"}}]}
+{"id": "et00105", "category": "tpl_forecast_driver", "question": "Where is Isack Hadjar expected to finish this weekend?", "gold": [{"name": "forecast", "arguments": {"driver": "HAD"}}]}
+{"id": "et00106", "category": "tpl_career", "question": "what's de angelis's best championship finish", "gold": [{"name": "driver_career", "arguments": {"driver": "Elio de Angelis"}}]}
+{"id": "et00107", "category": "tpl_finish_of", "question": "What was Bira's result in the 1953 Italian GP", "gold": [{"name": "history_results", "arguments": {"season": 1953, "round": 9}}]}
+{"id": "et00109", "category": "tpl_driver_at_circuit", "question": "how many times did pascal fabre win at buenos aires", "gold": [{"name": "records", "arguments": {"metric": "wins", "driver": "Pascal Fabre", "circuit": "Autódromo Juan y Oscar Gálvez"}}]}
+{"id": "et00110", "category": "tpl_career", "question": "how many seasons did kevin magnussen race in f1", "gold": [{"name": "driver_career", "arguments": {"driver": "Kevin Magnussen"}}]}
+{"id": "et00111", "category": "tpl_circuit_leaders", "question": "Which driver is the most successful at Abu Dhabi by podiums?", "gold": [{"name": "records", "arguments": {"metric": "podiums", "circuit": "Yas Marina Circuit", "n": 3}}]}
+{"id": "et00113", "category": "tpl_circuit_leaders", "question": "most wins at Sochi?", "gold": [{"name": "records", "arguments": {"metric": "wins", "circuit": "Sochi Autodrom", "n": 3}}]}
+{"id": "et00114", "category": "tpl_career", "question": "How many world championships did Tarquini win?", "gold": [{"name": "driver_career", "arguments": {"driver": "Gabriele Tarquini"}}]}
+{"id": "et00115", "category": "tpl_driver_at_circuit", "question": "Fabre's record at Barcelona?", "gold": [{"name": "records", "arguments": {"metric": "wins", "driver": "Pascal Fabre", "circuit": "Montjuïc"}}]}
+{"id": "et00116", "category": "tpl_forecast_driver", "question": "Can COL get a podium this race?", "gold": [{"name": "forecast", "arguments": {"driver": "COL"}}]}
+{"id": "et00117", "category": "tpl_champion", "question": "who won the 1990 constructors' title", "gold": [{"name": "season_summary", "arguments": {"year": 1990}}]}
+{"id": "et00119", "category": "tpl_era", "question": "Who won the most races between 2005 and 2019?", "gold": [{"name": "records", "arguments": {"metric": "wins", "by": "driver", "from_year": 2005, "to_year": 2019, "n": 3}}]}
+{"id": "et00120", "category": "tpl_explain", "question": "Why is LEC predicted where he is?", "gold": [{"name": "explain_prediction", "arguments": {"driver": "LEC"}}]}
+{"id": "et00121", "category": "tpl_team", "question": "How many wins does Brabham have?", "gold": [{"name": "team_history", "arguments": {"team": "Brabham"}}]}
+{"id": "et00123", "category": "tpl_career", "question": "How many pole positions did Ayrton Senna get?", "gold": [{"name": "driver_career", "arguments": {"driver": "Ayrton Senna"}}]}
+{"id": "et00124", "category": "tpl_winner", "question": "singapore grand prix 1993 winner", "gold": [{"name": "history_results", "arguments": {"season": 1993, "grand_prix": "Singapore Grand Prix"}}]}
+{"id": "et00125", "category": "tpl_strategy", "question": "when should they pit this weekend", "gold": [{"name": "race_strategy", "arguments": {}}]}
+{"id": "et00126", "category": "tpl_finish_of", "question": "What was Roberto Guerrero's result in the 1983 British Grand Prix?", "gold": [{"name": "history_results", "arguments": {"season": 1983, "round": 9}}]}
+{"id": "et00128", "category": "tpl_career", "question": "How many seasons did Fabi race in F1?", "gold": [{"name": "driver_career", "arguments": {"driver": "Teo Fabi"}}]}
+{"id": "et00129", "category": "tpl_winner", "question": "Remind me who won the Miami GP in 1968", "gold": [{"name": "history_results", "arguments": {"season": 1968, "grand_prix": "Miami Grand Prix"}}]}
+{"id": "et00130", "category": "tpl_timeline", "question": "How has the forecast changed through the weekend?", "gold": [{"name": "forecast_timeline", "arguments": {}}]}
+{"id": "et00132", "category": "tpl_champion", "question": "How close was the 1999 title fight?", "gold": [{"name": "season_summary", "arguments": {"year": 1999}}]}
+{"id": "et00133", "category": "tpl_career", "question": "Give me Fangio's career numbers.", "gold": [{"name": "driver_career", "arguments": {"driver": "Juan Fangio"}}]}
+{"id": "et00134", "category": "tpl_podium", "question": "Who finished second at the 1984 Abu Dhabi Grand Prix?", "gold": [{"name": "history_results", "arguments": {"season": 1984, "grand_prix": "Abu Dhabi Grand Prix"}}]}
+{"id": "et00135", "category": "tpl_driver_at_circuit", "question": "Did Trulli ever win at Shanghai?", "gold": [{"name": "records", "arguments": {"metric": "wins", "driver": "Jarno Trulli", "circuit": "Shanghai International Circuit"}}]}
+{"id": "et00136", "category": "tpl_winner", "question": "Remind me who won the Chinese Grand Prix in 2019", "gold": [{"name": "history_results", "arguments": {"season": 2019, "grand_prix": "Chinese Grand Prix"}}]}
+{"id": "et00137", "category": "tpl_winner", "question": "who won the German back in 1979", "gold": [{"name": "history_results", "arguments": {"season": 1979, "grand_prix": "German Grand Prix"}}]}
+{"id": "et00139", "category": "tpl_strategy", "question": "What changes if there's a safety car on lap 30?", "gold": [{"name": "race_strategy", "arguments": {"safety_car_lap": 30}}]}
+{"id": "et00140", "category": "tpl_era", "question": "who won the most races between 2002 and 2011", "gold": [{"name": "records", "arguments": {"metric": "wins", "by": "driver", "from_year": 2002, "to_year": 2011, "n": 3}}]}
+{"id": "et00141", "category": "tpl_season_count", "question": "How many races were there in 2008?", "gold": [{"name": "season_summary", "arguments": {"year": 2008}}]}
+{"id": "et00142", "category": "tpl_team_drivers", "question": "Which driver has the most podiums with Ferrari?", "gold": [{"name": "records", "arguments": {"metric": "podiums", "team": "Ferrari", "n": 3}}]}
+{"id": "et00143", "category": "tpl_finish_of", "question": "Where did John Surtees finish at the 1971 United States Grand Prix?", "gold": [{"name": "history_results", "arguments": {"season": 1971, "round": 11}}]}
+{"id": "et00144", "category": "tpl_era", "question": "Most poles from 2017 to 2025?", "gold": [{"name": "records", "arguments": {"metric": "poles", "by": "driver", "from_year": 2017, "to_year": 2025, "n": 3}}]}
+{"id": "et00145", "category": "tpl_team", "question": "How long did Porsche race in F1?", "gold": [{"name": "team_history", "arguments": {"team": "Porsche"}}]}
+{"id": "et00146", "category": "tpl_team", "question": "When did Vanwall win the constructors' championship?", "gold": [{"name": "team_history", "arguments": {"team": "Vanwall"}}]}
+{"id": "et00147", "category": "tpl_track_record", "question": "Can I trust the forecast?", "gold": [{"name": "model_track_record", "arguments": {}}]}
+{"id": "et00149", "category": "tpl_standings", "question": "What are the drivers' standings?", "gold": [{"name": "championship", "arguments": {"kind": "drivers"}}]}
+{"id": "et00150", "category": "tpl_career", "question": "give me ginther's career numbers.", "gold": [{"name": "driver_career", "arguments": {"driver": "Richie Ginther"}}]}
+{"id": "et00152", "category": "tpl_circuit_leaders", "question": "Who has the most wins at São Paulo?", "gold": [{"name": "records", "arguments": {"metric": "wins", "circuit": "Autódromo José Carlos Pace", "n": 3}}]}
+{"id": "et00155", "category": "tpl_standings", "question": "how many points does the leader have", "gold": [{"name": "championship", "arguments": {"kind": "drivers"}}]}
+{"id": "et00156", "category": "tpl_schedule", "question": "How many races are left?", "gold": [{"name": "season_schedule", "arguments": {}}]}
+{"id": "et00157", "category": "tpl_podium", "question": "top three at the french gp 1971", "gold": [{"name": "history_results", "arguments": {"season": 1971, "grand_prix": "French Grand Prix"}}]}
+{"id": "et00158", "category": "tpl_podium", "question": "Top three at the Singapore Grand Prix 2013?", "gold": [{"name": "history_results", "arguments": {"season": 2013, "grand_prix": "Singapore Grand Prix"}}]}
+{"id": "et00159", "category": "tpl_era", "question": "who won the most races between 2016 and 2025", "gold": [{"name": "records", "arguments": {"metric": "wins", "by": "driver", "from_year": 2016, "to_year": 2025, "n": 3}}]}
+{"id": "et00160", "category": "tpl_explain", "question": "Why is LAW predicted where he is?", "gold": [{"name": "explain_prediction", "arguments": {"driver": "LAW"}}]}
+{"id": "et00161", "category": "tpl_forecast", "question": "Which race is this weekend and who's favourite?", "gold": [{"name": "forecast", "arguments": {}}]}
+{"id": "et00162", "category": "tpl_h2h", "question": "hul vs had: who finishes ahead", "gold": [{"name": "head_to_head", "arguments": {"driver_a": "HUL", "driver_b": "HAD"}}]}
+{"id": "et00163", "category": "tpl_finish_of", "question": "where did walker finish at the 1972 french grand prix", "gold": [{"name": "history_results", "arguments": {"season": 1972, "round": 6}}]}
+{"id": "et00164", "category": "tpl_rules", "question": "explain parc ferme according to the rules.", "gold": [{"name": "search_knowledge", "arguments": {"query": "parc ferme", "only": "rules"}}]}
+{"id": "et00165", "category": "tpl_rules", "question": "What's the rule on track limits?", "gold": [{"name": "search_knowledge", "arguments": {"query": "track limits", "only": "rules"}}]}
+{"id": "et00166", "category": "tpl_explain", "question": "Explain HAM's forecast to me.", "gold": [{"name": "explain_prediction", "arguments": {"driver": "HAM"}}]}
+{"id": "et00167", "category": "tpl_standings", "question": "Who can still win the title", "gold": [{"name": "championship", "arguments": {"kind": "drivers"}}]}
+{"id": "et00168", "category": "tpl_team_at_circuit", "question": "Which team has won the most at Spielberg?", "gold": [{"name": "records", "arguments": {"metric": "wins", "by": "team", "circuit": "Red Bull Ring", "n": 3}}]}
+{"id": "et00169", "category": "tpl_podium", "question": "top three at the united states gp 1954", "gold": [{"name": "history_results", "arguments": {"season": 1954, "grand_prix": "United States Grand Prix"}}]}
+{"id": "et00170", "category": "tpl_career", "question": "Give me d'Ambrosio's career numbers.", "gold": [{"name": "driver_career", "arguments": {"driver": "Jérôme d'Ambrosio"}}]}
+{"id": "et00171", "category": "tpl_winner", "question": "who won the Australian Grand Prix back in 1970", "gold": [{"name": "history_results", "arguments": {"season": 1970, "grand_prix": "Australian Grand Prix"}}]}
+{"id": "et00172", "category": "tpl_circuit_leaders", "question": "Who has the most poles at Jeddah?", "gold": [{"name": "records", "arguments": {"metric": "poles", "circuit": "Jeddah Corniche Circuit", "n": 3}}]}
+{"id": "et00173", "category": "tpl_career", "question": "How many podiums did Patrick Depailler have?", "gold": [{"name": "driver_career", "arguments": {"driver": "Patrick Depailler"}}]}
+{"id": "et00175", "category": "tpl_explain", "question": "why is lando norris expected to qualify there", "gold": [{"name": "explain_prediction", "arguments": {"driver": "NOR", "target": "qualifying"}}]}
+{"id": "et00176", "category": "tpl_title_maths", "question": "what does oscar piastri need to win the title", "gold": [{"name": "title_scenario_for", "arguments": {"driver": "PIA"}}]}
+{"id": "et00177", "category": "tpl_champion", "question": "How close was the 1988 title fight?", "gold": [{"name": "season_summary", "arguments": {"year": 1988}}]}
+{"id": "et00178", "category": "tpl_champion", "question": "Who won the 1987 world championship?", "gold": [{"name": "season_summary", "arguments": {"year": 1987}}]}
+{"id": "et00179", "category": "tpl_strategy", "question": "What's the best tyre strategy for this race?", "gold": [{"name": "race_strategy", "arguments": {}}]}
+{"id": "et00180", "category": "tpl_finish_of", "question": "How did Herrmann do at the British Grand Prix in 1959?", "gold": [{"name": "history_results", "arguments": {"season": 1959, "round": 5}}]}
+{"id": "et00182", "category": "tpl_podium", "question": "Who finished second at the 1968 Malaysian?", "gold": [{"name": "history_results", "arguments": {"season": 1968, "grand_prix": "Malaysian Grand Prix"}}]}
+{"id": "et00183", "category": "tpl_winner", "question": "Swedish 1970 winner", "gold": [{"name": "history_results", "arguments": {"season": 1970, "grand_prix": "Swedish Grand Prix"}}]}
+{"id": "et00184", "category": "tpl_rules", "question": "What's the rule on red flag restarts?", "gold": [{"name": "search_knowledge", "arguments": {"query": "red flag restarts", "only": "rules"}}]}
+{"id": "et00185", "category": "tpl_champion", "question": "Who was champion in 2003?", "gold": [{"name": "season_summary", "arguments": {"year": 2003}}]}
+{"id": "et00186", "category": "tpl_season_count", "question": "who won the most races in 1954", "gold": [{"name": "season_summary", "arguments": {"year": 1954}}]}
+{"id": "et00187", "category": "tpl_driver_at_circuit", "question": "How many times did Ward win at Austin?", "gold": [{"name": "records", "arguments": {"metric": "wins", "driver": "Rodger Ward", "circuit": "Circuit of the Americas"}}]}
+{"id": "et00188", "category": "tpl_season_count", "question": "How many different winners were there in 2017?", "gold": [{"name": "season_summary", "arguments": {"year": 2017}}]}
+{"id": "et00189", "category": "tpl_h2h", "question": "ver vs gas: who finishes ahead", "gold": [{"name": "head_to_head", "arguments": {"driver_a": "VER", "driver_b": "GAS"}}]}
+{"id": "et00190", "category": "tpl_podium", "question": "who was on the podium at the 2007 são paulo grand prix", "gold": [{"name": "history_results", "arguments": {"season": 2007, "grand_prix": "São Paulo Grand Prix"}}]}
+{"id": "et00191", "category": "tpl_career", "question": "What's Gianmaria Bruni's best championship finish?", "gold": [{"name": "driver_career", "arguments": {"driver": "Gianmaria Bruni"}}]}
+{"id": "et00192", "category": "tpl_winner", "question": "Swiss Grand Prix 1977 winner", "gold": [{"name": "history_results", "arguments": {"season": 1977, "grand_prix": "Swiss Grand Prix"}}]}
+{"id": "et00193", "category": "tpl_winner", "question": "remind me who won the monaco grand prix in 1954", "gold": [{"name": "history_results", "arguments": {"season": 1954, "grand_prix": "Monaco Grand Prix"}}]}
+{"id": "et00194", "category": "tpl_team", "question": "Give me Force India's history in numbers.", "gold": [{"name": "team_history", "arguments": {"team": "Force India"}}]}
+{"id": "et00195", "category": "tpl_forecast_driver", "question": "What are Russell's chances this weekend?", "gold": [{"name": "forecast", "arguments": {"driver": "RUS"}}]}
+{"id": "et00196", "category": "tpl_circuit_leaders", "question": "Top 3 drivers for wins at Estoril?", "gold": [{"name": "records", "arguments": {"metric": "wins", "circuit": "Autódromo do Estoril", "n": 3}}]}
+{"id": "et00197", "category": "tpl_rules", "question": "Explain overtaking under safety car according to the rules.", "gold": [{"name": "search_knowledge", "arguments": {"query": "overtaking under safety car", "only": "rules"}}]}
+{"id": "et00199", "category": "tpl_team", "question": "when did lotus win the constructors' championship", "gold": [{"name": "team_history", "arguments": {"team": "Lotus"}}]}
+{"id": "ef00000", "category": "history_stats", "question": "I want know the shortest winning gap in F1, like photo finish."}
+{"id": "ef00001", "category": "history_stats", "question": "what was mercedes' best year? they were so strong when i started watching."}
+{"id": "ef00002", "category": "history_stats", "question": "Can you say what the biggest point lead ever after season finished?"}
+{"id": "ef00003", "category": "history_stats", "question": "Circuit Park Zandvoort has such a unique, flowing layout. What are some of the most memorable or record-breaking pole position laps there throughout F1 history? I'm thinking of drivers like Lauda or Verstappen."}
+{"id": "ef00004", "category": "history_stats", "question": "Which team achieved most pole positions all time?"}
+{"id": "ef00005", "category": "history_stats", "question": "Records for wins in a single season?"}
+{"id": "ef00006", "category": "history_stats", "question": "did any driver win lots of races in a row? what's the record for consecutive wins?"}
+{"id": "ef00007", "category": "history_stats", "question": "Lewis Hamilton has broken so many records. Aside from his total wins and titles, what is one of his most impressive statistical achievements, like most poles at a single circuit or most wins in a row?"}
+{"id": "ef00008", "category": "history_stats", "question": "How many wins did Timo Glock get in his career? Wondering if he's undervalued in my retro fantasy roster."}
+{"id": "ef00009", "category": "history_stats", "question": "In the ground effect era, which team had the highest percentage of laps led but didn't win the title? Potential for fantasy underdog points."}
+{"id": "ef00010", "category": "history_stats", "question": "i heard about a driver who won with ferrari a long time ago, alberto ascari maybe? what made his 1952 season so special?"}
+{"id": "ef00011", "category": "history_stats", "question": "what's the craziest season for title fights? the 2010s had some bangers"}
+{"id": "ef00012", "category": "history_stats", "question": "How many wins did Max Verstappen get last year?"}
+{"id": "ef00013", "category": "history_stats", "question": "When was Fernando Alonso last world champion?"}
+{"id": "ef00014", "category": "history_stats", "question": "What's the highest number of race wins for a driver who never won a World Championship? I know Stirling Moss had 16, but has that record been surpassed?"}
+{"id": "ef00015", "category": "history_stats", "question": "were there any famous rival eras before hamilton vs verstappen? like senna and prost?"}
+{"id": "ef00016", "category": "history_stats", "question": "Who from United States won a championship? Like Mario Andretti, others?"}
+{"id": "ef00017", "category": "history_stats", "question": "Can you tell me about the most successful F1 teams of the 1970s? Were Ferrari and Lotus the dominant ones during that era, or did other constructors make a big impact as well?"}
+{"id": "ef00018", "category": "history_stats", "question": "did anyone ever win their first race, like a total rookie?"}
+{"id": "ef00019", "category": "history_stats", "question": "In 1990s, what team was most successful?"}
+{"id": "ef00020", "category": "history_stats", "question": "most consecutive poles. like who's a qualy beast?"}
+{"id": "ef00021", "category": "history_stats", "question": "which team has the most constructors championships?"}
+{"id": "ef00022", "category": "history_stats", "question": "who the GOAT, Hammy or someone else? breakdown pls"}
+{"id": "ef00023", "category": "history_stats", "question": "Regarding constructor records, McLaren and Williams have such rich histories. Which one holds the record for the most consecutive constructor championships, and during which seasons did that incredible streak happen?"}
+{"id": "ef00024", "category": "history_stats", "question": "Tell me Roy Salvadori's best finish in a race"}
+{"id": "ef00025", "category": "history_stats", "question": "Did any team manage back-to-back 1-2 finishes in the 1970s besides Ferrari? Could influence my 'historic performance' bonus category."}
+{"id": "ef00026", "category": "history_stats", "question": "Could you give me a quick breakdown of the total career wins for legendary drivers like Michael Schumacher, Lewis Hamilton, and Ayrton Senna? I'd love to know how they stack up."}
+{"id": "ef00027", "category": "history_stats", "question": "How many different drivers won the World Championship in the 1970s exactly? I'm debating with a friend about whether it was 5 or 6 distinct champions."}
+{"id": "ef00028", "category": "history_stats", "question": "What was the biggest margin of victory at Fuji Speedway in F1? Trying to gauge dominance for circuit-specific fantasy scoring."}
+{"id": "ef00029", "category": "history_stats", "question": "which driver smoked everyone one season but then fell off the map?"}
+{"id": "ef00030", "category": "history_stats", "question": "Eddie Irvine was such an entertaining driver to watch. What were his best statistical seasons in Formula 1, particularly in terms of podium finishes or championship position?"}
+{"id": "ef00031", "category": "history_stats", "question": "I'm fascinated by the early years of F1. Who were the most dominant drivers and constructors in the 1950s, the first decade of the championship? How many wins did someone like Juan Manuel Fangio actually achieve?"}
+{"id": "ef00032", "category": "history_stats", "question": "Which driver has most races without ever getting podium finish?"}
+{"id": "ef00033", "category": "history_stats", "question": "In the 1988 season, McLaren won 15 out of 16 races – what was their exact points gap to the second-place constructor that year?"}
+{"id": "ef00034", "category": "history_stats", "question": "which team dominated so hard it was boring"}
+{"id": "ef00035", "category": "history_stats", "question": "Who has the most Grand Prix wins in F1 history?"}
+{"id": "ef00036", "category": "history_stats", "question": "At Marina Bay night race, who has top wins record?"}
+{"id": "ef00037", "category": "history_stats", "question": "most championships without a single win in a season"}
+{"id": "ef00038", "category": "history_stats", "question": "Breandon Hartley started 25 races – what was his average grid position across his entire F1 career? I'm looking for a precise calculation."}
+{"id": "ef00039", "category": "history_stats", "question": "who has the most pole positions ever? is it hamilton?"}
+{"id": "ef00040", "category": "history_stats", "question": "What driver had the longest points streak during the hybrid turbo era? Need consistency data for my fantasy league."}
+{"id": "ef00041", "category": "history_stats", "question": "Which constructor had the most mechanical DNFs in a single season? Might avoid them in my 'reliability' fantasy stat."}
+{"id": "ef00042", "category": "history_stats", "question": "Who has the most race starts without ever scoring a single championship point? I'm curious about the unluckiest career in F1 history statistically."}
+{"id": "ef00043", "category": "history_stats", "question": "Which constructor has the most 1-2 finishes in F1 history? I want the exact number and want to compare it to Mercedes' dominant era."}
+{"id": "ef00044", "category": "history_stats", "question": "what was the most dominant season by a driver? like, one driver just crushing everyone."}
+{"id": "ef00045", "category": "history_stats", "question": "Best season by a driver, most points scored?"}
+{"id": "ef00046", "category": "history_stats", "question": "Who was the first champion born in 1990s?"}
+{"id": "ef00047", "category": "history_stats", "question": "After watching Drive to Survive, I'm wondering: during the turbo-hybrid era that started in 2014, which holds the record for the most wins in a single season? Also, was anyone close to breaking it?"}
+{"id": "ef00048", "category": "history_stats", "question": "At Suzuka Circuit, which driver has the most pole positions historically? Give me the exact count and years if possible."}
+{"id": "ef00049", "category": "history_stats", "question": "Who is the oldest F1 champion?"}
+{"id": "ef00050", "category": "history_stats", "question": "i saw a clip of the 2010 abu dhabi finale with vettel winning the title. was that one of the closest championships?"}
+{"id": "ef00051", "category": "bio_background", "question": "Stirling Moss is called the greatest driver never to win the championship - break down his near-misses and why he's so revered."}
+{"id": "ef00052", "category": "bio_background", "question": "Is Dario Franchitti known for something?"}
+{"id": "ef00053", "category": "bio_background", "question": "Beyond his four consecutive titles with Red Bull, what specific technical feedback or development direction is Sebastian Vettel credited with during his peak seasons?"}
+{"id": "ef00054", "category": "bio_background", "question": "George Eaton what known for?"}
+{"id": "ef00055", "category": "bio_background", "question": "who is yannick dalmas"}
+{"id": "ef00056", "category": "bio_background", "question": "My fantasy team needs a 'cult hero' pick. Who's a driver from the late 70s or early 80s with an amazing backstory but few wins?"}
+{"id": "ef00057", "category": "bio_background", "question": "why do people talk about vantoorne so much after mclaren"}
+{"id": "ef00058", "category": "bio_background", "question": "paco godia what were his highlights"}
+{"id": "ef00059", "category": "bio_background", "question": "What was the technical regulation era and car philosophy that characterized Jody Scheckter's time at Ferrari in the late 1970s?"}
+{"id": "ef00060", "category": "bio_background", "question": "Why is Kimi Räikkönen's 2007 title considered such a tactical masterpiece by Ferrari, and what were his key performances?"}
+{"id": "ef00061", "category": "bio_background", "question": "lewis's story before f1"}
+{"id": "ef00062", "category": "bio_background", "question": "Detail Sergey Sirotkin's path to F1 and his primary achievements prior to his season with Williams."}
+{"id": "ef00063", "category": "bio_background", "question": "I'm doing a deep dive on drivers from the mid-80s. Can you tell me everything about François Hesnault's brief career and why he stopped?"}
+{"id": "ef00064", "category": "bio_background", "question": "Mike Hawthorn is known for his rivalry with Fangio, but what was he like as a person off the track?"}
+{"id": "ef00065", "category": "bio_background", "question": "Who was the last driver to win a Grand Prix using a manual gearbox?"}
+{"id": "ef00066", "category": "bio_background", "question": "Explain the significance of Sebastian Vettel's 'Multi 21' team radio message and the subsequent fallout with Mark Webber."}
+{"id": "ef00067", "category": "bio_background", "question": "Break down James Hunt's 1976 season - was his championship more about his talent or Lauda's accident?"}
+{"id": "ef00068", "category": "bio_background", "question": "senna prost feud details"}
+{"id": "ef00069", "category": "bio_background", "question": "What exactly made Juan Manuel Fangio so dominant in the 50s, given the technology and competition of his era?"}
+{"id": "ef00070", "category": "bio_background", "question": "Who was Louis Chiron and what's the story behind his incredibly long career?"}
+{"id": "ef00071", "category": "bio_background", "question": "who was alain prost's main rival"}
+{"id": "ef00072", "category": "bio_background", "question": "stroll how did he get into f1"}
+{"id": "ef00073", "category": "bio_background", "question": "How did Mika Häkkinen's driving style and team strategy contribute to his back-to-back championships with McLaren in 1998 and 1999?"}
+{"id": "ef00074", "category": "bio_background", "question": "Why is Harry Schell barely mentioned when talking about early American F1 drivers?"}
+{"id": "ef00075", "category": "bio_background", "question": "tell me about satoru nakajima's career"}
+{"id": "ef00076", "category": "bio_background", "question": "What Stirling Moss famous for? I not sure."}
+{"id": "ef00077", "category": "bio_background", "question": "Juan Manuel Fangio rivalries? Who he compete against?"}
+{"id": "ef00078", "category": "bio_background", "question": "Tell me about driver from 1950s, their career."}
+{"id": "ef00079", "category": "bio_background", "question": "Tell me about Jochen Mass' 1975 Spanish GP win - how did that race unfold and what made it controversial?"}
+{"id": "ef00080", "category": "bio_background", "question": "who won the 1994 championship and what was the drama"}
+{"id": "ef00081", "category": "bio_background", "question": "What are the key races or controversies that defined the rivalry between Sebastian Vettel and Fernando Alonso during the 2010-2012 seasons?"}
+{"id": "ef00082", "category": "bio_background", "question": "tell me what gaston mazzacane was known for in f1"}
+{"id": "ef00083", "category": "bio_background", "question": "who is marc gene"}
+{"id": "ef00084", "category": "bio_background", "question": "Explain who is Alberto Ascari, why people remember him."}
+{"id": "ef00085", "category": "bio_background", "question": "Who Peter Whitehead? Can you tell driver story?"}
+{"id": "ef00086", "category": "bio_background", "question": "was michael schumacher controversial"}
+{"id": "ef00087", "category": "bio_background", "question": "I'm researching teammates who had explosive relationships. What's the full story behind Senna and Prost at McLaren?"}
+{"id": "ef00088", "category": "bio_background", "question": "What did Daniel Ricciardo bring to Renault when he left Red Bull, and was it the right move career-wise?"}
+{"id": "ef00089", "category": "bio_background", "question": "why is kimi raikkonen called the iceman"}
+{"id": "ef00090", "category": "bio_background", "question": "What was so special about Stirling Moss that he's considered the greatest driver never to win a championship?"}
+{"id": "ef00091", "category": "team_story", "question": "surtees team story why didnt it last long"}
+{"id": "ef00092", "category": "team_story", "question": "How did Red Bull even get into F1 and become such a dominant force so fast?"}
+{"id": "ef00093", "category": "team_story", "question": "Tell me about Surtees team glory days biggest win"}
+{"id": "ef00094", "category": "team_story", "question": "Tell me about Brawn GP - they won everything in one season and then just... transformed? How?"}
+{"id": "ef00095", "category": "team_story", "question": "how did mercedes come back in 2010 after buying brawn"}
+{"id": "ef00096", "category": "team_story", "question": "Brawn GP story from race to win champions, quick"}
+{"id": "ef00097", "category": "team_story", "question": "Alfa Romeo team history and why they rise and fall?"}
+{"id": "ef00098", "category": "team_story", "question": "Which F1 famous team has most ownership changes?"}
+{"id": "ef00099", "category": "team_story", "question": "did arrows ever have a chance to win a race?"}
+{"id": "ef00100", "category": "team_story", "question": "prost's team had a rocky history right"}
+{"id": "ef00101", "category": "team_story", "question": "renault team history why they keep leaving and coming back"}
+{"id": "ef00102", "category": "team_story", "question": "williams team downfall over the years what happened"}
+{"id": "ef00103", "category": "team_story", "question": "Is it true that Sauber has had like a million different owners and name changes? That's wild."}
+{"id": "ef00104", "category": "team_story", "question": "was lotus a top team originally?"}
+{"id": "ef00105", "category": "team_story", "question": "Can someone spill about Renault's F1 history? They kept changing names and bouncing, so confusing."}
+{"id": "ef00106", "category": "team_story", "question": "how did mercedes return to f1 as a works team"}
+{"id": "ef00107", "category": "team_story", "question": "Minardi team always small, why fans love them?"}
+{"id": "ef00108", "category": "team_story", "question": "Mercedes in 1950s vs now, how different?"}
+{"id": "ef00109", "category": "team_story", "question": "tell me the history of brawn gp why they were so good and then disappeared"}
+{"id": "ef00110", "category": "team_story", "question": "did jordan really go from midfield to winning?"}
+{"id": "ef00111", "category": "team_story", "question": "red bull rivalry with mercedes how did it start"}
+{"id": "ef00112", "category": "team_story", "question": "theodore racing who were they did they ever win"}
+{"id": "ef00113", "category": "team_story", "question": "tell me about mclaren's dominant years"}
+{"id": "ef00114", "category": "team_story", "question": "Lotus team drama years 80s, why fall down?"}
+{"id": "ef00115", "category": "team_story", "question": "Someone explain why Zakspeed was such a big deal in the 80s but then dipped out of F1."}
+{"id": "ef00116", "category": "team_story", "question": "lancia in f1 that was a thing right"}
+{"id": "ef00117", "category": "circuit_story", "question": "is Silverstone actually the GOAT circuit? make your case"}
+{"id": "ef00118", "category": "circuit_story", "question": "Can you tell me what makes the Suzuka Circuit so special and challenging for the Formula 1 drivers? I'm fascinated by its figure-eight layout and unique corners."}
+{"id": "ef00119", "category": "circuit_story", "question": "tell me about old Spa before they changed it"}
+{"id": "ef00120", "category": "circuit_story", "question": "What was the exact margin of victory in the 2005 Japanese Grand Prix at Suzuka, and what's the lap-by-lap gap progression in the closing stages between Räikkönen and Fisichella?"}
+{"id": "ef00121", "category": "circuit_story", "question": "In the context of classic circuits, what was the old Nürburgring Nordschleife like for Formula 1, and why was it considered the ultimate test of driver skill and bravery?"}
+{"id": "ef00122", "category": "circuit_story", "question": "Regarding street circuits, what specific challenges does the Marina Bay Street Circuit in Singapore present due to its night race format and humid conditions, and are there any legendary moments from its history?"}
+{"id": "ef00123", "category": "circuit_story", "question": "Can you list all DRS zones at Interlagos with their precise start and end points in meters from the timing line, plus the average speed gain per zone in 2023?"}
+{"id": "ef00124", "category": "circuit_story", "question": "yo what's the deal with Monaco? like why's it such a pain to overtake there? seems low-key impossible"}
+{"id": "ef00125", "category": "circuit_story", "question": "Argentina's track used to go off back in the day, right? what races went down there?"}
+{"id": "ef00126", "category": "circuit_story", "question": "Detail the asphalt abrasion and degradation coefficient at the Las Vegas Strip Street Circuit from 2023 data, including how many pit stops it forced compared to the seasonal average."}
+{"id": "ef00127", "category": "circuit_story", "question": "which race at Spa was the absolute craziest? need the deets on the wildest moments"}
+{"id": "ef00128", "category": "circuit_story", "question": "As a newer fan, I'm curious about how the iconic Monaco Grand Prix circuit has evolved over the decades, and what makes it such a legendary and difficult race."}
+{"id": "ef00129", "category": "circuit_story", "question": "why is Suzuka considered a drivers favorite layout"}
+{"id": "ef00130", "category": "circuit_story", "question": "is Baku really as dangerous as it looks with those castle walls"}
+{"id": "ef00131", "category": "circuit_story", "question": "Could you discuss the history of the Imola circuit, particularly focusing on its tragic 1994 San Marino Grand Prix and how safety improvements transformed the track afterwards?"}
+{"id": "ef00132", "category": "circuit_story", "question": "Baku's just a street circuit but why does it always serve chaos? like, every year something mental happens lol"}
+{"id": "ef00133", "category": "circuit_story", "question": "What's the exact percentage of full-throttle time on a lap at Monza versus Singapore, and how does that correlate with fuel consumption differential per lap?"}
+{"id": "ef00134", "category": "circuit_story", "question": "Silverstone history like when was first race there"}
+{"id": "ef00135", "category": "circuit_story", "question": "why is Monaco still on the calendar its so slow and narrow"}
+{"id": "ef00136", "category": "circuit_story", "question": "what makes Interlagos so special for fans and drivers"}
+{"id": "ef00137", "category": "circuit_story", "question": "what makes Nürburgring Nordschleife so insanely hard? like, people call it the Green Hell for real?"}
+{"id": "ef00138", "category": "circuit_story", "question": "I'm interested in the Interlagos circuit in São Paulo. How has its anti-clockwise layout and bumpy surface shaped historic races, especially in relation to dramatic championship deciders?"}
+{"id": "ef00139", "category": "circuit_story", "question": "what was the rouen les essarts circuit like and why isnt it used"}
+{"id": "ef00140", "category": "circuit_story", "question": "heard Suzuka is a beast, why's it so special compared to other tracks?"}
+{"id": "ef00141", "category": "circuit_story", "question": "Give me the precise corner distribution breakdown at Suzuka—like how many are high-speed, mid-speed, and low-speed, and which specific corners are taken above 250 km/h."}
+{"id": "ef00142", "category": "circuit_story", "question": "Break down Monaco's average lap speed versus pole position speed over the last two decades—show me year-by-year data to prove if it's truly getting slower relative to other circuits."}
+{"id": "ef00143", "category": "rules_explained", "question": "If Red Bull pits Verstappen first and Perez a lap later during a safety car, is that considered team orders?"}
+{"id": "ef00144", "category": "rules_explained", "question": "What's the exact time advantage per lap from DRS when deployed at Monza's main straight versus Baku's? Include drag coefficient delta."}
+{"id": "ef00145", "category": "rules_explained", "question": "During the Hungarian Grand Prix, there was a five-second time penalty given. What's the difference between a five-second penalty, a ten-second penalty, and a stop-go penalty, and how are they served during the race?"}
+{"id": "ef00146", "category": "rules_explained", "question": "tyre compounds whats the difference between c3 and c4 at monza"}
+{"id": "ef00147", "category": "rules_explained", "question": "How does the FIA decide when to deploy the safety car vs virtual safety car? I'm strategizing for my fantasy team."}
+{"id": "ef00148", "category": "rules_explained", "question": "If a sprint race has 100km total distance at Spa, and the safety car leads for 3 laps at 200 km/h average speed, how many racing laps remain?"}
+{"id": "ef00149", "category": "rules_explained", "question": "If Pirelli's soft tyre degrades 0.15 seconds per lap in Bahrain's evening conditions, how many laps until it's slower than a fresh medium?"}
+{"id": "ef00150", "category": "rules_explained", "question": "qualifying q1 q2 q3 elimination how does it work"}
+{"id": "ef00151", "category": "rules_explained", "question": "I'm still a bit confused about sprint weekends. How does the schedule work from Friday to Sunday, and how do the results of the sprint race affect the starting grid for the main Grand Prix?"}
+{"id": "ef00152", "category": "rules_explained", "question": "safety car vs virtual safety car what the difference"}
+{"id": "ef00153", "category": "rules_explained", "question": "What's the penalty if a team like Ferrari gives a driver an illegal tow during qualifying? Affects my fantasy quali picks."}
+{"id": "ef00154", "category": "rules_explained", "question": "I've been following F1 since the V10 era, but the points system has changed a few times. Could you detail the current points distribution, including for sprint races, and how it differs from the early 2000s?"}
+{"id": "ef00155", "category": "rules_explained", "question": "How many reprimands before a driver gets a grid penalty, and when was the last time someone reached that threshold?"}
+{"id": "ef00156", "category": "rules_explained", "question": "Does overtaking under yellow flag conditions in the 70s like in the Hunt-Lauda era have similar penalties today?"}
+{"id": "ef00157", "category": "rules_explained", "question": "How many black-and-white flag warnings were issued in the 2023 season, broken down by driver and circuit?"}
+{"id": "ef00158", "category": "rules_explained", "question": "If a safety car period lasts exactly 11 laps and there's a 40% chance of rain per lap, what's the probability it stays dry the entire time?"}
+{"id": "ef00159", "category": "rules_explained", "question": "In Brawn's 2009 double diffuser era, would that be protested and penalized under current technical regulations?"}
+{"id": "ef00160", "category": "rules_explained", "question": "drs zones how many per track and when can they use it"}
+{"id": "ef00161", "category": "rules_explained", "question": "Could you explain the current qualifying format, from Q1 to Q3, including how many drivers are eliminated at each stage? Also, what happens if a session is interrupted by rain or a red flag?"}
+{"id": "ef00162", "category": "rules_explained", "question": "What are the different flag colors used by marshals, and what does each one signal to the drivers? I'm particularly interested in the blue flag, yellow flag, and black and white flag."}
+{"id": "ef00163", "category": "rules_explained", "question": "What's the exact fuel flow limit in kg/hour under current regulations, and how does that compare to the 2.4L V8 era?"}
+{"id": "ef00164", "category": "rules_explained", "question": "If a driver like Alonso changes all power unit components, what's the total grid penalty? Planning transfers."}
+{"id": "ef00165", "category": "rules_explained", "question": "In sprint weekends, do drivers get points for both sprint and main race finishes? Need to pick my fantasy lineup."}
+{"id": "ef00166", "category": "rules_explained", "question": "In the 1990s, I remember drivers sometimes getting black-flagged. How does that differ from a drive-through penalty today, and what kind of infractions would lead to a disqualification or black flag?"}
+{"id": "ef00167", "category": "rules_explained", "question": "Could you explain the rules around the formation lap? For example, what happens if a car stalls on the grid or if there's a jump start? How is that detected and penalized?"}
+{"id": "ef00168", "category": "rules_explained", "question": "Could you please explain how the Drag Reduction System (DRS) works in Formula 1? I'm a newer fan and I'd like to understand when drivers are allowed to open their rear wing."}
+{"id": "ef00169", "category": "rules_explained", "question": "During the ground effect era (1977-1982), what was the exact downforce coefficient difference between a Lotus 79 and a Ferrari 312T4?"}
+{"id": "ef00170", "category": "rules_explained", "question": "why did they penalise that guy for a jump start in 97"}
+{"id": "ef00171", "category": "rules_explained", "question": "Can a driver serve a jump start penalty and a grid penalty for engine parts in the same weekend?"}
+{"id": "ef00172", "category": "technical", "question": "What is ground effect mean in F1? Does it make car stick to track?"}
+{"id": "ef00173", "category": "technical", "question": "For a historical comparison piece: how did the downforce levels of a late-80s turbo car like the McLaren MP4/4 compare, in pure numbers, to a current ground effect car like the 2024 Red Bull?"}
+{"id": "ef00174", "category": "technical", "question": "Can you explain the specific deployment strategy of the MGU-K during an over-take? How does the driver 'call' for that extra energy versus it being managed automatically?"}
+{"id": "ef00175", "category": "technical", "question": "How does race car create downforce with wings?"}
+{"id": "ef00176", "category": "technical", "question": "Can you explain the hybrid power unit? I remember the old turbos."}
+{"id": "ef00177", "category": "technical", "question": "Watching pit stops now, it's like a ballet. What's the actual choreography? How many people are involved and what does each one do?"}
+{"id": "ef00178", "category": "technical", "question": "What changes in setup from wet track to dry track?"}
+{"id": "ef00179", "category": "technical", "question": "What is dirty air and why it make passing difficult?"}
+{"id": "ef00180", "category": "technical", "question": "How teams choose tire compounds for race weekend?"}
+{"id": "ef00181", "category": "technical", "question": "These cars seem so sensitive to setup. What's a basic explanation of how a team changes the car from a high-downforce Monaco setup to a low-drag Monza one?"}
+{"id": "ef00182", "category": "technical", "question": "Explain MGU-K system. How it recover energy under braking?"}
+{"id": "ef00183", "category": "technical", "question": "When a team talks about a 'high-drag' Monaco setup versus a 'low-drag' Monza setup, what are the two or three primary mechanical and aero components they are actually changing on the car?"}
+{"id": "ef00184", "category": "technical", "question": "Confirming some details for a tech piece: how precisely does the ground effect floor on the 2022-onwards cars generate downforce while preventing porpoising?"}
+{"id": "ef00185", "category": "technical", "question": "Difference between today's hybrid engines and V8 engines from before?"}
+{"id": "ef00186", "category": "technical", "question": "How does the halo affect airflow compared to the old cockpit designs?"}
+{"id": "ef00187", "category": "technical", "question": "How does DRS compare to the old skool F1 turbo boost button? Is it a real overtaking tool or just a gimmick?"}
+{"id": "ef00188", "category": "technical", "question": "We used to talk about downforce versus drag in the Williams FW14B era. How do designers balance that today with these complex front wings?"}
+{"id": "ef00189", "category": "technical", "question": "Explain the 'undercut' and 'overcut' strategies. Ayrton Senna used to pull it off without all these calculations."}
+{"id": "ef00190", "category": "technical", "question": "How have the aerodynamics evolved since the days of ground effect?"}
+{"id": "ef00191", "category": "technical", "question": "In the era of refueling, the car's weight changed massively during a race. How does the car's balance and behaviour change now as the fuel load burns off?"}
+{"id": "ef00192", "category": "technical", "question": "Why Red Bull car so dominant in ground effect era?"}
+{"id": "ef00193", "category": "technical", "question": "For a feature on Adrian Newey's design evolution: how does the underfloor vortex system on his 2024 Red Bull differ conceptually from the famous 'double diffuser' he pioneered at Williams in the early 90s?"}
+{"id": "ef00194", "category": "technical", "question": "Can you detail the exact sensor data a race engineer uses to determine if a car is 'bottoming out' too much, and what specific setup changes (ride height, spring rates) would they make to correct it during a practice session?"}
+{"id": "ef00195", "category": "technical", "question": "Can you walk me through a pit stop? Back in Nigel Mansell's day, they were slower but just as dramatic."}
+{"id": "ef00196", "category": "technical", "question": "How come cars can run closer to the ground now without bottoming out?"}
+{"id": "ef00197", "category": "technical", "question": "I'm fact-checking a line about tyre blankets. Post-2024 ban, what's the exact procedure for bringing tyres up to temperature on out laps, and is there a specific minimum temperature the drivers have to achieve before the formation lap?"}
+{"id": "ef00198", "category": "current_season", "question": "who's getting sacked next? my boy's seat is looking shaky ngl"}
+{"id": "ef00199", "category": "current_season", "question": "Provide the official, updated driver and constructor championship standings with point margins, and highlight the most critical upcoming battles for P2 and P3."}
+{"id": "ef00200", "category": "current_season", "question": "In terms of long-run pace and race simulations from practice sessions, which teams seem strongest, and are there any dark horses that might challenge the usual front-runners?"}
+{"id": "ef00201", "category": "current_season", "question": "Is there any precedent from a past era—say, the V10 or early hybrid years—for a championship fight tightening this dramatically after a mid-season runaway?"}
+{"id": "ef00202", "category": "current_season", "question": "Looking at historic data from this circuit, how do probable one-stop and two-stop strategies compare on total race time with this year's tyre compounds?"}
+{"id": "ef00203", "category": "current_season", "question": "In wet-dry races since 2010, what's the success rate (as a percentage) of teams pitting for slicks within 2 laps of the crossover point versus waiting 3+ laps, broken down by constructor?"}
+{"id": "ef00204", "category": "current_season", "question": "I'm picking my fantasy team for Qatar. Who's a good dark horse for points given the new tyre rules and high degradation?"}
+{"id": "ef00205", "category": "current_season", "question": "is there a driver from like the Senna era who'd dominate in these cars?"}
+{"id": "ef00206", "category": "current_season", "question": "How accurate have the pre-race predictions been this season? I'm interested in whether favorites often deliver or if there have been many surprises."}
+{"id": "ef00207", "category": "current_season", "question": "The championship is basically over, but for fantasy, who's got the best shot at Driver of the Day in the upcoming Hungarian Grand Prix?"}
+{"id": "ef00208", "category": "current_season", "question": "I'm hearing whispers about a potential return to ground-effect dominance reminiscent of the early 1980s. Is that a fair comparison given this season's aerodynamic philosophy?"}
+{"id": "ef00209", "category": "current_season", "question": "yo who's gonna win the championship this year? it's actually so close rn"}
+{"id": "ef00210", "category": "current_season", "question": "what's the weather looking like for quali? gonna be a mess or nah"}
+{"id": "ef00211", "category": "current_season", "question": "Hello! Could you please give me an overview of the race weekend schedule for the upcoming Grand Prix, including practice, qualifying, and race start times in my local time zone?"}
+{"id": "ef00212", "category": "current_season", "question": "I'd like to know if there are any notable driver or team updates for this weekend, such as penalties, new components, or performance upgrades being introduced."}
+{"id": "ef00213", "category": "current_season", "question": "Could you explain how the current championship points system works, and what scenarios might lead to a driver clinching the title in the coming races?"}
+{"id": "ef00214", "category": "current_season", "question": "Based on the last five races, what's the exact correlation coefficient between a driver's average practice long-run pace (in seconds per lap) and their actual race finish position?"}
+{"id": "ef00215", "category": "current_season", "question": "How much will the upgraded McLaren challenge Red Bull at this weekend's Austrian Grand Prix? Need to know for my constructor slot."}
+{"id": "ef00216", "category": "current_season", "question": "Looking at the championship, if Verstappen's current points-per-race average (25.3) holds, and Leclerc maintains his (18.7), at which race number mathematically does Max clinch the title assuming no DNFs for either?"}
+{"id": "ef00217", "category": "current_season", "question": "How accurate have the pre-race win probability models been this season, and what were their biggest forecasting failures that we've actually seen?"}
+{"id": "ef00218", "category": "current_season", "question": "Considering the forecast for race day, how might rain or variable conditions affect team strategies, particularly around pit stops and tyre choices?"}
+{"id": "ef00219", "category": "current_season", "question": "Given the current constructor standings, if Red Bull's development rate follows the same curve as Mercedes' in 2019 (0.15s/lap improvement per third of the season), when do they mathematically lock out P1 in the standings?"}
+{"id": "ef00220", "category": "current_season", "question": "Based purely on long-run data from practice, which constructor seems to have the most consistent race pace, and where are their main weaknesses?"}
+{"id": "ef00221", "category": "current_season", "question": "is perez cooked or can he actually challenge max this weekend?"}
+{"id": "ef00222", "category": "current_season", "question": "Could you provide some insight into which driver or team is favored to win this weekend's race, based on recent performances and circuit characteristics?"}
+{"id": "ef00223", "category": "current_season", "question": "Looking at historical data from past eras, like the Senna-Prost rivalry or the Vettel dominance years, how does the current championship battle compare in terms of intensity and unpredictability?"}
+{"id": "ef00224", "category": "current_season", "question": "Fact-check for me: are the performance gaps between the top three teams here at this track as large as some pundits claimed after FP2?"}
+{"id": "ef00225", "category": "current_season", "question": "What's the exact degradation delta per lap (in milliseconds) for the C4 tyre at COTA this season compared to the 2022 race, and how does that shift the undercut window?"}
+{"id": "ef00226", "category": "current_season", "question": "any chance the midfield could shock everyone and win? asking for a friend lol"}
+{"id": "ef00227", "category": "current_season", "question": "bruh what's the tyre strat for sunday? gonna be a one-stop or what"}
+{"id": "ef00228", "category": "current_season", "question": "Predictions say Ferrari are favourites at Spa. How accurate are these usually and should I trust them with my fantasy captain pick?"}
+{"id": "ef00229", "category": "current_season", "question": "Statistically, in the hybrid era (2014-present), how many times has the driver leading the championship after Round 5 gone on to win it, and what's the average margin in points?"}
+{"id": "ef00230", "category": "current_season", "question": "For Imola, using historical telemetry, what's the 95% confidence interval for the time loss per overtake at the Tamburello chicane, and how does that affect race strategy models for a car with a 0.15s/lap pace advantage?"}
+{"id": "ef00231", "category": "comparisons", "question": "between matra and brawn gp which team had the bigger glow-up and then fell off harder?"}
+{"id": "ef00232", "category": "comparisons", "question": "ok but seriously was ferrari's strategy in 2022 lowkey more of a mess than mclaren's in 2012?"}
+{"id": "ef00233", "category": "comparisons", "question": "Fact-check this: Did both Nigel Mansell and Alain Prost earn more points with Ferrari than they did during their world championship seasons with Williams (Mansell '92) and McLaren (Prost '89)?"}
+{"id": "ef00234", "category": "comparisons", "question": "When Lotus was a dominant force in the 1960s and 1970s versus its modern incarnation in the 2010s, how did the team's performance, innovations, and place in the grid hierarchy compare across those two distinct eras?"}
+{"id": "ef00235", "category": "comparisons", "question": "Can you verify the win-to-start ratio for both Jim Clark and Stirling Moss during their overlapping competitive periods in the early-to-mid 1960s?"}
+{"id": "ef00236", "category": "comparisons", "question": "Would you be able to compare the overall careers of Lewis Hamilton and Max Verstappen? I'm interested in seeing how their early careers differed and how their achievements stack up against each other."}
+{"id": "ef00237", "category": "comparisons", "question": "Porsche and Maserati both have rich histories in motorsport. Could you compare their eras of factory participation in Formula 1, focusing on time periods entered, their best championship results, and major innovations each introduced?"}
+{"id": "ef00238", "category": "comparisons", "question": "Can tell me about performance between Mercedes and Ferrari in 2017 to 2019 seasons?"}
+{"id": "ef00239", "category": "comparisons", "question": "Can you compare the impact of Brawn GP and Tyrrell Racing in their respective eras? I'm interested in how each team's single championship-winning season compares in terms of innovation, competitiveness, and long-term influence on the sport."}
+{"id": "ef00240", "category": "comparisons", "question": "who had more bad luck literally every race, hulkenberg or gasly? spill the tea"}
+{"id": "ef00241", "category": "comparisons", "question": "Between 2002 and 2009, Toyota's F1 team never scored more than 56 points in a season. In those same years, did the similarly new Honda team ever achieve a higher single-season total?"}
+{"id": "ef00242", "category": "comparisons", "question": "Compare the podium trajectory of the Williams team during their dominant 1992-1997 era against McLaren's during their 1988-1991 dominant period. How many more years did it take Williams to reach the same number of podiums from the start of each run?"}
+{"id": "ef00243", "category": "comparisons", "question": "Between Damon Hill and Jacques Villeneuve, who had the more statistically impressive career overall? I'd appreciate a comparison of their championship results, total wins, and podium finishes across their respective careers."}
+{"id": "ef00244", "category": "comparisons", "question": "Ayrton Senna vs Alain Prost their whole F1 careers compare please."}
+{"id": "ef00245", "category": "comparisons", "question": "I'm curious about Mika Häkkinen and Michael Schumacher's respective careers from 1998 to 2001. Could you compare their championship results, race wins, and podium finishes during that period?"}
+{"id": "ef00246", "category": "comparisons", "question": "For Eugenio Castellotti's F1 career (1955-1957), how did his finishing record versus teammates like Luigi Musso and Peter Collins compare with contemporaries like Masten Gregory in similar equipment?"}
+{"id": "ef00247", "category": "comparisons", "question": "Rubens Barrichello and Felipe Massa, their driving for Ferrari team compare results."}
+{"id": "ef00248", "category": "comparisons", "question": "Show me comparison for Sauber and Jordan teams in 1990s decade."}
+{"id": "ef00249", "category": "comparisons", "question": "like fr tho who had the better rookie season: lewis in '07 or max in '16? no cap"}
+{"id": "ef00250", "category": "comparisons", "question": "How was Honda different with Williams team versus with McLaren team in old times?"}
+{"id": "ef00251", "category": "comparisons", "question": "Contrast the pole-to-win conversion rates of Nico Rosberg at Mercedes (2014-2016) with those of his teammate Lewis Hamilton across the exact same three-year period."}
+{"id": "ef00252", "category": "comparisons", "question": "was jenson button's 2009 title run more impressive than rosberg's 2016? like which one had more plot armor"}
+{"id": "ef00253", "category": "comparisons", "question": "who's had the worst teammate curse - like ricciardo vs sainz or someone else?"}
+{"id": "ef00254", "category": "comparisons", "question": "I want know difference Red Bull Racing and McLaren how they did championship results from 2010 until 2013."}
+{"id": "ef00255", "category": "comparisons", "question": "yo can u settle this debate - was senna just washed vs prost or was he actually robbed all those times they raced?"}
+{"id": "ef00256", "category": "comparisons", "question": "Compare Kimi Räikkönen and Fernando Alonso in races of 2005. Who better?"}
+{"id": "ef00257", "category": "out_of_scope", "question": "Need cheap hotel near airport in Frankfurt."}
+{"id": "ef00258", "category": "out_of_scope", "question": "How to get from city centre to the mountain for hiking?"}
+{"id": "ef00259", "category": "out_of_scope", "question": "my wrist hurts from typing how do i fix it"}
+{"id": "ef00260", "category": "out_of_scope", "question": "my english teacher assigned an essay on shakespeare and it's giving me nightmares"}
+{"id": "ef00261", "category": "out_of_scope", "question": "please book a flight to milan asap price not important"}
+{"id": "ef00262", "category": "out_of_scope", "question": "whats the weather in monaco right now"}
+{"id": "ef00263", "category": "out_of_scope", "question": "I lose my passport in vacation, what do?"}
+{"id": "ef00264", "category": "out_of_scope", "question": "yo what's the vibe for the weather this weekend? tryna plan a beach day fr"}
+{"id": "ef00265", "category": "out_of_scope", "question": "What weather should expected in London on Friday?"}
+{"id": "ef00266", "category": "out_of_scope", "question": "lol did u see that tiktok of the cat? it had me dying"}
+{"id": "ef00267", "category": "out_of_scope", "question": "My friend says eat avocado is healthy, true?"}
+{"id": "ef00268", "category": "out_of_scope", "question": "recommend a dessert spot near silverstone circuit"}
+{"id": "ef00269", "category": "out_of_scope", "question": "Too much coffee is bad for stomach?"}
+{"id": "ef00270", "category": "out_of_scope", "question": "i need a weekend break suggestion for 2 people"}
+{"id": "ef00271", "category": "out_of_scope", "question": "is it too late to start learning guitar at 30"}
+{"id": "ef00272", "category": "out_of_scope", "question": "Tomorrow will rain? I have picnic plan."}
+{"id": "ef00273", "category": "out_of_scope", "question": "ay can u settle a debate? who was better: 80s rock or 90s hip hop?"}
+{"id": "ef00274", "category": "out_of_scope", "question": "can i run a marathon with only 2 months training"}
+{"id": "ef00275", "category": "out_of_scope", "question": "wassup got any tips for a tennis backhand? trying to impress at practice tmrw"}
+{"id": "ef00276", "category": "out_of_scope", "question": "what's a lit movie to watch? i'm so bored and netflix is dead atm"}
+{"id": "ef00277", "category": "out_of_scope", "question": "sis i'm hungry, what's a quick snack that isn't just more chips?"}
+{"id": "ef00278", "category": "out_of_scope", "question": "Is good to walk for heart health?"}
+{"id": "ef00279", "category": "unanswerable_news", "question": "Has Verstappen's new mechanics required a chassis weld that adds 187 grams? Need specifics on the stress fracture location and rumored weight distribution penalty."}
+{"id": "ef00280", "category": "unanswerable_news", "question": "will verstappen sign a new contract with red bull"}
+{"id": "ef00281", "category": "unanswerable_news", "question": "If Jean Behra hadn't missed that suspension inspection in 1952, what precise lap time would he have needed at Rouen to close the 8.3-second gap to Ascari?"}
+{"id": "ef00282", "category": "unanswerable_news", "question": "The rumour about Karun Chandhok: is it true HRT had a specific brake bias range 0.4% narrower than Virgin's in 2011, causing his three documented lock-ups?"}
+{"id": "ef00283", "category": "unanswerable_news", "question": "who is mercedes gonna pick if hamilton leaves"}
+{"id": "ef00284", "category": "unanswerable_news", "question": "allegations about budget cap breaches this season any updates"}
+{"id": "ef00285", "category": "unanswerable_news", "question": "will spa stay on the calendar"}
+{"id": "ef00286", "category": "unanswerable_news", "question": "rumour about honda making their own team again"}
+{"id": "ef00287", "category": "unanswerable_news", "question": "Is true rumor about Audi buy another team?"}
+{"id": "ef00288", "category": "unanswerable_news", "question": "is it true seb vettel is coming back"}
+{"id": "ef00289", "category": "unanswerable_news", "question": "any chance ross brawn returns to run a team"}
+{"id": "ef00290", "category": "unanswerable_news", "question": "rumors about aston martin changing their driver lineup next year"}
+{"id": "ef00291", "category": "unanswerable_news", "question": "If Ayrton Senna had run three more seasons, statistically how many more wins could he have achieved before the 27.5% reliability decline of 1997?"}
+{"id": "ef00292", "category": "unanswerable_news", "question": "Can you quantify the rumour: what percentage of the grid currently has performance clauses triggered after Qatar, and which three drivers are statistically most likely to move?"}
+{"id": "ef00293", "category": "unanswerable_news", "question": "I hear news that Max Verstappen retiring next season, this is true?"}
+{"id": "ef00294", "category": "unanswerable_news", "question": "What was the exact speed difference yesterday when Russell said Hamilton's setup was 3mm too high at turn 12 in FP2?"}
+{"id": "ef00295", "category": "unanswerable_news", "question": "Jody Scheckter will be drive for Ferrari in future?"}
+{"id": "ef00296", "category": "unanswerable_news", "question": "Lewis Hamilton said what in yesterday press conference?"}
+{"id": "ef00297", "category": "unanswerable_news", "question": "What Graham Hill would think of current Formula 1 cars?"}
+{"id": "ef00298", "category": "unanswerable_news", "question": "Based on the last three cockpit radio exchanges, calculate Ricciardo's probability of securing the Williams seat in 2025 as a percentage."}
+{"id": "ef00299", "category": "unanswerable_news", "question": "According to yesterday's paddock whispers, what's the exact timeline for Carlos Sainz's team announcement and which specific offers is he weighing right now?"}
+{"id": "ef00300", "category": "unanswerable_news", "question": "Is there new team coming to Formula 1 soon?"}
+{"id": "ef00301", "category": "false_premise", "question": "I remember reading that Takuma Sato had an F1 win with Honda around 2004, but I can't find it now."}
+{"id": "ef00302", "category": "false_premise", "question": "Can you tell me more about the 1958 Cuban Grand Prix? I heard it was a really important race for Stirling Moss, but I can't find many details about the circuit."}
+{"id": "ef00303", "category": "false_premise", "question": "How did Pascal Wehrlein do as a full-time driver for Mercedes in 2017?"}
+{"id": "ef00304", "category": "false_premise", "question": "Just getting into F1 history, how many championships did Felipe Massa win for Ferrari?"}
+{"id": "ef00305", "category": "false_premise", "question": "Wasn't the Miami Grand Prix on the calendar back in 2015? I'm sure I saw an old clip."}
+{"id": "ef00306", "category": "false_premise", "question": "I think Sebastian Vettel won four titles in a row with Ferrari from 2010 to 2014."}
+{"id": "ef00307", "category": "false_premise", "question": "I'm trying to remember—didn't Michael Schumacher clinch his very first World Championship title in 1992 with Benetton, after that intense battle with Senna?"}
+{"id": "ef00308", "category": "false_premise", "question": "I saw Marussia scored a podium once in 2014—who was driving for them that day?"}
+{"id": "ef00309", "category": "false_premise", "question": "Max Verstappen has been champion since 2020, hasn't he? That's four now."}
+{"id": "ef00310", "category": "false_premise", "question": "Alexander Albon's first Grand Prix win was so dramatic, at the 2020 Italian Grand Prix when he took the lead after the safety car, right? I remember him celebrating on the podium with Red Bull."}
+{"id": "ef00311", "category": "false_premise", "question": "Why did Mercedes struggle so much in the 2021 season after dominating for years?"}
+{"id": "ef00312", "category": "false_premise", "question": "How many races did Nico Hulkenberg win for Renault during their factory team era?"}
+{"id": "ef00313", "category": "false_premise", "question": "Is it true that Nick Heidfeld finally won his first race at the 2008 Canadian Grand Prix?"}
+{"id": "ef00314", "category": "false_premise", "question": "Did Red Bull ever have a season where they didn't win any races between 2010 and 2013?"}
+{"id": "ef00315", "category": "false_premise", "question": "I heard Alain Prost has 6 world driver's titles because he won in 1985, 1986, 1993, 1995, and two others I forget."}
+{"id": "ef00316", "category": "false_premise", "question": "Is it true that the German Grand Prix at the Nürburgring was held every single year without fail from 1951 to 2013? I'm curious about the years it might have been bypassed."}
+{"id": "ef00317", "category": "false_premise", "question": "I read that Ayrton Senna won the championship three years in a row from 1990 to 1992 for McLaren. Is that correct, and what made that run so special?"}
+{"id": "ef00318", "category": "false_premise", "question": "I heard Robert Kubica came back and won a race for Williams in 2021."}
+{"id": "ef00319", "category": "false_premise", "question": "Is it true that IndyCar champion Alessandro Zanardi also won 2 Formula 1 championships in the early 2000s?"}
+{"id": "ef00320", "category": "false_premise", "question": "Niki Lauda's comeback race after his crash was at the 1977 South African Grand Prix, wasn't it? I believe he finished in the points for Ferrari that day."}
+{"id": "ef00321", "category": "false_premise", "question": "Was the 2020 Singapore Grand Prix cancelled due to COVID like Monaco was?"}
+{"id": "ef00322", "category": "false_premise", "question": "Could you provide some details on Kimi Räikkönen's victory at the 2005 United States Grand Prix? I recall him winning there in the McLaren after a fantastic duel with Alonso."}
+{"id": "ef00323", "category": "vague_ambiguous", "question": "Compare the career podium percentages of all drivers surnamed 'Brabham': Jack, Gary, and David."}
+{"id": "ef00324", "category": "vague_ambiguous", "question": "Were both Piquets world champions?"}
+{"id": "ef00325", "category": "vague_ambiguous", "question": "Why Alfa Romeo team sometimes disappear and come back with different car?"}
+{"id": "ef00326", "category": "vague_ambiguous", "question": "Was Lotus successful in the 80s? I heard they had different teams."}
+{"id": "ef00327", "category": "vague_ambiguous", "question": "Who was Alesi? I've seen that name in some old highlights."}
+{"id": "ef00328", "category": "vague_ambiguous", "question": "Which Verstappen was in F1 first, Max or his dad?"}
+{"id": "ef00329", "category": "vague_ambiguous", "question": "Tell me all drivers named Piquet and their championships."}
+{"id": "ef00330", "category": "vague_ambiguous", "question": "I'm confused about Williams. Which era was most dominant?"}
+{"id": "ef00331", "category": "vague_ambiguous", "question": "Show the fastest lap count per season for all drivers named 'Andretti' who started a Grand Prix."}
+{"id": "ef00332", "category": "vague_ambiguous", "question": "Provide the total race distances completed (in km) by all F1 teams with 'Alfa Romeo' in their name, across all their separate participations."}
+{"id": "ef00333", "category": "vague_ambiguous", "question": "Break down the win-to-start ratio of every Williams team in F1 history: Frank Williams (1977-present), Walter Wolf (1976-1979), and Ishard/Équipe Ligier (1985 rebrand). Give percentages to two decimal places."}
+{"id": "ef00334", "category": "vague_ambiguous", "question": "What is the exact career points total of every driver named 'Jones' in Formula 1, broken down by individual?"}
+{"id": "ef00335", "category": "vague_ambiguous", "question": "Did Brabham have a team or just drive? I see it mentioned both ways."}
+{"id": "ef00336", "category": "vague_ambiguous", "question": "Which Fittipaldi driver had more career points per race entered: Wilson or Emerson?"}
+{"id": "ef00337", "category": "vague_ambiguous", "question": "I heard Sauber changed names a lot – what teams were actually them?"}
+{"id": "ef00338", "category": "vague_ambiguous", "question": "Compare the 100% finish rate percentages for all teams formally called 'Benetton' (1986–2001) versus all teams later called 'Benetton' (owned but differently named)."}
+{"id": "ef00339", "category": "vague_ambiguous", "question": "Lotus team name same but not same team? Please explain history."}
+{"id": "ef00340", "category": "vague_ambiguous", "question": "Which driver named Fittipaldi have win Grand Prix?"}
+{"id": "ef00341", "category": "opinion", "question": "Fact-checking a list of classic races: which Grand Prix from the 2000s is universally acknowledged as the most strategically complex and thrilling? I've heard Brazil 2008 and Suzuka 2005 mentioned."}
+{"id": "ef00342", "category": "opinion", "question": "For Renault's works return, should they prioritize signing a young talent like Andrea Kimi Antonelli, or pursue an established star like Carlos Sainz? What does F1's historical precedent suggest is the smarter move? I'm writing a strategy analysis."}
+{"id": "ef00343", "category": "opinion", "question": "most exciting rookie in the last 20 years"}
+{"id": "ef00344", "category": "opinion", "question": "Comparing only the data—qualifying gaps, race head-to-heads, and points finishes—who was the more effective driver at Benetton in the mid-90s: Michael Schumacher's various teammates, or Ayrton Senna's teammates at McLaren in the late 80s? I'm analyzing teammate benchmarks."}
+{"id": "ef00345", "category": "opinion", "question": "who was the greatest driver of the 1960s"}
+{"id": "ef00346", "category": "opinion", "question": "what was the best car of the 2010s"}
+{"id": "ef00347", "category": "opinion", "question": "best race of the v8 era"}
+{"id": "ef00348", "category": "opinion", "question": "why does mclaren struggle with race pace tell me now"}
+{"id": "ef00349", "category": "opinion", "question": "what car was the most innovative lotus or ferrari"}
+{"id": "ef00350", "category": "opinion", "question": "was schumacher better than hamilton"}
+{"id": "ef00351", "category": "opinion", "question": "Given his standout 1999 season with Jordan and frequent podium finishes against stronger machinery, could Heinz-Harald Frentzen be considered one of the most underrated drivers of the modern era? I'm fact-checking for a feature on overlooked talents."}
+{"id": "ef00352", "category": "opinion", "question": "should red bull sign norris"}
+{"id": "ef00353", "category": "opinion", "question": "who had the better career prost or lauda"}
+{"id": "ef00354", "category": "opinion", "question": "should red bull sign new drivers or stick with perez"}
+{"id": "ef00355", "category": "opinion", "question": "Williams need a resurgence. Based on current driver market logic and historical signing success, who should they prioritize to sign for 2026—a proven veteran or a top junior? I'm weighing options for my column."}
+{"id": "ef00356", "category": "opinion", "question": "Based on pure driving skill and racecraft, ignoring championships, who do analysts regard as the single greatest F1 driver in history? I'm compiling expert opinions for an article."}
+{"id": "ef00357", "category": "opinion", "question": "is verstappen better than senna"}
+{"id": "ef00358", "category": "opinion", "question": "is lewis better than senna"}

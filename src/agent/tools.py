@@ -13,9 +13,9 @@ from typing import Literal
 
 import numpy as np
 
-from src.agent import f1_api
+from src.agent import context, f1_api
 from src.agent.scenarios import closest_rival, remaining_rounds, title_odds, title_scenario
-from src.api.cache import get_json
+from src.api.cache import LOCAL_DATA_DIR, get_json
 from src.api.enrich import head_to_head as _h2h
 from src.api.enrich import with_probabilities
 from src.models.catalog import CANONICAL_PRED_COLS, FEATURE_LABELS, MODEL_DIR
@@ -32,8 +32,40 @@ TARGET_MEANING = {
 }
 
 
+def _payload_name(season: int | None = None, round: int | None = None, folder: str = "") -> str:
+    """Which forecast file a tool reads: the one asked for, else the current
+    weekend: the live latest.json, or the replayed snapshot (src/agent/context.py)."""
+    if season is not None and round is not None:
+        return f"{folder}{season}_{round}.json"
+    snap = context.snapshot()
+    if not snap:
+        return "latest.json"
+    variant = context.variant()
+    name = f"{snap[0]}_{snap[1]}{'_' + variant if variant else ''}.json"
+    return f"snapshots/{folder}{name}" if (LOCAL_DATA_DIR / "snapshots" / folder / name).exists() else f"{folder}{name}"
+
+
+def _completed_round() -> int | None:
+    """The last finished round the standings should reflect when replaying a weekend."""
+    snap = context.snapshot()
+    return snap[1] - 1 if snap else None
+
+
 def pct(p) -> float | None:
     return None if p is None else round(float(p), 4)
+
+
+def driver_name(code: str) -> str | None:
+    """A driver's full name from his 3-letter code, so nothing (a person or a
+    model) has to guess who "ANT" is. Uses the history table; None where that
+    isn't installed (the serverless API), which only costs the name."""
+    try:
+        from src.agent import history
+
+        did, _ = history.find_driver(code)
+        return history._data()["people"]["drivers"][did]["name"] if did else None
+    except Exception:
+        return None
 
 
 def forecast(season: int | None = None, round: int | None = None) -> dict:
@@ -43,7 +75,7 @@ def forecast(season: int | None = None, round: int | None = None) -> dict:
     the winner, plus race length and safety-car chance. season/round=None
     means the current race weekend. Raises for a past race with no stored
     forecast -- use past_race_prediction for those."""
-    payload = get_json("latest.json" if season is None or round is None else f"{season}_{round}.json")
+    payload = get_json(_payload_name(season, round))
     p = with_probabilities(payload)
     race = p.get("race", {})
     drivers = []
@@ -51,7 +83,7 @@ def forecast(season: int | None = None, round: int | None = None) -> dict:
         pr = d.get("probabilities", {})
         q = d.get("quali_odds", {})
         drivers.append({
-            "predicted_rank": rank, "driver": d["driver"], "team": d["team"], "grid": d.get("grid_position"),
+            "predicted_rank": rank, "driver": d["driver"], "name": driver_name(d["driver"]), "team": d["team"], "grid": d.get("grid_position"),
             "win": pct(pr.get("win")), "podium": pct(pr.get("podium")), "points": pct(pr.get("top10")),
             "likely_range": d.get("position_band"), "retire_risk": pct(d.get("retire_risk")),
             "beats_teammate": pct(d.get("beats_teammate")),
@@ -81,15 +113,15 @@ def explain_prediction(driver: str, target: Target = "finish_position", season: 
     """Why the model predicts what it does for one driver: the inputs that
     pushed the prediction up or down most (SHAP contributions, in the
     target's own units), with each input's value. driver is the 3-letter code."""
-    p = get_json("latest.json" if season is None or round is None else f"{season}_{round}.json")
+    p = get_json(_payload_name(season, round))
     code = driver_code(p, driver)
     d = next(x for x in p["drivers"] if x["driver"] == code)
     exp = d.get("explanations", {}).get(target)
     if exp is None:
         raise ValueError("this forecast has no stored breakdown")
     return {
-        "season": p["season"], "round": p["round"], "circuit": p["location"],
-        "driver": code, "team": d["team"], "target": target, "prediction_of": TARGET_MEANING[target],
+        "season": p["season"], "round": p["round"], "race": p.get("event_name") or p["location"], "circuit": p["location"],
+        "driver": code, "name": driver_name(code), "team": d["team"], "target": target, "prediction_of": TARGET_MEANING[target],
         "predicted": exp["predicted_value"], "average_prediction": exp["base_value"],
         "contributions": [{"feature": c["feature"], "input": FEATURE_LABELS.get(c["feature"], c["feature"]),
                            "value": c["value"], "effect": c["shap"]} for c in exp["top_contributions"]],
@@ -98,20 +130,22 @@ def explain_prediction(driver: str, target: Target = "finish_position", season: 
 
 def head_to_head(driver_a: str, driver_b: str, season: int | None = None, round: int | None = None) -> dict:
     """Chance driver_a finishes ahead of driver_b in a race, from 10,000 simulated races."""
-    payload = get_json("latest.json" if season is None or round is None else f"{season}_{round}.json")
+    payload = get_json(_payload_name(season, round))
     p = with_probabilities(payload)
     a, b = driver_code(p, driver_a), driver_code(p, driver_b)
     chance = _h2h(p, a, b)
     exp = {d["driver"]: d.get("expected_position") for d in p["drivers"]}
-    return {"season": p["season"], "round": p["round"], "driver_a": a, "driver_b": b,
+    return {"season": p["season"], "round": p["round"], "driver_a": a, "name_a": driver_name(a), "driver_b": b, "name_b": driver_name(b),
             "a_ahead_of_b": pct(chance), "expected_finish_a": exp.get(a), "expected_finish_b": exp.get(b)}
 
 
 def championship_state() -> dict:
     """Standings, remaining rounds and simulated title odds (shared with the API)."""
-    standings = f1_api.get_driver_standings()
-    remaining = remaining_rounds(f1_api.get_season_schedule(), f1_api.get_current_round())
-    forecast_payload = with_probabilities(get_json("latest.json"))
+    done, snap = _completed_round(), context.snapshot()
+    season = str(snap[0]) if snap else "current"
+    standings = f1_api.get_driver_standings(season, done)
+    remaining = remaining_rounds(f1_api.get_season_schedule(season), done if done is not None else f1_api.get_current_round())
+    forecast_payload = with_probabilities(get_json(_payload_name()))
     strength = {d["driver"]: d["predicted_finish_position"] for d in forecast_payload["drivers"]}
     worst = max(strength.values()) + 2
     retire = [d.get("retire_risk") or 0.1 for d in forecast_payload["drivers"]]
@@ -130,7 +164,8 @@ def championship(kind: Literal["drivers", "constructors"] = "drivers") -> dict:
     c = championship_state()
     left = {"races": len(c["remaining"]), "sprints": sum(r["is_sprint"] for r in c["remaining"])}
     if kind == "constructors":
-        teams = f1_api.get_constructor_standings()
+        snap = context.snapshot()
+        teams = f1_api.get_constructor_standings(str(snap[0]) if snap else "current", _completed_round())
         return {"remaining": left, "constructors": [
             {**t, "title_chance": pct(c["odds"]["team_champion"].get(t["name"]))} for t in teams]}
     return {"remaining": left, "drivers": [
@@ -163,17 +198,18 @@ def race_strategy(safety_car_lap: int | None = None, season: int | None = None, 
     windows), how much slower each alternative is, and each plan's chance of
     being fastest once random safety cars are simulated. Pass
     safety_car_lap to see how a safety car on that lap changes the best plan."""
-    p = get_json("latest.json" if season is None or round is None else f"{season}_{round}.json")
+    p = get_json(_payload_name(season, round))
     laps = p.get("race", {}).get("laps") or 57
-    return {"season": p["season"], "round": p["round"], **simulate(p["location"], int(laps), sc_lap=safety_car_lap)}
+    return {"season": p["season"], "round": p["round"], "race": p.get("event_name") or p["location"], **simulate(p["location"], int(laps), sc_lap=safety_car_lap)}
 
 
 def forecast_timeline(driver: str | None = None, season: int | None = None, round: int | None = None) -> list[dict]:
     """How the forecast changed through the weekend (before practice, after
     each practice, after qualifying): predicted finishing position per
     driver at each point. Pass a driver code to follow one driver."""
-    p = get_json("latest.json" if season is None or round is None else f"{season}_{round}.json")
-    timeline = get_json(f"timeline/{p['season']}_{p['round']}.json")
+    p = get_json(_payload_name(season, round))
+    timeline = get_json(_payload_name(folder="timeline/") if context.snapshot() and season is None
+                        else f"timeline/{p['season']}_{p['round']}.json")
     code = driver_code(p, driver) if driver else None
     return [{"when": s["label"], "drivers": [
         {"driver": d["driver"], "predicted_finish": d["predicted_finish_position"]}
@@ -186,6 +222,29 @@ def search_rules(query: str, k: int = 5) -> list[dict]:
     release", "grid penalty power unit", "safety car restart"). Each hit
     carries its document and article number, so it can be cited exactly."""
     return search(query, k=k, doc_types={"regulation", "steward_decision"})
+
+
+def search_knowledge(query: str, k: int = 4, only: str | None = None) -> dict:
+    """Search everything written down: Wikipedia articles on drivers, teams,
+    circuits, seasons and Grands Prix, rules explainers, the FIA regulations,
+    steward decisions and circuit notes. For explanations, background and
+    stories; use `records`/`driver_career`/`history_results` for any number.
+    Hits are interleaved best-first from the two indexes (BM25 scores are not
+    comparable across them) and carry their source, so they can be cited."""
+    from src.rag.corpus import WIKI_INDEX_PATH
+
+    main_types = {"rules": {"regulation", "steward_decision"}, "circuit_notes": {"circuit_summary"}}.get(only)
+    main = [] if only == "wikipedia" else search(query, k=k, doc_types=main_types)
+    wiki = search(query, k=k, index_path=WIKI_INDEX_PATH) if WIKI_INDEX_PATH.exists() and only in (None, "wikipedia") else []
+    # BM25 always returns something; keep only hits within half the best score of their own index
+    main, wiki = (([h for h in hs if h["score"] >= 0.5 * hs[0]["score"]] if hs else []) for hs in (main, wiki))
+    hits, i = [], 0
+    while len(hits) < k and (i < len(main) or i < len(wiki)):
+        hits += [h for h in (wiki[i:i + 1] + main[i:i + 1])]
+        i += 1
+    return {"hits": [{"title": h["title"], "source": h["source"], "doc_type": h["doc_type"], "article": h.get("article"),
+                      "license": h.get("license"), "text": h["text"][:650]} for h in hits[:k]],
+            "note": "Wikipedia text is CC BY-SA 4.0" if wiki else None}
 
 
 def circuit_guide(circuit: str) -> str:
@@ -212,10 +271,13 @@ def past_race_prediction(season: int, round: int) -> dict:
     """For a race that has already happened: what the model predicted
     beforehand (from a model trained only on earlier races) next to the real
     result, per driver."""
+    snap = context.snapshot()
+    if snap and (season, round) >= snap:
+        raise ValueError(f"{season} round {round} hasn't been raced yet")
     b = get_json(f"backtest/{season}_{round}.json")
     rows = sorted(b["drivers"], key=lambda d: d["finish_position"]["actual"] or 99)
     return {"season": season, "round": round, "circuit": b["location"], "method": b.get("method"), "drivers": [
-        {"driver": d["driver"], "actual_finish": d["finish_position"]["actual"], "predicted_finish": d["finish_position"]["predicted"],
+        {"driver": d["driver"], "name": driver_name(d["driver"]), "actual_finish": d["finish_position"]["actual"], "predicted_finish": d["finish_position"]["predicted"],
          "actual_places_gained": d["quali_delta"]["actual"], "predicted_places_gained": d["quali_delta"]["predicted"]}
         for d in rows]}
 
@@ -234,9 +296,9 @@ def model_track_record() -> dict:
 def season_schedule(season: int | None = None) -> dict:
     """The season calendar: rounds, venues, race start times (UTC), sprint
     weekends, and which race is next."""
-    season = season or datetime.now(timezone.utc).year
+    season = season or context.today().year
     sched = get_json(f"schedule/{season}.json")
-    now = datetime.now(timezone.utc).isoformat()
+    now = context.today().isoformat()
     upcoming = [r for r in sched if (r.get("RaceStartUtc") or "") > now[:19]]
     return {"season": season, "next_round": upcoming[0]["RoundNumber"] if upcoming else None, "rounds": [
         {"round": r["RoundNumber"], "event": r["EventName"], "location": r["Location"], "race_start_utc": r.get("RaceStartUtc"),
