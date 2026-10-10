@@ -80,7 +80,19 @@ def test_race_forecast_handler():
     assert r["ok"] and "|" in r["text"] and not r["llm"]
 
 
-def test_qualifying_lens_shows_pole_odds():
+def test_qualifying_lens_shows_pole_odds(monkeypatch):
+    # pole odds only exist until qualifying has run, so pin the forecast to
+    # before it rather than depend on where the live weekend happens to be
+    from src.agent import tools
+
+    real = tools.get_json
+
+    def before_qualifying(name):
+        p = real(name)
+        return {**p, "stage": "post_practice", "generated_at": "test-before-qualifying",
+                "known_sessions": {**p["known_sessions"], "qualifying": False}}
+
+    monkeypatch.setattr(tools, "get_json", before_qualifying)
     r = dispatch("race_forecast", "who is favourite for pole", {})
     assert r["ok"] and "Pole" in r["text"]
 
