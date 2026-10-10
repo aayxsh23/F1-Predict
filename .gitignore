@@ -80,6 +80,7 @@ src/rag/saved/
 src/models/saved/*
 !src/models/saved/*_xgb.json
 !src/models/saved/pl_calibration.json
+!src/models/saved/blend.json
 !src/models/saved/*_metrics.json
 
 # Notebooks

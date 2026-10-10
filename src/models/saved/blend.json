@@ -1,0 +1,86 @@
+{
+  "weights": {
+    "finish_grid": 0.6,
+    "finish_sprint": 0.25,
+    "quali_sprint": 0.2,
+    "quali_team": 0.25
+  },
+  "held_out": {
+    "finish_grid": {
+      "post_quali": {
+        "n": 911,
+        "mae_model": 3.3063,
+        "mae_blend": 3.1607,
+        "blend_minus_model_ci95": [
+          -0.1984,
+          -0.0903
+        ],
+        "winner_pred_model": 0.523,
+        "podium_pred_model": 1.886,
+        "winner_pred": 0.591,
+        "podium_pred": 2.023
+      },
+      "race_day": {
+        "n": 911,
+        "mae_model": 3.2919,
+        "mae_blend": 3.1771,
+        "blend_minus_model_ci95": [
+          -0.1672,
+          -0.0589
+        ],
+        "winner_pred_model": 0.5,
+        "podium_pred_model": 1.909,
+        "winner_pred": 0.614,
+        "podium_pred": 2.023
+      }
+    },
+    "finish_sprint": {
+      "post_sprint": {
+        "n": 270,
+        "mae_model": 3.8135,
+        "mae_blend": 3.7293,
+        "blend_minus_model_ci95": [
+          -0.2104,
+          0.0555
+        ],
+        "winner_pred_model": 0.308,
+        "podium_pred_model": 1.462,
+        "winner_pred": 0.308,
+        "podium_pred": 1.615
+      }
+    },
+    "quali_sprint": {
+      "post_sprint_quali": {
+        "n": 247,
+        "mae_model": 0.7732,
+        "mae_blend": 0.7399,
+        "blend_minus_model_ci95": [
+          -0.0503,
+          -0.0117
+        ]
+      },
+      "post_sprint": {
+        "n": 247,
+        "mae_model": 0.7732,
+        "mae_blend": 0.7399,
+        "blend_minus_model_ci95": [
+          -0.0503,
+          -0.0117
+        ]
+      }
+    },
+    "quali_team": {
+      "pre_weekend": {
+        "n": 877,
+        "mae_model": 0.6824,
+        "mae_blend": 0.6604,
+        "blend_minus_model_ci95": [
+          -0.0347,
+          -0.0103
+        ]
+      }
+    }
+  },
+  "method": "one weight per blend, chosen by MAE on tuning-window walk-forward predictions (finishers for finishing position); held_out = races after the tuning window",
+  "fitted_at": "2026-10-10T15:12:35+00:00"
+}
