@@ -59,8 +59,13 @@ function Set-Failures([int]$n) {
     $s[$job] = $n
     $s | ConvertTo-Json | Set-Content -Encoding utf8 $statePath
 }
+# Windows PowerShell mangles embedded quotes in arguments to programs, so
+# nothing passed to gh contains any: filter here, and send the body as a file
 function Get-OpenAlert {
-    try { return (gh issue list --state open --search "in:title `"$title`"" --json number --jq ".[0].number" 2>$null) } catch { return $null }
+    try {
+        $issues = gh issue list --state open --limit 100 --json number,title 2>$null | ConvertFrom-Json
+        return ($issues | Where-Object { $_.title -eq $title } | Select-Object -First 1).number
+    } catch { return $null }
 }
 function Fail([int]$code) {
     $n = [int](Read-State)[$job] + 1
@@ -70,12 +75,18 @@ function Fail([int]$code) {
         $tail = (Get-Content $log -Tail 30 -Encoding utf8 | ForEach-Object { "    $_" }) -join "`n"
         $body = "The scheduled ``$job`` job on the home PC has failed $n time(s) in a row (exit code $code). " +
                 "It keeps retrying; this issue closes itself on the next success.`n`nEnd of %TEMP%\f1-refresh.log:`n`n$tail"
-        try { gh issue create --title $title --body $body 2>&1 | Out-File -Append -Encoding utf8 $log } catch {}
+        $bodyFile = Join-Path $env:TEMP "f1-refresh-alert.md"
+        Set-Content -Encoding utf8 -Path $bodyFile -Value $body
+        try { gh issue create --title $title --body-file $bodyFile 2>&1 | Out-File -Append -Encoding utf8 $log } catch {}
     }
     exit $code
 }
 function Step([string]$exe) {
     "[$(Get-Date -Format s)] $exe $args" | Out-File -Append -Encoding utf8 $log
+    if (-not (Get-Command $exe -ErrorAction SilentlyContinue)) {  # a missing program sets no exit code
+        "[$(Get-Date -Format s)] not found: $exe" | Out-File -Append -Encoding utf8 $log
+        Fail 127
+    }
     & $exe @args 2>&1 | Out-File -Append -Encoding utf8 $log
     if ($LASTEXITCODE) { Fail $LASTEXITCODE }
 }
