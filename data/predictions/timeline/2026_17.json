@@ -278,145 +278,6 @@
     ]
   },
   {
-    "label": "Official grid",
-    "stage": "race_day",
-    "generated_at": "2026-10-11T07:00:20.299948+00:00",
-    "drivers": [
-      {
-        "driver": "VER",
-        "predicted_finish_position": 1.7347,
-        "predicted_qualifying_gap_pct": 0.4665,
-        "predicted_race_gap_pct": 0.1915
-      },
-      {
-        "driver": "LEC",
-        "predicted_finish_position": 2.7201,
-        "predicted_qualifying_gap_pct": 0.2572,
-        "predicted_race_gap_pct": 0.2314
-      },
-      {
-        "driver": "HAM",
-        "predicted_finish_position": 3.158,
-        "predicted_qualifying_gap_pct": 0.5144,
-        "predicted_race_gap_pct": 0.403
-      },
-      {
-        "driver": "ANT",
-        "predicted_finish_position": 3.4969,
-        "predicted_qualifying_gap_pct": 0.405,
-        "predicted_race_gap_pct": 0.5607
-      },
-      {
-        "driver": "NOR",
-        "predicted_finish_position": 4.6576,
-        "predicted_qualifying_gap_pct": 0.333,
-        "predicted_race_gap_pct": 0.3819
-      },
-      {
-        "driver": "PIA",
-        "predicted_finish_position": 5.4099,
-        "predicted_qualifying_gap_pct": 0.5029,
-        "predicted_race_gap_pct": 0.559
-      },
-      {
-        "driver": "LAW",
-        "predicted_finish_position": 7.7655,
-        "predicted_qualifying_gap_pct": 1.6092,
-        "predicted_race_gap_pct": 1.4079
-      },
-      {
-        "driver": "GAS",
-        "predicted_finish_position": 7.8585,
-        "predicted_qualifying_gap_pct": 1.5989,
-        "predicted_race_gap_pct": 1.3895
-      },
-      {
-        "driver": "LIN",
-        "predicted_finish_position": 8.2662,
-        "predicted_qualifying_gap_pct": 1.9673,
-        "predicted_race_gap_pct": 1.7785
-      },
-      {
-        "driver": "RUS",
-        "predicted_finish_position": 9.4368,
-        "predicted_qualifying_gap_pct": 0.2779,
-        "predicted_race_gap_pct": 1.0119
-      },
-      {
-        "driver": "HUL",
-        "predicted_finish_position": 10.1156,
-        "predicted_qualifying_gap_pct": 2.1737,
-        "predicted_race_gap_pct": 1.6085
-      },
-      {
-        "driver": "HAD",
-        "predicted_finish_position": 10.565,
-        "predicted_qualifying_gap_pct": 0.6483,
-        "predicted_race_gap_pct": 1.4192
-      },
-      {
-        "driver": "OCO",
-        "predicted_finish_position": 11.8473,
-        "predicted_qualifying_gap_pct": 3.1175,
-        "predicted_race_gap_pct": 2.0791
-      },
-      {
-        "driver": "BEA",
-        "predicted_finish_position": 11.9039,
-        "predicted_qualifying_gap_pct": 2.7244,
-        "predicted_race_gap_pct": 1.8432
-      },
-      {
-        "driver": "COL",
-        "predicted_finish_position": 12.4253,
-        "predicted_qualifying_gap_pct": 1.882,
-        "predicted_race_gap_pct": 1.9841
-      },
-      {
-        "driver": "BOR",
-        "predicted_finish_position": 12.5819,
-        "predicted_qualifying_gap_pct": 2.112,
-        "predicted_race_gap_pct": 1.9765
-      },
-      {
-        "driver": "SAI",
-        "predicted_finish_position": 13.348,
-        "predicted_qualifying_gap_pct": 3.1476,
-        "predicted_race_gap_pct": 2.217
-      },
-      {
-        "driver": "ALO",
-        "predicted_finish_position": 15.1202,
-        "predicted_qualifying_gap_pct": 3.8512,
-        "predicted_race_gap_pct": 2.7765
-      },
-      {
-        "driver": "ALB",
-        "predicted_finish_position": 15.3631,
-        "predicted_qualifying_gap_pct": 3.286,
-        "predicted_race_gap_pct": 2.3778
-      },
-      {
-        "driver": "STR",
-        "predicted_finish_position": 16.3891,
-        "predicted_qualifying_gap_pct": 4.2282,
-        "predicted_race_gap_pct": 3.0528
-      },
-      {
-        "driver": "PER",
-        "predicted_finish_position": 16.5087,
-        "predicted_qualifying_gap_pct": 4.3233,
-        "predicted_race_gap_pct": 2.7866
-      },
-      {
-        "driver": "BOT",
-        "predicted_finish_position": 17.247,
-        "predicted_qualifying_gap_pct": 4.4185,
-        "predicted_race_gap_pct": 3.3082
-      }
-    ]
-  },
-  {
     "label": "After qualifying",
     "stage": "post_quali",
     "generated_at": "2026-10-11T11:01:18.520377+00:00",
@@ -552,6 +413,145 @@
         "predicted_finish_position": 17.5738,
         "predicted_qualifying_gap_pct": 4.4185,
         "predicted_race_gap_pct": 3.3082
+      }
+    ]
+  },
+  {
+    "label": "Official grid",
+    "stage": "race_day",
+    "generated_at": "2026-10-11T11:30:41.873267+00:00",
+    "drivers": [
+      {
+        "driver": "VER",
+        "predicted_finish_position": 1.7347,
+        "predicted_qualifying_gap_pct": 0.4665,
+        "predicted_race_gap_pct": 0.1915
+      },
+      {
+        "driver": "LEC",
+        "predicted_finish_position": 2.7201,
+        "predicted_qualifying_gap_pct": 0.2572,
+        "predicted_race_gap_pct": 0.2314
+      },
+      {
+        "driver": "HAM",
+        "predicted_finish_position": 3.158,
+        "predicted_qualifying_gap_pct": 0.5144,
+        "predicted_race_gap_pct": 0.403
+      },
+      {
+        "driver": "ANT",
+        "predicted_finish_position": 3.4969,
+        "predicted_qualifying_gap_pct": 0.405,
+        "predicted_race_gap_pct": 0.5607
+      },
+      {
+        "driver": "NOR",
+        "predicted_finish_position": 4.6576,
+        "predicted_qualifying_gap_pct": 0.333,
+        "predicted_race_gap_pct": 0.3819
+      },
+      {
+        "driver": "PIA",
+        "predicted_finish_position": 5.4099,
+        "predicted_qualifying_gap_pct": 0.5029,
+        "predicted_race_gap_pct": 0.559
+      },
+      {
+        "driver": "LAW",
+        "predicted_finish_position": 7.7655,
+        "predicted_qualifying_gap_pct": 1.6092,
+        "predicted_race_gap_pct": 1.4079
+      },
+      {
+        "driver": "GAS",
+        "predicted_finish_position": 7.8585,
+        "predicted_qualifying_gap_pct": 1.5989,
+        "predicted_race_gap_pct": 1.3895
+      },
+      {
+        "driver": "LIN",
+        "predicted_finish_position": 8.2662,
+        "predicted_qualifying_gap_pct": 1.9673,
+        "predicted_race_gap_pct": 1.7785
+      },
+      {
+        "driver": "RUS",
+        "predicted_finish_position": 8.4368,
+        "predicted_qualifying_gap_pct": 0.2779,
+        "predicted_race_gap_pct": 1.0119
+      },
+      {
+        "driver": "HAD",
+        "predicted_finish_position": 9.565,
+        "predicted_qualifying_gap_pct": 0.6483,
+        "predicted_race_gap_pct": 1.4192
+      },
+      {
+        "driver": "HUL",
+        "predicted_finish_position": 10.1156,
+        "predicted_qualifying_gap_pct": 2.1737,
+        "predicted_race_gap_pct": 1.6085
+      },
+      {
+        "driver": "OCO",
+        "predicted_finish_position": 11.8473,
+        "predicted_qualifying_gap_pct": 3.1175,
+        "predicted_race_gap_pct": 2.0791
+      },
+      {
+        "driver": "BEA",
+        "predicted_finish_position": 11.9039,
+        "predicted_qualifying_gap_pct": 2.7244,
+        "predicted_race_gap_pct": 1.8432
+      },
+      {
+        "driver": "COL",
+        "predicted_finish_position": 12.4253,
+        "predicted_qualifying_gap_pct": 1.882,
+        "predicted_race_gap_pct": 1.9841
+      },
+      {
+        "driver": "BOR",
+        "predicted_finish_position": 12.5819,
+        "predicted_qualifying_gap_pct": 2.112,
+        "predicted_race_gap_pct": 1.9765
+      },
+      {
+        "driver": "SAI",
+        "predicted_finish_position": 13.348,
+        "predicted_qualifying_gap_pct": 3.1476,
+        "predicted_race_gap_pct": 2.217
+      },
+      {
+        "driver": "ALB",
+        "predicted_finish_position": 14.7671,
+        "predicted_qualifying_gap_pct": 3.286,
+        "predicted_race_gap_pct": 2.3272
+      },
+      {
+        "driver": "PER",
+        "predicted_finish_position": 15.636,
+        "predicted_qualifying_gap_pct": 4.3233,
+        "predicted_race_gap_pct": 2.7889
+      },
+      {
+        "driver": "BOT",
+        "predicted_finish_position": 16.3251,
+        "predicted_qualifying_gap_pct": 4.4185,
+        "predicted_race_gap_pct": 3.2929
+      },
+      {
+        "driver": "ALO",
+        "predicted_finish_position": 16.9101,
+        "predicted_qualifying_gap_pct": 3.8512,
+        "predicted_race_gap_pct": 2.7765
+      },
+      {
+        "driver": "STR",
+        "predicted_finish_position": 17.657,
+        "predicted_qualifying_gap_pct": 4.2282,
+        "predicted_race_gap_pct": 3.0505
       }
     ]
   }
