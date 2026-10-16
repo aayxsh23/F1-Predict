@@ -4,7 +4,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.features import circuit_reference, driver_features, relative_features, strategy_features, team_features
+from src.features import (circuit_history, circuit_reference, driver_features, ratings, relative_features, strategy_features,
+                          team_features)
 from src.models.catalog import LOCATION_ALIASES, TEAM_LINEAGE
 
 RAW_DIR = Path(__file__).resolve().parents[2] / "data" / "raw" / "races"
@@ -20,6 +21,10 @@ CIRCUIT_COLS = [
 # forecasts for race start (src/data/weather.py), not measured race weather:
 # a live prediction only ever has the forecast
 WEATHER_COLS = ["air_temp_forecast", "rain_mm_forecast", "wind_kph_forecast"]
+# the same forecasts as they stood 3 days and 1 day before the race (weather.py,
+# Previous Runs API, 2022/2024 on): mask_for_stage swaps them in per stage
+WEATHER_LEAD_COLS = [f"{c}_d{d}" for d in (3, 1) for c in WEATHER_COLS]
+LEADS_PATH = RAW_DIR.parent / "weather_leads.parquet"
 # race-level facts carried through for the lap-time and race-duration estimates
 RACE_INFO_COLS = ["race_start_utc", "practice_fastest_s", "quali_pole_s", "race_winner_time_s", "race_laps", "sc_laps"]
 # sprint weekends only (NaN elsewhere): Sprint Qualifying gap to its pole as %
@@ -32,6 +37,10 @@ KEY = ["season", "round", "driver"]
 # (2026-10-11): qualifying learns from 2018, finish and places gained from
 # 2021, gap to the winner from 2022.
 FIRST_SEASON = 2018
+# circuit facts measured from earlier races (circuit_history.py), beside the
+# hand-typed ones they stand in for; which a model reads is decided per model
+# on the tuning window (experiments/circuit_history.py, models/features.py)
+MEASURED_CIRCUIT_COLS = list(circuit_history.COLUMNS)
 
 
 def _load_dir(path: Path) -> pd.DataFrame:
@@ -77,18 +86,32 @@ def build(raw: pd.DataFrame | None = None, upgrades: pd.DataFrame | None = None,
         table = raw[["season", "round", "team"]].merge(ups, on=["season", "round", "team"], how="left")["performance_upgrades"]
         raw["performance_upgrades"] = raw.reindex(columns=["performance_upgrades"])["performance_upgrades"].fillna(table.set_axis(raw.index))
     raw = circuit_reference.resolve(raw)
+    measured = circuit_history.build(raw).set_index(["season", "round"])
+    keys = pd.MultiIndex.from_frame(raw[["season", "round"]])
+    for col, typed in zip(circuit_history.COLUMNS, circuit_history.REPLACES):
+        # the very first race in the data has nothing before it: the typed value stands in
+        raw[col] = measured[col].reindex(keys).to_numpy()
+        raw[col] = raw[col].fillna(raw[typed])
 
     driver = driver_features.build(raw)
     team = team_features.build(raw, testing if not testing.empty else None)
     relative = relative_features.build(raw.merge(driver[KEY + ["driver_recent_form"]], on=KEY))
     strategy = strategy_features.build(raw)
+    rating = ratings.build(raw)
 
-    out = raw.reindex(columns=KEY + ["team", "location", "race_date"] + CIRCUIT_COLS + WEATHER_COLS + RACE_INFO_COLS + SPRINT_COLS).copy()
+    out = raw.reindex(columns=KEY + ["team", "location", "race_date"] + CIRCUIT_COLS + MEASURED_CIRCUIT_COLS + WEATHER_COLS
+                      + RACE_INFO_COLS + SPRINT_COLS).copy()
     out["team"] = team_name.loc[out.index]  # the name they raced under, for display
     out["is_sprint_weekend"] = raw.reindex(columns=["sprint_weekend"])["sprint_weekend"].fillna(False).astype(float)
+    if LEADS_PATH.exists():
+        leads = pd.read_parquet(LEADS_PATH)
+        out = out.merge(leads.reindex(columns=["season", "round"] + WEATHER_LEAD_COLS), on=["season", "round"], how="left").set_axis(out.index)
+    else:
+        out = out.assign(**{c: float("nan") for c in WEATHER_LEAD_COLS})
     # coarse steps: hourly forecast wobble shouldn't count as new information
     for col, step in zip(WEATHER_COLS, (1.0, 0.5, 5.0)):
-        out[col] = (out[col] / step).round() * step
+        for c in [col, f"{col}_d3", f"{col}_d1"]:
+            out[c] = (out[c] / step).round() * step
     # not model inputs: the qualifying order stands in for the grid until the
     # official one (penalties applied) is out (features.mask_for_stage), and
     # retirements are left to the odds sampler (train.py trains on finishers)
@@ -98,13 +121,17 @@ def build(raw: pd.DataFrame | None = None, upgrades: pd.DataFrame | None = None,
     out["target_finish_position"] = raw["finish_position"]
     out["target_quali_to_race_delta"] = raw["grid_position"] - raw["finish_position"]
     out["target_race_gap_pct"] = raw["race_gap_pct"]
+    # finished a lap or more down: the two-part gap-to-winner model's split
+    # (families.TwoPart). Not an input: nobody knows it before the race
+    out["lapped"] = (raw.reindex(columns=["laps_completed"])["laps_completed"] < raw["race_laps"]).astype(float).where(
+        ~out["dnf"] & raw["race_gap_pct"].notna())
     # gaps past 107% (no time, a crash) stay in training: dropping them was
     # tried and did slightly worse even on representative laps. They are
     # scored separately (train.py) and their chance is the odds' job.
     out["target_qualifying_gap_pct"] = raw["quali_gap_pct"]
     out["quali_gap_to_pole"] = raw["quali_gap_to_pole"]  # seconds, for display only
 
-    for layer in (driver, team, relative, strategy):
+    for layer in (driver, team, relative, strategy, rating):
         new_cols = [c for c in layer.columns if c not in KEY]
         out = out.merge(layer[KEY + new_cols], on=KEY, how="left")
 

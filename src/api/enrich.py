@@ -33,7 +33,8 @@ def _simulate(payload: dict) -> dict | None:
         return None
     stage = stage_of_payload(payload)
     seed = payload["season"] * 100 + payload["round"]  # the same race always samples the same draws
-    race = race_probabilities(predicted, stage=stage, teams=[d["team"] for d in drivers], seed=seed)
+    race = race_probabilities(predicted, stage=stage, teams=[d["team"] for d in drivers], seed=seed,
+                              grid=[_num(d.get("grid_position")) for d in drivers])
     quali = None
     gaps = [d.get("predicted_qualifying_gap_pct") for d in drivers]
     if not payload.get("known_sessions", {}).get("qualifying") and all(g is not None for g in gaps):

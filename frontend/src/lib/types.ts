@@ -260,6 +260,22 @@ export interface ChampionshipTeam {
   title_chance: number
 }
 
+export interface DriverRating {
+  rank: number
+  driver: string
+  team: string
+  rating_pct: number // % of a lap against an average driver; negative = faster
+  vs_teammate_pct: number | null
+}
+
+export interface Ratings {
+  season: number
+  round: number
+  event_name: string
+  method: string
+  drivers: DriverRating[]
+}
+
 export interface Championship {
   remaining: { races: number; sprints: number }
   drivers: ChampionshipDriver[]

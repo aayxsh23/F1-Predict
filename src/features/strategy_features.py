@@ -4,16 +4,10 @@ from src.features.rolling import recent_form
 
 
 def build(df: pd.DataFrame) -> pd.DataFrame:
-    """expected_stops and historical_compound_performance are both historical
-    (prior races only) — this race's actual pit stops / finish position would
-    leak the outcome. starting_tire_compound itself is a pre-race actual and
-    is passed through directly in build_dataset, not here."""
+    """expected_stops: the usual number of pit stops at this circuit, over
+    prior races only (this race's actual stops would leak the outcome).
+    Starting tyres and "past results on this tyre here" were inputs once;
+    a live forecast never knows the starting tyre, so both were dropped."""
     df = df.copy()
     df["expected_stops"] = recent_form(df, "location", "race_date", "num_pit_stops", decay=0.9)
-
-    df["_loc_compound_key"] = df["location"] + "|" + df["starting_compound"].astype(str)
-    df["historical_compound_performance"] = recent_form(
-        df, "_loc_compound_key", "race_date", "finish_position", decay=0.9
-    ).where(df["starting_compound"].notna())
-
-    return df[["season", "round", "driver", "expected_stops", "historical_compound_performance"]]
+    return df[["season", "round", "driver", "expected_stops"]]

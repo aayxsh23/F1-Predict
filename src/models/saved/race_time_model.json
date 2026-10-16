@@ -1,0 +1,46 @@
+{
+  "family": "two_part",
+  "threshold": 0.5,
+  "mode": "mix",
+  "classifier": {
+    "family": "xgb",
+    "params": {
+      "max_depth": 3,
+      "n_estimators": 300,
+      "learning_rate": 0.05,
+      "subsample": 0.8
+    },
+    "classifier": true,
+    "suffix": "xgb_lapped_clf"
+  },
+  "first": {
+    "family": "xgb",
+    "params": {
+      "colsample_bytree": 0.6780971951192178,
+      "learning_rate": 0.15449042305230107,
+      "max_depth": 4,
+      "min_child_weight": 4,
+      "n_estimators": 134,
+      "reg_alpha": 1.537108028612618,
+      "reg_lambda": 0.6308113152633013,
+      "subsample": 0.9978202043189364
+    },
+    "classifier": false,
+    "suffix": "xgb_lead_lap"
+  },
+  "second": {
+    "family": "xgb",
+    "params": {
+      "colsample_bytree": 0.6780971951192178,
+      "learning_rate": 0.15449042305230107,
+      "max_depth": 4,
+      "min_child_weight": 4,
+      "n_estimators": 134,
+      "reg_alpha": 1.537108028612618,
+      "reg_lambda": 0.6308113152633013,
+      "subsample": 0.9978202043189364
+    },
+    "classifier": false,
+    "suffix": "xgb_lapped"
+  }
+}

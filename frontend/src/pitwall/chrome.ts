@@ -8,7 +8,7 @@ export interface Crumb {
   back?: boolean // a "← Full grid" style crumb
 }
 
-export type Section = 'pred' | 'hist' | 'regs' | null
+export type Section = 'pred' | 'season' | 'hist' | 'regs' | null
 
 /** What a page tells the layout around it: where it sits, how fresh it is, and
  *  what Pit Radio should know and suggest while it's on screen. */

@@ -30,12 +30,13 @@ from src.data.ingest import race_start
 from src.features.build_dataset import load_raw
 from src.models import estimates
 from src.models.explain import shown_explanation
-from src.models.features import FEATURE_COLS, stage_of
+from src.models.features import FEATURE_COLS, mask_for_stage, stage_of
 from src.models.live_predict import build_live_rows, event_info
 from src.models.predict import MODEL_DIR, TARGETS, predict_all
 
 OUT_DIR = Path(__file__).resolve().parents[2] / "data" / "predictions"
 RACE_OVER_AFTER = pd.Timedelta(hours=3)
+_last_rows: pd.DataFrame | None = None  # the feature rows behind the last payload (for ratings.json)
 # a session's data is expected this long after its scheduled start (session
 # length plus FastF1's publishing delay); later than that, missing = failed
 DATA_DUE_AFTER = pd.Timedelta(hours=2)
@@ -92,10 +93,19 @@ def in_race_weekend(event: pd.Series, now: pd.Timestamp) -> bool:
 
 def build_prediction_payload(season: int, round_number: int) -> dict:
     rows, sessions = build_live_rows(season, round_number)
+    lineup_changes = rows.attrs.get("lineup_changes", [])
+    global _last_rows
+    _last_rows = rows
     stage = stage_of(rows)
     event = event_info(season, round_number)
     sprint_weekend = bool(rows["is_sprint_weekend"].eq(1).any())
     p = predict_all(rows).sort_values("predicted_finish_position").reset_index(drop=True)
+    # each driver's strength for the rest of the season: this race's form,
+    # team and circuit with nothing race-specific (no practice, grid or
+    # penalty), so the title odds don't carry one weekend's grid into every
+    # remaining round
+    pre = predict_all(mask_for_stage(rows, "pre_weekend"))
+    season_strength = dict(zip(pre["driver"], pre["predicted_finish_position"]))
     location = event["Location"]
 
     raw = load_raw()
@@ -126,6 +136,7 @@ def build_prediction_payload(season: int, round_number: int) -> dict:
             "feature_row": {c: row[c] if isinstance(row[c], str) else _clean(row[c]) for c in FEATURE_COLS},
             # the "why" behind each prediction, precomputed so serving needs no XGBoost
             "quali_nolap_rate": _clean(row.get("driver_quali_nolap_rate")),
+            "season_strength": _clean(season_strength.get(row["driver"])),
             "explanations": {t: shown_explanation(t, stage, p.iloc[[i]], p, top_n=10) for t in TARGETS},
         })
 
@@ -146,6 +157,9 @@ def build_prediction_payload(season: int, round_number: int) -> dict:
             "grid": bool(p["grid_official"].eq(1).any()),  # the FIA's official grid, penalties applied
         },
         "model_trained_at": trained,
+        # how the line-up differs from the last race (FIA entry list), so a
+        # wrong or surprising line-up is visible in the published file
+        **({"lineup_changes": lineup_changes} if lineup_changes else {}),
         "race": {
             "laps": estimates.race_laps(raw, location, season),
             "expected_duration_s": _clean(duration_s),
@@ -186,6 +200,46 @@ def write_payload(payload: dict) -> bool:
     return True
 
 
+def write_ratings(payload: dict, rows: pd.DataFrame) -> bool:
+    """Each entered driver's qualifying rating (features/ratings.py: % of a
+    lap against an average driver, from teammate comparisons, races before
+    this one only) into ratings.json, best first. False if unchanged."""
+    if "driver_quali_rating" not in rows:
+        return False
+    r = rows[["driver", "team", "driver_quali_rating", "teammate_quali_rating_gap"]].dropna(subset=["driver_quali_rating"])
+    r = r.sort_values("driver_quali_rating").reset_index(drop=True)
+    body = {"season": payload["season"], "round": payload["round"], "event_name": payload["event_name"],
+            "method": "teammate qualifying gaps (last session both ran), every past race fitted at once, recent races weighted more; "
+                      "negative = faster than an average driver, in % of a lap",
+            "drivers": [{"rank": i + 1, "driver": x["driver"], "team": x["team"], "rating_pct": _clean(x["driver_quali_rating"]),
+                         "vs_teammate_pct": _clean(x["teammate_quali_rating_gap"])} for i, x in r.iterrows()]}
+    path = OUT_DIR / "ratings.json"
+    if path.exists() and json.loads(path.read_text()) == body:
+        return False
+    path.write_text(json.dumps(body, indent=2))
+    return True
+
+
+def write_championship() -> bool:
+    """Standings and title odds into championship.json, which GET
+    /championship serves. Needs Jolpica; a failure never fails the forecast.
+    False if nothing changed."""
+    from src.agent.tools import championship_payload
+    from src.api import cache
+
+    cache._cache.clear()  # read the forecast just written, not a cached copy
+    try:
+        body = championship_payload()
+    except Exception as exc:
+        print(f"championship odds not refreshed ({type(exc).__name__}: {exc})")
+        return False
+    path = OUT_DIR / "championship.json"
+    if path.exists() and {k: v for k, v in json.loads(path.read_text()).items() if k != "generated_at"} == body:
+        return False
+    path.write_text(json.dumps({**body, "generated_at": datetime.now(timezone.utc).isoformat()}, indent=2))
+    return True
+
+
 def write_schedule(season: int) -> None:
     sched = event_schedule(season)
     out = sched[SCHEDULE_COLS].copy()
@@ -216,6 +270,10 @@ def main():
                          "forecast that ignores it. (F1 live timing refuses GitHub's runners: race weekends are "
                          "refreshed by scripts/refresh_local.ps1 from a home connection.)")
     changed = write_payload(payload)
+    if _last_rows is not None and write_ratings(payload, _last_rows):
+        print("driver ratings updated")
+    if write_championship():
+        print("championship odds updated")
     print(f"{'wrote' if changed else 'unchanged:'} season {season} round {round_number} ({payload['location']}, {payload['session_label']})")
 
 

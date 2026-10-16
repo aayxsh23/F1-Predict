@@ -1,0 +1,15 @@
+{
+  "family": "xgb",
+  "params": {
+    "colsample_bytree": 0.718509402281633,
+    "learning_rate": 0.0430533878126005,
+    "max_depth": 2,
+    "min_child_weight": 7,
+    "n_estimators": 108,
+    "reg_alpha": 1.5444895385933148,
+    "reg_lambda": 1.0961470446025172,
+    "subsample": 0.602208846849441
+  },
+  "classifier": false,
+  "suffix": "xgb"
+}

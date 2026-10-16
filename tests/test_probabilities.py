@@ -11,8 +11,8 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.api.enrich import head_to_head, with_probabilities
-from src.models.probabilities import (field_retirement_rates, load_calibration, q1_cut, quali_probabilities, race_probabilities,
-                                      sample_positions)
+from src.models.probabilities import (field_retirement_rates, grid_retirement, load_calibration, q1_cut, quali_probabilities,
+                                      race_probabilities, sample_positions)
 
 
 def test_sampled_orders_are_permutations():
@@ -37,10 +37,21 @@ def test_certain_retirement_never_wins():
     assert (pos[:, 0] == 3).all(), "a car that retires in every draw always classifies last"
 
 
-def test_every_car_gets_the_field_retirement_rate():
-    pr = race_probabilities([1.0, 2.0, 3.0])
+def test_every_car_gets_the_field_retirement_rate_before_a_grid_exists():
+    pr = race_probabilities([1.0, 2.0, 3.0], stage="post_practice", grid=[1, 2, 3])
     assert (pr["retire"] == load_calibration()["dnf_prior"]).all(), "per-car rates scored worse than one field rate"
-    assert (race_probabilities([1.0, 2.0], p_dnf=0.2)["retire"] == 0.2).all()
+    assert (race_probabilities([1.0, 2.0], stage="pre_weekend", p_dnf=0.2)["retire"] == 0.2).all()
+
+
+def test_retirement_leans_with_the_grid_slot_once_there_is_a_grid():
+    p = grid_retirement(0.15, [1, 11, 22], 0.05)
+    assert p[0] < 0.15 < p[2], "the back of the grid retires more often than the front"
+    assert abs(grid_retirement(0.15, [5, np.nan, 7], 0.05)[1] - 0.15) < 0.02, "a car without a slot stays near the field rate"
+    cal = {**load_calibration(), "dnf_grid_slope": 0.05}
+    pr = race_probabilities(list(range(1, 21)), stage="post_quali", grid=list(range(1, 21)), cal=cal, p_dnf=0.15)
+    assert pr["retire"][0] < pr["retire"][-1]
+    flat = race_probabilities(list(range(1, 21)), stage="post_quali", grid=list(range(1, 21)), cal={**cal, "dnf_grid_slope": 0.0}, p_dnf=0.15)
+    assert (flat["retire"] == 0.15).all(), "a slope the held-out check rejected (0) means the field rate"
 
 
 def test_field_retirement_rate_only_looks_back():

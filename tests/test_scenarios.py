@@ -80,3 +80,22 @@ if __name__ == "__main__":
         t()
         print(f"ok  {t.__name__}")
     print(f"{len(tests)} checks passed")
+
+
+def test_title_odds_strength_ignores_this_weekends_grid(monkeypatch):
+    """After qualifying the shown forecast includes the grid; a grid penalty
+    must not count in every remaining round (Singapore 2026)."""
+    from src.agent import tools
+
+    payload = {"season": 2026, "round": 17, "drivers": [
+        {"driver": "RUS", "predicted_finish_position": 9.5, "season_strength": 5.0},
+        {"driver": "VER", "predicted_finish_position": 1.7, "season_strength": 4.8}]}
+    assert tools.season_strength(payload) == {"RUS": 5.0, "VER": 4.8}
+
+    old = {"season": 2026, "round": 17, "drivers": [{"driver": "RUS", "predicted_finish_position": 9.5},
+                                                     {"driver": "VER", "predicted_finish_position": 1.7}]}
+    timeline = [{"label": "Before practice", "stage": "pre_weekend", "drivers": [
+        {"driver": "RUS", "predicted_finish_position": 4.97}, {"driver": "VER", "predicted_finish_position": 4.83}]},
+        {"label": "Official grid", "stage": "race_day", "drivers": []}]
+    monkeypatch.setattr(tools, "get_json", lambda name: timeline)
+    assert tools.season_strength(old) == {"RUS": 4.97, "VER": 4.83}, "older forecasts: the weekend's pre-practice snapshot"

@@ -37,6 +37,18 @@ TARGET_DIRECTION = {  # what a positive contribution means, per target
     "quali_delta": "towards gaining more places", "race_time": "further behind the winner",
 }
 LLM_LIMIT, LLM_WINDOW_S = 20, 600
+# GET responses only change when a scheduled job publishes new files, so a CDN
+# (Vercel's edge) may serve them for a minute and keep serving a stale copy
+# for ten while it refetches: most reads never wake the serverless function
+CACHE_CONTROL = "public, max-age=0, s-maxage=60, stale-while-revalidate=600"
+
+
+@app.middleware("http")
+async def cache_headers(request: Request, call_next):
+    response = await call_next(request)
+    if request.method == "GET" and response.status_code == 200 and request.url.path not in ("/health",):
+        response.headers.setdefault("Cache-Control", CACHE_CONTROL)
+    return response
 _calls: dict[str, deque] = defaultdict(deque)
 
 
@@ -186,24 +198,26 @@ def strategy(season: int, round: int, sc_lap: int | None = None):
     return {"season": season, "round": round, **_strategy(p["location"], laps, sc_lap)}
 
 
+@app.get("/ratings")
+def ratings():
+    """Drivers' qualifying ratings from teammate comparisons (src/features/ratings.py)."""
+    return _json("ratings.json", "No driver ratings published yet.")
+
+
 @app.get("/championship")
 def championship():
-    from src.agent.tools import championship_state
+    """Standings and title odds: precomputed by the refresh job
+    (championship.json); computed live only if that file is missing."""
+    try:
+        return get_json("championship.json")
+    except FileNotFoundError:
+        pass
+    from src.agent.tools import championship_payload
 
     try:
-        c = championship_state()
+        return championship_payload()
     except Exception as exc:  # Jolpica down or rate-limited
         raise HTTPException(503, f"Live standings unavailable right now ({type(exc).__name__}).")
-    from src.agent.f1_api import get_constructor_standings
-
-    odds = c["odds"]
-    return {
-        "remaining": {"races": len(c["remaining"]), "sprints": sum(r["is_sprint"] for r in c["remaining"])},
-        "drivers": [{**s, "title_chance": round(float(odds["champion"][i]), 4),
-                     "expected_points": round(float(odds["expected_points"][i]), 1)} for i, s in enumerate(c["standings"])],
-        "constructors": [{**t, "title_chance": round(float(odds["team_champion"].get(t["name"], 0.0)), 4)}
-                         for t in get_constructor_standings()],
-    }
 
 
 @app.post("/explain")

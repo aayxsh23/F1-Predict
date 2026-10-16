@@ -35,4 +35,8 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
       - run: npm run lint
+      - run: npm test  # unit tests (vitest)
       - run: npm run build
+      - run: npm run size  # first-load JS/CSS budget (scripts/check-bundle.mjs)
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e  # browser smoke + accessibility checks on desktop and phone, against recorded API fixtures

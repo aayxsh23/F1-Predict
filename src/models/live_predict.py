@@ -11,6 +11,8 @@ penalties applied (race morning). Until the grid is out, the qualifying order
 stands in for it, as it does in training at that stage. `grid_overrides`
 still lets a known grid be forced.
 """
+import logging
+
 import fastf1
 import numpy as np
 import pandas as pd
@@ -25,14 +27,41 @@ from src.models.catalog import TEAM_LINEAGE
 
 # a session that hasn't happened yet is the normal case here, not an error
 fastf1.set_log_level("CRITICAL")
+log = logging.getLogger(__name__)
 
 
-def _current_lineup(raw: pd.DataFrame) -> pd.DataFrame:
-    """(driver, team, car number) from the latest race we have. Use
-    `lineup_overrides` for a known substitution."""
+def _current_lineup(raw: pd.DataFrame, entries: list[dict] | None = None) -> tuple[pd.DataFrame, list[str]]:
+    """(driver, team, car number) for the race being forecast, and what
+    changed against the last race we have.
+
+    The FIA's entry list (src/data/fia.py, published the day before
+    practice) is the source when it's out: copying the last race's line-up is
+    wrong at every season start and after any driver swap. A driver who stays
+    with the same constructor keeps the team name he raced under last time
+    (the app shows it); a move takes the entry list's name. Until the entry
+    list is published the last race's line-up stands in. Use
+    `lineup_overrides` for anything else."""
     last = raw.sort_values("race_date").iloc[-1]
     mask = (raw["season"] == last["season"]) & (raw["round"] == last["round"])
-    return raw.loc[mask, ["driver", "team", "driver_number"]].drop_duplicates("driver").reset_index(drop=True)
+    previous = raw.loc[mask, ["driver", "team", "driver_number"]].drop_duplicates("driver").reset_index(drop=True)
+    if not entries:
+        return previous, []
+    before = previous.set_index("driver")["team"].to_dict()
+    canon = lambda team: TEAM_LINEAGE.get(team, team)  # noqa: E731
+    rows, changes = [], []
+    for e in entries:
+        team = before.get(e["driver"])
+        if team is None:
+            changes.append(f"{e['driver']} joins ({e['team']})")
+            team = e["team"]
+        elif canon(team) != canon(e["team"]):
+            changes.append(f"{e['driver']} moves {team} -> {e['team']}")
+            team = e["team"]
+        rows.append({"driver": e["driver"], "team": team, "driver_number": str(e["driver_number"])})
+    changes += [f"{d} not entered" for d in before if d not in {e["driver"] for e in entries}]
+    if changes:
+        log.warning("line-up differs from the last race: %s", "; ".join(changes))
+    return pd.DataFrame(rows), changes
 
 
 def event_info(season: int, round_number: int) -> pd.Series:
@@ -50,12 +79,13 @@ def build_live_rows(
     grid_overrides: dict[str, float] | None = None,
 ) -> tuple[pd.DataFrame, list[str]]:
     """One feature row per driver for (season, round), plus the sessions that
-    have data so far, in weekend order (e.g. ["FP1", "FP2"] or ["FP1", "SQ", "S"])."""
+    have data so far, in weekend order (e.g. ["FP1", "FP2"] or ["FP1", "SQ", "S"]).
+    `rows.attrs["lineup_changes"]` lists how the line-up differs from the last race."""
     raw = build_dataset.load_raw()
     event = event_info(season, round_number)
     location, start = event["Location"], race_start(event)
 
-    lineup = _current_lineup(raw)
+    lineup, lineup_changes = _current_lineup(raw, fia.entry_list(season, event["EventName"]))
     for driver, team in (lineup_overrides or {}).items():
         lineup.loc[lineup["driver"] == driver, "team"] = team
 
@@ -98,7 +128,9 @@ def build_live_rows(
 
     full = build_dataset.build(raw=pd.concat([raw, live.astype({"dnf": bool})], ignore_index=True))
     rows = full[(full["season"] == season) & (full["round"] == round_number)].reset_index(drop=True)
-    return rows.merge(lineup[["driver", "driver_number"]], on="driver", how="left"), sessions
+    rows = rows.merge(lineup[["driver", "driver_number"]], on="driver", how="left")
+    rows.attrs["lineup_changes"] = lineup_changes
+    return rows, sessions
 
 
 if __name__ == "__main__":

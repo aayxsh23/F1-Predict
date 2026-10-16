@@ -8,7 +8,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.data.fia import parse_grid, parse_upgrades
+from src.data.fia import parse_entry_list, parse_grid, parse_upgrades, team_from_text
 from src.features.team_features import _upgrades_recent
 
 # text as pypdf extracts it: a car with no lap time is followed straight by its team line
@@ -60,3 +60,36 @@ if __name__ == "__main__":
         t()
         print(f"ok  {t.__name__}")
     print(f"{len(tests)} checks passed")
+
+
+# an entry list as pypdf extracts it (2026 Singapore): lines end with the engine supplier
+ENTRY = """No. TLA Driver Nat Team Constructor
+81 PIA Oscar Piastri  AUS McLaren Mastercard F1 Team McLaren Mercedes
+31 OCO Esteban Ocon FRA TGR Haas F1 Team Haas Ferrari
+41 LIN Arvid Lindblad GBR Visa Cash App Racing Bulls F1 Team Racing Bulls Red Bull Ford
+3 VER Max Verstappen NED Oracle Red Bull Racing Red Bull Racing Red Bull Ford
+77 BOT Valtteri Bottas FIN Cadilla c Formula 1 Team Cadillac Ferrari
+Document 12
+"""
+
+
+def test_entry_list_reads_codes_numbers_and_teams_not_engine_suppliers():
+    rows = parse_entry_list(ENTRY)
+    assert [(r["driver_number"], r["driver"], r["team"]) for r in rows] == [
+        (81, "PIA", "McLaren"), (31, "OCO", "Haas F1 Team"), (41, "LIN", "Racing Bulls"),
+        (3, "VER", "Red Bull Racing"), (77, "BOT", "Cadillac")]
+    assert team_from_text("Atlassian Williams F1 Team Atlassian Williams Mercedes") == "Williams"
+
+
+def test_live_line_up_follows_the_entry_list():
+    from src.models.live_predict import _current_lineup
+
+    raw = pd.DataFrame({"season": 2026, "round": 16, "race_date": pd.Timestamp("2026-10-04"),
+                        "driver": ["PIA", "NOR", "SAI"], "team": ["McLaren", "McLaren", "Williams"], "driver_number": ["81", "1", "55"]})
+    entries = [{"driver_number": 81, "driver": "PIA", "team": "McLaren"}, {"driver_number": 55, "driver": "SAI", "team": "Ferrari"},
+               {"driver_number": 7, "driver": "NEW", "team": "McLaren"}]
+    lineup, changes = _current_lineup(raw, entries)
+    assert dict(zip(lineup["driver"], lineup["team"])) == {"PIA": "McLaren", "SAI": "Ferrari", "NEW": "McLaren"}
+    assert changes == ["SAI moves Williams -> Ferrari", "NEW joins (McLaren)", "NOR not entered"]
+    same, none = _current_lineup(raw, None)
+    assert list(same["driver"]) == ["PIA", "NOR", "SAI"] and none == [], "no entry list yet: the last race's line-up"

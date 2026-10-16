@@ -1,0 +1,132 @@
+{
+  "race_time": {
+    "family": "two_part",
+    "split_column": "lapped",
+    "threshold": 0.5,
+    "classifier": {
+      "family": "xgb",
+      "classifier": true,
+      "suffix": "xgb_lapped_clf",
+      "params": {
+        "max_depth": 3,
+        "n_estimators": 300,
+        "learning_rate": 0.05,
+        "subsample": 0.8
+      }
+    },
+    "first": {
+      "family": "xgb",
+      "suffix": "xgb_lead_lap",
+      "params": {
+        "colsample_bytree": 0.6780971951192178,
+        "learning_rate": 0.15449042305230107,
+        "max_depth": 4,
+        "min_child_weight": 4,
+        "n_estimators": 134,
+        "reg_alpha": 1.537108028612618,
+        "reg_lambda": 0.6308113152633013,
+        "subsample": 0.9978202043189364
+      }
+    },
+    "second": {
+      "family": "xgb",
+      "suffix": "xgb_lapped",
+      "params": {
+        "colsample_bytree": 0.6780971951192178,
+        "learning_rate": 0.15449042305230107,
+        "max_depth": 4,
+        "min_child_weight": 4,
+        "n_estimators": 134,
+        "reg_alpha": 1.537108028612618,
+        "reg_lambda": 0.6308113152633013,
+        "subsample": 0.9978202043189364
+      }
+    },
+    "mode": "mix",
+    "chosen_at": "2026-10-11T06:01:07+00:00",
+    "chosen_from": "leaderboard.json: race_time / two_part_mix",
+    "why": "better on the tuning window at every stage (after qualifying 0.512 vs 0.527); held-out intervals straddle zero (after qualifying 0.650 vs 0.657)"
+  },
+  "finish_position": {
+    "family": "ensemble",
+    "weights": [
+      0.3,
+      0.7
+    ],
+    "members": [
+      {
+        "family": "xgb",
+        "suffix": "xgb",
+        "params": {
+          "colsample_bytree": 0.6914200087189198,
+          "learning_rate": 0.04499098541918724,
+          "max_depth": 2,
+          "min_child_weight": 4,
+          "n_estimators": 159,
+          "reg_alpha": 0.521658349660818,
+          "reg_lambda": 3.488761099273773,
+          "subsample": 0.9861677405155175
+        }
+      },
+      {
+        "family": "lgbm",
+        "suffix": "lgbm",
+        "params": {
+          "colsample_bytree": 0.7564242430292963,
+          "learning_rate": 0.04644721755761247,
+          "min_child_samples": 8,
+          "n_estimators": 101,
+          "num_leaves": 9,
+          "reg_alpha": 0.41588332573637765,
+          "reg_lambda": 2.2031009834599744,
+          "subsample": 0.6125253169822235,
+          "subsample_freq": 1
+        }
+      }
+    ],
+    "chosen_at": "2026-10-11T06:16:19+00:00",
+    "chosen_from": "leaderboard.json: finish_position / ensemble_xgb_lgbm",
+    "why": "XGBoost 0.3 + LightGBM 0.7 (weight chosen on tuning races): better on the tuning window at every stage; held-out before practice 3.574 vs 3.605 (CI -0.058 to -0.001), after qualifying 3.169 vs 3.185 (CI -0.041 to +0.010), raw model before blends"
+  },
+  "qualifying": {
+    "family": "ensemble",
+    "weights": [
+      0.55,
+      0.45
+    ],
+    "members": [
+      {
+        "family": "xgb",
+        "suffix": "xgb",
+        "params": {
+          "colsample_bytree": 0.7879778055963772,
+          "learning_rate": 0.06591206835935172,
+          "max_depth": 4,
+          "min_child_weight": 9,
+          "n_estimators": 136,
+          "reg_alpha": 1.8566371251754508,
+          "reg_lambda": 1.784552444951943,
+          "subsample": 0.9866619276174678
+        }
+      },
+      {
+        "family": "lgbm",
+        "suffix": "lgbm",
+        "params": {
+          "colsample_bytree": 0.6783931449676581,
+          "learning_rate": 0.019045457782107613,
+          "min_child_samples": 44,
+          "n_estimators": 312,
+          "num_leaves": 19,
+          "reg_alpha": 1.4946402202747617,
+          "reg_lambda": 2.1190763971672393,
+          "subsample": 0.8347004662655393,
+          "subsample_freq": 1
+        }
+      }
+    ],
+    "chosen_at": "2026-10-11T06:16:19+00:00",
+    "chosen_from": "leaderboard.json: qualifying / ensemble_xgb_lgbm",
+    "why": "XGBoost 0.55 + LightGBM 0.45: better on the tuning window at both stages; held-out after practice 0.731 vs 0.740 (CI -0.015 to -0.004), before practice 0.784 vs 0.790 (CI -0.011 to -0.001)"
+  }
+}

@@ -1,6 +1,8 @@
 name: Retrain models
 
-# Tuesdays, after the weekend's race is in the data: retrain all four models
+# Tuesdays, after the weekend's race is in the data: retrain every model with
+# the stored hyperparameters (on the 1st of each month, or with `retune`, search
+# them again)
 # and commit them only if every model still beats its naive baseline on races
 # it never saw, is not clearly worse than the models it replaces, and the test
 # suite passes. The race itself is ingested on Monday by
@@ -9,11 +11,16 @@ name: Retrain models
 # Run by hand with dry_run to time it or try a change without committing.
 on:
   schedule:
-    - cron: "0 4 * * 2"
+    - cron: "0 4 * * 2"   # weekly: retrain with the stored hyperparameters
+    - cron: "0 4 1 * *"   # monthly: search hyperparameters again
   workflow_dispatch:
     inputs:
       dry_run:
         description: "Train and check, but commit nothing"
+        type: boolean
+        default: false
+      retune:
+        description: "Search hyperparameters again (otherwise the shipped models' are reused)"
         type: boolean
         default: false
 
@@ -42,7 +49,7 @@ jobs:
       - run: python -m src.features.build_dataset
 
       - name: Retrain (fails if a model no longer beats its baseline)
-        run: python -m src.models.train --gate
+        run: python -m src.models.train --gate ${{ (inputs.retune || github.event.schedule == '0 4 1 * *') && '--retune' || '' }}
 
       - name: Refit blends
         run: python -m src.models.blend
@@ -56,6 +63,7 @@ jobs:
           python -m src.models.backtest_export
           python -m src.strategy.model
           python -m src.models.live_record
+          python scripts/readme_accuracy.py
 
       - name: Tests against the new models
         run: pytest -q -p no:cacheprovider
@@ -65,7 +73,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/raw/races data/raw/laps src/models/saved src/strategy/params.json data/predictions/backtest data/predictions/live_record.json
+          git add data/raw/races data/raw/laps src/models/saved src/strategy/params.json data/predictions/backtest data/predictions/live_record.json README.md
           if ! git diff --cached --quiet; then
             git commit -m "chore: weekly retrain"
             git pull --rebase

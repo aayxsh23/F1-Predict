@@ -133,6 +133,8 @@ components:
     padding: "8px 12px"
 ---
 
+> **Note (2026-10-11):** this file documents the retired "Night Garage" workbench (the single-surface view with the 3D podium and dossier tabs), which was removed when strategy and the title race moved into the pit wall. The live app is the pit wall ("Night Session"): its tokens are in `src/styles/tokens.css` (the `asphalt`/`ink`/`signal` set) and its patterns in `src/pitwall/parts.tsx` and `src/index.css` (`pw-glass`, `pw-label`). A pit-wall DESIGN.md should replace this one.
+
 # Design System: F1 Predict
 
 > **Two worlds since 2026-10-05.** The front door (`/`, `/race/:season/:round`, `/race/:season/:round/driver/:code`) is the **Night Session** pit wall, specified at the end of this file. Everything from here to that section describes the **Night Garage** workbench, which now lives at `/workbench` and keeps the archive, tyre strategy, title odds and the rulebook. The two share data hooks and the chat state, not tokens.

@@ -66,6 +66,10 @@ export function useChampionship() {
   return useQuery({ queryKey: ['championship'], queryFn: api.championship, staleTime: 5 * 60_000, retry: 1 })
 }
 
+export function useRatings() {
+  return useQuery({ queryKey: ['ratings'], queryFn: api.ratings, staleTime: 10 * 60_000, retry: false })
+}
+
 export function useHealth() {
   return useQuery({ queryKey: ['health'], queryFn: api.health, refetchInterval: 30_000, retry: false })
 }

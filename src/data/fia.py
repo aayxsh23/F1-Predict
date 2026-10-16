@@ -1,9 +1,12 @@
-"""Two facts only the FIA's own documents carry, read from fia.com's PDFs:
+"""Facts only the FIA's own documents carry, read from fia.com's PDFs:
 
   starting grid    the official grid with penalties applied ("Final Starting
                    Grid", else "Provisional Starting Grid"), published a few
                    hours before the race. Qualifying order is only a proxy:
                    since 2024 a fifth of drivers started elsewhere.
+  entry list       each event's drivers, car numbers and teams (the day
+                   before practice): the live line-up, so a new season or a
+                   driver swap doesn't inherit the last race's
   car upgrades     each team's "Car Presentation Submissions" (from the 2024
                    Saudi Arabian GP): every updated component and why. A
                    component whose primary reason is "Performance - ..." is
@@ -131,6 +134,41 @@ def starting_grid(season: int, event_name: str) -> dict[int, int] | None:
         log.warning("starting grid unavailable: %s", exc)
         return None
     return grid if len(grid) >= 10 else None
+
+
+def team_from_text(text: str) -> str | None:
+    """The FastF1 team name in a line of FIA text: the pattern that matches
+    earliest, because entry-list lines end with the engine supplier
+    ("McLaren Mastercard F1 Team McLaren Mercedes")."""
+    s = text.upper()
+    hits = [(m.start(), name) for pat, name in _TEAM_PATTERNS if (m := re.search(pat, s))]
+    if not hits:  # the PDF text sometimes splits words ("Cadilla c")
+        squashed = s.replace(" ", "")
+        hits = [(m.start(), name) for pat, name in _TEAM_PATTERNS if (m := re.search(pat.replace(" ", ""), squashed))]
+    return min(hits)[1] if hits else None
+
+
+def parse_entry_list(text: str) -> list[dict]:
+    """[{driver_number, driver (3-letter code), team}] from an entry-list PDF,
+    whose lines read "<number> <TLA> <First> <Last> <NAT> <team...>"."""
+    out = []
+    for number, code, rest in re.findall(r"^(\d{1,2})\s+([A-Z]{3})\s+(.+)$", text, flags=re.M):
+        team = team_from_text(re.sub(r"^.*?\b[A-Z]{3}\b\s+", "", rest, count=1) or rest)
+        if team:
+            out.append({"driver_number": int(number), "driver": code, "team": team})
+    return out
+
+
+def entry_list(season: int, event_name: str) -> list[dict] | None:
+    """The event's official entry list, or None if it isn't published yet
+    (it comes out the day before practice) or can't be read."""
+    try:
+        url = _find(event_documents(season, event_name), "entry list")
+        entries = parse_entry_list(_pdf_text(url)) if url else []
+    except Exception as exc:  # the forecast must not fail because fia.com did
+        log.warning("entry list unavailable: %s", exc)
+        return None
+    return entries if len(entries) >= 18 else None
 
 
 def parse_upgrades(text: str) -> dict[str, int]:

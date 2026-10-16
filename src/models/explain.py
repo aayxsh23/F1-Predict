@@ -2,7 +2,6 @@
 down, and by how much (signed SHAP contributions, in the target's units)."""
 import numpy as np
 import pandas as pd
-import xgboost as xgb
 
 from src.models.features import PREPARE_FN
 from src.models.predict import contributions
@@ -37,13 +36,13 @@ def shown_explanation(target: str, stage: str, row: pd.DataFrame, field: pd.Data
 
     c, base = blended_contributions(target, stage, row, field)
     X = PREPARE_FN[target](row)
-    for col in ("grid_position", "sprint_finish_position", "sprint_quali_gap_pct"):
+    for col in ("grid_position", "sprint_finish_position", "sprint_quali_gap_pct", "team_quali_pace", "driver_quali_rating"):
         if col in c.index and col not in X:
             X[col] = row[col].to_numpy()
     return _format(c, base, X, top_n)
 
 
-def shap_explanation(model: xgb.XGBRegressor, row: pd.DataFrame, target: str = "finish_position", top_n: int = 8) -> dict:
+def shap_explanation(model, row: pd.DataFrame, target: str = "finish_position", top_n: int = 8) -> dict:
     """row: single-row frame with the feature-table columns."""
     X = PREPARE_FN[target](row)
     contrib, base = contributions(model, X)

@@ -1,0 +1,2084 @@
+{
+  "race_time": {
+    "two_part": {
+      "spec": {
+        "family": "two_part",
+        "split_column": "lapped",
+        "threshold": 0.5,
+        "classifier": {
+          "family": "xgb",
+          "classifier": true,
+          "suffix": "xgb_lapped_clf",
+          "params": {
+            "max_depth": 3,
+            "n_estimators": 300,
+            "learning_rate": 0.05,
+            "subsample": 0.8
+          }
+        },
+        "first": {
+          "family": "xgb",
+          "suffix": "xgb_lead_lap",
+          "params": {
+            "colsample_bytree": 0.6780971951192178,
+            "learning_rate": 0.15449042305230107,
+            "max_depth": 4,
+            "min_child_weight": 4,
+            "n_estimators": 134,
+            "reg_alpha": 1.537108028612618,
+            "reg_lambda": 0.6308113152633013,
+            "subsample": 0.9978202043189364
+          }
+        },
+        "second": {
+          "family": "xgb",
+          "suffix": "xgb_lapped",
+          "params": {
+            "colsample_bytree": 0.6780971951192178,
+            "learning_rate": 0.15449042305230107,
+            "max_depth": 4,
+            "min_child_weight": 4,
+            "n_estimators": 134,
+            "reg_alpha": 1.537108028612618,
+            "reg_lambda": 0.6308113152633013,
+            "subsample": 0.9978202043189364
+          }
+        }
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 0.5731,
+          "tuning_mae_incumbent": 0.5486,
+          "held_out_mae": 0.7147,
+          "held_out_mae_incumbent": 0.6854,
+          "vs_incumbent_ci95": [
+            -0.0107,
+            0.0699
+          ],
+          "held_out_races": 44
+        },
+        "post_practice": {
+          "tuning_mae": 0.5641,
+          "tuning_mae_incumbent": 0.5415,
+          "held_out_mae": 0.7243,
+          "held_out_mae_incumbent": 0.6773,
+          "vs_incumbent_ci95": [
+            0.0067,
+            0.0884
+          ],
+          "held_out_races": 44
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 0.441,
+          "tuning_mae_incumbent": 0.3901,
+          "held_out_mae": 0.6398,
+          "held_out_mae_incumbent": 0.6098,
+          "vs_incumbent_ci95": [
+            -0.0388,
+            0.0884
+          ],
+          "held_out_races": 13
+        },
+        "post_sprint": {
+          "tuning_mae": 0.4362,
+          "tuning_mae_incumbent": 0.389,
+          "held_out_mae": 0.6347,
+          "held_out_mae_incumbent": 0.6056,
+          "vs_incumbent_ci95": [
+            -0.0307,
+            0.0835
+          ],
+          "held_out_races": 13
+        },
+        "post_quali": {
+          "tuning_mae": 0.5467,
+          "tuning_mae_incumbent": 0.5269,
+          "held_out_mae": 0.6859,
+          "held_out_mae_incumbent": 0.6573,
+          "vs_incumbent_ci95": [
+            -0.0112,
+            0.0677
+          ],
+          "held_out_races": 44
+        },
+        "race_day": {
+          "tuning_mae": 0.5463,
+          "tuning_mae_incumbent": 0.5258,
+          "held_out_mae": 0.6771,
+          "held_out_mae_incumbent": 0.6562,
+          "vs_incumbent_ci95": [
+            -0.0197,
+            0.0622
+          ],
+          "held_out_races": 44
+        }
+      },
+      "note": "Gap to the winner: one regression for every finisher, or a two-part model",
+      "scored_at": "2026-10-11T05:58:22+00:00"
+    },
+    "two_part_pick": {
+      "spec": {
+        "family": "two_part",
+        "split_column": "lapped",
+        "threshold": 0.5,
+        "classifier": {
+          "family": "xgb",
+          "classifier": true,
+          "suffix": "xgb_lapped_clf",
+          "params": {
+            "max_depth": 3,
+            "n_estimators": 300,
+            "learning_rate": 0.05,
+            "subsample": 0.8
+          }
+        },
+        "first": {
+          "family": "xgb",
+          "suffix": "xgb_lead_lap",
+          "params": {
+            "colsample_bytree": 0.6780971951192178,
+            "learning_rate": 0.15449042305230107,
+            "max_depth": 4,
+            "min_child_weight": 4,
+            "n_estimators": 134,
+            "reg_alpha": 1.537108028612618,
+            "reg_lambda": 0.6308113152633013,
+            "subsample": 0.9978202043189364
+          }
+        },
+        "second": {
+          "family": "xgb",
+          "suffix": "xgb_lapped",
+          "params": {
+            "colsample_bytree": 0.6780971951192178,
+            "learning_rate": 0.15449042305230107,
+            "max_depth": 4,
+            "min_child_weight": 4,
+            "n_estimators": 134,
+            "reg_alpha": 1.537108028612618,
+            "reg_lambda": 0.6308113152633013,
+            "subsample": 0.9978202043189364
+          }
+        },
+        "mode": "pick"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 0.5731,
+          "tuning_mae_incumbent": 0.5486,
+          "held_out_mae": 0.7147,
+          "held_out_mae_incumbent": 0.6854,
+          "vs_incumbent_ci95": [
+            -0.0107,
+            0.0699
+          ],
+          "held_out_races": 44
+        },
+        "post_practice": {
+          "tuning_mae": 0.5641,
+          "tuning_mae_incumbent": 0.5415,
+          "held_out_mae": 0.7243,
+          "held_out_mae_incumbent": 0.6773,
+          "vs_incumbent_ci95": [
+            0.0067,
+            0.0884
+          ],
+          "held_out_races": 44
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 0.441,
+          "tuning_mae_incumbent": 0.3901,
+          "held_out_mae": 0.6398,
+          "held_out_mae_incumbent": 0.6098,
+          "vs_incumbent_ci95": [
+            -0.0388,
+            0.0884
+          ],
+          "held_out_races": 13
+        },
+        "post_sprint": {
+          "tuning_mae": 0.4362,
+          "tuning_mae_incumbent": 0.389,
+          "held_out_mae": 0.6347,
+          "held_out_mae_incumbent": 0.6056,
+          "vs_incumbent_ci95": [
+            -0.0307,
+            0.0835
+          ],
+          "held_out_races": 13
+        },
+        "post_quali": {
+          "tuning_mae": 0.5467,
+          "tuning_mae_incumbent": 0.5269,
+          "held_out_mae": 0.6859,
+          "held_out_mae_incumbent": 0.6573,
+          "vs_incumbent_ci95": [
+            -0.0112,
+            0.0677
+          ],
+          "held_out_races": 44
+        },
+        "race_day": {
+          "tuning_mae": 0.5463,
+          "tuning_mae_incumbent": 0.5258,
+          "held_out_mae": 0.6771,
+          "held_out_mae_incumbent": 0.6562,
+          "vs_incumbent_ci95": [
+            -0.0197,
+            0.0622
+          ],
+          "held_out_races": 44
+        }
+      },
+      "note": "Gap to the winner: one regression for every finisher, or a two-part model",
+      "scored_at": "2026-10-11T05:59:48+00:00"
+    },
+    "two_part_mix": {
+      "spec": {
+        "family": "two_part",
+        "split_column": "lapped",
+        "threshold": 0.5,
+        "classifier": {
+          "family": "xgb",
+          "classifier": true,
+          "suffix": "xgb_lapped_clf",
+          "params": {
+            "max_depth": 3,
+            "n_estimators": 300,
+            "learning_rate": 0.05,
+            "subsample": 0.8
+          }
+        },
+        "first": {
+          "family": "xgb",
+          "suffix": "xgb_lead_lap",
+          "params": {
+            "colsample_bytree": 0.6780971951192178,
+            "learning_rate": 0.15449042305230107,
+            "max_depth": 4,
+            "min_child_weight": 4,
+            "n_estimators": 134,
+            "reg_alpha": 1.537108028612618,
+            "reg_lambda": 0.6308113152633013,
+            "subsample": 0.9978202043189364
+          }
+        },
+        "second": {
+          "family": "xgb",
+          "suffix": "xgb_lapped",
+          "params": {
+            "colsample_bytree": 0.6780971951192178,
+            "learning_rate": 0.15449042305230107,
+            "max_depth": 4,
+            "min_child_weight": 4,
+            "n_estimators": 134,
+            "reg_alpha": 1.537108028612618,
+            "reg_lambda": 0.6308113152633013,
+            "subsample": 0.9978202043189364
+          }
+        },
+        "mode": "mix"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 0.5379,
+          "tuning_mae_incumbent": 0.5486,
+          "held_out_mae": 0.688,
+          "held_out_mae_incumbent": 0.6854,
+          "vs_incumbent_ci95": [
+            -0.0258,
+            0.0295
+          ],
+          "held_out_races": 44
+        },
+        "post_practice": {
+          "tuning_mae": 0.53,
+          "tuning_mae_incumbent": 0.5415,
+          "held_out_mae": 0.6828,
+          "held_out_mae_incumbent": 0.6773,
+          "vs_incumbent_ci95": [
+            -0.0237,
+            0.0352
+          ],
+          "held_out_races": 44
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 0.381,
+          "tuning_mae_incumbent": 0.3901,
+          "held_out_mae": 0.6036,
+          "held_out_mae_incumbent": 0.6098,
+          "vs_incumbent_ci95": [
+            -0.0616,
+            0.0481
+          ],
+          "held_out_races": 13
+        },
+        "post_sprint": {
+          "tuning_mae": 0.3777,
+          "tuning_mae_incumbent": 0.389,
+          "held_out_mae": 0.5868,
+          "held_out_mae_incumbent": 0.6056,
+          "vs_incumbent_ci95": [
+            -0.0746,
+            0.0371
+          ],
+          "held_out_races": 13
+        },
+        "post_quali": {
+          "tuning_mae": 0.5119,
+          "tuning_mae_incumbent": 0.5269,
+          "held_out_mae": 0.6504,
+          "held_out_mae_incumbent": 0.6573,
+          "vs_incumbent_ci95": [
+            -0.0391,
+            0.0268
+          ],
+          "held_out_races": 44
+        },
+        "race_day": {
+          "tuning_mae": 0.5112,
+          "tuning_mae_incumbent": 0.5258,
+          "held_out_mae": 0.6485,
+          "held_out_mae_incumbent": 0.6562,
+          "vs_incumbent_ci95": [
+            -0.0391,
+            0.0251
+          ],
+          "held_out_races": 44
+        }
+      },
+      "note": "Gap to the winner: one regression for every finisher, or a two-part model",
+      "scored_at": "2026-10-11T06:00:26+00:00"
+    },
+    "xgb_measured_circuits": {
+      "spec": {
+        "family": "xgb",
+        "params": {
+          "colsample_bytree": 0.6780971951192178,
+          "learning_rate": 0.15449042305230107,
+          "max_depth": 4,
+          "min_child_weight": 4,
+          "n_estimators": 134,
+          "reg_alpha": 1.537108028612618,
+          "reg_lambda": 0.6308113152633013,
+          "subsample": 0.9978202043189364
+        },
+        "features": "measured circuit facts"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 0.5611,
+          "tuning_mae_incumbent": 0.5486,
+          "held_out_mae": 0.7263,
+          "held_out_mae_incumbent": 0.6854,
+          "vs_incumbent_ci95": [
+            0.0006,
+            0.0868
+          ],
+          "held_out_races": 44
+        },
+        "post_practice": {
+          "tuning_mae": 0.5555,
+          "tuning_mae_incumbent": 0.5415,
+          "held_out_mae": 0.7173,
+          "held_out_mae_incumbent": 0.6773,
+          "vs_incumbent_ci95": [
+            -0.004,
+            0.0896
+          ],
+          "held_out_races": 44
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 0.3738,
+          "tuning_mae_incumbent": 0.3901,
+          "held_out_mae": 0.6266,
+          "held_out_mae_incumbent": 0.6098,
+          "vs_incumbent_ci95": [
+            -0.0215,
+            0.0533
+          ],
+          "held_out_races": 13
+        },
+        "post_sprint": {
+          "tuning_mae": 0.3737,
+          "tuning_mae_incumbent": 0.389,
+          "held_out_mae": 0.6249,
+          "held_out_mae_incumbent": 0.6056,
+          "vs_incumbent_ci95": [
+            -0.0189,
+            0.0562
+          ],
+          "held_out_races": 13
+        },
+        "post_quali": {
+          "tuning_mae": 0.5386,
+          "tuning_mae_incumbent": 0.5269,
+          "held_out_mae": 0.6969,
+          "held_out_mae_incumbent": 0.6573,
+          "vs_incumbent_ci95": [
+            -0.0065,
+            0.0945
+          ],
+          "held_out_races": 44
+        },
+        "race_day": {
+          "tuning_mae": 0.5388,
+          "tuning_mae_incumbent": 0.5258,
+          "held_out_mae": 0.6962,
+          "held_out_mae_incumbent": 0.6562,
+          "vs_incumbent_ci95": [
+            -0.0059,
+            0.0941
+          ],
+          "held_out_races": 44
+        }
+      },
+      "note": "incumbent here = the same XGBoost on the hand-typed circuit facts",
+      "scored_at": "2026-10-11T06:18:49+00:00"
+    },
+    "xgb_lead_weather": {
+      "spec": {
+        "family": "xgb",
+        "params": {
+          "colsample_bytree": 0.6780971951192178,
+          "learning_rate": 0.15449042305230107,
+          "max_depth": 4,
+          "min_child_weight": 4,
+          "n_estimators": 134,
+          "reg_alpha": 1.537108028612618,
+          "reg_lambda": 0.6308113152633013,
+          "subsample": 0.9978202043189364
+        },
+        "features": "stage-matched forecast lead times"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 0.5495,
+          "tuning_mae_incumbent": 0.5486,
+          "held_out_mae": 0.6839,
+          "held_out_mae_incumbent": 0.6854,
+          "vs_incumbent_ci95": [
+            -0.0329,
+            0.0305
+          ],
+          "held_out_races": 44
+        },
+        "post_practice": {
+          "tuning_mae": 0.5451,
+          "tuning_mae_incumbent": 0.5415,
+          "held_out_mae": 0.6698,
+          "held_out_mae_incumbent": 0.6773,
+          "vs_incumbent_ci95": [
+            -0.0389,
+            0.0249
+          ],
+          "held_out_races": 44
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 0.3933,
+          "tuning_mae_incumbent": 0.3901,
+          "held_out_mae": 0.6161,
+          "held_out_mae_incumbent": 0.6098,
+          "vs_incumbent_ci95": [
+            -0.0389,
+            0.0475
+          ],
+          "held_out_races": 13
+        },
+        "post_sprint": {
+          "tuning_mae": 0.3926,
+          "tuning_mae_incumbent": 0.389,
+          "held_out_mae": 0.6124,
+          "held_out_mae_incumbent": 0.6056,
+          "vs_incumbent_ci95": [
+            -0.0383,
+            0.0476
+          ],
+          "held_out_races": 13
+        },
+        "post_quali": {
+          "tuning_mae": 0.5229,
+          "tuning_mae_incumbent": 0.5269,
+          "held_out_mae": 0.6487,
+          "held_out_mae_incumbent": 0.6573,
+          "vs_incumbent_ci95": [
+            -0.0399,
+            0.0229
+          ],
+          "held_out_races": 44
+        },
+        "race_day": {
+          "tuning_mae": 0.5195,
+          "tuning_mae_incumbent": 0.5258,
+          "held_out_mae": 0.6472,
+          "held_out_mae_incumbent": 0.6562,
+          "vs_incumbent_ci95": [
+            -0.0342,
+            0.0174
+          ],
+          "held_out_races": 44
+        }
+      },
+      "note": "incumbent here = the same XGBoost with the archive forecast at every stage",
+      "scored_at": "2026-10-11T06:29:53+00:00"
+    }
+  },
+  "finish_position": {
+    "lgbm": {
+      "spec": {
+        "family": "lgbm",
+        "params": {
+          "colsample_bytree": 0.7564242430292963,
+          "learning_rate": 0.04644721755761247,
+          "min_child_samples": 8,
+          "n_estimators": 101,
+          "num_leaves": 9,
+          "reg_alpha": 0.41588332573637765,
+          "reg_lambda": 2.2031009834599744,
+          "subsample": 0.6125253169822235,
+          "subsample_freq": 1
+        }
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 2.6192,
+          "tuning_mae_incumbent": 2.6626,
+          "held_out_mae": 3.5692,
+          "held_out_mae_incumbent": 3.6048,
+          "vs_incumbent_ci95": [
+            -0.0744,
+            0.0054
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6376,
+          "vs_incumbent_ci95_finishers": [
+            -0.0745,
+            -0.0002
+          ]
+        },
+        "post_practice": {
+          "tuning_mae": 2.5918,
+          "tuning_mae_incumbent": 2.6034,
+          "held_out_mae": 3.5344,
+          "held_out_mae_incumbent": 3.5589,
+          "vs_incumbent_ci95": [
+            -0.0655,
+            0.0199
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6188,
+          "vs_incumbent_ci95_finishers": [
+            -0.0633,
+            0.0128
+          ]
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 2.6577,
+          "tuning_mae_incumbent": 2.6139,
+          "held_out_mae": 3.6575,
+          "held_out_mae_incumbent": 3.7309,
+          "vs_incumbent_ci95": [
+            -0.1408,
+            -0.0091
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.6224,
+          "vs_incumbent_ci95_finishers": [
+            -0.1143,
+            0.0216
+          ]
+        },
+        "post_sprint": {
+          "tuning_mae": 2.6569,
+          "tuning_mae_incumbent": 2.6139,
+          "held_out_mae": 3.6572,
+          "held_out_mae_incumbent": 3.731,
+          "vs_incumbent_ci95": [
+            -0.1407,
+            -0.0089
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.6236,
+          "vs_incumbent_ci95_finishers": [
+            -0.1151,
+            0.0244
+          ]
+        },
+        "post_quali": {
+          "tuning_mae": 2.3504,
+          "tuning_mae_incumbent": 2.3555,
+          "held_out_mae": 3.1733,
+          "held_out_mae_incumbent": 3.1848,
+          "vs_incumbent_ci95": [
+            -0.0469,
+            0.0258
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.2404,
+          "vs_incumbent_ci95_finishers": [
+            -0.0511,
+            0.0185
+          ]
+        },
+        "race_day": {
+          "tuning_mae": 2.3386,
+          "tuning_mae_incumbent": 2.3544,
+          "held_out_mae": 3.163,
+          "held_out_mae_incumbent": 3.1696,
+          "vs_incumbent_ci95": [
+            -0.0418,
+            0.0316
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.2281,
+          "vs_incumbent_ci95_finishers": [
+            -0.0481,
+            0.0208
+          ]
+        }
+      },
+      "note": "LightGBM alone",
+      "scored_at": "2026-10-11T06:02:00+00:00"
+    },
+    "ensemble_xgb_lgbm": {
+      "spec": {
+        "family": "ensemble",
+        "weights": [
+          0.3,
+          0.7
+        ],
+        "members": [
+          {
+            "family": "xgb",
+            "suffix": "xgb",
+            "params": {
+              "colsample_bytree": 0.6914200087189198,
+              "learning_rate": 0.04499098541918724,
+              "max_depth": 2,
+              "min_child_weight": 4,
+              "n_estimators": 159,
+              "reg_alpha": 0.521658349660818,
+              "reg_lambda": 3.488761099273773,
+              "subsample": 0.9861677405155175
+            }
+          },
+          {
+            "family": "lgbm",
+            "suffix": "lgbm",
+            "params": {
+              "colsample_bytree": 0.7564242430292963,
+              "learning_rate": 0.04644721755761247,
+              "min_child_samples": 8,
+              "n_estimators": 101,
+              "num_leaves": 9,
+              "reg_alpha": 0.41588332573637765,
+              "reg_lambda": 2.2031009834599744,
+              "subsample": 0.6125253169822235,
+              "subsample_freq": 1
+            }
+          }
+        ]
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 2.6253,
+          "tuning_mae_incumbent": 2.6626,
+          "held_out_mae": 3.5742,
+          "held_out_mae_incumbent": 3.6048,
+          "vs_incumbent_ci95": [
+            -0.0582,
+            -0.001
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6428,
+          "vs_incumbent_ci95_finishers": [
+            -0.0589,
+            -0.0061
+          ]
+        },
+        "post_practice": {
+          "tuning_mae": 2.5885,
+          "tuning_mae_incumbent": 2.6034,
+          "held_out_mae": 3.5364,
+          "held_out_mae_incumbent": 3.5589,
+          "vs_incumbent_ci95": [
+            -0.0517,
+            0.0085
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6203,
+          "vs_incumbent_ci95_finishers": [
+            -0.051,
+            0.0029
+          ]
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 2.6353,
+          "tuning_mae_incumbent": 2.6139,
+          "held_out_mae": 3.6725,
+          "held_out_mae_incumbent": 3.7309,
+          "vs_incumbent_ci95": [
+            -0.1064,
+            -0.0103
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.6282,
+          "vs_incumbent_ci95_finishers": [
+            -0.0899,
+            0.0091
+          ]
+        },
+        "post_sprint": {
+          "tuning_mae": 2.6347,
+          "tuning_mae_incumbent": 2.6139,
+          "held_out_mae": 3.6724,
+          "held_out_mae_incumbent": 3.731,
+          "vs_incumbent_ci95": [
+            -0.1065,
+            -0.011
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.6291,
+          "vs_incumbent_ci95_finishers": [
+            -0.0912,
+            0.0109
+          ]
+        },
+        "post_quali": {
+          "tuning_mae": 2.339,
+          "tuning_mae_incumbent": 2.3555,
+          "held_out_mae": 3.1688,
+          "held_out_mae_incumbent": 3.1848,
+          "vs_incumbent_ci95": [
+            -0.0412,
+            0.0098
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.2364,
+          "vs_incumbent_ci95_finishers": [
+            -0.0458,
+            0.0029
+          ]
+        },
+        "race_day": {
+          "tuning_mae": 2.3316,
+          "tuning_mae_incumbent": 2.3544,
+          "held_out_mae": 3.1572,
+          "held_out_mae_incumbent": 3.1696,
+          "vs_incumbent_ci95": [
+            -0.0368,
+            0.014
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.2236,
+          "vs_incumbent_ci95_finishers": [
+            -0.0428,
+            0.0046
+          ]
+        }
+      },
+      "note": "weight on LightGBM chosen on the tuning window: 0.7",
+      "scored_at": "2026-10-11T06:02:00+00:00"
+    },
+    "xgb_measured_circuits": {
+      "spec": {
+        "family": "xgb",
+        "params": {
+          "colsample_bytree": 0.6914200087189198,
+          "learning_rate": 0.04499098541918724,
+          "max_depth": 2,
+          "min_child_weight": 4,
+          "n_estimators": 159,
+          "reg_alpha": 0.521658349660818,
+          "reg_lambda": 3.488761099273773,
+          "subsample": 0.9861677405155175
+        },
+        "features": "measured circuit facts"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 2.6572,
+          "tuning_mae_incumbent": 2.6626,
+          "held_out_mae": 3.6043,
+          "held_out_mae_incumbent": 3.6048,
+          "vs_incumbent_ci95": [
+            -0.0061,
+            0.0057
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6761,
+          "vs_incumbent_ci95_finishers": [
+            -0.0071,
+            0.007
+          ]
+        },
+        "post_practice": {
+          "tuning_mae": 2.5953,
+          "tuning_mae_incumbent": 2.6034,
+          "held_out_mae": 3.5591,
+          "held_out_mae_incumbent": 3.5589,
+          "vs_incumbent_ci95": [
+            -0.0063,
+            0.0068
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6453,
+          "vs_incumbent_ci95_finishers": [
+            -0.0063,
+            0.0083
+          ]
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 2.6123,
+          "tuning_mae_incumbent": 2.6139,
+          "held_out_mae": 3.7297,
+          "held_out_mae_incumbent": 3.7309,
+          "vs_incumbent_ci95": [
+            -0.0139,
+            0.0095
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.6704,
+          "vs_incumbent_ci95_finishers": [
+            -0.009,
+            0.0085
+          ]
+        },
+        "post_sprint": {
+          "tuning_mae": 2.6123,
+          "tuning_mae_incumbent": 2.6139,
+          "held_out_mae": 3.7297,
+          "held_out_mae_incumbent": 3.731,
+          "vs_incumbent_ci95": [
+            -0.014,
+            0.0093
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.6704,
+          "vs_incumbent_ci95_finishers": [
+            -0.0091,
+            0.0084
+          ]
+        },
+        "post_quali": {
+          "tuning_mae": 2.3434,
+          "tuning_mae_incumbent": 2.3555,
+          "held_out_mae": 3.1869,
+          "held_out_mae_incumbent": 3.1848,
+          "vs_incumbent_ci95": [
+            -0.0084,
+            0.0134
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.2615,
+          "vs_incumbent_ci95_finishers": [
+            -0.0077,
+            0.0144
+          ]
+        },
+        "race_day": {
+          "tuning_mae": 2.3442,
+          "tuning_mae_incumbent": 2.3544,
+          "held_out_mae": 3.1741,
+          "held_out_mae_incumbent": 3.1696,
+          "vs_incumbent_ci95": [
+            -0.0067,
+            0.0162
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.2481,
+          "vs_incumbent_ci95_finishers": [
+            -0.0063,
+            0.0168
+          ]
+        }
+      },
+      "note": "incumbent here = the same XGBoost on the hand-typed circuit facts",
+      "scored_at": "2026-10-11T06:18:06+00:00"
+    },
+    "xgb_lead_weather": {
+      "spec": {
+        "family": "xgb",
+        "params": {
+          "colsample_bytree": 0.6914200087189198,
+          "learning_rate": 0.04499098541918724,
+          "max_depth": 2,
+          "min_child_weight": 4,
+          "n_estimators": 159,
+          "reg_alpha": 0.521658349660818,
+          "reg_lambda": 3.488761099273773,
+          "subsample": 0.9861677405155175
+        },
+        "features": "stage-matched forecast lead times"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 2.6561,
+          "tuning_mae_incumbent": 2.6555,
+          "held_out_mae": 3.6027,
+          "held_out_mae_incumbent": 3.6031,
+          "vs_incumbent_ci95": [
+            -0.0024,
+            0.0014
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6756,
+          "vs_incumbent_ci95_finishers": [
+            -0.0019,
+            0.0019
+          ]
+        },
+        "post_practice": {
+          "tuning_mae": 2.5951,
+          "tuning_mae_incumbent": 2.5937,
+          "held_out_mae": 3.5573,
+          "held_out_mae_incumbent": 3.5589,
+          "vs_incumbent_ci95": [
+            -0.0037,
+            0.0003
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6438,
+          "vs_incumbent_ci95_finishers": [
+            -0.0033,
+            0.0008
+          ]
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 2.6085,
+          "tuning_mae_incumbent": 2.6124,
+          "held_out_mae": 3.7276,
+          "held_out_mae_incumbent": 3.7293,
+          "vs_incumbent_ci95": [
+            -0.0044,
+            0.0005
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.6663,
+          "vs_incumbent_ci95_finishers": [
+            -0.0026,
+            0.0003
+          ]
+        },
+        "post_sprint": {
+          "tuning_mae": 2.6085,
+          "tuning_mae_incumbent": 2.6124,
+          "held_out_mae": 3.7277,
+          "held_out_mae_incumbent": 3.7294,
+          "vs_incumbent_ci95": [
+            -0.0044,
+            0.0005
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.6664,
+          "vs_incumbent_ci95_finishers": [
+            -0.0026,
+            0.0003
+          ]
+        },
+        "post_quali": {
+          "tuning_mae": 2.3413,
+          "tuning_mae_incumbent": 2.343,
+          "held_out_mae": 3.1862,
+          "held_out_mae_incumbent": 3.1889,
+          "vs_incumbent_ci95": [
+            -0.0058,
+            -0.0002
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.2616,
+          "vs_incumbent_ci95_finishers": [
+            -0.0046,
+            0.0004
+          ]
+        },
+        "race_day": {
+          "tuning_mae": 2.3442,
+          "tuning_mae_incumbent": 2.3442,
+          "held_out_mae": 3.1729,
+          "held_out_mae_incumbent": 3.1762,
+          "vs_incumbent_ci95": [
+            -0.0064,
+            -0.0009
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.248,
+          "vs_incumbent_ci95_finishers": [
+            -0.0051,
+            -0.0004
+          ]
+        }
+      },
+      "note": "incumbent here = the same XGBoost with the archive forecast at every stage",
+      "scored_at": "2026-10-11T06:28:58+00:00"
+    },
+    "xgb_practice_session_weighted": {
+      "spec": {
+        "family": "xgb",
+        "params": {
+          "colsample_bytree": 0.6914200087189198,
+          "learning_rate": 0.04499098541918724,
+          "max_depth": 2,
+          "min_child_weight": 4,
+          "n_estimators": 159,
+          "reg_alpha": 0.521658349660818,
+          "reg_lambda": 3.488761099273773,
+          "subsample": 0.9861677405155175
+        },
+        "features": "practice_session_weighted"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 2.6625,
+          "tuning_mae_incumbent": 2.6561,
+          "held_out_mae": 3.5984,
+          "held_out_mae_incumbent": 3.6027,
+          "vs_incumbent_ci95": [
+            -0.0096,
+            0.0016
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6775,
+          "vs_incumbent_ci95_finishers": [
+            -0.0032,
+            0.0077
+          ]
+        },
+        "post_practice": {
+          "tuning_mae": 2.5967,
+          "tuning_mae_incumbent": 2.5951,
+          "held_out_mae": 3.5698,
+          "held_out_mae_incumbent": 3.5573,
+          "vs_incumbent_ci95": [
+            0.0026,
+            0.0221
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6496,
+          "vs_incumbent_ci95_finishers": [
+            -0.0046,
+            0.0155
+          ]
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 2.6451,
+          "tuning_mae_incumbent": 2.6085,
+          "held_out_mae": 3.7481,
+          "held_out_mae_incumbent": 3.7276,
+          "vs_incumbent_ci95": [
+            0.0091,
+            0.0317
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.673,
+          "vs_incumbent_ci95_finishers": [
+            -0.0058,
+            0.0177
+          ]
+        },
+        "post_sprint": {
+          "tuning_mae": 2.6451,
+          "tuning_mae_incumbent": 2.6085,
+          "held_out_mae": 3.7485,
+          "held_out_mae_incumbent": 3.7277,
+          "vs_incumbent_ci95": [
+            0.0091,
+            0.0326
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.6735,
+          "vs_incumbent_ci95_finishers": [
+            -0.0055,
+            0.0183
+          ]
+        },
+        "post_quali": {
+          "tuning_mae": 2.3472,
+          "tuning_mae_incumbent": 2.3413,
+          "held_out_mae": 3.1841,
+          "held_out_mae_incumbent": 3.1862,
+          "vs_incumbent_ci95": [
+            -0.0115,
+            0.0065
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.2578,
+          "vs_incumbent_ci95_finishers": [
+            -0.014,
+            0.0057
+          ]
+        },
+        "race_day": {
+          "tuning_mae": 2.3366,
+          "tuning_mae_incumbent": 2.3442,
+          "held_out_mae": 3.1704,
+          "held_out_mae_incumbent": 3.1729,
+          "vs_incumbent_ci95": [
+            -0.0127,
+            0.0065
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.2438,
+          "vs_incumbent_ci95_finishers": [
+            -0.0149,
+            0.006
+          ]
+        }
+      },
+      "note": "incumbent here = best practice lap across sessions",
+      "scored_at": "2026-10-11T06:37:35+00:00"
+    },
+    "xgb_practice_latest_session": {
+      "spec": {
+        "family": "xgb",
+        "params": {
+          "colsample_bytree": 0.6914200087189198,
+          "learning_rate": 0.04499098541918724,
+          "max_depth": 2,
+          "min_child_weight": 4,
+          "n_estimators": 159,
+          "reg_alpha": 0.521658349660818,
+          "reg_lambda": 3.488761099273773,
+          "subsample": 0.9861677405155175
+        },
+        "features": "practice_latest_session"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 2.6563,
+          "tuning_mae_incumbent": 2.6561,
+          "held_out_mae": 3.6089,
+          "held_out_mae_incumbent": 3.6027,
+          "vs_incumbent_ci95": [
+            0.0016,
+            0.011
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6856,
+          "vs_incumbent_ci95_finishers": [
+            0.0052,
+            0.0153
+          ]
+        },
+        "post_practice": {
+          "tuning_mae": 2.5867,
+          "tuning_mae_incumbent": 2.5951,
+          "held_out_mae": 3.5588,
+          "held_out_mae_incumbent": 3.5573,
+          "vs_incumbent_ci95": [
+            -0.0089,
+            0.0124
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6446,
+          "vs_incumbent_ci95_finishers": [
+            -0.0096,
+            0.0121
+          ]
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 2.6332,
+          "tuning_mae_incumbent": 2.6085,
+          "held_out_mae": 3.7308,
+          "held_out_mae_incumbent": 3.7276,
+          "vs_incumbent_ci95": [
+            -0.0146,
+            0.0202
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.6646,
+          "vs_incumbent_ci95_finishers": [
+            -0.018,
+            0.0134
+          ]
+        },
+        "post_sprint": {
+          "tuning_mae": 2.6332,
+          "tuning_mae_incumbent": 2.6085,
+          "held_out_mae": 3.7308,
+          "held_out_mae_incumbent": 3.7277,
+          "vs_incumbent_ci95": [
+            -0.0147,
+            0.02
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.6646,
+          "vs_incumbent_ci95_finishers": [
+            -0.0179,
+            0.0131
+          ]
+        },
+        "post_quali": {
+          "tuning_mae": 2.3306,
+          "tuning_mae_incumbent": 2.3413,
+          "held_out_mae": 3.1845,
+          "held_out_mae_incumbent": 3.1862,
+          "vs_incumbent_ci95": [
+            -0.0116,
+            0.0085
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.2622,
+          "vs_incumbent_ci95_finishers": [
+            -0.0095,
+            0.0111
+          ]
+        },
+        "race_day": {
+          "tuning_mae": 2.3202,
+          "tuning_mae_incumbent": 2.3442,
+          "held_out_mae": 3.1698,
+          "held_out_mae_incumbent": 3.1729,
+          "vs_incumbent_ci95": [
+            -0.0131,
+            0.0069
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.247,
+          "vs_incumbent_ci95_finishers": [
+            -0.0114,
+            0.0095
+          ]
+        }
+      },
+      "note": "incumbent here = best practice lap across sessions",
+      "scored_at": "2026-10-11T06:37:49+00:00"
+    }
+  },
+  "quali_delta": {
+    "lgbm": {
+      "spec": {
+        "family": "lgbm",
+        "params": {
+          "colsample_bytree": 0.7564242430292963,
+          "learning_rate": 0.04644721755761247,
+          "min_child_samples": 8,
+          "n_estimators": 101,
+          "num_leaves": 9,
+          "reg_alpha": 0.41588332573637765,
+          "reg_lambda": 2.2031009834599744,
+          "subsample": 0.6125253169822235,
+          "subsample_freq": 1
+        }
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 2.9302,
+          "tuning_mae_incumbent": 2.9244,
+          "held_out_mae": 3.4311,
+          "held_out_mae_incumbent": 3.4199,
+          "vs_incumbent_ci95": [
+            -0.008,
+            0.0309
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.7069,
+          "vs_incumbent_ci95_finishers": [
+            -0.0132,
+            0.0296
+          ]
+        },
+        "post_practice": {
+          "tuning_mae": 2.9249,
+          "tuning_mae_incumbent": 2.9247,
+          "held_out_mae": 3.4262,
+          "held_out_mae_incumbent": 3.4187,
+          "vs_incumbent_ci95": [
+            -0.0116,
+            0.0258
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6945,
+          "vs_incumbent_ci95_finishers": [
+            -0.0183,
+            0.0228
+          ]
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 2.7773,
+          "tuning_mae_incumbent": 2.7541,
+          "held_out_mae": 3.6071,
+          "held_out_mae_incumbent": 3.5978,
+          "vs_incumbent_ci95": [
+            -0.019,
+            0.0408
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.852,
+          "vs_incumbent_ci95_finishers": [
+            -0.0234,
+            0.044
+          ]
+        },
+        "post_sprint": {
+          "tuning_mae": 2.7847,
+          "tuning_mae_incumbent": 2.7541,
+          "held_out_mae": 3.6089,
+          "held_out_mae_incumbent": 3.5978,
+          "vs_incumbent_ci95": [
+            -0.0171,
+            0.0421
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.8555,
+          "vs_incumbent_ci95_finishers": [
+            -0.0179,
+            0.0461
+          ]
+        },
+        "post_quali": {
+          "tuning_mae": 2.5455,
+          "tuning_mae_incumbent": 2.539,
+          "held_out_mae": 3.2166,
+          "held_out_mae_incumbent": 3.2014,
+          "vs_incumbent_ci95": [
+            -0.0045,
+            0.0349
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.3331,
+          "vs_incumbent_ci95_finishers": [
+            -0.0162,
+            0.0236
+          ]
+        },
+        "race_day": {
+          "tuning_mae": 2.3669,
+          "tuning_mae_incumbent": 2.3443,
+          "held_out_mae": 3.1059,
+          "held_out_mae_incumbent": 3.0873,
+          "vs_incumbent_ci95": [
+            -0.0025,
+            0.0388
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.2088,
+          "vs_incumbent_ci95_finishers": [
+            -0.0116,
+            0.0285
+          ]
+        }
+      },
+      "note": "LightGBM alone",
+      "scored_at": "2026-10-11T06:03:00+00:00"
+    },
+    "ensemble_xgb_lgbm": {
+      "spec": {
+        "family": "ensemble",
+        "weights": [
+          0.75,
+          0.25
+        ],
+        "members": [
+          {
+            "family": "xgb",
+            "suffix": "xgb",
+            "params": {
+              "colsample_bytree": 0.718509402281633,
+              "learning_rate": 0.0430533878126005,
+              "max_depth": 2,
+              "min_child_weight": 7,
+              "n_estimators": 108,
+              "reg_alpha": 1.5444895385933148,
+              "reg_lambda": 1.0961470446025172,
+              "subsample": 0.602208846849441
+            }
+          },
+          {
+            "family": "lgbm",
+            "suffix": "lgbm",
+            "params": {
+              "colsample_bytree": 0.7564242430292963,
+              "learning_rate": 0.04644721755761247,
+              "min_child_samples": 8,
+              "n_estimators": 101,
+              "num_leaves": 9,
+              "reg_alpha": 0.41588332573637765,
+              "reg_lambda": 2.2031009834599744,
+              "subsample": 0.6125253169822235,
+              "subsample_freq": 1
+            }
+          }
+        ]
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 2.9228,
+          "tuning_mae_incumbent": 2.9244,
+          "held_out_mae": 3.42,
+          "held_out_mae_incumbent": 3.4199,
+          "vs_incumbent_ci95": [
+            -0.0046,
+            0.005
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6978,
+          "vs_incumbent_ci95_finishers": [
+            -0.0064,
+            0.0042
+          ]
+        },
+        "post_practice": {
+          "tuning_mae": 2.9217,
+          "tuning_mae_incumbent": 2.9247,
+          "held_out_mae": 3.4178,
+          "held_out_mae_incumbent": 3.4187,
+          "vs_incumbent_ci95": [
+            -0.0056,
+            0.0036
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6895,
+          "vs_incumbent_ci95_finishers": [
+            -0.008,
+            0.0026
+          ]
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 2.7591,
+          "tuning_mae_incumbent": 2.7541,
+          "held_out_mae": 3.5952,
+          "held_out_mae_incumbent": 3.5978,
+          "vs_incumbent_ci95": [
+            -0.0085,
+            0.0038
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.8385,
+          "vs_incumbent_ci95_finishers": [
+            -0.011,
+            0.0039
+          ]
+        },
+        "post_sprint": {
+          "tuning_mae": 2.7611,
+          "tuning_mae_incumbent": 2.7541,
+          "held_out_mae": 3.5952,
+          "held_out_mae_incumbent": 3.5978,
+          "vs_incumbent_ci95": [
+            -0.0085,
+            0.0036
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.8388,
+          "vs_incumbent_ci95_finishers": [
+            -0.0105,
+            0.0039
+          ]
+        },
+        "post_quali": {
+          "tuning_mae": 2.5362,
+          "tuning_mae_incumbent": 2.539,
+          "held_out_mae": 3.2007,
+          "held_out_mae_incumbent": 3.2014,
+          "vs_incumbent_ci95": [
+            -0.0056,
+            0.0044
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.325,
+          "vs_incumbent_ci95_finishers": [
+            -0.0095,
+            0.0009
+          ]
+        },
+        "race_day": {
+          "tuning_mae": 2.3453,
+          "tuning_mae_incumbent": 2.3443,
+          "held_out_mae": 3.0872,
+          "held_out_mae_incumbent": 3.0873,
+          "vs_incumbent_ci95": [
+            -0.0054,
+            0.0052
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.1968,
+          "vs_incumbent_ci95_finishers": [
+            -0.0089,
+            0.002
+          ]
+        }
+      },
+      "note": "weight on LightGBM chosen on the tuning window: 0.25",
+      "scored_at": "2026-10-11T06:03:00+00:00"
+    },
+    "xgb_measured_circuits": {
+      "spec": {
+        "family": "xgb",
+        "params": {
+          "colsample_bytree": 0.718509402281633,
+          "learning_rate": 0.0430533878126005,
+          "max_depth": 2,
+          "min_child_weight": 7,
+          "n_estimators": 108,
+          "reg_alpha": 1.5444895385933148,
+          "reg_lambda": 1.0961470446025172,
+          "subsample": 0.602208846849441
+        },
+        "features": "measured circuit facts"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 2.8922,
+          "tuning_mae_incumbent": 2.9244,
+          "held_out_mae": 3.4164,
+          "held_out_mae_incumbent": 3.4199,
+          "vs_incumbent_ci95": [
+            -0.0122,
+            0.0059
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6943,
+          "vs_incumbent_ci95_finishers": [
+            -0.0136,
+            0.0052
+          ]
+        },
+        "post_practice": {
+          "tuning_mae": 2.8928,
+          "tuning_mae_incumbent": 2.9247,
+          "held_out_mae": 3.4152,
+          "held_out_mae_incumbent": 3.4187,
+          "vs_incumbent_ci95": [
+            -0.0125,
+            0.006
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.689,
+          "vs_incumbent_ci95_finishers": [
+            -0.0119,
+            0.0059
+          ]
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 2.7593,
+          "tuning_mae_incumbent": 2.7541,
+          "held_out_mae": 3.5908,
+          "held_out_mae_incumbent": 3.5978,
+          "vs_incumbent_ci95": [
+            -0.0233,
+            0.0076
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.8368,
+          "vs_incumbent_ci95_finishers": [
+            -0.0171,
+            0.0067
+          ]
+        },
+        "post_sprint": {
+          "tuning_mae": 2.7593,
+          "tuning_mae_incumbent": 2.7541,
+          "held_out_mae": 3.5908,
+          "held_out_mae_incumbent": 3.5978,
+          "vs_incumbent_ci95": [
+            -0.0233,
+            0.0076
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.8368,
+          "vs_incumbent_ci95_finishers": [
+            -0.0171,
+            0.0067
+          ]
+        },
+        "post_quali": {
+          "tuning_mae": 2.5071,
+          "tuning_mae_incumbent": 2.539,
+          "held_out_mae": 3.1982,
+          "held_out_mae_incumbent": 3.2014,
+          "vs_incumbent_ci95": [
+            -0.0116,
+            0.0061
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.3278,
+          "vs_incumbent_ci95_finishers": [
+            -0.0125,
+            0.0115
+          ]
+        },
+        "race_day": {
+          "tuning_mae": 2.3078,
+          "tuning_mae_incumbent": 2.3443,
+          "held_out_mae": 3.0795,
+          "held_out_mae_incumbent": 3.0873,
+          "vs_incumbent_ci95": [
+            -0.016,
+            0.0008
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.1924,
+          "vs_incumbent_ci95_finishers": [
+            -0.0201,
+            0.0055
+          ]
+        }
+      },
+      "note": "incumbent here = the same XGBoost on the hand-typed circuit facts",
+      "scored_at": "2026-10-11T06:18:16+00:00"
+    },
+    "xgb_lead_weather": {
+      "spec": {
+        "family": "xgb",
+        "params": {
+          "colsample_bytree": 0.718509402281633,
+          "learning_rate": 0.0430533878126005,
+          "max_depth": 2,
+          "min_child_weight": 7,
+          "n_estimators": 108,
+          "reg_alpha": 1.5444895385933148,
+          "reg_lambda": 1.0961470446025172,
+          "subsample": 0.602208846849441
+        },
+        "features": "stage-matched forecast lead times"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 2.8978,
+          "tuning_mae_incumbent": 2.8965,
+          "held_out_mae": 3.4163,
+          "held_out_mae_incumbent": 3.4162,
+          "vs_incumbent_ci95": [
+            -0.0011,
+            0.0012
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6941,
+          "vs_incumbent_ci95_finishers": [
+            -0.0009,
+            0.0014
+          ]
+        },
+        "post_practice": {
+          "tuning_mae": 2.8981,
+          "tuning_mae_incumbent": 2.897,
+          "held_out_mae": 3.4147,
+          "held_out_mae_incumbent": 3.4144,
+          "vs_incumbent_ci95": [
+            -0.0009,
+            0.0015
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.6877,
+          "vs_incumbent_ci95_finishers": [
+            -0.0009,
+            0.0013
+          ]
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 2.7565,
+          "tuning_mae_incumbent": 2.7557,
+          "held_out_mae": 3.5922,
+          "held_out_mae_incumbent": 3.5921,
+          "vs_incumbent_ci95": [
+            -0.0024,
+            0.0022
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.8379,
+          "vs_incumbent_ci95_finishers": [
+            -0.0021,
+            0.0037
+          ]
+        },
+        "post_sprint": {
+          "tuning_mae": 2.7565,
+          "tuning_mae_incumbent": 2.7557,
+          "held_out_mae": 3.5922,
+          "held_out_mae_incumbent": 3.5921,
+          "vs_incumbent_ci95": [
+            -0.0024,
+            0.0022
+          ],
+          "held_out_races": 14,
+          "held_out_mae_finishers": 2.8379,
+          "vs_incumbent_ci95_finishers": [
+            -0.0021,
+            0.0037
+          ]
+        },
+        "post_quali": {
+          "tuning_mae": 2.5094,
+          "tuning_mae_incumbent": 2.5098,
+          "held_out_mae": 3.1959,
+          "held_out_mae_incumbent": 3.1973,
+          "vs_incumbent_ci95": [
+            -0.003,
+            0.0
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.3242,
+          "vs_incumbent_ci95_finishers": [
+            -0.0027,
+            0.0002
+          ]
+        },
+        "race_day": {
+          "tuning_mae": 2.309,
+          "tuning_mae_incumbent": 2.3082,
+          "held_out_mae": 3.0784,
+          "held_out_mae_incumbent": 3.0797,
+          "vs_incumbent_ci95": [
+            -0.0029,
+            0.0001
+          ],
+          "held_out_races": 52,
+          "held_out_mae_finishers": 2.1908,
+          "vs_incumbent_ci95_finishers": [
+            -0.0026,
+            0.0004
+          ]
+        }
+      },
+      "note": "incumbent here = the same XGBoost with the archive forecast at every stage",
+      "scored_at": "2026-10-11T06:29:23+00:00"
+    }
+  },
+  "qualifying": {
+    "lgbm": {
+      "spec": {
+        "family": "lgbm",
+        "params": {
+          "colsample_bytree": 0.6783931449676581,
+          "learning_rate": 0.019045457782107613,
+          "min_child_samples": 44,
+          "n_estimators": 312,
+          "num_leaves": 19,
+          "reg_alpha": 1.4946402202747617,
+          "reg_lambda": 2.1190763971672393,
+          "subsample": 0.8347004662655393,
+          "subsample_freq": 1
+        }
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 0.789,
+          "tuning_mae_incumbent": 0.7899,
+          "held_out_mae": 0.7817,
+          "held_out_mae_incumbent": 0.7899,
+          "vs_incumbent_ci95": [
+            -0.019,
+            0.0019
+          ],
+          "held_out_races": 76
+        },
+        "post_practice": {
+          "tuning_mae": 0.7351,
+          "tuning_mae_incumbent": 0.7342,
+          "held_out_mae": 0.7276,
+          "held_out_mae_incumbent": 0.74,
+          "vs_incumbent_ci95": [
+            -0.0251,
+            -0.0006
+          ],
+          "held_out_races": 76
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 0.7701,
+          "tuning_mae_incumbent": 0.7678,
+          "held_out_mae": 0.8478,
+          "held_out_mae_incumbent": 0.8846,
+          "vs_incumbent_ci95": [
+            -0.0736,
+            -0.0079
+          ],
+          "held_out_races": 20
+        },
+        "post_sprint": {
+          "tuning_mae": 0.7701,
+          "tuning_mae_incumbent": 0.7678,
+          "held_out_mae": 0.8481,
+          "held_out_mae_incumbent": 0.8846,
+          "vs_incumbent_ci95": [
+            -0.0733,
+            -0.0078
+          ],
+          "held_out_races": 20
+        }
+      },
+      "note": "LightGBM alone",
+      "scored_at": "2026-10-11T06:04:32+00:00"
+    },
+    "ensemble_xgb_lgbm": {
+      "spec": {
+        "family": "ensemble",
+        "weights": [
+          0.55,
+          0.45
+        ],
+        "members": [
+          {
+            "family": "xgb",
+            "suffix": "xgb",
+            "params": {
+              "colsample_bytree": 0.7879778055963772,
+              "learning_rate": 0.06591206835935172,
+              "max_depth": 4,
+              "min_child_weight": 9,
+              "n_estimators": 136,
+              "reg_alpha": 1.8566371251754508,
+              "reg_lambda": 1.784552444951943,
+              "subsample": 0.9866619276174678
+            }
+          },
+          {
+            "family": "lgbm",
+            "suffix": "lgbm",
+            "params": {
+              "colsample_bytree": 0.6783931449676581,
+              "learning_rate": 0.019045457782107613,
+              "min_child_samples": 44,
+              "n_estimators": 312,
+              "num_leaves": 19,
+              "reg_alpha": 1.4946402202747617,
+              "reg_lambda": 2.1190763971672393,
+              "subsample": 0.8347004662655393,
+              "subsample_freq": 1
+            }
+          }
+        ]
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 0.787,
+          "tuning_mae_incumbent": 0.7899,
+          "held_out_mae": 0.7838,
+          "held_out_mae_incumbent": 0.7899,
+          "vs_incumbent_ci95": [
+            -0.0112,
+            -0.0013
+          ],
+          "held_out_races": 76
+        },
+        "post_practice": {
+          "tuning_mae": 0.7321,
+          "tuning_mae_incumbent": 0.7342,
+          "held_out_mae": 0.7306,
+          "held_out_mae_incumbent": 0.74,
+          "vs_incumbent_ci95": [
+            -0.0154,
+            -0.0043
+          ],
+          "held_out_races": 76
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 0.7688,
+          "tuning_mae_incumbent": 0.7678,
+          "held_out_mae": 0.8641,
+          "held_out_mae_incumbent": 0.8846,
+          "vs_incumbent_ci95": [
+            -0.037,
+            -0.0069
+          ],
+          "held_out_races": 20
+        },
+        "post_sprint": {
+          "tuning_mae": 0.7688,
+          "tuning_mae_incumbent": 0.7678,
+          "held_out_mae": 0.8642,
+          "held_out_mae_incumbent": 0.8846,
+          "vs_incumbent_ci95": [
+            -0.0367,
+            -0.0069
+          ],
+          "held_out_races": 20
+        }
+      },
+      "note": "weight on LightGBM chosen on the tuning window: 0.45",
+      "scored_at": "2026-10-11T06:04:32+00:00"
+    },
+    "xgb_measured_circuits": {
+      "spec": {
+        "family": "xgb",
+        "params": {
+          "colsample_bytree": 0.7879778055963772,
+          "learning_rate": 0.06591206835935172,
+          "max_depth": 4,
+          "min_child_weight": 9,
+          "n_estimators": 136,
+          "reg_alpha": 1.8566371251754508,
+          "reg_lambda": 1.784552444951943,
+          "subsample": 0.9866619276174678
+        },
+        "features": "measured circuit facts"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 0.7941,
+          "tuning_mae_incumbent": 0.7899,
+          "held_out_mae": 0.7995,
+          "held_out_mae_incumbent": 0.7899,
+          "vs_incumbent_ci95": [
+            -0.0096,
+            0.0316
+          ],
+          "held_out_races": 76
+        },
+        "post_practice": {
+          "tuning_mae": 0.741,
+          "tuning_mae_incumbent": 0.7342,
+          "held_out_mae": 0.753,
+          "held_out_mae_incumbent": 0.74,
+          "vs_incumbent_ci95": [
+            -0.0057,
+            0.0348
+          ],
+          "held_out_races": 76
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 0.7616,
+          "tuning_mae_incumbent": 0.7678,
+          "held_out_mae": 0.9065,
+          "held_out_mae_incumbent": 0.8846,
+          "vs_incumbent_ci95": [
+            -0.0173,
+            0.0742
+          ],
+          "held_out_races": 20
+        },
+        "post_sprint": {
+          "tuning_mae": 0.7616,
+          "tuning_mae_incumbent": 0.7678,
+          "held_out_mae": 0.9065,
+          "held_out_mae_incumbent": 0.8846,
+          "vs_incumbent_ci95": [
+            -0.0173,
+            0.0742
+          ],
+          "held_out_races": 20
+        }
+      },
+      "note": "incumbent here = the same XGBoost on the hand-typed circuit facts",
+      "scored_at": "2026-10-11T06:18:36+00:00"
+    },
+    "xgb_practice_session_weighted": {
+      "spec": {
+        "family": "xgb",
+        "params": {
+          "colsample_bytree": 0.7879778055963772,
+          "learning_rate": 0.06591206835935172,
+          "max_depth": 4,
+          "min_child_weight": 9,
+          "n_estimators": 136,
+          "reg_alpha": 1.8566371251754508,
+          "reg_lambda": 1.784552444951943,
+          "subsample": 0.9866619276174678
+        },
+        "features": "practice_session_weighted"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 0.7893,
+          "tuning_mae_incumbent": 0.7899,
+          "held_out_mae": 0.7864,
+          "held_out_mae_incumbent": 0.7899,
+          "vs_incumbent_ci95": [
+            -0.0078,
+            0.0008
+          ],
+          "held_out_races": 76
+        },
+        "post_practice": {
+          "tuning_mae": 0.7427,
+          "tuning_mae_incumbent": 0.7342,
+          "held_out_mae": 0.7428,
+          "held_out_mae_incumbent": 0.74,
+          "vs_incumbent_ci95": [
+            -0.0142,
+            0.023
+          ],
+          "held_out_races": 76
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 0.7573,
+          "tuning_mae_incumbent": 0.7678,
+          "held_out_mae": 0.8606,
+          "held_out_mae_incumbent": 0.8846,
+          "vs_incumbent_ci95": [
+            -0.0477,
+            -0.0026
+          ],
+          "held_out_races": 20
+        },
+        "post_sprint": {
+          "tuning_mae": 0.7573,
+          "tuning_mae_incumbent": 0.7678,
+          "held_out_mae": 0.8605,
+          "held_out_mae_incumbent": 0.8846,
+          "vs_incumbent_ci95": [
+            -0.0479,
+            -0.0028
+          ],
+          "held_out_races": 20
+        }
+      },
+      "note": "incumbent here = best practice lap across sessions",
+      "scored_at": "2026-10-11T06:36:45+00:00"
+    },
+    "xgb_practice_latest_session": {
+      "spec": {
+        "family": "xgb",
+        "params": {
+          "colsample_bytree": 0.7879778055963772,
+          "learning_rate": 0.06591206835935172,
+          "max_depth": 4,
+          "min_child_weight": 9,
+          "n_estimators": 136,
+          "reg_alpha": 1.8566371251754508,
+          "reg_lambda": 1.784552444951943,
+          "subsample": 0.9866619276174678
+        },
+        "features": "practice_latest_session"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 0.7919,
+          "tuning_mae_incumbent": 0.7899,
+          "held_out_mae": 0.7858,
+          "held_out_mae_incumbent": 0.7899,
+          "vs_incumbent_ci95": [
+            -0.0098,
+            0.0009
+          ],
+          "held_out_races": 76
+        },
+        "post_practice": {
+          "tuning_mae": 0.7486,
+          "tuning_mae_incumbent": 0.7342,
+          "held_out_mae": 0.7483,
+          "held_out_mae_incumbent": 0.74,
+          "vs_incumbent_ci95": [
+            -0.008,
+            0.0295
+          ],
+          "held_out_races": 76
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 0.7845,
+          "tuning_mae_incumbent": 0.7678,
+          "held_out_mae": 0.8657,
+          "held_out_mae_incumbent": 0.8846,
+          "vs_incumbent_ci95": [
+            -0.0375,
+            -0.0014
+          ],
+          "held_out_races": 20
+        },
+        "post_sprint": {
+          "tuning_mae": 0.7845,
+          "tuning_mae_incumbent": 0.7678,
+          "held_out_mae": 0.8657,
+          "held_out_mae_incumbent": 0.8846,
+          "vs_incumbent_ci95": [
+            -0.0375,
+            -0.0014
+          ],
+          "held_out_races": 20
+        }
+      },
+      "note": "incumbent here = best practice lap across sessions",
+      "scored_at": "2026-10-11T06:37:06+00:00"
+    }
+  }
+}

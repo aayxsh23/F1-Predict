@@ -55,3 +55,25 @@ if __name__ == "__main__":
         t()
         print(f"ok  {t.__name__}")
     print(f"{len(tests)} checks passed")
+
+
+def test_weekly_retrain_reuses_the_stored_hyperparameters(tmp_path, monkeypatch):
+    """Searching again every week made the gap-to-winner model drift; the
+    shipped settings are reused unless --retune."""
+    import json
+
+    from src.models import train
+
+    monkeypatch.setattr(train, "MODEL_DIR", tmp_path)
+    assert train.saved_params("race_time") == (None, None)
+    (tmp_path / "race_time_metrics.json").write_text(json.dumps({"best_params": {"max_depth": 3}, "params_tuned_at": "2026-10-01"}))
+    assert train.saved_params("race_time") == ({"max_depth": 3}, "2026-10-01")
+
+
+def test_readme_accuracy_table_matches_the_metrics():
+    """README quoted a 43-race accuracy table long after the models moved on;
+    it is now generated from src/models/saved/ (scripts/readme_accuracy.py)."""
+    from scripts.readme_accuracy import README, updated
+
+    text = README.read_text(encoding="utf-8")
+    assert updated(text) == text, "run python scripts/readme_accuracy.py"

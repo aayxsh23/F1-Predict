@@ -22,7 +22,7 @@ the FIA publishes the official grid, the forecast switches to it
 import numpy as np
 import pandas as pd
 
-from src.features.build_dataset import CIRCUIT_COLS, SPRINT_COLS, WEATHER_COLS
+from src.features.build_dataset import CIRCUIT_COLS, MEASURED_CIRCUIT_COLS, SPRINT_COLS, WEATHER_COLS
 from src.models.catalog import FEATURE_LABELS  # noqa: F401  (re-exported for older imports)
 
 # FP long-run pace was tried as a second practice input and added nothing
@@ -54,8 +54,22 @@ STRATEGY_COLS = ["expected_stops"]
 # has one practice session, not three
 SPRINT_FEATURE_COLS = ["is_sprint_weekend", *SPRINT_COLS]
 
-FEATURE_COLS = list(dict.fromkeys(
-    CIRCUIT_COLS + WEATHER_COLS + DRIVER_COLS + TEAM_COLS + RELATIVE_COLS + STRATEGY_COLS + SPRINT_FEATURE_COLS))
+# Circuit facts: finishing position and places gained read the ones measured
+# from earlier races (features/circuit_history.py: better on the tuning races,
+# held-out no worse); qualifying and gap to the winner keep the hand-typed
+# ones, which the measured ones made worse (2026-10-11,
+# experiments/circuit_history.py).
+TYPED_OUTCOME_COLS = ["safety_car_frequency", "dnf_rate", "overtaking_difficulty"]
+FINISH_CIRCUIT_COLS = [c for c in CIRCUIT_COLS if c not in TYPED_OUTCOME_COLS] + MEASURED_CIRCUIT_COLS
+
+
+def _race_inputs(circuit: list[str]) -> list[str]:
+    return list(dict.fromkeys(circuit + WEATHER_COLS + DRIVER_COLS + TEAM_COLS + RELATIVE_COLS + STRATEGY_COLS + SPRINT_FEATURE_COLS))
+
+
+FINISH_FEATURE_COLS = _race_inputs(FINISH_CIRCUIT_COLS)  # finishing position, places gained
+RACE_TIME_FEATURE_COLS = _race_inputs(CIRCUIT_COLS)  # gap to the winner
+FEATURE_COLS = list(dict.fromkeys(FINISH_FEATURE_COLS + RACE_TIME_FEATURE_COLS))  # every input a race model reads
 
 # The qualifying model predicts qualifying itself, so it may only see what is
 # known before qualifying: no grid, no quali times, nothing decided on race
@@ -89,10 +103,23 @@ RACE_STAGES = STAGES
 QUALI_STAGES = ["pre_weekend", "post_practice", *SPRINT_STAGES]
 
 
+# Which forecast a stage would really have had: on Thursday/Friday the race
+# forecast is about three days out, on Saturday about one. Past races carry
+# those (build_dataset.WEATHER_LEAD_COLS, from 2022/2024) besides the nearly
+# same-day archive forecast; a live race only has the forecast of the moment,
+# which is already the right one, so the swap does nothing there.
+WEATHER_LEAD_FOR = {"pre_weekend": "_d3", "post_practice": "_d3", "post_sprint_quali": "_d1", "post_sprint": "_d1", "post_quali": "_d1"}
+
+
 def mask_for_stage(rows: pd.DataFrame, stage: str) -> pd.DataFrame:
     if stage not in UNKNOWN_AT:
         raise ValueError(f"unknown stage: {stage}")
     rows = rows.copy()
+    lead = WEATHER_LEAD_FOR.get(stage)
+    if lead:
+        for col in WEATHER_COLS:
+            if f"{col}{lead}" in rows:
+                rows[col] = rows[f"{col}{lead}"].where(rows[f"{col}{lead}"].notna(), rows[col])
     for col in UNKNOWN_AT[stage]:
         if col in rows.columns:
             rows[col] = np.nan
@@ -131,8 +158,16 @@ def row_from_dict(feature_row: dict) -> pd.DataFrame:
 
 
 def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
-    X = df.reindex(columns=FEATURE_COLS).astype(float)
-    # grid slot matters more where passing is hard; spelled out so explanations can name it
+    """Finishing position and places gained."""
+    X = df.reindex(columns=FINISH_FEATURE_COLS).astype(float)
+    # grid slot matters more where results follow the grid; spelled out so explanations can name it
+    X["grid_x_circuit_grid_order"] = X["grid_position"] * X["circuit_grid_order"]
+    return X
+
+
+def prepare_features_race_time(df: pd.DataFrame) -> pd.DataFrame:
+    """Gap to the winner."""
+    X = df.reindex(columns=RACE_TIME_FEATURE_COLS).astype(float)
     X["grid_x_overtaking_difficulty"] = X["grid_position"] * X["overtaking_difficulty"]
     return X
 
@@ -143,5 +178,5 @@ def prepare_features_quali(df: pd.DataFrame) -> pd.DataFrame:
 
 PREPARE_FN = {
     "finish_position": prepare_features, "quali_delta": prepare_features,
-    "qualifying": prepare_features_quali, "race_time": prepare_features,
+    "qualifying": prepare_features_quali, "race_time": prepare_features_race_time,
 }

@@ -1,0 +1,39 @@
+{
+  "family": "ensemble",
+  "weights": [
+    0.55,
+    0.45
+  ],
+  "members": [
+    {
+      "family": "xgb",
+      "params": {
+        "colsample_bytree": 0.7879778055963772,
+        "learning_rate": 0.06591206835935172,
+        "max_depth": 4,
+        "min_child_weight": 9,
+        "n_estimators": 136,
+        "reg_alpha": 1.8566371251754508,
+        "reg_lambda": 1.784552444951943,
+        "subsample": 0.9866619276174678
+      },
+      "classifier": false,
+      "suffix": "xgb"
+    },
+    {
+      "family": "lgbm",
+      "params": {
+        "colsample_bytree": 0.6783931449676581,
+        "learning_rate": 0.019045457782107613,
+        "min_child_samples": 44,
+        "n_estimators": 312,
+        "num_leaves": 19,
+        "reg_alpha": 1.4946402202747617,
+        "reg_lambda": 2.1190763971672393,
+        "subsample": 0.8347004662655393,
+        "subsample_freq": 1
+      },
+      "suffix": "lgbm"
+    }
+  ]
+}

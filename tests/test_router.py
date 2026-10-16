@@ -6,9 +6,31 @@ would get wrong. Run with `python tests/test_router.py`."""
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.agent.router import classify_intent, dispatch, route
+from src.agent import f1_api  # noqa: E402
+from src.agent.router import classify_intent, dispatch, route  # noqa: E402
+
+# Recorded standings (2026, after round 16), so the standings tests don't
+# fail whenever Jolpica is down or rate-limiting CI.
+_DRIVERS = [("ANT", "Kimi", "Antonelli", "Mercedes", 325, 6), ("RUS", "George", "Russell", "Mercedes", 236, 3),
+            ("HAM", "Lewis", "Hamilton", "Ferrari", 221, 2), ("VER", "Max", "Verstappen", "Red Bull", 196, 3),
+            ("NOR", "Lando", "Norris", "McLaren", 189, 1)]
+
+
+@pytest.fixture
+def offline_standings(monkeypatch):
+    drivers = [{"code": c, "given_name": g, "family_name": f, "team": t, "points": float(p), "wins": w, "position": i + 1}
+               for i, (c, g, f, t, p, w) in enumerate(_DRIVERS)]
+    teams = [{"name": "Mercedes", "points": 561.0, "wins": 9, "position": 1}, {"name": "Ferrari", "points": 418.0, "wins": 2, "position": 2},
+             {"name": "McLaren", "points": 330.0, "wins": 1, "position": 3}]
+    schedule = [{"round": r, "race_name": f"Race {r}", "date": "2026-01-01", "is_sprint": r in (19, 22)} for r in range(1, 23)]
+    monkeypatch.setattr(f1_api, "get_driver_standings", lambda season="current", round=None: drivers)
+    monkeypatch.setattr(f1_api, "get_constructor_standings", lambda season="current", round=None: teams)
+    monkeypatch.setattr(f1_api, "get_season_schedule", lambda season="current": schedule)
+    monkeypatch.setattr(f1_api, "get_current_round", lambda season="current": 16)
 
 
 def _msgs(*texts: str) -> list[dict]:
@@ -113,17 +135,17 @@ def test_head_to_head_needs_two_codes():
     assert dispatch("head_to_head", "who wins", {})["ok"] is False
 
 
-def test_driver_standings_names_the_right_driver():
+def test_driver_standings_names_the_right_driver(offline_standings):
     r = dispatch("driver_standings", "where does VER stand", {})
     assert r["ok"] and ("VER" in r["text"] or "Verstappen" in r["text"])
 
 
-def test_constructor_standings_leads_with_real_points():
+def test_constructor_standings_leads_with_real_points(offline_standings):
     r = dispatch("constructor_standings", "team standings", {})
     assert r["ok"] and "points" in r["text"]
 
 
-def test_title_scenario_reports_a_real_points_gap():
+def test_title_scenario_reports_a_real_points_gap(offline_standings):
     r = dispatch("title_scenario", "what does the leader need to win the title", {})
     assert r["ok"] and ("points" in r["text"].lower())
 

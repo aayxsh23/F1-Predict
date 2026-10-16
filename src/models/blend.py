@@ -11,6 +11,12 @@
                  (1 - w) * qualifying model + w * Sprint Qualifying gap
   quali_team     qualifying gap before practice:
                  (1 - w) * qualifying model + w * team's recent qualifying gap
+  quali_split    qualifying gap before and after practice: the model's
+                 average for the two teammates stays, the gap between them
+                 moves toward the drivers' ratings (features/ratings.py):
+                 anchor = team mean of the predictions + (rating - team mean
+                 rating). Pole is usually decided between teammates, and the
+                 per-car model split them less than half as widely as reality
 
 Why: the finish model leans on form and, after qualifying, named the winner
 in 45% of held-out races against 66% for "the pole-sitter wins"; the
@@ -44,7 +50,9 @@ BLENDS = {  # name: (target, stages, anchor column)
     "finish_sprint": ("finish_position", ["post_sprint"], "sprint_finish_position"),
     "quali_sprint": ("qualifying", SPRINT_STAGES, "sprint_quali_gap_pct"),
     "quali_team": ("qualifying", ["pre_weekend"], "team_quali_pace"),
+    "quali_split": ("qualifying", ["pre_weekend", "post_practice"], "driver_quali_rating"),
 }
+SPLIT_GROUP = ("season", "round", "team")  # teammates: same race, same team
 
 
 @lru_cache(maxsize=1)
@@ -52,12 +60,21 @@ def load_weights() -> dict:
     return json.loads(BLEND_PATH.read_text())["weights"] if BLEND_PATH.exists() else {}
 
 
-def anchor(name: str, rows: pd.DataFrame, delta_pred: pd.Series | None = None) -> pd.Series:
+def anchor(name: str, rows: pd.DataFrame, delta_pred: pd.Series | None = None, pred: pd.Series | None = None) -> pd.Series:
     """What blend `name` pulls toward, NaN where it doesn't exist (no grid yet,
-    no Sprint Qualifying lap)."""
+    no Sprint Qualifying lap, no teammate with a rating)."""
     col = BLENDS[name][2]
     a = rows[col].astype(float) if col in rows else pd.Series(np.nan, index=rows.index)
-    return a - delta_pred if name == "finish_grid" else a
+    if name == "finish_grid":
+        return a - delta_pred
+    if name == "quali_split":
+        keys = [rows[k] for k in SPLIT_GROUP if k in rows]
+        both = a.notna() & pred.notna()
+        n = both.groupby(keys).transform("sum")
+        mean_pred = pred.where(both).groupby(keys).transform("mean")
+        mean_rating = a.where(both).groupby(keys).transform("mean")
+        return (mean_pred + a - mean_rating).where(both & (n >= 2))
+    return a
 
 
 def _mix(pred: pd.Series, a: pd.Series, w) -> pd.Series:
@@ -87,15 +104,15 @@ def apply_rows(rows: pd.DataFrame, stage: str, weights: dict | None = None) -> p
         col = CANONICAL_PRED_COLS[target]
         for name in active(target, stage, weights):
             delta = rows[CANONICAL_PRED_COLS["quali_delta"]] if name == "finish_grid" else None
-            rows[col] = _mix(rows[col], anchor(name, rows, delta), row_weight(name, rows, weights)).round(4)
+            rows[col] = _mix(rows[col], anchor(name, rows, delta, rows[col]), row_weight(name, rows, weights)).round(4)
     return rows
 
 
 def _stage_inputs(matrix: pd.DataFrame, stage: str) -> pd.DataFrame:
     from src.models.features import mask_for_stage
 
-    cols = ["season", "round", "driver", "grid_position", "quali_position", "driver_recent_form",
-            "sprint_finish_position", "sprint_quali_gap_pct", "team_quali_pace"]
+    cols = ["season", "round", "driver", "team", "grid_position", "quali_position", "driver_recent_form",
+            "sprint_finish_position", "sprint_quali_gap_pct", "team_quali_pace", "driver_quali_rating"]
     return mask_for_stage(matrix[cols], stage).drop(columns=["quali_position", "driver_recent_form", "grid_official"], errors="ignore")
 
 
@@ -104,6 +121,7 @@ def apply_walkforward(wf: pd.DataFrame, matrix: pd.DataFrame, weights: dict | No
     weights = load_weights() if weights is None else weights
     key = ["season", "round", "driver", "stage"]
     wf = wf.copy()
+    wf["pred"] = wf["pred"].astype(float)  # XGBoost writes float32; blended values are float64
     wf["pred_model"] = wf["pred"]
     for stage in set(wf["stage"]):
         inputs = _stage_inputs(matrix, stage).assign(stage=stage)
@@ -114,7 +132,7 @@ def apply_walkforward(wf: pd.DataFrame, matrix: pd.DataFrame, weights: dict | No
                 continue
             rows = wf.loc[sel, key + ["pred"]].merge(inputs, on=key, how="left").merge(delta, on=key, how="left")
             for name in active(target, stage, weights):
-                rows["pred"] = _mix(rows["pred"], anchor(name, rows, rows["_delta"]), row_weight(name, rows, weights))
+                rows["pred"] = _mix(rows["pred"], anchor(name, rows, rows["_delta"], rows["pred"]), row_weight(name, rows, weights))
             wf.loc[sel, "pred"] = rows["pred"].to_numpy()
     return wf
 
@@ -128,6 +146,7 @@ def contributions(target: str, stage: str, row: pd.DataFrame, field: pd.DataFram
     from src.models import predict
     from src.models.features import PREPARE_FN
 
+    weights = load_weights() if weights is None else weights
     c, b = predict.contributions(predict.load_model(target), PREPARE_FN[target](row))
     c, b = c.iloc[0], float(b.iloc[0])
     for name in active(target, stage, weights):
@@ -137,6 +156,22 @@ def contributions(target: str, stage: str, row: pd.DataFrame, field: pd.DataFram
             continue
         w = row_weight(name, row, weights)
         w = float(w.iloc[0]) if isinstance(w, pd.Series) else float(w)
+        if name == "quali_split":
+            # shown = (1 - w) * own + w * (team mean of the predictions + rating
+            # gap to the team mean): the team mean's contributions are the mean
+            # of the teammates' own (each with the blends before this one)
+            mates = field[(field["team"] == row["team"].iloc[0]) & (field["driver"] != row["driver"].iloc[0]) & field[col].notna()]
+            if mates.empty:
+                continue
+            earlier = {k: v for k, v in weights.items() if k != name}
+            parts = [(c, b)] + [contributions(target, stage, mates.iloc[[i]], field, earlier) for i in range(len(mates))]
+            mean_c = sum(p[0] for p in parts) / len(parts)
+            mean_b = sum(p[1] for p in parts) / len(parts)
+            team_rating = (value + float(mates[col].sum())) / len(parts)
+            c = c * (1 - w) + w * mean_c
+            b = b * (1 - w) + w * mean_b
+            c[col] = c.get(col, 0.0) + w * (value - team_rating)
+            continue
         mean = float(field[col].mean())
         c, b = c * (1 - w), b * (1 - w)
         if name == "finish_grid":
@@ -240,7 +275,27 @@ def fit() -> dict:
         m["blends"] = {n: {"weight": weights[n], **({"front_weight": weights[f"{n}_front"]} if f"{n}_front" in weights else {}),
                            "held_out": report[n]} for n, (t, _, _) in BLENDS.items() if t == target}
         path.write_text(json.dumps(m, indent=2))
+    for target in TARGETS:
+        record_history(target)
     return {"weights": weights, "held_out": report}
+
+
+HISTORY_PATH = MODEL_DIR / "model_history.json"
+HISTORY_KEEP = 200  # retrains per target (about four years of weekly runs)
+
+
+def record_history(target: str) -> None:
+    """Append this retrain's shown held-out accuracy to model_history.json, so
+    drift across retrains is visible (gap-to-winner moved 0.627 -> 0.657 in
+    three retrains before anyone could see it)."""
+    m = json.loads((MODEL_DIR / f"{target}_metrics.json").read_text())
+    history = json.loads(HISTORY_PATH.read_text()) if HISTORY_PATH.exists() else {}
+    entry = {"trained_at": m.get("trained_at"), "data_through": m.get("data_through"), "family": m.get("family", "xgb"),
+             "evaluation": m.get("evaluation"),
+             "stages": {s: {k: v[k] for k in ("mae", "baseline_mae", "vs_baseline_ci95") if k in v} for s, v in m["stages"].items()}}
+    runs = [r for r in history.get(target, []) if r.get("trained_at") != entry["trained_at"]] + [entry]
+    history[target] = runs[-HISTORY_KEEP:]
+    HISTORY_PATH.write_text(json.dumps(history, indent=2))
 
 
 if __name__ == "__main__":

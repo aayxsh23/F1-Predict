@@ -7,6 +7,8 @@ xgboost==3.4.1; sys_platform != "linux"
 fastf1==3.8.3
 pyarrow==25.0.1
 scikit-learn==1.9.1
+# a second tree library: ensembles with XGBoost (src/models/families.py)
+lightgbm==4.7.0
 scipy==1.18.1
 pypdf==6.18.1
 uvicorn==0.52.4

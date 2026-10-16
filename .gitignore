@@ -51,6 +51,8 @@ data/raw/upgrades/*
 !data/raw/testing/
 data/raw/testing/*
 !data/raw/testing/*.parquet
+# race forecasts as they stood 3 days / 1 day before (src/data/weather.py): an input, small
+!data/raw/weather_leads.parquet
 
 # Phase 9 chat knowledge: the Wikipedia index is big and regenerable
 # (python -m src.data.wiki); data/history/ IS committed (small, and the
@@ -82,6 +84,14 @@ src/models/saved/*
 !src/models/saved/pl_calibration.json
 !src/models/saved/blend.json
 !src/models/saved/*_metrics.json
+# any model family (src/models/families.py): each target's manifest and its
+# members' files, the chosen families, the contest results and the history
+!src/models/saved/*_model.json
+!src/models/saved/*_xgb_*.json
+!src/models/saved/*_lgbm.txt
+!src/models/saved/model_specs.json
+!src/models/saved/leaderboard.json
+!src/models/saved/model_history.json
 
 # Notebooks
 .ipynb_checkpoints/

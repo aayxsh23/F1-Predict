@@ -171,3 +171,14 @@ if __name__ == "__main__":
         t()
         print(f"ok  {t.__name__}")
     print(f"{len(tests)} checks passed")
+
+
+@_with_fixture_dir
+def test_championship_is_served_precomputed_and_reads_are_cdn_cacheable():
+    (cache.LOCAL_DATA_DIR / "championship.json").write_text(json.dumps(
+        {"remaining": {"races": 6, "sprints": 0}, "drivers": [{"code": "ANT", "title_chance": 0.99}], "constructors": []}))
+    with patch("src.agent.tools.championship_payload", side_effect=AssertionError("must not compute live")):
+        r = client.get("/championship")
+    assert r.status_code == 200 and r.json()["drivers"][0]["code"] == "ANT"
+    assert "s-maxage" in r.headers["cache-control"], "GET responses carry CDN cache headers"
+    assert "cache-control" not in client.get("/health").headers, "health checks are never cached"

@@ -6,6 +6,7 @@ Only top_shap_features() needs pandas/XGBoost (it runs a model), so that
 import is lazy, inside the function -- everything else here is plain string
 logic the chat router can use on an already-computed SHAP breakdown (read
 straight from a stored forecast) without pulling in either dependency."""
+from src.models.catalog import FEATURE_LABELS  # fan labels: the fallback phrase for inputs without one below
 
 # the one prompt both real inference (chat.py, explain.py) and the Phase 5
 # fine-tuning dataset (build_finetune_dataset.py) use, so the fine-tuned
@@ -74,7 +75,7 @@ def top_shap_features(model, row, target: str = "finish_position", top_k: int = 
     c = contrib.iloc[0]
     c = c.reindex(c.abs().sort_values(ascending=False).index)
     return [
-        {"feature": feat, "shap_value": float(val), "phrase": FEATURE_PHRASES.get(feat, feat)}
+        {"feature": feat, "shap_value": float(val), "phrase": FEATURE_PHRASES.get(feat) or FEATURE_LABELS.get(feat, feat).lower()}
         for feat, val in c.head(top_k).items()
     ]
 

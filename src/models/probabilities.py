@@ -6,10 +6,16 @@ model.
 Each simulated result is a Plackett-Luce draw (Gumbel-max trick: sort
 score/tau + Gumbel noise). In races each car also retires with the field's
 recent retirement rate (the share of starters who retired over the last
-DNF_WINDOW races) and a retired car classifies last. Per-driver and per-team
-rates were used until 2026-10-11 and scored worse than that single rate
-(Brier 0.1321 vs 0.1297 on held-out races): ten or twenty races of one car's
-history are mostly noise.
+DNF_WINDOW races) and a retired car classifies last. Once a grid exists the
+rate leans with the grid slot (a logistic curve with one slope, fitted on
+tuning-window races): cars at the back retire about twice as often as the
+front row (2026-10-11: held-out Brier 0.1208 vs 0.1230 for the flat rate in
+the research run; the shipped slope and its held-out check are in
+pl_calibration.json, "retirement_by_grid", and the slope is set to 0 unless
+that check's interval says it helps). Per-driver and per-team rates were
+used until 2026-10-11 and scored worse than one field rate (Brier 0.1321 vs
+0.1297 on held-out races): ten or twenty races of one car's history are
+mostly noise.
 
 tau is how noisy results are relative to the model's ordering. Each one is
 fitted, separately per weekend stage and on the tuning-window races only, for
@@ -44,6 +50,8 @@ FIT_SAMPLES = 2_000  # per race while searching temperatures (same draws for eve
 TAU_GRID = np.geomspace(0.3, 8.0, 36)  # candidate temperatures, on the 1-22 position scale
 BAND_TARGET = 0.80  # the P10-P90 range should hold the result this often
 DNF_WINDOW = 48  # races in the field's retirement rate (~two seasons; 12-96 all scored alike on the tuning races)
+GRID_STAGES = ("post_quali", "race_day")  # stages with a grid (features.GRID_STAGES; not imported: this module stays pandas-free)
+SLOPE_GRID = np.round(np.arange(0.0, 0.1001, 0.0025), 4)  # retirement log-odds per grid slot
 Q3_SIZE = 10
 
 
@@ -57,6 +65,16 @@ def load_calibration() -> dict:
 def q1_cut(n_cars: int) -> int:
     """Cars knocked out in Q1: 6 with the 22-car grid from 2026, 5 before."""
     return 6 if n_cars >= 22 else 5
+
+
+def grid_retirement(rate: float, grid, slope: float) -> np.ndarray:
+    """Each car's retirement chance from the field rate and its grid slot:
+    log-odds = logit(rate) + slope * (slot - middle of the grid). A missing
+    slot gets the field rate."""
+    g = np.asarray(grid, dtype=float)
+    centre = (np.sum(~np.isnan(g)) + 1) / 2
+    logit = np.log(rate / (1 - rate)) + slope * np.nan_to_num(g - centre)
+    return 1 / (1 + np.exp(-logit))
 
 
 def sample_positions(score, tau: float, p_dnf=0.0, n: int = N_SAMPLES, seed: int = 0) -> np.ndarray:
@@ -76,15 +94,21 @@ def _stage_cal(cal: dict, kind: str, stage: str) -> dict:
 
 
 def race_probabilities(predicted_finish, stage: str = "post_quali", teams=None, seed: int = 0,
-                       cal: dict | None = None, p_dnf: float | None = None) -> dict:
+                       cal: dict | None = None, p_dnf: float | None = None, grid=None) -> dict:
     """predicted_finish: the model's predicted finishing position per car
     (lower = better). Per-car arrays: win, podium, top10, expected_position,
     band (P10, P90), retire, beats_teammate (NaN without a teammate). p_dnf:
-    every car's retirement chance (default: the calibrated field rate)."""
+    the field's retirement rate (default: the calibrated one); `grid` (slot
+    per car, once a grid exists) leans it with the grid slot."""
     cal = cal or load_calibration()
     t = _stage_cal(cal, "race", stage)
     score = -np.asarray(predicted_finish, dtype=float)
-    p = np.full(len(score), cal["dnf_prior"] if p_dnf is None else p_dnf)
+    rate = cal["dnf_prior"] if p_dnf is None else p_dnf
+    slope = cal.get("dnf_grid_slope", 0.0)
+    if grid is not None and stage in GRID_STAGES and slope:
+        p = grid_retirement(rate, grid, slope)
+    else:
+        p = np.full(len(score), rate)
     top = sample_positions(score, t["tau_top"], p, seed=seed)
     field = sample_positions(score, t["tau_field"], p, seed=seed + 1)
     band = sample_positions(score, t.get("tau_band", t["tau_field"]), 0.0, n=4000, seed=seed + 2)  # if it finishes
@@ -190,6 +214,48 @@ def _quali_brier(g, tau: float, nolap_prior: float, n: int = FIT_SAMPLES) -> flo
     return err / max(cars, 1)
 
 
+def _stage_grid(race, matrix):
+    """Grid slot per walk-forward row at its stage: qualifying order after
+    qualifying, the official grid on race day."""
+    m = matrix[["season", "round", "driver", "grid_position", "quali_position"]]
+    j = race.merge(m, on=["season", "round", "driver"], how="left")
+    return np.where(j["stage"] == "post_quali", j["quali_position"], j["grid_position"]).astype(float), j
+
+
+def fit_grid_slope(race, matrix) -> tuple[float, dict]:
+    """The retirement slope per grid slot, chosen on tuning-window races by
+    log-likelihood, with the held-out Brier against the flat field rate and a
+    race-level 95% interval for the difference."""
+    rows = race[race["stage"].isin(GRID_STAGES)]
+    grid, j = _stage_grid(rows, matrix)
+    y, rate, tuning = j["dnf"].astype(float).to_numpy(), j["p_dnf"].to_numpy(), ~j["after_tuning_window"].to_numpy()
+    groups = (j["season"] * 1000 + j["round"]).to_numpy() * 10 + (j["stage"] == "race_day").to_numpy()
+
+    def probs(slope):
+        out = np.empty(len(j))
+        for g in np.unique(groups):
+            sel = groups == g
+            out[sel] = grid_retirement(float(rate[sel][0]), grid[sel], slope)
+        return np.clip(out, 1e-4, 1 - 1e-4)
+
+    loglik = {float(s): float(np.sum((y * np.log(p) + (1 - y) * np.log(1 - p))[tuning])) for s in SLOPE_GRID for p in [probs(s)]}
+    slope = max(loglik, key=loglik.get)
+    held = ~tuning
+    d = ((probs(slope) - y) ** 2 - (rate - y) ** 2)[held]
+    race_id = groups[held]
+    ids, inv = np.unique(race_id, return_inverse=True)
+    sums, counts = np.bincount(inv, d), np.bincount(inv)
+    rng = np.random.default_rng(0)
+    idx = rng.integers(0, len(ids), size=(2000, len(ids)))
+    boot = sums[idx].sum(axis=1) / counts[idx].sum(axis=1)
+    check = {"slope_per_grid_slot": slope, "held_out_brier_grid": round(float(((probs(slope) - y) ** 2)[held].mean()), 4),
+             "held_out_brier_field_rate": round(float(((rate - y) ** 2)[held].mean()), 4),
+             "difference_ci95": [round(float(x), 4) for x in np.percentile(boot, [2.5, 97.5])],
+             "held_out_race_stages": int(len(ids))}
+    # ship only what the held-out interval supports (AGENTS.md "Evaluate honestly")
+    return (slope if check["difference_ci95"][1] < 0 else 0.0), check
+
+
 def _reliability(p: np.ndarray, y: np.ndarray, edges=(0, .05, .1, .2, .4, 1.0)) -> list[dict]:
     """How often things given each range of chances actually happened."""
     out = []
@@ -221,6 +287,8 @@ def calibrate() -> dict:
                  "race": {}, "qualifying": {}, "checks": {}}
 
     race = wf[wf["target"] == "finish_position"].merge(raw[key + ["dnf"]], on=key).merge(rates, on=["season", "round"])
+    cal["dnf_grid_slope"], cal["checks"]["retirement_by_grid"] = fit_grid_slope(race, full_matrix)
+    race["grid_at_stage"] = _stage_grid(race, full_matrix)[0]
     for stage, g in race.groupby("stage"):
         tune, held = g[~g["after_tuning_window"]], g[g["after_tuning_window"]]
         scores = {float(t): _race_brier(tune, t) for t in TAU_GRID}
@@ -230,8 +298,8 @@ def calibrate() -> dict:
         cal["race"][stage] = taus
         P, Y, inside = [], [], []
         for i, (_, r) in enumerate(held.groupby(["season", "round"])):
-            pr = race_probabilities(r["pred"], stage=stage, seed=i, p_dnf=float(r["p_dnf"].iloc[0]),
-                                    cal={"dnf_prior": dnf_prior, "race": {stage: taus}})
+            pr = race_probabilities(r["pred"], stage=stage, seed=i, p_dnf=float(r["p_dnf"].iloc[0]), grid=r["grid_at_stage"],
+                                    cal={"dnf_prior": dnf_prior, "dnf_grid_slope": cal["dnf_grid_slope"], "race": {stage: taus}})
             a = r["actual"].to_numpy()
             P.append(np.c_[pr["win"], pr["podium"], pr["top10"]])
             Y.append(np.c_[a == 1, a <= 3, a <= 10])
@@ -247,7 +315,7 @@ def calibrate() -> dict:
             "brier": dict(zip(["win", "podium", "top10"], ((P - Y) ** 2).mean(axis=0).round(4).tolist())),
             "brier_if_guessing_evenly": dict(zip(["win", "podium", "top10"], ((np.array([1, 3, 10]) / n_cars - Y) ** 2).mean(axis=0).round(4).tolist())),
             "range_p10_p90_coverage_finishers": round(float(np.mean(inside)), 3),
-            "retirement_brier": round(float(((held_cars["p_dnf"] - held_cars["dnf"].astype(float)) ** 2).mean()), 4),
+            "retirement_brier_field_rate": round(float(((held_cars["p_dnf"] - held_cars["dnf"].astype(float)) ** 2).mean()), 4),
             "win_reliability": _reliability(P[:, 0], Y[:, 0]),
         }
 

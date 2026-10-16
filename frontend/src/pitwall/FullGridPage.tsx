@@ -231,7 +231,14 @@ function Grid({ view }: { view: RaceView }) {
           <span className="shrink-0 font-editorial text-[clamp(24px,3vw,40px)] italic leading-none text-ink-2">full grid</span>
         </div>
         <div className="flex w-full min-w-0 flex-col gap-2 wide:w-auto">
-          <span className="pw-label text-[10px]">Target lens · {betterWord(lens.id)}</span>
+          <span className="flex items-baseline justify-between gap-4">
+            <span className="pw-label text-[10px]">Target lens · {betterWord(lens.id)}</span>
+            {view.mode === 'forecast' && (
+              <Link to={`/race/${view.season}/${view.round}/strategy`} className="pw-label text-[10px] text-signal-ink hover:text-ink">
+                Tyre strategy →
+              </Link>
+            )}
+          </span>
           <LensTabs id="grid" lens={lens.id} onChange={setLens} />
         </div>
       </div>

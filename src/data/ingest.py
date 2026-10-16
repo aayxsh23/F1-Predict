@@ -420,6 +420,11 @@ def main():
                     lap_table.to_parquet(LAPS_DIR / name, index=False)
                 log.info("  wrote %s (%d rows, %d laps)", name, len(df), len(lap_table))
     testing_backfill(args.seasons)
+    # what the forecast said 3 days and 1 day before each finished race (weather.py)
+    from src.data.weather import update_leads
+    from src.features.build_dataset import load_raw
+
+    update_leads(load_raw())
 
 
 if __name__ == "__main__":

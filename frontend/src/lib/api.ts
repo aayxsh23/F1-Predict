@@ -6,6 +6,7 @@ import type {
   ChatEvent,
   ExplainResult,
   LiveRecord,
+  Ratings,
   ModelCard,
   PredictionPayload,
   RaceSummary,
@@ -60,6 +61,7 @@ export const api = {
   strategy: (season: number, round: number, scLap: number | null) =>
     request<StrategyResult>(`/strategy/${season}/${round}${scLap === null ? '' : `?sc_lap=${scLap}`}`),
   championship: () => request<Championship>('/championship'),
+  ratings: () => request<Ratings>('/ratings'),
   explain: (season: number, round: number, driver: string, target: Target) =>
     request<ExplainResult>('/explain', { method: 'POST', body: JSON.stringify({ season, round, driver, target }) }),
   regulationsList: () => request<RegulationDocument[]>('/regulations'),

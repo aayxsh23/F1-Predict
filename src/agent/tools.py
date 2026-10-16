@@ -139,6 +139,29 @@ def head_to_head(driver_a: str, driver_b: str, season: int | None = None, round:
             "a_ahead_of_b": pct(chance), "expected_finish_a": exp.get(a), "expected_finish_b": exp.get(b)}
 
 
+def season_strength(payload: dict) -> dict[str, float]:
+    """Each driver's strength for the rest of the season (predicted finish,
+    lower = stronger) with nothing specific to this weekend in it: the
+    refresh job's pre-weekend prediction, else this weekend's "Before
+    practice" snapshot. The shown forecast after qualifying includes the grid,
+    so one weekend's pole or grid penalty would otherwise count in every
+    remaining round (Singapore 2026: Russell's back-of-grid start cut his
+    expected final points from 299 to 255)."""
+    stored = {d["driver"]: d["season_strength"] for d in payload["drivers"] if d.get("season_strength") is not None}
+    if len(stored) == len(payload["drivers"]):
+        return stored
+    try:
+        timeline = get_json(f"timeline/{payload['season']}_{payload['round']}.json")
+        pre = next((s for s in timeline if s.get("stage") == "pre_weekend"), None)
+    except FileNotFoundError:
+        pre = None
+    if pre:
+        snap = {d["driver"]: d["predicted_finish_position"] for d in pre["drivers"] if d.get("predicted_finish_position") is not None}
+        if snap:
+            return {d["driver"]: snap.get(d["driver"], d["predicted_finish_position"]) for d in payload["drivers"]}
+    return {d["driver"]: d["predicted_finish_position"] for d in payload["drivers"]}
+
+
 def championship_state() -> dict:
     """Standings, remaining rounds and simulated title odds (shared with the API)."""
     done, snap = _completed_round(), context.snapshot()
@@ -146,7 +169,7 @@ def championship_state() -> dict:
     standings = f1_api.get_driver_standings(season, done)
     remaining = remaining_rounds(f1_api.get_season_schedule(season), done if done is not None else f1_api.get_current_round())
     forecast_payload = with_probabilities(get_json(_payload_name()))
-    strength = {d["driver"]: d["predicted_finish_position"] for d in forecast_payload["drivers"]}
+    strength = season_strength(forecast_payload)
     worst = max(strength.values()) + 2
     retire = [d.get("retire_risk") or 0.1 for d in forecast_payload["drivers"]]
     odds = title_odds(
@@ -155,6 +178,23 @@ def championship_state() -> dict:
         groups=[s["team"] for s in standings],
     )
     return {"standings": standings, "remaining": remaining, "odds": odds}
+
+
+def championship_payload() -> dict:
+    """Standings with every driver's and team's title chance and expected
+    points: what GET /championship serves. The refresh job precomputes it
+    into data/predictions/championship.json, so a request needs neither
+    Jolpica nor 5,000 simulated seasons."""
+    c = championship_state()
+    odds = c["odds"]
+    snap = context.snapshot()
+    return {
+        "remaining": {"races": len(c["remaining"]), "sprints": sum(r["is_sprint"] for r in c["remaining"])},
+        "drivers": [{**s, "title_chance": round(float(odds["champion"][i]), 4),
+                     "expected_points": round(float(odds["expected_points"][i]), 1)} for i, s in enumerate(c["standings"])],
+        "constructors": [{**t, "title_chance": round(float(odds["team_champion"].get(t["name"], 0.0)), 4)}
+                         for t in f1_api.get_constructor_standings(str(snap[0]) if snap else "current", _completed_round())],
+    }
 
 
 def championship(kind: Literal["drivers", "constructors"] = "drivers") -> dict:
@@ -298,8 +338,10 @@ def season_schedule(season: int | None = None) -> dict:
     weekends, and which race is next."""
     season = season or context.today().year
     sched = get_json(f"schedule/{season}.json")
-    now = context.today().isoformat()
-    upcoming = [r for r in sched if (r.get("RaceStartUtc") or "") > now[:19]]
+    # live: the current UTC time, so today's race stops being "next" once it
+    # has started; a replayed weekend only has a date
+    now = context.today().isoformat() if context.snapshot() else datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+    upcoming = [r for r in sched if (r.get("RaceStartUtc") or "")[:19] > now]
     return {"season": season, "next_round": upcoming[0]["RoundNumber"] if upcoming else None, "rounds": [
         {"round": r["RoundNumber"], "event": r["EventName"], "location": r["Location"], "race_start_utc": r.get("RaceStartUtc"),
          "sprint_weekend": "sprint" in (r.get("EventFormat") or "")} for r in sched]}

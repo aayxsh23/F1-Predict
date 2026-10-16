@@ -1,6 +1,6 @@
 import { MotionConfig, motion } from 'framer-motion'
-import { ArrowLeft, Check, Gauge, History, Radio, Scale, Search, Settings, type LucideIcon } from 'lucide-react'
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type PointerEvent, type ReactNode } from 'react'
+import { ArrowLeft, Check, Gauge, History, Radio, Scale, Search, Settings, Trophy, type LucideIcon } from 'lucide-react'
+import { Fragment, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type PointerEvent, type ReactNode } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 
 import { ChatProvider, useChat } from '@/lib/chat'
@@ -10,8 +10,9 @@ import { useHealth } from '@/lib/queries'
 
 import { ChromeContext, type Chrome, type ChromeApi, type Section } from './chrome'
 import { driverHref, snapshotLabel } from './data'
-import { Palette } from './Palette'
-import { PitRadio } from './PitRadio'
+// overlays opened on demand: their code loads the first time they open
+const Palette = lazy(() => import('./Palette').then((m) => ({ default: m.Palette })))
+const PitRadio = lazy(() => import('./PitRadio').then((m) => ({ default: m.PitRadio })))
 
 const MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
 const MOD = MAC ? '⌘' : 'Ctrl '
@@ -19,6 +20,7 @@ const KEY_K = MAC ? '⌘K' : 'Ctrl K'
 
 const NAV: Array<{ section: Section; to: string; icon: LucideIcon; label: string; short: string }> = [
   { section: 'pred', to: '/', icon: Gauge, label: 'Predictions', short: 'Predictions' },
+  { section: 'season', to: '/season', icon: Trophy, label: 'Title race', short: 'Title' },
   { section: 'hist', to: '/history', icon: History, label: 'Race history', short: 'History' },
   { section: 'regs', to: '/regulations', icon: Scale, label: 'Regulations', short: 'Rules' },
 ]
@@ -79,9 +81,6 @@ function SettingsMenu({ ambient, setAmbient, onClose }: { ambient: Ambient; setA
             </span>
           ))}
         </div>
-        <Link to="/workbench" onClick={onClose} className="mt-1 block border-t border-white/[.07] px-2 pb-1.5 pt-2.5 text-[12px] font-semibold text-signal-ink hover:text-ink">
-          Workbench: strategy & title odds →
-        </Link>
       </motion.div>
     </>
   )
@@ -330,6 +329,7 @@ export function PitWallLayout() {
             </div>
 
             {radio && (
+              <Suspense fallback={null}>
               <PitRadio
                 badge={chrome.badge}
                 suggestions={chrome.quick}
@@ -338,9 +338,14 @@ export function PitWallLayout() {
                 inputRef={input}
                 onClose={() => setRadio(false)}
               />
+              </Suspense>
             )}
             {settings && <SettingsMenu ambient={ambient} setAmbient={setAmbient} onClose={() => setSettings(false)} />}
-            {palette && <Palette onClose={() => setPalette(false)} openRadio={openRadio} />}
+            {palette && (
+              <Suspense fallback={null}>
+                <Palette onClose={() => setPalette(false)} openRadio={openRadio} />
+              </Suspense>
+            )}
           </div>
         </Api>
       </ChatProvider>

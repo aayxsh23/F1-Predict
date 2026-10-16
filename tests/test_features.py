@@ -90,12 +90,67 @@ def test_processed_dataset_if_built():
         print("  (skipped: data/processed/model_matrix.parquet not built yet)")
         return
     df = pd.read_parquet(path)
-    feature_cols = [c for c in df.columns if not c.startswith("target_")
-                     and c not in ("season", "round", "driver", "team", "location", "race_date")]
-    assert 25 <= len(feature_cols) <= 50, f"expected ~30-45 feature columns, got {len(feature_cols)}"
+    from src.models.features import FEATURE_COLS, QUALI_SAFE_FEATURE_COLS
+
+    missing = set(FEATURE_COLS + QUALI_SAFE_FEATURE_COLS) - set(df.columns)
+    assert not missing, f"model inputs missing from the matrix: {sorted(missing)}"
+    feature_cols = sorted(set(FEATURE_COLS + QUALI_SAFE_FEATURE_COLS))
     assert df["target_finish_position"].notna().mean() > 0.9
     # no row's historical features can be non-null on its own first-ever race for a brand new driver+team combo
     print(f"  {len(df)} rows, {len(feature_cols)} feature columns")
+
+
+def _races(n_races: int = 4) -> pd.DataFrame:
+    """Two teams of two at one circuit, n_races races in date order."""
+    rows = []
+    for r in range(1, n_races + 1):
+        for i, (drv, team) in enumerate([("AAA", "T1"), ("BBB", "T1"), ("CCC", "T2"), ("DDD", "T2")]):
+            rows.append({"season": 2024, "round": r, "race_date": pd.Timestamp("2024-03-01") + pd.Timedelta(days=14 * r),
+                         "location": "Monza", "driver": drv, "team": team, "grid_position": i + 1, "finish_position": i + 1,
+                         "dnf": False, "sc_laps": 0, "q1_time": 80.0 + 0.1 * i, "q2_time": np.nan, "q3_time": np.nan})
+    return pd.DataFrame(rows)
+
+
+def test_circuit_facts_use_only_earlier_races():
+    from src.features import circuit_history
+
+    races = _races()
+    before = circuit_history.build(races).set_index("round")
+    changed = races.copy()
+    changed.loc[changed["round"] == 4, "sc_laps"] = 5  # a safety car in the last race
+    changed.loc[changed["round"] == 4, "dnf"] = True
+    after = circuit_history.build(changed).set_index("round")
+    assert after.loc[[1, 2, 3, 4]].equals(before.loc[[1, 2, 3, 4]]), "a race's own outcome never feeds its circuit facts"
+    assert np.isnan(before.loc[1, "circuit_sc_share"]), "nothing before the first race"
+
+
+def test_driver_ratings_use_only_earlier_races_and_follow_teammate_gaps():
+    from src.features import ratings
+
+    races = _races()
+    r = ratings.build(races)
+    first = r[r["round"] == 1].set_index("driver")["driver_quali_rating"]
+    assert (first == 0).all(), "no comparisons yet: everyone average"
+    last = r[r["round"] == 4].set_index("driver")
+    assert last.loc["AAA", "driver_quali_rating"] < last.loc["BBB", "driver_quali_rating"], "AAA out-qualified BBB every time"
+    assert last.loc["AAA", "teammate_quali_rating_gap"] < 0 < last.loc["BBB", "teammate_quali_rating_gap"]
+    changed = races.copy()
+    changed.loc[(changed["round"] == 4) & (changed["driver"] == "BBB"), "q1_time"] = 79.0  # BBB fastest in the last race
+    assert ratings.build(changed)[lambda d: d["round"] == 4]["driver_quali_rating"].equals(
+        r[r["round"] == 4]["driver_quali_rating"]), "a race's own qualifying never feeds its ratings"
+
+
+def test_before_practice_sees_the_three_day_forecast():
+    from src.models.features import mask_for_stage
+
+    row = pd.DataFrame({"air_temp_forecast": [30.0], "rain_mm_forecast": [0.0], "wind_kph_forecast": [5.0],
+                        "air_temp_forecast_d3": [27.0], "rain_mm_forecast_d3": [2.5], "wind_kph_forecast_d3": [np.nan],
+                        "air_temp_forecast_d1": [29.0], "rain_mm_forecast_d1": [1.0], "wind_kph_forecast_d1": [10.0],
+                        "grid_position": [np.nan], "quali_position": [np.nan], "driver_recent_form": [5.0]})
+    pre = mask_for_stage(row, "pre_weekend")
+    assert (pre["air_temp_forecast"].iloc[0], pre["rain_mm_forecast"].iloc[0], pre["wind_kph_forecast"].iloc[0]) == (27.0, 2.5, 5.0)
+    assert mask_for_stage(row, "post_quali")["rain_mm_forecast"].iloc[0] == 1.0
+    assert mask_for_stage(row, "race_day")["rain_mm_forecast"].iloc[0] == 0.0, "race morning: the near-same-day forecast"
 
 
 if __name__ == "__main__":

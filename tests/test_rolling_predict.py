@@ -78,6 +78,19 @@ def test_shipped_blend_weights_are_committed():
     assert set(blend.BLENDS) <= set(blend.load_weights())
 
 
+def test_every_file_a_model_loads_is_committed():
+    """A model family's member files (LightGBM halves, two-part pieces) were
+    gitignored at first: a retrain on GitHub would have shipped manifests
+    pointing at files that weren't there."""
+    import subprocess
+
+    from src.models.catalog import MODEL_DIR
+
+    files = [p for p in MODEL_DIR.iterdir() if p.suffix in (".json", ".txt")]
+    ignored = subprocess.run(["git", "check-ignore", *map(str, files)], capture_output=True, text=True, cwd=MODEL_DIR).stdout.split()
+    assert not ignored, f"gitignored model files: {ignored}"
+
+
 def test_blends_are_weighted_averages_and_explanations_stay_exact():
     fin, delta = CANONICAL_PRED_COLS["finish_position"], CANONICAL_PRED_COLS["quali_delta"]
     rows = pd.DataFrame({fin: [4.0, 9.0], delta: [1.0, -2.0], "grid_position": [3.0, None],

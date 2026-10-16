@@ -1,11 +1,9 @@
 import { motion } from 'framer-motion'
 import { Check, LoaderCircle, RotateCcw, Send, Square, Trash2, X } from 'lucide-react'
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type RefObject } from 'react'
-import Markdown from 'react-markdown'
+import { lazy, Suspense, useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type RefObject } from 'react'
 import { Link } from 'react-router-dom'
-import remarkGfm from 'remark-gfm'
 
-import { TOOL_LABELS } from '@/components/deck/StrategistCard'
+import { TOOL_LABELS } from './toolLabels'
 import { useChat } from '@/lib/chat'
 import { cn } from '@/lib/cn'
 import { useMagnet } from '@/lib/motion'
@@ -17,34 +15,15 @@ function linkCodes(text: string, codes: string[], href: (code: string) => string
   return text.replace(new RegExp(`\\b(${codes.join('|')})\\b(?![\\]/])`, 'g'), (c) => `[${c}](${href(c)})`)
 }
 
+// The markdown renderer (react-markdown + GFM tables) is about a quarter of
+// the app's JavaScript and only answers need it, so it loads with the first answer.
+const AnswerMarkdown = lazy(() => import('./AnswerMarkdown'))
+
 function Answer({ text }: { text: string }) {
   return (
-    <div className="space-y-2.5 font-editorial text-[19px] leading-[1.45] text-ink [&_code]:font-mono [&_code]:text-[13px] [&_li]:ml-5 [&_ol]:list-decimal [&_strong]:font-normal [&_strong]:italic [&_ul]:list-disc">
-      <Markdown
-        remarkPlugins={[remarkGfm]}
-        components={{
-          table: (props) => (
-            <div className="my-1 overflow-x-auto font-mono text-[12px]">
-              <table className="w-full border-collapse" {...props} />
-            </div>
-          ),
-          th: (props) => <th className="border-b border-hairline-strong px-2 py-1 text-left font-medium text-ink-3" {...props} />,
-          td: (props) => <td className="border-b border-hairline px-2 py-1 tabular-nums" {...props} />,
-          a: ({ href = '', children }) =>
-            href.startsWith('/') ? (
-              <Link to={href} viewTransition className="text-signal-ink underline decoration-dotted underline-offset-[3px] hover:text-ink">
-                {children}
-              </Link>
-            ) : (
-              <a href={href} target="_blank" rel="noreferrer" className="text-signal-ink underline underline-offset-[3px]">
-                {children}
-              </a>
-            ),
-        }}
-      >
-        {text}
-      </Markdown>
-    </div>
+    <Suspense fallback={<p className="whitespace-pre-wrap font-editorial text-[19px] leading-[1.45] text-ink">{text}</p>}>
+      <AnswerMarkdown text={text} />
+    </Suspense>
   )
 }
 
