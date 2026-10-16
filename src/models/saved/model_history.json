@@ -55,6 +55,62 @@
           ]
         }
       }
+    },
+    {
+      "trained_at": "2026-10-16T10:24:44+00:00",
+      "data_through": "2026-10-11",
+      "family": "ensemble",
+      "evaluation": "53 races from 2024-07-21 to 2026-10-11, each predicted by a model trained only on earlier races; none of them was used to pick hyperparameters",
+      "stages": {
+        "pre_weekend": {
+          "mae": 3.563,
+          "baseline_mae": 3.6571,
+          "vs_baseline_ci95": [
+            -0.172,
+            -0.0183
+          ]
+        },
+        "post_practice": {
+          "mae": 3.5241,
+          "baseline_mae": 3.6571,
+          "vs_baseline_ci95": [
+            -0.2098,
+            -0.0592
+          ]
+        },
+        "post_sprint_quali": {
+          "mae": 3.6311,
+          "baseline_mae": 3.8223,
+          "vs_baseline_ci95": [
+            -0.3666,
+            -0.0121
+          ]
+        },
+        "post_sprint": {
+          "mae": 3.5499,
+          "baseline_mae": 4.4615,
+          "vs_baseline_ci95": [
+            -1.3884,
+            -0.4707
+          ]
+        },
+        "post_quali": {
+          "mae": 3.0316,
+          "baseline_mae": 3.2777,
+          "vs_baseline_ci95": [
+            -0.3682,
+            -0.1251
+          ]
+        },
+        "race_day": {
+          "mae": 3.05,
+          "baseline_mae": 3.3687,
+          "vs_baseline_ci95": [
+            -0.4463,
+            -0.1924
+          ]
+        }
+      }
     }
   ],
   "quali_delta": [
@@ -113,6 +169,62 @@
           ]
         }
       }
+    },
+    {
+      "trained_at": "2026-10-16T10:25:04+00:00",
+      "data_through": "2026-10-11",
+      "family": "xgb",
+      "evaluation": "53 races from 2024-07-21 to 2026-10-11, each predicted by a model trained only on earlier races; none of them was used to pick hyperparameters",
+      "stages": {
+        "pre_weekend": {
+          "mae": 3.4093,
+          "baseline_mae": 3.3687,
+          "vs_baseline_ci95": [
+            -0.0081,
+            0.0866
+          ]
+        },
+        "post_practice": {
+          "mae": 3.4086,
+          "baseline_mae": 3.3687,
+          "vs_baseline_ci95": [
+            -0.0118,
+            0.0886
+          ]
+        },
+        "post_sprint_quali": {
+          "mae": 3.5649,
+          "baseline_mae": 3.6154,
+          "vs_baseline_ci95": [
+            -0.1507,
+            0.0497
+          ]
+        },
+        "post_sprint": {
+          "mae": 3.5649,
+          "baseline_mae": 3.6154,
+          "vs_baseline_ci95": [
+            -0.1507,
+            0.0497
+          ]
+        },
+        "post_quali": {
+          "mae": 3.1979,
+          "baseline_mae": 3.3687,
+          "vs_baseline_ci95": [
+            -0.2721,
+            -0.0703
+          ]
+        },
+        "race_day": {
+          "mae": 3.0721,
+          "baseline_mae": 3.3687,
+          "vs_baseline_ci95": [
+            -0.4022,
+            -0.1934
+          ]
+        }
+      }
     }
   ],
   "qualifying": [
@@ -152,6 +264,46 @@
           "vs_baseline_ci95": [
             -0.2048,
             0.0248
+          ]
+        }
+      }
+    },
+    {
+      "trained_at": "2026-10-16T10:26:32+00:00",
+      "data_through": "2026-10-11",
+      "family": "ensemble",
+      "evaluation": "76 races from 2023-07-23 to 2026-10-11, each predicted by a model trained only on earlier races; none of them was used to pick hyperparameters",
+      "stages": {
+        "pre_weekend": {
+          "mae": 0.7668,
+          "baseline_mae": 0.7876,
+          "vs_baseline_ci95": [
+            -0.0322,
+            -0.0091
+          ]
+        },
+        "post_practice": {
+          "mae": 0.7207,
+          "baseline_mae": 0.7876,
+          "vs_baseline_ci95": [
+            -0.091,
+            -0.0402
+          ]
+        },
+        "post_sprint_quali": {
+          "mae": 0.8295,
+          "baseline_mae": 0.9479,
+          "vs_baseline_ci95": [
+            -0.2293,
+            -0.0092
+          ]
+        },
+        "post_sprint": {
+          "mae": 0.8294,
+          "baseline_mae": 0.9479,
+          "vs_baseline_ci95": [
+            -0.2295,
+            -0.0093
           ]
         }
       }
@@ -210,6 +362,62 @@
           "vs_baseline_ci95": [
             -0.3023,
             -0.1167
+          ]
+        }
+      }
+    },
+    {
+      "trained_at": "2026-10-16T10:27:35+00:00",
+      "data_through": "2026-10-11",
+      "family": "two_part",
+      "evaluation": "44 races from 2024-11-23 to 2026-10-11, each predicted by a model trained only on earlier races; none of them was used to pick hyperparameters",
+      "stages": {
+        "pre_weekend": {
+          "mae": 0.6917,
+          "baseline_mae": 0.8618,
+          "vs_baseline_ci95": [
+            -0.25,
+            -0.0854
+          ]
+        },
+        "post_practice": {
+          "mae": 0.6804,
+          "baseline_mae": 0.8618,
+          "vs_baseline_ci95": [
+            -0.2702,
+            -0.0886
+          ]
+        },
+        "post_sprint_quali": {
+          "mae": 0.6144,
+          "baseline_mae": 0.8063,
+          "vs_baseline_ci95": [
+            -0.3002,
+            -0.0708
+          ]
+        },
+        "post_sprint": {
+          "mae": 0.597,
+          "baseline_mae": 0.8063,
+          "vs_baseline_ci95": [
+            -0.3248,
+            -0.0786
+          ]
+        },
+        "post_quali": {
+          "mae": 0.648,
+          "baseline_mae": 0.8618,
+          "vs_baseline_ci95": [
+            -0.3141,
+            -0.1087
+          ]
+        },
+        "race_day": {
+          "mae": 0.6433,
+          "baseline_mae": 0.8618,
+          "vs_baseline_ci95": [
+            -0.3206,
+            -0.1126
           ]
         }
       }

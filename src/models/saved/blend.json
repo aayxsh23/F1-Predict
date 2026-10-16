@@ -2,107 +2,107 @@
   "weights": {
     "finish_grid": 0.5,
     "finish_grid_front": 0.75,
-    "finish_sprint": 0.15,
+    "finish_sprint": 0.1,
     "quali_sprint": 0.05,
-    "quali_team": 0.35,
-    "quali_split": 0.4
+    "quali_team": 0.3,
+    "quali_split": 0.35
   },
   "held_out": {
     "finish_grid": {
       "post_quali": {
-        "n": 1071,
-        "mae_model": 3.1621,
-        "mae_blend": 3.047,
+        "n": 1093,
+        "mae_model": 3.1429,
+        "mae_blend": 3.0316,
         "blend_minus_model_ci95": [
-          -0.1539,
-          -0.0756
+          -0.1509,
+          -0.0703
         ],
-        "winner_pred_model": 0.538,
-        "podium_pred_model": 2.0,
-        "winner_pred": 0.596,
-        "podium_pred": 2.038
+        "winner_pred_model": 0.528,
+        "podium_pred_model": 2.019,
+        "winner_pred": 0.585,
+        "podium_pred": 2.057
       },
       "race_day": {
-        "n": 1071,
-        "mae_model": 3.1501,
-        "mae_blend": 3.0605,
+        "n": 1093,
+        "mae_model": 3.1342,
+        "mae_blend": 3.05,
         "blend_minus_model_ci95": [
-          -0.1319,
-          -0.0424
+          -0.1268,
+          -0.0392
         ],
-        "winner_pred_model": 0.519,
-        "podium_pred_model": 2.0,
-        "winner_pred": 0.596,
-        "podium_pred": 2.019
+        "winner_pred_model": 0.509,
+        "podium_pred_model": 2.019,
+        "winner_pred": 0.585,
+        "podium_pred": 2.038
       }
     },
     "finish_sprint": {
       "post_sprint": {
-        "n": 290,
-        "mae_model": 3.6721,
-        "mae_blend": 3.6003,
+        "n": 312,
+        "mae_model": 3.631,
+        "mae_blend": 3.5499,
         "blend_minus_model_ci95": [
-          -0.1526,
-          0.0144
+          -0.141,
+          -0.0211
         ],
-        "winner_pred_model": 0.286,
-        "podium_pred_model": 1.643,
-        "winner_pred": 0.429,
-        "podium_pred": 1.714
+        "winner_pred_model": 0.333,
+        "podium_pred_model": 1.533,
+        "winner_pred": 0.4,
+        "podium_pred": 1.667
       }
     },
     "quali_sprint": {
       "post_sprint_quali": {
-        "n": 407,
-        "mae_model": 0.8641,
-        "mae_blend": 0.8549,
+        "n": 428,
+        "mae_model": 0.8367,
+        "mae_blend": 0.8295,
         "blend_minus_model_ci95": [
-          -0.0134,
-          -0.0046
+          -0.0118,
+          -0.0021
         ]
       },
       "post_sprint": {
-        "n": 407,
-        "mae_model": 0.8642,
-        "mae_blend": 0.855,
+        "n": 428,
+        "mae_model": 0.8366,
+        "mae_blend": 0.8294,
         "blend_minus_model_ci95": [
-          -0.0134,
-          -0.0046
+          -0.0117,
+          -0.0021
         ]
       }
     },
     "quali_team": {
       "pre_weekend": {
-        "n": 1530,
-        "mae_model": 0.7838,
-        "mae_blend": 0.7762,
+        "n": 1531,
+        "mae_model": 0.7732,
+        "mae_blend": 0.7668,
         "blend_minus_model_ci95": [
-          -0.0144,
-          -0.0012
+          -0.0121,
+          -0.0006
         ]
       }
     },
     "quali_split": {
       "pre_weekend": {
-        "n": 1530,
-        "mae_model": 0.7838,
-        "mae_blend": 0.7762,
+        "n": 1531,
+        "mae_model": 0.7732,
+        "mae_blend": 0.7668,
         "blend_minus_model_ci95": [
-          -0.0144,
-          -0.0012
+          -0.0121,
+          -0.0006
         ]
       },
       "post_practice": {
-        "n": 1530,
-        "mae_model": 0.7306,
-        "mae_blend": 0.7307,
+        "n": 1531,
+        "mae_model": 0.7209,
+        "mae_blend": 0.7207,
         "blend_minus_model_ci95": [
-          -0.0018,
-          0.002
+          -0.0019,
+          0.0015
         ]
       }
     }
   },
   "method": "one weight per blend, chosen by MAE on tuning-window walk-forward predictions (finishers for finishing position); held_out = races after the tuning window",
-  "fitted_at": "2026-10-11T06:40:16+00:00"
+  "fitted_at": "2026-10-16T10:27:42+00:00"
 }
