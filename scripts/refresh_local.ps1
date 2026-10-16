@@ -29,15 +29,16 @@ $log = Join-Path $env:TEMP "f1-refresh.log"
 
 if ($Register) {
     $ErrorActionPreference = "Stop"
-    $run = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" -Python `"$Python`""
+    # headless conhost: no console window pops up every 30 min (Windows Terminal ignores -WindowStyle Hidden)
+    $run = "--headless powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" -Python `"$Python`""
     $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
         -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 25)
     $every30 = New-ScheduledTaskTrigger -Once -At (Get-Date).Date -RepetitionInterval (New-TimeSpan -Minutes 30)
     $monday = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At "15:00"
     Register-ScheduledTask -TaskName "F1 forecast refresh" -Trigger $every30 -Settings $settings -Force `
-        -Action (New-ScheduledTaskAction -Execute "powershell.exe" -Argument $run -WorkingDirectory $repo) | Out-Null
+        -Action (New-ScheduledTaskAction -Execute "conhost.exe" -Argument $run -WorkingDirectory $repo) | Out-Null
     Register-ScheduledTask -TaskName "F1 race ingest" -Trigger $monday -Settings $settings -Force `
-        -Action (New-ScheduledTaskAction -Execute "powershell.exe" -Argument "$run -Ingest" -WorkingDirectory $repo) | Out-Null
+        -Action (New-ScheduledTaskAction -Execute "conhost.exe" -Argument "$run -Ingest" -WorkingDirectory $repo) | Out-Null
     Write-Output "registered: F1 forecast refresh (every 30 min), F1 race ingest (Mondays 15:00)"
     return
 }
