@@ -5982,7 +5982,7 @@ parameters:
 [num_iterations: 312]
 [learning_rate: 0.0190455]
 [num_leaves: 19]
-[num_threads: 20]
+[num_threads: 4]
 [seed: 42]
 [deterministic: 0]
 [force_col_wise: 0]

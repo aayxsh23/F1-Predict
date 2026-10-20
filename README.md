@@ -91,7 +91,7 @@ Every number below is from races the model had never seen: each was predicted by
 | Gap to winner *(after quali)* | **0.65%** of race time | 0.86% · typical past gap | 44 races, Nov 2024 → Oct 2026 |
 | Win odds *(Brier, after quali)* | **0.028** | 0.046 · everyone equal | 53 races |
 
-_Models trained 2026-10-16 on data through 2026-10-11. Lower is better for every number._
+_Models trained 2026-10-20 on data through 2026-10-11. Lower is better for every number._
 
 <!-- ACCURACY:END -->
 
