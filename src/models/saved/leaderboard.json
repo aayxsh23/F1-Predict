@@ -2557,6 +2557,95 @@
       },
       "note": "incumbent here = the same shipped model on the hand-typed physical circuit facts",
       "scored_at": "2026-10-20T14:29:21+00:00"
+    },
+    "ensemble_chained_target": {
+      "spec": {
+        "family": "ensemble",
+        "weights": [
+          0.55,
+          0.45
+        ],
+        "members": [
+          {
+            "family": "xgb",
+            "suffix": "xgb",
+            "params": {
+              "colsample_bytree": 0.7879778055963772,
+              "learning_rate": 0.06591206835935172,
+              "max_depth": 4,
+              "min_child_weight": 9,
+              "n_estimators": 136,
+              "reg_alpha": 1.8566371251754508,
+              "reg_lambda": 1.784552444951943,
+              "subsample": 0.9866619276174678
+            }
+          },
+          {
+            "family": "lgbm",
+            "suffix": "lgbm",
+            "params": {
+              "colsample_bytree": 0.6783931449676581,
+              "learning_rate": 0.019045457782107613,
+              "min_child_samples": 44,
+              "n_estimators": 312,
+              "num_leaves": 19,
+              "reg_alpha": 1.4946402202747617,
+              "reg_lambda": 2.1190763971672393,
+              "subsample": 0.8347004662655393,
+              "subsample_freq": 1
+            }
+          }
+        ],
+        "target": "session-chained gap"
+      },
+      "stages": {
+        "pre_weekend": {
+          "tuning_mae": 0.8415,
+          "tuning_mae_incumbent": 0.7893,
+          "held_out_mae": 0.8052,
+          "held_out_mae_incumbent": 0.773,
+          "vs_incumbent_ci95": [
+            0.0028,
+            0.0599
+          ],
+          "held_out_races": 76
+        },
+        "post_practice": {
+          "tuning_mae": 0.802,
+          "tuning_mae_incumbent": 0.7327,
+          "held_out_mae": 0.7608,
+          "held_out_mae_incumbent": 0.7215,
+          "vs_incumbent_ci95": [
+            0.0056,
+            0.0704
+          ],
+          "held_out_races": 76
+        },
+        "post_sprint_quali": {
+          "tuning_mae": 0.7327,
+          "tuning_mae_incumbent": 0.7618,
+          "held_out_mae": 0.8359,
+          "held_out_mae_incumbent": 0.8398,
+          "vs_incumbent_ci95": [
+            -0.0786,
+            0.0681
+          ],
+          "held_out_races": 21
+        },
+        "post_sprint": {
+          "tuning_mae": 0.7327,
+          "tuning_mae_incumbent": 0.7618,
+          "held_out_mae": 0.8359,
+          "held_out_mae_incumbent": 0.8399,
+          "vs_incumbent_ci95": [
+            -0.0787,
+            0.0681
+          ],
+          "held_out_races": 21
+        }
+      },
+      "note": "trained on the session-chained gap, scored on the official gap; incumbent = same ensemble on the official gap",
+      "scored_at": "2026-10-20T19:16:32+00:00"
     }
   }
 }
