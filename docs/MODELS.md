@@ -176,7 +176,9 @@ On every retrain each metrics file also gets a **segment table** (held-out, at t
 - 10,000 simulated races, each a random finishing order drawn around the shown ranking.
 - **Retirements: one rate for the whole field**, the share of starters who retired over the last 48 races (16% now), **leaning with the grid slot once there is a grid** (a logistic curve with one slope: about 11% at the front to 20% at the back; held-out Brier 0.1274 vs 0.1302 for the flat rate). Until 2026-10-11 each car got its driver's and team's recent rate, but that scored *worse* than one rate for everyone (Brier 0.1321 vs 0.1297): a car's ten or twenty recent races are mostly noise. So the app no longer pretends to know which car is fragile.
 - **How spread out the order is ("temperature")** is chosen, separately per stage and on the early races only, for the probabilities it produces: one for win and podium, one for the top ten. Until 2026-10-11 the win temperature was fitted to explain the whole top three, which under-stated favourites: drivers given 40-60% won 87% of the time. On the same held-out predictions, the change cut the win error (Brier) after qualifying from 0.0300 to **0.0284**, podium 0.0673 → **0.0665**, top ten 0.1507 → **0.1481**; earlier stages are unchanged.
-- What the win odds say vs what happened, after qualifying (52 held-out races): drivers given 5-10% won 4% of the time, 10-20% won 9%, 20-40% won 26%, 40% or more won 65%. Favourites are still slightly under-stated, much less than before.
+- What the win odds say vs what happened, after qualifying (53 held-out races, shown on the History page since 2026-10-21): drivers given 5-10% (7% on average) won 5% of the time, 10-20% (14%) won 7%, 20-40% (28%) won 28%, 40% or more (50%) won 63%. Favourites are still slightly under-stated, much less than before; the 10-20% group is 44 drivers, so its gap is about three wins.
+- **Each finishing place's chance** (since 2026-10-21, the driver page): the share of the simulated races in which the car finished in each place. A retirement counts as last, which is why the bars rise again at the back.
+- **What if they started elsewhere?** (`src/models/whatif.py`, `GET /whatif`): the refresh job predicts each driver's finish from every grid slot (the other cars unchanged), and the API re-runs only the odds simulation for the chosen slot. Before qualifying, the other qualifying inputs are the model's own predictions. There is no rain what-if: the models barely react to the rain forecast, so it would show almost nothing.
 - The likely range is where the car finishes **if it finishes** (its retirement chance is shown separately): with every car's retirement chance at 16%, a range that counted retirements would end at last place for everyone. Its own temperature is fitted so the P10-P90 range holds a finisher's result 80% of the time; on the held-out races it holds 80-82%.
 
 | After qualifying | Brier score | Guessing evenly |
@@ -209,7 +211,8 @@ Qualifying after practice: log loss pole 0.134, Q3 0.415; calibration error 2.1 
 
 **Tyre strategy** (`src/strategy/model.py`): fitted per circuit on real race laps since 2022 (the 18-inch tyres); every legal one- and two-stop plan costed, 2,000 races with random safety cars. Limits: linear tyre wear, no traffic.
 
-**Championship odds** (`src/agent/scenarios.py`): the remaining races and sprints simulated 5,000 times with real points and every driver's strength from this weekend's forecast **before practice** (form, team, circuit). Until 2026-10-11 it used the shown forecast, which after qualifying includes the grid, so one weekend's pole or penalty counted in every remaining round. Precomputed by the refresh job (`data/predictions/championship.json`).
+**Championship odds** (`src/agent/scenarios.py`): the remaining races and sprints simulated 5,000 times with real points and every driver's strength from this weekend's forecast **before practice** (form, team, circuit). Until 2026-10-11 it used the shown forecast, which after qualifying includes the grid, so one weekend's pole or penalty counted in every remaining round. Precomputed by the refresh job (`data/predictions/championship.json`). Ties on points go to FIA countback (more wins, then more second places, down to fifths; since 2026-10-21).
+- **Tested and not switched on** (`experiments/title_odds_backtest.py`, the odds re-run after every round of 2023-2025 with nothing from later): each driver's strength at each remaining venue instead of one for the season, and team form drifting round to round. Each won one test window and lost the other: venue strengths scored better in 2023-24 and worse in 2025, drift halved the constructors' error in 2023-24 (McLaren's 2024 rise) and hurt in 2025. Three seasons can't separate a real gain from one season's story.
 
 **Driver ratings** (`src/features/ratings.py`, `GET /ratings`, the Title race page): each driver's one-lap pace against an average driver in % of a lap, from every past teammate qualifying gap fitted at once, recent races counting more.
 
@@ -224,15 +227,17 @@ Two models, neither of which ever produces a number itself.
   - On free-form questions, the keyword rules it replaced were right 53% of the time; the classifier is right **91.5%** of the time.
   - Confidently wrong answers (a fixed answer to the wrong kind of question) fall from **44%** to **2.8%**.
   - The rules' typical failure was a history question containing "win" getting this weekend's forecast.
-- **Without a local model:** it takes the likeliest fixed kind when it's above 20% likely, since an open question then only gets a generic reply. This finds 55% of fixed questions, against 45% in normal mode, at 4.7% confidently wrong.
+- **Unusual wording** (since 2026-10-21, `experiments/router_paraphrases.py`): the generated questions were tidy, so a model rewrote 2,976 of them three ways each (casual or misspelled, indirect, second-language or slang; 8,933 in all, $0.31) and they joined the training data, split by source question. On reworded test questions, fixed questions recognised **18% → 65%** (accuracy 51% → 78%); on the original free-form questions accuracy held (91.4% → 91.7%), confidently wrong 2.5% → 3.8%.
+- **Without a local model:** it takes the likeliest fixed kind when it's above 30% likely (re-tuned after the reworded questions), since an open question then only gets a generic reply.
+- **Follow-ups:** a short "and Leclerc?" keeps the previous question's kind.
 - **Overrides:** two exact rules stay. An article number goes to the rules, and "why" with "predicted" goes to the prediction breakdown (124 of 129 such questions wanted it).
-- **Limit:** it learned from generated questions, so unusual phrasings of fixed questions often land in "open". That's harmless when the local model runs; on the serverless app they get the generic reply.
+- **Limit:** a third of reworded fixed questions still land in "open". That's harmless when the local model runs; on the serverless app they get the generic reply.
 
 **Search** (`src/rag/corpus.py`, BM25 over Wikipedia and over the FIA rules, rulings and circuit notes)
 - **Accuracy:** for questions naming a driver, team or circuit, that entity's own Wikipedia page is among the 5 hits the model reads **80%** of the time, and first **70-73%** of the time.
   - That holds for the raw question and for the queries the teacher model wrote (`experiments/retrieval_eval.py`: 79 held-out questions, 928 teacher queries).
   - Misses are mostly broad questions where a related page outranks the entity's own.
-- **Not measured:** rules questions, because no source says which article is the right one.
+- **Rules search** (since 2026-10-21; only 23 questions, labelled by the article a checked answer cited): the teacher's keyword query finds it among the 5 hits **83%** of the time, the user's raw question 61% (casual words like "ballast" for "minimum mass"). The chat model writes keyword queries, so it is fine; without the model the app searches the raw question and is weaker.
 - **Decision:** no embeddings yet; the plan adds them only if this falls short.
 
 **The chat model, `f1-analyst`** (`training/README.md` for how it's built)
@@ -262,7 +267,7 @@ Two notes on fairness:
 - **A scoring fix:** until 2026-10-20 the code checks also failed correct refusals ("I only cover F1") of the evaluation set's off-topic, news and future questions, for every model. Both columns are re-scored with the fix.
 
 - **Limits:**
-  - Style: it sometimes cites sources in the teacher's bracket style ("【source: ...】").
+  - Style: it sometimes cites sources in the teacher's bracket style ("【source: ...】"); since 2026-10-21 the app rewrites those as plain words.
   - Trick questions: 8 of 40 still go wrong. Two each are a statistic the data doesn't hold, a question about the future, and a rules question; one is a false premise answered rather than corrected; one needs arithmetic.
   - Fact check: about 1 answer in 10 contains a number or name the lookups didn't return. The app catches these and shows the plain data answer.
   - Freshness: it knows only what the tools return. News, rumours and anything after the last data refresh get "I don't have that".

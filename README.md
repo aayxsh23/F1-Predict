@@ -35,7 +35,7 @@ For the next race, and for every past race the models have been tested on (since
 | | Question | What you see |
 |---|---|---|
 | `01` | **Who takes pole?** | Predicted qualifying order and lap times, with each driver's chance of pole, of reaching Q3, and of going out in Q1 |
-| `02` | **Who wins?** | Predicted finishing order; chances to win, podium and score; a likely finishing range, retirement risk, and gap to the winner |
+| `02` | **Who wins?** | Predicted finishing order; chances to win, podium and score; each driver's chance of every finishing place, retirement risk, and gap to the winner; a slider for "what if they started P3?" |
 | `03` | **Why?** | The inputs that pushed each prediction up or down — recent results, grid slot, practice pace, circuit, weather forecast — in plain words, plus a written explanation |
 | `04` | **Best strategy?** | The fastest tyre plans, pit windows, and what a safety car on a given lap changes |
 | `05` | **Who wins the title?** | Live standings with each driver's and team's chance of the championship |
@@ -182,7 +182,8 @@ The API needs no model, no API key and no GPU to serve every fixed chat question
 | `GET /strategy/{season}/{round}?sc_lap=` | Tyre strategies, pit windows, safety-car scenario |
 | `GET /championship` | Standings with simulated title odds |
 | `GET /backtest/races` · `/backtest/{season}/{round}` · `/backtest/summary` | Past races, predicted vs actual, accuracy by season |
-| `GET /model` | Held-out accuracy of each model |
+| `GET /whatif/{season}/{round}?driver=&grid=` | One driver's odds if they started from another grid slot |
+| `GET /model` | Held-out accuracy of each model, and how honest the odds were |
 | `GET /races?season=` | The calendar |
 | `GET /regulations` · `/regulations/search?query=` · `/regulations/{file}` | FIA regulations and steward decisions |
 | `GET /ratings` | Drivers ranked by qualifying pace with the car taken out |
