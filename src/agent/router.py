@@ -30,6 +30,7 @@ _LAP_RE = re.compile(r"\blap\s*(\d{1,2})\b", re.I)
 _ROUND_RE = re.compile(r"\bround\s*(\d{1,2})\b", re.I)
 _YEAR_RE = re.compile(r"\b(20[12]\d)\b")
 _ARTICLE_RE = re.compile(r"\b[a-z]?\d{1,2}\.\d{1,2}(?:\.\d{1,2})*\b", re.I)
+FOLLOW_UP_WORDS = 5
 CONTINUATION = ("and ", "also ", "what about", "how about", "what's his", "what is his", "what's her", "what is her")
 
 
@@ -124,7 +125,9 @@ def _model() -> dict:
     return json.loads((Path(__file__).with_name("router_model.json")).read_text(encoding="utf-8"))
 
 
-EAGER_P = 0.2  # without a model: answer with the likeliest fixed intent above this (recall 55% vs 45%, wrong 4.7% vs 2.6%)
+# without a model: answer with the likeliest fixed intent above this. Re-tuned 2026-10-21 for the classifier
+# trained with rewordings (experiments/router_paraphrases.py): fixed questions found 53% vs 49%, wrong 5.0% vs 3.8%
+EAGER_P = 0.3
 
 
 def _learned_intent(q: str, eager: bool = False) -> str:
@@ -171,16 +174,12 @@ def classify_intent(messages: list[dict], eager: bool = False) -> str:
     user turn's intent for an explicit continuation ("and what about...") --
     a real discourse signal, not just "nothing else matched"."""
     question = (messages[-1].get("content") or "").lower().strip()
-    specific = _classify_specific(question, eager)
-    if specific:
-        return specific
-    if question.startswith(CONTINUATION) and len(messages) > 1:
+    # a short "and RUS?" only makes sense as a follow-up: the previous question decides, if it was a fixed one
+    if question.startswith(CONTINUATION) and len(question.split()) <= FOLLOW_UP_WORDS and len(messages) > 1:
         prev = next((m["content"] for m in reversed(messages[:-1]) if m.get("role") == "user"), None)
-        if prev:
-            inherited = _classify_specific(prev.lower().strip(), eager)
-            if inherited:
-                return inherited
-    return "general"
+        if prev and (inherited := _classify_specific(prev.lower().strip(), eager)):
+            return inherited
+    return _classify_specific(question, eager) or "general"
 
 
 # --- per-intent handlers: look up real data, render plain English ---
