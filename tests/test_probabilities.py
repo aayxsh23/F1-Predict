@@ -97,3 +97,17 @@ if __name__ == "__main__":
         if name.startswith("test_"):
             fn()
             print(f"ok  {name}")
+
+
+def test_ranked_probability_score_rewards_being_close():
+    import numpy as np
+
+    from src.models.probabilities import calibration_error, position_probabilities, ranked_probability_score
+
+    sure = np.eye(4)
+    assert np.allclose(ranked_probability_score(sure, [1, 2, 3, 4]), 0), "certain and right scores zero"
+    near, far = ranked_probability_score(sure[[1]], [1])[0], ranked_probability_score(sure[[3]], [1])[0]
+    assert 0 < near < far, "saying P2 for a winner costs less than saying P4"
+    samples = np.array([[1, 2], [2, 1], [1, 2], [1, 2]])
+    assert np.allclose(position_probabilities(samples), [[0.75, 0.25], [0.25, 0.75]])
+    assert calibration_error(np.array([0.25] * 4), np.array([1.0, 0, 0, 0])) == 0

@@ -267,6 +267,36 @@ def _reliability(p: np.ndarray, y: np.ndarray, edges=(0, .05, .1, .2, .4, 1.0)) 
     return out
 
 
+def position_probabilities(samples: np.ndarray) -> np.ndarray:
+    """(cars, cars): each car's chance of finishing in each position, from sampled orders."""
+    n = samples.shape[1]
+    return np.stack([(samples == k).mean(axis=0) for k in range(1, n + 1)], axis=1)
+
+
+def ranked_probability_score(pos_probs: np.ndarray, actual) -> np.ndarray:
+    """Per car: the squared distance between the predicted and the actual
+    cumulative finishing distribution, over positions 1..n-1 and divided by
+    n-1 (0 = certain and right). Unlike a yes/no Brier score it rewards
+    being close: P4 for a car given P3 costs less than P15."""
+    n = pos_probs.shape[1]
+    a = np.clip(np.asarray(actual, dtype=float), 1, n)
+    cum_pred = np.cumsum(pos_probs, axis=1)
+    cum_actual = (np.arange(1, n + 1)[None, :] >= a[:, None]).astype(float)
+    return ((cum_pred - cum_actual) ** 2)[:, :-1].sum(axis=1) / (n - 1)
+
+
+def log_loss(p: np.ndarray, y: np.ndarray) -> float:
+    p = np.clip(p, 1e-4, 1 - 1e-4)
+    return float(-(y * np.log(p) + (1 - y) * np.log(1 - p)).mean())
+
+
+def calibration_error(p: np.ndarray, y: np.ndarray, bins: int = 10) -> float:
+    """Expected calibration error: the gap between stated and observed rates,
+    averaged over equal-width probability bins weighted by how many fall in each."""
+    idx = np.minimum((p * bins).astype(int), bins - 1)
+    return float(sum(abs(p[idx == b].mean() - y[idx == b].mean()) * (idx == b).mean() for b in range(bins) if (idx == b).any()))
+
+
 def calibrate() -> dict:
     import pandas as pd
 
@@ -296,13 +326,15 @@ def calibrate() -> dict:
         tau_field = min(scores, key=lambda t: scores[t][2])
         taus = {"tau_top": tau_top, "tau_field": tau_field, "tau_band": fit_tau_band(tune, tau_field)}
         cal["race"][stage] = taus
-        P, Y, inside = [], [], []
+        P, Y, inside, rps, rps_even = [], [], [], [], []
         for i, (_, r) in enumerate(held.groupby(["season", "round"])):
             pr = race_probabilities(r["pred"], stage=stage, seed=i, p_dnf=float(r["p_dnf"].iloc[0]), grid=r["grid_at_stage"],
                                     cal={"dnf_prior": dnf_prior, "dnf_grid_slope": cal["dnf_grid_slope"], "race": {stage: taus}})
             a = r["actual"].to_numpy()
             P.append(np.c_[pr["win"], pr["podium"], pr["top10"]])
             Y.append(np.c_[a == 1, a <= 3, a <= 10])
+            rps += list(ranked_probability_score(position_probabilities(pr["samples"]), a))
+            rps_even += list(ranked_probability_score(np.full((len(a), len(a)), 1 / len(a)), a))
             fin = ~r["dnf"].astype(bool).to_numpy()
             inside += list(((a >= pr["band"][:, 0]) & (a <= pr["band"][:, 1]))[fin])
         if not P:
@@ -317,6 +349,13 @@ def calibrate() -> dict:
             "range_p10_p90_coverage_finishers": round(float(np.mean(inside)), 3),
             "retirement_brier_field_rate": round(float(((held_cars["p_dnf"] - held_cars["dnf"].astype(float)) ** 2).mean()), 4),
             "win_reliability": _reliability(P[:, 0], Y[:, 0]),
+            # the whole distribution, not just three yes/no events (phase 10 item 3.2)
+            "ranked_probability_score": round(float(np.mean(rps)), 4),
+            "ranked_probability_score_if_guessing_evenly": round(float(np.mean(rps_even)), 4),
+            "log_loss": dict(zip(["win", "podium", "top10"], [round(log_loss(P[:, j], Y[:, j]), 4) for j in range(3)])),
+            "log_loss_if_guessing_evenly": dict(zip(["win", "podium", "top10"], [round(log_loss(np.full(len(Y), k / n_cars), Y[:, j]), 4)
+                                                                               for j, k in enumerate((1, 3, 10))])),
+            "calibration_error": dict(zip(["win", "podium", "top10"], [round(calibration_error(P[:, j], Y[:, j]), 4) for j in range(3)])),
         }
 
     # qualifying, ranked by the official order, each car's no-lap chance in the draw
@@ -335,6 +374,8 @@ def calibrate() -> dict:
         if P:
             P, Y = np.vstack(P), np.vstack(Y).astype(float)
             cal["checks"][f"qualifying_{stage}"] = {"brier": dict(zip(["pole", "q3"], ((P - Y) ** 2).mean(axis=0).round(4).tolist())),
+                                                    "log_loss": dict(zip(["pole", "q3"], [round(log_loss(P[:, j], Y[:, j]), 4) for j in range(2)])),
+                                                    "calibration_error": dict(zip(["pole", "q3"], [round(calibration_error(P[:, j], Y[:, j]), 4) for j in range(2)])),
                                                     "pole_reliability": _reliability(P[:, 0], Y[:, 0])}
 
     cal["method"] = ("temperatures per weekend stage chosen on tuning-window walk-forward predictions for the Brier score of "
