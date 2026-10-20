@@ -99,3 +99,21 @@ def test_title_odds_strength_ignores_this_weekends_grid(monkeypatch):
         {"label": "Official grid", "stage": "race_day", "drivers": []}]
     monkeypatch.setattr(tools, "get_json", lambda name: timeline)
     assert tools.season_strength(old) == {"RUS": 4.97, "VER": 4.83}, "older forecasts: the weekend's pre-practice snapshot"
+
+
+def test_title_ties_go_to_fia_countback():
+    import numpy as np
+
+    level = [100, 100]
+    by_wins = title_odds(level, [1, 2], [], tau=1.0, places=np.array([[2, 0, 0, 0, 0], [1, 5, 0, 0, 0]]), n=50)
+    assert list(by_wins["champion"]) == [1.0, 0.0], "more wins takes a tie on points"
+    by_seconds = title_odds(level, [1, 2], [], tau=1.0, places=np.array([[1, 3, 0, 0, 0], [1, 5, 0, 0, 0]]), n=50)
+    assert list(by_seconds["champion"]) == [0.0, 1.0], "then more second places"
+    assert list(title_odds(level, [1, 2], [], tau=1.0, n=50)["champion"]) == [0.5, 0.5], "nothing to separate them: split"
+
+
+def test_team_drift_widens_late_season_uncertainty():
+    rounds = [{"round": i, "is_sprint": False} for i in range(10)]
+    steady = title_odds([0, 0, 0, 0], [1, 2, 3, 4], rounds, tau=1.5, groups=["A", "A", "B", "B"], n=4000)
+    drifting = title_odds([0, 0, 0, 0], [1, 2, 3, 4], rounds, tau=1.5, groups=["A", "A", "B", "B"], n=4000, drift=1.0)
+    assert drifting["champion"][0] < steady["champion"][0]

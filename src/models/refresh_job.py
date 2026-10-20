@@ -30,7 +30,7 @@ import pandas as pd
 from src.data.fastf1_client import event_schedule
 from src.data.ingest import race_start
 from src.features.build_dataset import load_raw
-from src.models import estimates
+from src.models import estimates, whatif
 from src.models.explain import shown_explanation
 from src.models.features import FEATURE_COLS, mask_for_stage, stage_of
 from src.models.live_predict import build_live_rows, event_info
@@ -107,6 +107,11 @@ def build_prediction_payload(season: int, round_number: int) -> dict:
     # penalty), so the title odds don't carry one weekend's grid into every
     # remaining round
     pre = predict_all(mask_for_stage(rows, "pre_weekend"))
+    try:
+        grid_whatif = whatif.grid_table(rows, p)
+    except Exception as exc:  # a what-if never stops the forecast
+        print(f"what-if table skipped ({type(exc).__name__}: {exc})")
+        grid_whatif = None
     season_strength = dict(zip(pre["driver"], pre["predicted_finish_position"]))
     location = event["Location"]
 
@@ -169,6 +174,8 @@ def build_prediction_payload(season: int, round_number: int) -> dict:
             "safety_car_probability": _clean(estimates.safety_car_probability(raw, location)),
         },
         "drivers": drivers,
+        # each driver's predicted finish from every grid slot, for the app's what-if (src/models/whatif.py)
+        **({"whatif_grid": grid_whatif} if grid_whatif else {}),
     }
 
 

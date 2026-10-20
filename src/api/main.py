@@ -7,6 +7,7 @@ refresh job precomputes everything that needs them, SHAP breakdowns included),
 so it fits a serverless function: see api/index.py for the Vercel entry point.
 Run locally: `uvicorn src.api.main:app --reload`.
 """
+import builtins
 import json
 import os
 import time
@@ -171,7 +172,50 @@ def model_card():
         m = json.loads((MODEL_DIR / f"{t}_metrics.json").read_text())
         out[t] = {k: m[k] for k in ("unit", "baseline", "evaluation", "stages", "data_through", "trained_at")}
         out[t]["top_features"] = [{"feature": f, "label": FEATURE_LABELS.get(f, f), "weight": w} for f, w in m["top_features"].items()]
+    # the odds on held-out races: "when we said 30%, it happened ...%" (phase 10 item 6.4)
+    checks = json.loads((MODEL_DIR / "pl_calibration.json").read_text()).get("checks", {})
+    out["odds"] = {stage: {k: c[k] for k in ("held_out_races", "win_reliability", "brier", "ranked_probability_score",
+                                              "ranked_probability_score_if_guessing_evenly", "calibration_error") if k in c}
+                   for stage, c in ((s.removeprefix("race_"), c) for s, c in checks.items() if s.startswith("race_"))}
     return out
+
+
+@app.get("/whatif/{season}/{round}")
+def what_if(season: int, round: int, driver: str, grid: int):
+    """One driver's odds if they started from `grid`, the rest of the field as
+    forecast. The finish for every slot was predicted by the real models when
+    the forecast was published (src/models/whatif.py); this only re-runs the
+    race sampler, so it costs milliseconds."""
+    from src.models.probabilities import race_probabilities
+
+    payload = _forecast(season, round)
+    table = payload.get("whatif_grid") or {}
+    row = _driver(payload, driver)
+    slots = table.get(row["driver"])
+    if not slots:
+        raise HTTPException(404, "No what-if for this race's forecast.")
+    if not 1 <= grid <= len(slots):
+        raise HTTPException(422, f"grid must be between 1 and {len(slots)}")
+    drivers = payload["drivers"]
+    i = next(k for k, d in enumerate(drivers) if d["driver"] == row["driver"])
+    now = [d["predicted_finish_position"] for d in drivers]
+    then = now[:i] + [slots[grid - 1]] + now[i + 1:]
+    seed = season * 100 + round
+    teams = [d["team"] for d in drivers]
+
+    def odds(pred):  # builtins.round: the route's `round` (the race) shadows it
+        r = race_probabilities(pred, stage="post_quali", teams=teams, seed=seed)
+        return {"win": builtins.round(float(r["win"][i]), 4), "podium": builtins.round(float(r["podium"][i]), 4),
+                "points": builtins.round(float(r["top10"][i]), 4), "expected_position": builtins.round(float(r["expected_position"][i]), 2)}
+
+    # "current" is what the app shows now; the what-if also assumes the grid is settled, as it is after qualifying
+    shown = with_probabilities(payload)["drivers"][i]
+    current = {"win": shown["probabilities"]["win"], "podium": shown["probabilities"]["podium"],
+               "points": shown["probabilities"]["top10"], "expected_position": shown["expected_position"]}
+    current_grid = row.get("grid_position")
+    return {"driver": row["driver"], "grid": grid, "current_grid": int(current_grid) if current_grid else None,
+            "current": current, "what_if": odds(then), "predicted_finish": {"current": now[i], "what_if": slots[grid - 1]},
+            "note": None if current_grid else "Before qualifying: the other qualifying inputs are the model's own predictions."}
 
 
 @app.get("/regulations")

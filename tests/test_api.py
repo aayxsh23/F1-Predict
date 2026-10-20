@@ -127,8 +127,9 @@ def test_strategy_route():
 
 def test_model_card_and_regulations():
     card = client.get("/model").json()
-    assert set(card) == {"qualifying", "finish_position", "quali_delta", "race_time"}
+    assert set(card) == {"qualifying", "finish_position", "quali_delta", "race_time", "odds"}
     assert "post_quali" in card["finish_position"]["stages"]
+    assert card["odds"]["post_quali"]["win_reliability"], "the calibration panel's held-out table"
     docs = client.get("/regulations").json()
     assert len(docs) == 8
     hits = client.get("/regulations/search", params={"query": "unsafe release"}).json()
@@ -199,3 +200,16 @@ def test_rate_limit_ignores_forged_ip_headers():
                              headers={"x-forwarded-for": f"10.0.0.{i}", "x-real-ip": f"10.0.1.{i}"}).status_code for i in range(main.LLM_LIMIT + 1)]
     assert codes[-1] == 429, "a new forged IP per request must not reset the limit"
     main._calls.clear()
+
+
+def test_what_if_moves_one_driver_and_keeps_the_rest():
+    payload = json.loads((cache.LOCAL_DATA_DIR / "latest.json").read_text(encoding="utf-8"))
+    if "whatif_grid" not in payload:
+        return  # forecast published before what-if tables existed
+    code, n = payload["drivers"][0]["driver"], len(payload["drivers"])
+    c = TestClient(main.app)
+    front = c.get(f"/whatif/{payload['season']}/{payload['round']}", params={"driver": code, "grid": 1}).json()
+    back = c.get(f"/whatif/{payload['season']}/{payload['round']}", params={"driver": code, "grid": n}).json()
+    assert front["what_if"]["win"] > back["what_if"]["win"], "starting first beats starting last"
+    assert front["current"] == back["current"], "the current odds don't depend on the what-if"
+    assert c.get(f"/whatif/{payload['season']}/{payload['round']}", params={"driver": code, "grid": n + 1}).status_code == 422

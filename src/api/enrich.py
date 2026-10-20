@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 
 from src.models.catalog import LOCATION_ALIASES
-from src.models.probabilities import quali_probabilities, race_probabilities
+from src.models.probabilities import position_probabilities, quali_probabilities, race_probabilities
 
 _cache: dict[tuple, dict] = {}
 CIRCUITS_CSV = Path(__file__).resolve().parents[1] / "features" / "circuit_reference.csv"
@@ -59,11 +59,14 @@ def with_probabilities(payload: dict) -> dict:
     if sim is None:
         return payload
     race, quali = sim["race"], sim["quali"]
+    dist = position_probabilities(race["samples"])
     out = []
     for i, d in enumerate(payload["drivers"]):
         extra = {
             "probabilities": {k: round(float(race[k][i]), 4) for k in ("win", "podium", "top10")},
             "position_band": [int(race["band"][i][0]), int(race["band"][i][1])],
+            # the chance of each finishing place, P1 first (phase 10 item 6.4: chances, not just "Finish 3.42")
+            "finish_distribution": [round(float(x), 3) for x in dist[i]],
             "expected_position": round(float(race["expected_position"][i]), 2),
             "retire_risk": round(float(race["retire"][i]), 3),
             "beats_teammate": None if np.isnan(race["beats_teammate"][i]) else round(float(race["beats_teammate"][i]), 3),
