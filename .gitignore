@@ -26,6 +26,8 @@ data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
+# third-party data whose terms may forbid sharing it (betting odds: publish only aggregates)
+data/external/
 
 # data/raw/races/ is excluded by the data/raw/* rule above, so re-including
 # files inside it needs the same "un-ignore the dir, then re-ignore its
