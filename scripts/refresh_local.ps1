@@ -99,7 +99,10 @@ if ($Ingest) {
     Step $Python -m src.data.ingest --seasons $year
     Step $Python -m src.data.fia --seasons $year
     Step $Python -m src.models.live_record
-    $paths = @("data/raw/races", "data/raw/laps", "data/raw/testing", "data/raw/upgrades", "data/predictions/live_record.json")
+    # the chat's race history (data/history): re-fetches only the current season from Jolpica.
+    # data/raw/jolpica_cache must hold the older seasons (in ../F1-live it is a junction to the main folder's)
+    Step $Python -m src.data.history
+    $paths = @("data/raw/races", "data/raw/laps", "data/raw/testing", "data/raw/upgrades", "data/predictions/live_record.json", "data/history")
     $message = "chore: ingest finished races"
 } else {
     Step $Python -m src.models.refresh_job --weekend-only

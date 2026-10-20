@@ -28,7 +28,7 @@ from collections.abc import Iterator
 from functools import lru_cache
 
 from src.agent import context as clock
-from src.agent import toolspec
+from src.agent import tools, toolspec
 from src.agent.grounding import ungrounded  # noqa: F401  (also re-exported for tests)
 from src.agent.prompts import system_prompt
 from src.agent.router import route
@@ -83,6 +83,34 @@ def _sources(name: str, res: dict) -> list[dict]:
             for h in res["result"]["hits"]]
 
 
+_BRACKET_SOURCE = re.compile(r"\s*【\s*(?:source:\s*)?([^】]*)】")
+
+
+def _plain_sources(text: str) -> str:
+    """The teacher model cited in brackets ("【source: Wikipedia】") and the
+    student picked the habit up in about 3% of answers; the app's style is
+    plain words in parentheses."""
+    return _BRACKET_SOURCE.sub(lambda m: f" (source: {m.group(1).strip()})" if m.group(1).strip() else "", text)
+
+
+def _on_screen(history: list[dict], context: dict | None) -> list[dict]:
+    """Open questions are answered for the current weekend unless they name a
+    race. When the app shows another race, say which in the question itself,
+    in words: a question naming its race is what the model was trained on."""
+    ctx = context or {}
+    if not (ctx.get("season") and ctx.get("round")):
+        return history
+    try:
+        current = tools.forecast()
+        if (current["season"], current["round"]) == (ctx["season"], ctx["round"]):
+            return history
+        race = ctx.get("race_name") or tools.forecast(ctx["season"], ctx["round"])["race"]
+    except Exception:
+        race = ctx.get("race_name") or f"round {ctx['round']}"
+    last = history[-1]
+    return history[:-1] + [{**last, "content": f"{last.get('content') or ''} (I'm looking at the {ctx['season']} {race}.)"}]
+
+
 def agent_answer(history: list[dict], first_calls: list[dict] | None = None) -> Iterator[dict]:
     """The model's lookup loop for the latest question. `first_calls` are
     lookups already known to be right (the router resolved them), played as
@@ -120,6 +148,7 @@ def agent_answer(history: list[dict], first_calls: list[dict] | None = None) -> 
         # out of lookups: told to answer, as the teacher was when the training data was written
         text, calls = parse_reply(llm.generate(render(msgs + [{"role": "user", "content": NUDGE}] if last else msgs, tools)), tools)
         if not calls or last:
+            text = _plain_sources(text)
             bad = ungrounded(text, "\n".join(evidence)) if text else ["(empty)"]
             if bad:
                 log.info("chat_ungrounded %s", bad[:4])
@@ -164,7 +193,7 @@ def stream_chat(history: list[dict], context: dict | None = None) -> Iterator[di
         if tool == "explain_prediction":
             first = [{"name": "explain_prediction", "arguments": {"driver": payload["driver"], "target": payload["target"],
                                                                  "season": payload["season"], "round": payload["round"]}}]
-        for event in agent_answer(history, first):
+        for event in agent_answer(_on_screen(history, context), first):
             if event["type"] == "answer":
                 yield {"type": "token", "text": event["text"] if event["grounded"] else fallback}
             else:

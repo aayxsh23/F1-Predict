@@ -109,6 +109,25 @@ def test_agent_loop_runs_lookups_and_checks_the_answer():
     assert answer["grounded"] is False
 
 
+def test_bracket_citations_become_plain_words():
+    from src.agent.chat import _plain_sources
+
+    assert _plain_sources("Six times【source: Jolpica-F1 race results】.") == "Six times (source: Jolpica-F1 race results)."
+    assert _plain_sources("Six times【】.") == "Six times."
+
+
+def test_a_question_about_another_race_names_it():
+    from src.agent import tools
+    from src.agent.chat import _on_screen
+
+    now = tools.forecast()
+    ask = [{"role": "user", "content": "who won here?"}]
+    assert _on_screen(ask, {"season": now["season"], "round": now["round"]}) == ask, "the current weekend needs no note"
+    other = _on_screen(ask, {"season": 2026, "round": 3, "race_name": "Japanese Grand Prix"})
+    assert other[-1]["content"] == "who won here? (I'm looking at the 2026 Japanese Grand Prix.)"
+    assert _on_screen(ask, None) == ask
+
+
 if __name__ == "__main__":
     tests = [v for k, v in list(globals().items()) if k.startswith("test_")]
     for t in tests:
