@@ -187,6 +187,16 @@ On every retrain each metrics file also gets a **segment table** (held-out, at t
 
 (After the phase-10 retrain: win 0.0277, podium 0.0667, points 0.1479.)
 
+**The whole finishing order, not just three yes/no events** (since 2026-10-21, every retrain; `checks` in `pl_calibration.json`):
+
+| Held-out races | After practice | After qualifying | Everyone equal |
+|---|---|---|---|
+| Ranked probability score (finishing order; lower is better, and close misses cost less than far ones) | 0.124 | **0.111** | 0.175 |
+| Log loss, win / podium / points | 0.129 / 0.266 / 0.507 | **0.091 / 0.222 / 0.455** | 0.194 / 0.415 / 0.693 |
+| Calibration error, win / podium / points (average gap between stated and actual rates) | 1.2 / 2.8 / 3.5 points | 1.4 / 2.7 / 2.6 points | |
+
+Qualifying after practice: log loss pole 0.134, Q3 0.415; calibration error 2.1 and 2.7 points.
+
 **Pole / Q3 / out-in-Q1 odds**
 - The same method on the qualifying model (temperature chosen for pole and Q3), plus each driver's chance of no representative lap (recent record, field rate about 4%).
 - Brier score after practice: pole 0.039, reaching Q3 0.131 (guessing evenly: 0.25).
