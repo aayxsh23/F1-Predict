@@ -24,6 +24,9 @@ PRICES = {"openai.gpt-oss-120b-1:0": (0.15, 0.60), "deepseek.v3.2": (0.62, 1.85)
           "zai.glm-4.7": (0.60, 2.20), "minimax.minimax-m2.1": (0.30, 1.20), "us.meta.llama4-maverick-17b-instruct-v1:0": (0.24, 0.97),
           "moonshotai.kimi-k2.5": (0.60, 3.00), "openai.gpt-oss-20b-1:0": (0.07, 0.30), "zai.glm-4.7-flash": (0.07, 0.40),
           "mistral.ministral-3-14b-instruct": (0.20, 0.20), "nvidia.nemotron-super-3-120b": (0.15, 0.65)}
+# botocore's standard mode also retries dropped connections (DNS, SSL, timeouts) with backoff up to 20 s:
+# 30 attempts ride out the few minutes the laptop's network is gone while WARP changes exit IP
+NETWORK_RETRIES = {"max_attempts": 30, "mode": "standard"}
 RETRYABLE = {"ThrottlingException", "ModelTimeoutException", "ServiceUnavailableException", "InternalServerException", "ModelErrorException"}
 
 
@@ -61,7 +64,7 @@ class Bedrock:
         key = f"bedrock-{os.getpid()}-{time.time():.0f}"
         atexit.register(lambda: self.ledger.spent and budget_guard.record(f"Bedrock run (pid {os.getpid()})", self.ledger.spent, key))
         self.client = boto3.client("bedrock-runtime", region_name=region,
-                                   config=Config(read_timeout=180, retries={"max_attempts": 2, "mode": "standard"}, max_pool_connections=32))  # more than the worker count
+                                   config=Config(read_timeout=180, retries=NETWORK_RETRIES, max_pool_connections=32))  # more than the worker count
         self.ledger = Ledger(cap_usd)
 
     def converse(self, model: str, system: str, messages: list[dict], tools: list[dict] | None = None,

@@ -199,7 +199,7 @@ function InWords({ q, onAsk }: { q: UseQueryResult<ExplainResult>; onAsk: () => 
         <p className="whitespace-pre-line font-editorial text-[19px] leading-[1.45] text-ink-2">{q.data.explanation}</p>
       ) : q.isFetching ? (
         <p role="status" className="font-editorial text-[19px] italic text-ink-3 motion-safe:animate-[pw-live_1.6s_ease-in-out_infinite]">
-          Writing it up from these numbers and the circuit notes…
+          Writing it up from these numbers…
         </p>
       ) : q.isError ? (
         <div className="flex flex-wrap items-baseline gap-3">

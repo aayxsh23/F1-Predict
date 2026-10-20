@@ -19,6 +19,9 @@ import urllib.request
 from pathlib import Path
 
 import boto3
+from botocore.config import Config
+
+from training.bedrock import NETWORK_RETRIES
 
 REGION = "us-east-1"
 NAME = "f1-chat-gpu"
@@ -46,7 +49,7 @@ touch /var/log/setup-done
 
 
 def ec2():
-    return boto3.client("ec2", region_name=REGION)
+    return boto3.client("ec2", region_name=REGION, config=Config(retries=NETWORK_RETRIES))
 
 
 def my_ip() -> str:
@@ -160,6 +163,45 @@ def status() -> dict:
     info = json.loads(STATE.read_text())
     inst = ec2().describe_instances(InstanceIds=[info["instance_id"]])["Reservations"][0]["Instances"][0]
     return {**info, "state": inst["State"]["Name"]}
+
+
+BUCKET = "f1-chat-train-716522590518"
+ROLE = "f1-chat-gpu-role"  # SSM (commands over HTTPS: this network blocks outbound SSH) + the training bucket only
+
+
+def attach_role() -> None:
+    """Let the machine be driven through SSM and read/write the training
+    bucket, so nothing needs an inbound port or keys on the machine."""
+    iam = boto3.client("iam")
+    trust = {"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "ec2.amazonaws.com"}, "Action": "sts:AssumeRole"}]}
+    try:
+        iam.create_role(RoleName=ROLE, AssumeRolePolicyDocument=json.dumps(trust))
+        iam.attach_role_policy(RoleName=ROLE, PolicyArn="arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore")
+        iam.put_role_policy(RoleName=ROLE, PolicyName="training-bucket", PolicyDocument=json.dumps({"Version": "2012-10-17", "Statement": [
+            {"Effect": "Allow", "Action": ["s3:GetObject", "s3:PutObject", "s3:ListBucket"], "Resource": [f"arn:aws:s3:::{BUCKET}", f"arn:aws:s3:::{BUCKET}/*"]}]}))
+        iam.create_instance_profile(InstanceProfileName=ROLE)
+        iam.add_role_to_instance_profile(InstanceProfileName=ROLE, RoleName=ROLE)
+        time.sleep(15)  # IAM is eventually consistent
+    except iam.exceptions.EntityAlreadyExistsException:
+        pass
+    iid = json.loads(STATE.read_text())["instance_id"]
+    ec2().associate_iam_instance_profile(IamInstanceProfile={"Name": ROLE}, InstanceId=iid)
+
+
+def run(command: str, timeout_s: int = 600) -> str:
+    """Run a shell command on the machine as `ubuntu` through SSM and return its output (the last 24k characters)."""
+    ssm = boto3.client("ssm", region_name=REGION, config=Config(retries=NETWORK_RETRIES))
+    iid = json.loads(STATE.read_text())["instance_id"]
+    cmd = ssm.send_command(InstanceIds=[iid], DocumentName="AWS-RunShellScript", TimeoutSeconds=max(timeout_s, 30),
+                           Parameters={"commands": [f"sudo -iu ubuntu bash -lc {json.dumps(command)}"], "executionTimeout": [str(timeout_s)]})["Command"]["CommandId"]
+    while True:
+        time.sleep(3)
+        try:
+            r = ssm.get_command_invocation(CommandId=cmd, InstanceId=iid)
+        except ssm.exceptions.InvocationDoesNotExist:
+            continue
+        if r["Status"] not in ("Pending", "InProgress", "Delayed"):
+            return (r["StandardOutputContent"] + r["StandardErrorContent"]).strip() + ("" if r["Status"] == "Success" else f"\n[{r['Status']}]")
 
 
 def terminate() -> None:

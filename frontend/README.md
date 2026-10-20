@@ -18,3 +18,13 @@ npm run build
 ```
 
 Static output in `dist/` — no server-rendering, deployable to any static host (Cloudflare Pages, Netlify or Vercel).
+
+## Checks
+
+```
+npm run lint && npm test          # oxlint, Vitest (src/**/*.test.ts)
+npm run size                      # first-load JavaScript must stay under 150 KB gzipped
+npx playwright test               # smoke + axe on desktop and phone, against e2e/fixtures/
+```
+
+`python scripts/e2e_fixtures.py` (repo root) re-records the fixtures from the real API. The design system is [DESIGN.md](DESIGN.md).

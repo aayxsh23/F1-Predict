@@ -203,6 +203,60 @@ On every retrain each metrics file also gets a **segment table** (held-out, at t
 
 **Driver ratings** (`src/features/ratings.py`, `GET /ratings`, the Title race page): each driver's one-lap pace against an average driver in % of a lap, from every past teammate qualifying gap fitted at once, recent races counting more.
 
+## The chat (Pit Radio)
+
+Two models, neither of which ever produces a number itself.
+
+**The question classifier** (`src/agent/router.py`, weights in `src/agent/router_model.json`)
+- **What it does:** sorts a question into one of 14 fixed kinds, each answered by a plain data lookup, or "open".
+- **How it's built:** TF-IDF over words and word pairs (3,000 features) plus logistic regression. Trained on 22,027 questions labelled by the first lookup the teacher model chose for them; history, records and background count as "open".
+- **Accuracy:** measured on a fifth of the questions held out by conversation (`experiments/router_classifier.py`).
+  - On free-form questions, the keyword rules it replaced were right 53% of the time; the classifier is right **91.5%** of the time.
+  - Confidently wrong answers (a fixed answer to the wrong kind of question) fall from **44%** to **2.8%**.
+  - The rules' typical failure was a history question containing "win" getting this weekend's forecast.
+- **Without a local model:** it takes the likeliest fixed kind when it's above 20% likely, since an open question then only gets a generic reply. This finds 55% of fixed questions, against 45% in normal mode, at 4.7% confidently wrong.
+- **Overrides:** two exact rules stay. An article number goes to the rules, and "why" with "predicted" goes to the prediction breakdown (124 of 129 such questions wanted it).
+- **Limit:** it learned from generated questions, so unusual phrasings of fixed questions often land in "open". That's harmless when the local model runs; on the serverless app they get the generic reply.
+
+**Search** (`src/rag/corpus.py`, BM25 over Wikipedia and over the FIA rules, rulings and circuit notes)
+- **Accuracy:** for questions naming a driver, team or circuit, that entity's own Wikipedia page is among the 5 hits the model reads **80%** of the time, and first **70-73%** of the time.
+  - That holds for the raw question and for the queries the teacher model wrote (`experiments/retrieval_eval.py`: 79 held-out questions, 928 teacher queries).
+  - Misses are mostly broad questions where a related page outranks the entity's own.
+- **Not measured:** rules questions, because no source says which article is the right one.
+- **Decision:** no embeddings yet; the plan adds them only if this falls short.
+
+**The chat model, `f1-analyst`** (`training/README.md` for how it's built)
+- **Base:** Qwen3.5 9B (Apache 2.0).
+- **Training:**
+  - LoRA rank 32 on every attention and MLP projection, bf16, 2 passes.
+  - Data: 24,997 conversations whose lookups ran on the app's real data. The answers were written by gpt-oss-120b and kept only if a code check and a judge model passed them.
+  - Hardware: one L40S, 16.1 h, about $34.
+  - It learned only its own turns (lookups and answers). Validation loss fell from 0.365 to 0.294.
+- **Served:** Q4_K_M in Ollama (5.8 GB) on the owner's PC (4 GB GPU, 16 GB RAM), at about 17 s per answer once loaded. It gets up to 4 lookups, then is told to answer with what it has.
+- **Held-out results:** the same 200 questions the training data never saw, played through the app's own chat loop. Scored by the training data's code checks and one judge from another model family (Kimi K2.5); `training/eval_chat.py`.
+
+| | Untuned Qwen3.5 9B | f1-analyst |
+|---|---|---|
+| Right first lookup (97 questions with a known one) | 79 | **97** |
+| Passed the code checks and the judge | 89 | **145** |
+| Trick questions handled (40: false premises, invented facts, news, off-topic) | 16 | **32** |
+| Answer shown as written: passed the app's fact check | 137 | **179** |
+| An invented number or name (the app shows the plain answer instead) | 33 | 20 |
+| Talked about "tools" or "functions" in the answer | 17 | 0 |
+| Answered a factual question without looking anything up | 27 | 1 |
+| No answer | 6 | 2 |
+| Median time | 16.7 s | 16.8 s |
+
+Two notes on fairness:
+- **The "answer now" turn:** the untuned model ran without it; it was added after the fine-tuned model's first run, in which 31 of 200 answers stopped at 4 lookups, still refining searches.
+- **A scoring fix:** until 2026-10-20 the code checks also failed correct refusals ("I only cover F1") of the evaluation set's off-topic, news and future questions, for every model. Both columns are re-scored with the fix.
+
+- **Limits:**
+  - Style: it sometimes cites sources in the teacher's bracket style ("【source: ...】").
+  - Trick questions: 8 of 40 still go wrong. Two each are a statistic the data doesn't hold, a question about the future, and a rules question; one is a false premise answered rather than corrected; one needs arithmetic.
+  - Fact check: about 1 answer in 10 contains a number or name the lookups didn't return. The app catches these and shows the plain data answer.
+  - Freshness: it knows only what the tools return. News, rumours and anything after the last data refresh get "I don't have that".
+
 ## Earlier changes (2026-09-28)
 
 | Change | Effect |

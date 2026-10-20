@@ -5,8 +5,8 @@
   "functions": {
     "api/index.py": {
       "maxDuration": 60,
-      "includeFiles": "{src/**/*.py,src/**/*.json,src/**/*.csv,data/predictions/**,data/corpus/index.json}",
-      "excludeFiles": "{frontend/**,data/raw/**,notebooks/**,tests/**,src/rag/saved/**,src/rag/training_data/**,src/models/saved/*_xgb*.json,src/models/saved/*.txt,src/models/saved/*_model.json,src/models/saved/leaderboard.json}"
+      "includeFiles": "{src/**/*.py,src/**/*.json,src/**/*.csv,data/predictions/**,data/corpus/index.json,data/history/people.json}",
+      "excludeFiles": "{frontend/**,data/raw/**,notebooks/**,tests/**,src/models/saved/*_xgb*.json,src/models/saved/*.txt,src/models/saved/*_model.json,src/models/saved/leaderboard.json}"
     }
   },
   "rewrites": [

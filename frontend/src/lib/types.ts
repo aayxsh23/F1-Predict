@@ -78,6 +78,13 @@ export interface RaceInfo {
   expected_duration_s: number | null
   pole_time_estimate_s: number | null
   safety_car_probability: number | null
+  // added by the API when served (src/api/enrich.py): measured from F1 data
+  circuit?: {
+    flat_out_m: number | null // longest full-throttle stretch, median of the latest dry qualifying's five fastest laps
+    braking_zones: number | null // brake applications per lap, same laps
+    pit_loss_s: number | null // green-flag stop vs staying out (MultiViewer)
+    measured_from: string | null // e.g. "2025 Qualifying"
+  }
 }
 
 export interface PredictionPayload {
@@ -114,11 +121,8 @@ export interface ShapExplanation {
 export interface ExplainResult {
   prediction: number
   target: Target
-  circuit: string
-  top_features: Array<{ feature: string; shap_value: number; phrase: string }>
-  retrieval_query: string
-  sources: string[]
   explanation: string
+  sources: string[]
 }
 
 export interface TimelineSnapshot {

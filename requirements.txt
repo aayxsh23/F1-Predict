@@ -1,9 +1,9 @@
 # What the API needs at runtime. This stays lean: no pandas, XGBoost, torch
 # or FastF1 -- everything that needs them runs in the scheduled refresh job
 # and ships as JSON, and the chat router (src/agent/router.py) answers almost
-# every question from that JSON with plain Python, no model involved. Only
-# two chat intents use a model at all, and that model is local: see
-# requirements-llm.txt, optional, auto-detected at runtime (src/rag/llm.py).
+# every question from that JSON with plain Python, no model involved. Open
+# questions use a local model only where one runs (Ollama, see training/README.md;
+# no Python packages needed, src/rag/llm.py talks to it over HTTP).
 # Pipeline, training and tests: requirements-dev.txt.
 fastapi==0.141.1
 pydantic==2.13.5

@@ -17,17 +17,17 @@
 
 @layer base {
   * {
-    border-color: var(--color-line);
+    border-color: var(--color-hairline);
   }
 
   html {
     color-scheme: dark;
-    background: var(--color-obsidian-900);
+    background: var(--color-asphalt);
   }
 
   body {
-    background: var(--color-obsidian-900);
-    color: var(--color-silver-200);
+    background: var(--color-asphalt);
+    color: var(--color-ink);
     font-family: var(--font-sans);
     font-size: var(--text-base);
     line-height: 1.5;
@@ -36,12 +36,12 @@
   }
 
   ::selection {
-    background: var(--color-laser-wash);
-    color: var(--color-silver-100);
+    background: rgb(255 90 71 / 0.32); /* signal */
+    color: var(--color-ink);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-laser-400);
+    outline: 2px solid var(--color-ink);
     outline-offset: 2px;
   }
 

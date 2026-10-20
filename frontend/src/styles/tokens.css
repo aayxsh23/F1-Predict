@@ -1,58 +1,19 @@
-/* Design tokens -- "Night Garage": obsidian carbon ground, one laser-teal light,
-   silver-etched type. The obsidian (#080a0e / #0f141c), laser (#00d2be / #00a19b)
-   and silver (#e2e8f0 / #94a3b8) anchors are pinned by the brief; every other
-   step derives from them. Contrast on obsidian-800: silver-400 7.2:1, laser-400
-   9.6:1, coral 6.7:1. silver-500 (3.9:1) is decoration and disabled state only,
-   never text a reader needs. */
+/* Design tokens: "Night Session", the pit wall. The retired "Night Garage"
+   workbench palette (obsidian, silver, laser teal) was removed with it. */
 @theme {
-  --font-display: 'Chakra Petch', 'Barlow', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Barlow', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --color-obsidian-950: #05070a;
-  --color-obsidian-900: #080a0e;
-  --color-obsidian-800: #0f141c;
-  --color-obsidian-700: #151c27;
-  --color-obsidian-600: #1c2532;
-  --color-line: rgb(148 163 184 / 0.16);
-  --color-line-strong: rgb(148 163 184 / 0.34);
-
-  --color-silver-100: #f4f7fb;
-  --color-silver-200: #e2e8f0;
-  --color-silver-300: #c3ccd8;
-  --color-silver-400: #94a3b8;
-  --color-silver-500: #64748b;
-
-  --color-laser-300: #5ff0df;
-  --color-laser-400: #00d2be;
-  --color-laser-500: #00a19b;
-  --color-laser-700: #00615e;
-  --color-laser-900: #072a2b;
-
-  /* signal colours: pending/warning and negative delta only, never decoration */
-  --color-signal-amber: #f5b84b;
-  --color-signal-coral: #ff6b5e;
-
   /* tyre compounds: Pirelli's sidewall code, the one colour language every fan
-     already reads. Data only (stint bars, compound marks), never interface.
-     lib/teams.ts COMPOUNDS holds the same values for the three.js cars. */
+     already reads. Data only (stint bars, compound marks), never interface. */
   --color-tyre-soft: #e5384a;
   --color-tyre-medium: #f5c518;
   --color-tyre-hard: #f4f7fb;
 
-  /* surface texture and selection, tokenised so the weave and grid stay one system */
-  --color-weave-light: rgb(255 255 255 / 0.03);
-  --color-weave-dark: rgb(0 0 0 / 0.3);
-  --color-grid-line: rgb(148 163 184 / 0.07);
-  --color-laser-wash: rgb(0 210 190 / 0.32);
-
-  /* type ramp: micro = plates and legends, hud = labels and meta, base = UI and body */
-  --text-micro: 0.625rem;
-  --text-hud: 0.6875rem;
+  /* body text size (Tailwind's text-base, 15px here) */
   --text-base: 0.9375rem;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --tracking-hud: 0.14em;
 
   /* "Night Session" -- the pit wall (/, /race/...): asphalt canvas, glass
      panels, one signal red. Contrast on asphalt: ink 17.4:1, ink-2 9.5:1,
@@ -78,9 +39,4 @@
 
   /* the pit wall's one layout switch: below it, a bottom tab bar replaces the rail */
   --breakpoint-wide: 53.75rem; /* 860px */
-}
-
-:root {
-  /* laser-cut chamfer, in px; every framed surface reads it */
-  --cut: 12px;
 }

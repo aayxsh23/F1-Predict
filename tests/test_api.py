@@ -3,7 +3,7 @@ models, corpus index and strategy params. No real local-model load anywhere
 here (the local-model-unavailable branch is mocked): the chat route is
 deterministic and needs nothing beyond this fixture data; /explain's
 graceful-unavailable path and the shared rate limiter are checked with the
-local model mocked off. A real generation is tested in test_chat_llm.py.
+local model mocked off. The real model is measured by training/eval_chat.py.
 Run with `python tests/test_api.py`."""
 import json
 import sys
@@ -182,3 +182,20 @@ def test_championship_is_served_precomputed_and_reads_are_cdn_cacheable():
     assert r.status_code == 200 and r.json()["drivers"][0]["code"] == "ANT"
     assert "s-maxage" in r.headers["cache-control"], "GET responses carry CDN cache headers"
     assert "cache-control" not in client.get("/health").headers, "health checks are never cached"
+
+
+def test_cross_origin_calls_only_from_local_dev_by_default():
+    client = TestClient(main.app)
+    ask = lambda origin: client.options("/health", headers={"Origin": origin, "Access-Control-Request-Method": "GET"})  # noqa: E731
+    assert ask("http://localhost:5173").headers.get("access-control-allow-origin") == "http://localhost:5173"
+    assert ask("https://some-other-site.example").headers.get("access-control-allow-origin") is None
+
+
+def test_rate_limit_ignores_forged_ip_headers():
+    main._calls.clear()
+    client = TestClient(main.app)
+    with patch("src.agent.chat.explain_text", return_value=("ok", [])):
+        codes = [client.post("/explain", json={"season": 2026, "round": 1, "driver": "XXX"},
+                             headers={"x-forwarded-for": f"10.0.0.{i}", "x-real-ip": f"10.0.1.{i}"}).status_code for i in range(main.LLM_LIMIT + 1)]
+    assert codes[-1] == 429, "a new forged IP per request must not reset the limit"
+    main._calls.clear()

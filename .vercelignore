@@ -5,11 +5,12 @@ data/processed
 notebooks
 chroma_db
 tests
-src/rag/saved
 frontend/node_modules
 frontend/dist
 **/__pycache__
-# the history tools and Wikipedia index only run next to a local model (Ollama), never in the serverless API
-data/history
+# the history tools and Wikipedia index only run next to a local model (Ollama), never in the serverless API;
+# people.json (200 KB, driver names) stays: the chat's name resolver needs it
+data/history/races.json
+data/history/standings.json
 data/corpus/wiki_index.json
 training

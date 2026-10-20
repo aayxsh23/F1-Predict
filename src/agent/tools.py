@@ -8,7 +8,10 @@ model is used to turn a result into prose.
 """
 import builtins
 import json
+import re
+from collections import Counter
 from datetime import datetime, timezone
+from functools import lru_cache
 from typing import Literal
 
 import numpy as np
@@ -55,17 +58,61 @@ def pct(p) -> float | None:
     return None if p is None else round(float(p), 4)
 
 
+@lru_cache(maxsize=1)
+def _people() -> dict:
+    """Every F1 driver's name and code (data/history/people.json, which ships
+    with the serverless API: 200 KB, unlike the results table)."""
+    from src.agent.history import HISTORY_DIR
+
+    path = HISTORY_DIR / "people.json"
+    return json.loads(path.read_text(encoding="utf-8"))["drivers"] if path.exists() else {}
+
+
+def grid_names(codes) -> dict[str, dict]:
+    """code -> {given, family, name} for the drivers in one race: the most
+    recent driver to carry each code (codes get reused: MSC, VER)."""
+    best: dict[str, dict] = {}
+    for p in _people().values():
+        c = p.get("code")
+        if c in codes and (c not in best or (p.get("born") or "") > (best[c].get("born") or "")):
+            best[c] = p
+    return best
+
+
 def driver_name(code: str) -> str | None:
     """A driver's full name from his 3-letter code, so nothing (a person or a
-    model) has to guess who "ANT" is. Uses the history table; None where that
-    isn't installed (the serverless API), which only costs the name."""
-    try:
-        from src.agent import history
+    model) has to guess who "ANT" is."""
+    return (grid_names({code}).get(code) or {}).get("name")
 
-        did, _ = history.find_driver(code)
-        return history._data()["people"]["drivers"][did]["name"] if did else None
-    except Exception:
-        return None
+
+# lowercase words that are also driver codes: only count them typed in capitals
+_WORD_CODES = {"had", "nor", "per", "law", "ant", "gas", "col", "bot", "mag", "sit", "max"}
+NICKNAMES = {"checo": "perez", "alex": "albon", "ollie": "bearman", "hulk": "hulkenberg"}
+
+
+def drivers_in(text: str, codes) -> list[str]:
+    """The drivers of one race named in `text`, in the order they appear: by
+    code ("NOR", or "nor"), surname, first name (when only one driver on the
+    grid has it) or nickname ("Checo"). The one resolver behind every
+    driver argument, so "Norris vs Verstappen" works wherever "NOR vs VER" does."""
+    from src.agent.history import _fold
+
+    q = _fold(text)
+    people = grid_names(set(codes))
+    given_count = Counter(w for p in people.values() for w in _fold(p["given"]).split())
+    found: list[tuple[int, str]] = []
+    for code in codes:
+        p = people.get(code, {})
+        names = [_fold(p["family"])] if p else []
+        names += [w for w in (_fold(p["given"]).split() if p else []) if given_count[w] == 1]
+        names += [nick for nick, fam in NICKNAMES.items() if names and fam == names[0]]
+        spots = [m.start() for n in names for m in re.finditer(rf"\b{re.escape(n)}\b", q)]
+        spots += [m.start() for m in re.finditer(rf"\b{code}\b", text)]  # capitals: always a code
+        if code.lower() not in _WORD_CODES:
+            spots += [m.start() for m in re.finditer(rf"\b{code.lower()}\b", q)]
+        if spots:
+            found.append((min(spots), code))
+    return [c for _, c in sorted(found)]
 
 
 def forecast(season: int | None = None, round: int | None = None) -> dict:
@@ -102,10 +149,13 @@ def forecast(season: int | None = None, round: int | None = None) -> dict:
 
 
 def driver_code(payload: dict, driver: str) -> str:
-    d = driver.strip().upper()
+    """The 3-letter code of the one driver `driver` names (code, surname,
+    first name or nickname) in this payload's field."""
     codes = [x["driver"] for x in payload["drivers"]]
-    if d in codes:
-        return d
+    d = driver.strip().upper()
+    found = [d] if d in codes else drivers_in(driver, codes)
+    if len(found) == 1:
+        return found[0]
     raise ValueError(f"unknown driver '{driver}'; this race has: {', '.join(codes)}")
 
 
@@ -298,15 +348,6 @@ def circuit_guide(circuit: str) -> str:
     return text
 
 
-def driver_history(driver: str, circuit: str | None = None, last_n: int = 10) -> list[dict]:
-    """A driver's recent real results since 2022 (grid, qualifying position,
-    finish, status, points), optionally only at one circuit."""
-    rows = [r for r in get_json("backtest/results.json") if r["driver"] == driver.strip().upper()]
-    if circuit:
-        rows = [r for r in rows if circuit.lower() in r["location"].lower()]
-    return rows[-last_n:]
-
-
 def past_race_prediction(season: int, round: int) -> dict:
     """For a race that has already happened: what the model predicted
     beforehand (from a model trained only on earlier races) next to the real
@@ -345,3 +386,20 @@ def season_schedule(season: int | None = None) -> dict:
     return {"season": season, "next_round": upcoming[0]["RoundNumber"] if upcoming else None, "rounds": [
         {"round": r["RoundNumber"], "event": r["EventName"], "location": r["Location"], "race_start_utc": r.get("RaceStartUtc"),
          "sprint_weekend": "sprint" in (r.get("EventFormat") or "")} for r in sched]}
+
+
+def driver_ratings(driver: str | None = None) -> dict:
+    """Drivers ranked by qualifying pace with the car taken out (from
+    teammate head-to-heads, src/features/ratings.py): % of a lap faster (-) or
+    slower (+) than an average driver, and the gap to the teammate. Pass a
+    driver for that one driver and teammate."""
+    if context.snapshot():  # only the current weekend's ratings are published: a replayed weekend would see the future
+        raise ValueError("driver ratings are only published for the current race weekend")
+    r = get_json("ratings.json")
+    head = {"season": r["season"], "as_of": r.get("event_name"), "method": r["method"], "field_size": len(r["drivers"])}
+    rows = [{**d, "name": driver_name(d["driver"])} for d in r["drivers"]]
+    if not driver:
+        return {**head, "drivers": rows}
+    code = driver_code(r, driver)
+    me = next(d for d in rows if d["driver"] == code)
+    return {**head, "driver": me, "teammate": next((d for d in rows if d["team"] == me["team"] and d["driver"] != code), None)}

@@ -1,7 +1,7 @@
 """Chat with the assistant in a terminal: `python -m src.agent.cli`.
 Most answers are deterministic and need nothing installed beyond the dev
-requirements; "why" questions and anything unmatched use the local model if
-requirements-llm.txt is installed, else a plain fallback (see chat.py)."""
+requirements; "why" questions and anything unmatched use the local model when
+Ollama runs it (training/README.md), else a plain fallback (see chat.py)."""
 import sys
 
 from src.agent.chat import stream_chat

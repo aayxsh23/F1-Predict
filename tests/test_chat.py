@@ -1,8 +1,7 @@
 """stream_chat()'s event contract (src/agent/chat.py): the SSE shape the
 frontend renders, for both deterministic intents (no model at all) and the
-two LLM-backed intents with the local model unavailable (the fast, always-on
-path -- a real generation is tested separately in test_chat_llm.py, which
-needs the local-LLM extras and is slow). Run with `python tests/test_chat.py`."""
+two model-backed intents with the local model unavailable (the fast, always-on
+path), and the lookup loop with a scripted model. Run with `python tests/test_chat.py`."""
 import sys
 from pathlib import Path
 from unittest.mock import patch
@@ -25,7 +24,7 @@ def test_deterministic_question_is_tool_start_end_token_done():
 
 
 def test_search_rules_emits_sources_before_the_answer():
-    events = _events("what's the penalty for an unsafe release")
+    events = _events("what does article B1.6.2 say")
     kinds = [e["type"] for e in events]
     assert "sources" in kinds
     sources = next(e for e in events if e["type"] == "sources")["items"]
@@ -33,7 +32,7 @@ def test_search_rules_emits_sources_before_the_answer():
 
 
 def test_a_failed_lookup_is_reported_not_crashed():
-    events = _events("why is this predicted that way")  # no driver named, no context
+    events = _events("why is he predicted there")  # no driver named, no context
     end = next(e for e in events if e["type"] == "tool_end")
     assert end["ok"] is False
     assert events[-1]["type"] == "done"
@@ -51,7 +50,6 @@ def test_explain_prediction_falls_back_without_the_local_model(_mock):
     top_driver = _top_driver()
     events = _events(f"why is {top_driver} predicted there")
     assert events[0]["name"] == "explain_prediction"
-    assert any(e["type"] == "sources" for e in events)
     text = "".join(e["text"] for e in events if e["type"] == "token")
     assert top_driver in text and "effect" in text  # the plain-list fallback, not prose
     assert events[-1]["type"] == "done"
@@ -83,6 +81,32 @@ def test_invented_numbers_and_names_are_caught():
     assert ungrounded("Singapore sits over 300m above sea level.", facts) == ["300"]
     assert ungrounded("The current driver to beat is António Félix da Costa.", facts) == ["António", "Félix", "Costa"]
     assert ungrounded("Safety cars are common (0.9) here. ANT of Mercedes leads VER.", facts) == []
+
+
+def test_agent_loop_runs_lookups_and_checks_the_answer():
+    """A scripted model: one lookup, then an answer; then one that invents a number."""
+    import json
+
+    from src.agent.chat import agent_answer
+
+    replies = iter(["<tool_call>\n<function=season_schedule>\n</function>\n</tool_call>", "There are {n} rounds this season."])
+    rounds = {}
+
+    def fake_generate(prompt, max_tokens=700):
+        reply = next(replies)
+        if "{n}" in reply:
+            rounds["n"] = json.loads(prompt.split("<tool_response>\n")[-1].split("\n</tool_response>")[0])["rounds"]
+            reply = reply.format(n=len(rounds["n"]))
+        return reply
+
+    with patch("src.rag.llm.generate", side_effect=fake_generate):
+        events = list(agent_answer([{"role": "user", "content": "how many races this year?"}]))
+    assert [e["type"] for e in events] == ["tool_start", "tool_end", "answer"]
+    assert events[-1]["grounded"] and str(len(rounds["n"])) in events[-1]["text"]
+
+    with patch("src.rag.llm.generate", return_value="Verstappen has 412 wins."):
+        answer = list(agent_answer([{"role": "user", "content": "how many wins does max have?"}]))[-1]
+    assert answer["grounded"] is False
 
 
 if __name__ == "__main__":

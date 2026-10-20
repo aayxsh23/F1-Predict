@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 
 import { TOOL_LABELS } from './toolLabels'
 import { useChat } from '@/lib/chat'
+import { useHealth } from '@/lib/queries'
 import { cn } from '@/lib/cn'
 import { useMagnet } from '@/lib/motion'
 import type { ChatMessage } from '@/lib/types'
@@ -79,6 +80,7 @@ interface PitRadioProps {
 /** The analyst, as the pit wall's radio channel: same conversation everywhere, answers set as editorial copy. */
 export function PitRadio({ badge, suggestions, codes, driverHref, inputRef, onClose }: PitRadioProps) {
   const chat = useChat()
+  const openQuestions = useHealth().data?.chat_model === true
   const [draft, setDraft] = useState('')
   const log = useRef<HTMLDivElement>(null)
   const magnet = useMagnet(0.25)
@@ -127,7 +129,9 @@ export function PitRadio({ badge, suggestions, codes, driverHref, inputRef, onCl
       <div ref={log} role="log" aria-live="polite" className="min-h-0 flex-1 space-y-4 overflow-y-auto px-[18px] py-5 [scrollbar-width:thin]">
         {chat.messages.length === 0 && (
           <p className="font-editorial text-[20px] italic leading-[1.4] text-ink-2">
-            Live driver and constructor standings, title scenarios, and the reasoning behind every prediction. Ask in plain words; every number comes from this app's own models, and rules are cited by article.
+            {openQuestions
+              ? 'Ask anything about Formula 1: this weekend, the title fight, 75 years of results and records, the rules. Every number is looked up, never remembered; open questions take a few seconds.'
+              : "Live driver and constructor standings, title scenarios, and the reasoning behind every prediction. Ask in plain words; every number comes from this app's own models, and rules are cited by article."}
           </p>
         )}
         {chat.messages.map((m) =>
@@ -183,7 +187,7 @@ export function PitRadio({ badge, suggestions, codes, driverHref, inputRef, onCl
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={onKeyDown}
               maxLength={4000}
-              placeholder="Ask about this race, driver, or standings…"
+              placeholder={openQuestions ? 'Ask anything about F1…' : 'Ask about this race, driver, or standings…'}
               className="block max-h-28 min-h-11 w-full resize-none rounded-md border border-white/[.14] bg-black/25 px-3.5 py-2.5 font-editorial text-[17px] leading-snug text-ink placeholder:italic placeholder:text-ink-3 focus:border-white/30 focus:outline-none"
             />
           </label>

@@ -9,8 +9,17 @@ export const TOOL_LABELS: Record<string, string> = {
   forecast_timeline: 'Checking how the forecast moved',
   search_rules: 'Searching the rulebook',
   circuit_guide: 'Reading the circuit guide',
-  driver_history: 'Looking up past results',
   past_race_prediction: 'Checking a past prediction',
   model_track_record: "Checking the model's track record",
   season_schedule: 'Checking the calendar',
+  driver_ratings: 'Reading the driver ratings',
+  general: 'Thinking it through',
+  // lookups the local model makes itself (src/agent/toolspec.py)
+  forecast: 'Reading the forecast',
+  history_results: 'Looking up race results',
+  driver_career: 'Reading a career record',
+  team_history: "Reading a team's record",
+  season_summary: 'Reading a season',
+  records: 'Counting the record books',
+  search_knowledge: 'Searching the library',
 }

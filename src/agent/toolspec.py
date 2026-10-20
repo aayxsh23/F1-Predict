@@ -43,9 +43,9 @@ REGISTRY: dict[str, dict] = {s["schema"]["function"]["name"]: s for s in [
            "only": {"type": "string", "enum": ["rules", "wikipedia", "circuit_notes"], "description": "search one source only"}}, ["query"]),
     # --- this season's forecast, standings and strategy (our models) ---
     _spec(chat_tools.forecast, "The forecast for a race weekend: predicted top 10 with win, podium, points and pole chances, and race facts. Pass driver for one driver's full forecast.",
-          {**_SEASON, "driver": {**_STR, "description": "3-letter code, for one driver's full forecast"}}),
+          {**_SEASON, "driver": {**_STR, "description": "3-letter code or name, for one driver's full forecast"}}),
     _spec(tools.explain_prediction, "WHY the model predicts what it does for one driver: the inputs that moved the prediction, with their effect.",
-          {"driver": {**_STR, "description": "3-letter code, e.g. 'ANT'"}, "target": _TARGET, **_SEASON}, ["driver"]),
+          {"driver": {**_STR, "description": "3-letter code or name, e.g. 'ANT'"}, "target": _TARGET, **_SEASON}, ["driver"]),
     _spec(tools.head_to_head, "How often driver A finishes ahead of driver B in simulated races, and their expected finishes.",
           {"driver_a": _STR, "driver_b": _STR, **_SEASON}, ["driver_a", "driver_b"]),
     _spec(tools.race_strategy, "Best tyre strategies and pit windows for a race, optionally with a safety car on a given lap.", {"safety_car_lap": _INT, **_SEASON}),
@@ -56,7 +56,9 @@ REGISTRY: dict[str, dict] = {s["schema"]["function"]["name"]: s for s in [
     _spec(tools.season_schedule, "A season's calendar: rounds, venues, dates, sprint weekends, which race is next.", {"season": _INT}),
     _spec(tools.past_race_prediction, "What the model predicted for a finished race (before it) next to the real result.", {"season": _INT, "round": _INT}, ["season", "round"]),
     _spec(chat_tools.model_track_record, "How accurate the prediction models have been on races they never saw, against a simple guess.", {}),
-]}  # search_rules, circuit_guide and driver_history are folded into search_knowledge / the history tools (fewer, clearer choices)
+    _spec(tools.driver_ratings, "This season's drivers ranked by qualifying pace with the car taken out (teammate comparisons). Use for 'best qualifier', 'fastest driver', 'how does X compare to his teammate'.",
+          {"driver": {**_STR, "description": "3-letter code or name, for one driver and their teammate"}}),
+]}  # search_rules and circuit_guide are folded into search_knowledge (fewer, clearer choices)
 
 
 def schemas() -> list[dict]:

@@ -1,22 +1,24 @@
 """Deterministic chat router.
 
-A LangGraph StateGraph with two real nodes: `classify` matches the latest
-question to one of a fixed set of intents by keyword (the same discipline
-the project used before -- see LEARNING.md's chapter on why a weak local
-model can't be trusted to pick its own tool), and `dispatch` calls the one
+A LangGraph StateGraph with two real nodes: `classify` puts the latest
+question into one of a fixed set of intents with a small learned classifier
+(deterministic: same question, same intent), and `dispatch` calls the one
 matching function in tools.py and renders a plain-English answer from its
 real, already-correct result. Neither node calls an LLM, and every number in
-every answer traces to a real lookup -- there is nothing here for a model to
-hallucinate, because no model is involved.
+every answer traces to a real lookup.
 
-Two intents hand their result to the local Llama adapter afterwards, outside
-this module (see chat.py): `explain_prediction`, to turn a SHAP breakdown
-into prose (the model's own fine-tuned use case), and `general`, a
-best-effort answer when nothing else matched, with an honest caveat. Every
-other intent works even where the local model isn't installed at all.
+Two intents go on to the local model afterwards, outside this module (see
+chat.py): `explain_prediction`, to write the "why" in words, and `general`,
+everything the fixed intents can't answer (history, records, background),
+which the model answers by looking things up. Every other intent works where
+no model runs at all.
 """
+import json
+import math
 import re
+from collections import Counter
 from functools import lru_cache
+from pathlib import Path
 from typing import Callable, TypedDict
 
 from langgraph.graph import END, START, StateGraph
@@ -102,83 +104,80 @@ def _target_in(question_lower: str) -> str:
     return "finish_position"
 
 
-def _by_name_or_code(drivers: list[dict], question: str, code_key: str = "driver", name_key: str = "name") -> dict | None:
-    """Find a driver entry by an uppercase code in the question, else a surname match."""
-    codes = {d[code_key] for d in drivers}
-    for code in _codes_in(question):
-        if code in codes:
-            return next(d for d in drivers if d[code_key] == code)
-    ql = question.lower()
-    for d in drivers:
-        surname = d.get(name_key, "").split()[-1].lower() if d.get(name_key) else ""
-        if surname and surname in ql:
-            return d
-    return None
+def _named(drivers: list[dict], question: str) -> dict | None:
+    """The first of `drivers` (dicts with a "driver" code) the question names."""
+    found = t.drivers_in(question, [d["driver"] for d in drivers])
+    return next(d for d in drivers if d["driver"] == found[0]) if found else None
 
 
-# --- intent classification: pure keyword matching, no network, no LLM ---
+def _field(ctx: dict) -> list[str]:
+    return [d["driver"] for d in t.forecast(ctx.get("season"), ctx.get("round"))["drivers"]]
 
-CIRCUIT_TOPIC_WORDS = ("overtak", "pass", "track", "circuit", "layout", "corner", "difficult", "hard", "tricky",
-                       "tell me about", "what's", "what is", "like", "special", "unique", "elevation", "straight")
-_FORECAST_WORDS_RE = re.compile(r"\b(predict\w*|win\w*|podium|pole|finish\w*|forecast|odds|chance|p\d{1,2})\b")
 
-def _classify_specific(q: str) -> str | None:
-    if any(p in q for p in ("need to do to win", "clinch", "mathematically", "still in contention", "win the title", "win the championship")):
-        return "title_scenario"
-    if any(p in q for p in ("constructor", "team standings", "team's points", "team points", "constructors championship",
-                             "constructors' championship", "team is leading", "teams are leading")):
-        return "constructor_standings"
-    if any(p in q for p in ("championship standing", "driver standings", "drivers' championship", "points total",
-                             "how many points", "leading the championship", "championship lead", "who's leading",
-                             "who is leading", "championship position")):
-        return "driver_standings"
-    if any(p in q for p in ("strategy", "pit stop", "pit window", "tyre", "tire", "stint", "undercut", "overcut")):
-        return "race_strategy"
-    if _ARTICLE_RE.search(q) or any(p in q for p in ("regulation", " rule", "rules say", "penalty", "steward",
-                                                       "article", "disqualif", "infringement", "unsafe release", "legal")):
+# --- intent classification: a small learned classifier, no network, no LLM ---
+
+_TOKEN_RE = re.compile(r"(?u)\b\w\w+\b")  # scikit-learn's default token pattern
+
+
+@lru_cache(maxsize=1)
+def _model() -> dict:
+    return json.loads((Path(__file__).with_name("router_model.json")).read_text(encoding="utf-8"))
+
+
+EAGER_P = 0.2  # without a model: answer with the likeliest fixed intent above this (recall 55% vs 45%, wrong 4.7% vs 2.6%)
+
+
+def _learned_intent(q: str, eager: bool = False) -> str:
+    """TF-IDF over words and word pairs + logistic regression, fitted on ~21k
+    real-phrased questions labelled by the lookup they needed
+    (experiments/router_classifier.py, which also exports router_model.json).
+    Scored here in plain Python so the API needs no scikit-learn. It replaced
+    keyword rules that sent 45% of free-form questions to a wrong answer
+    ("how many races did Senna win?" got this weekend's forecast).
+
+    `eager`: no local model will answer a `general` question, only a generic
+    reply, so take the likeliest fixed intent when it is reasonably likely."""
+    m = _model()
+    toks = _TOKEN_RE.findall(q.lower())
+    counts = Counter(g for g in toks + [f"{a} {b}" for a, b in zip(toks, toks[1:])] if g in m["vocabulary"])
+    x = {m["vocabulary"][g]: (1 + math.log(c)) * m["idf"][m["vocabulary"][g]] for g, c in counts.items()}
+    norm = math.sqrt(sum(v * v for v in x.values())) or 1.0
+    scores = [b + sum(row[i] * v for i, v in x.items()) / norm for row, b in zip(m["coef"], m["intercept"])]
+    best = max(range(len(scores)), key=scores.__getitem__)
+    if not eager or m["classes"][best] != "general":
+        return m["classes"][best]
+    top = max(scores)
+    probs = [math.exp(v - top) for v in scores]
+    fixed = max((i for i, c in enumerate(m["classes"]) if c != "general"), key=probs.__getitem__)
+    return m["classes"][fixed] if probs[fixed] / sum(probs) > EAGER_P else "general"
+
+
+# "why" with "predicted"/"forecast": 124 of 129 such training questions wanted the breakdown,
+# and the classifier alone was on a knife-edge for them ("why is he predicted there")
+_WHY_PREDICTED_RE = re.compile(r"\bwhy\b.*\b(predict|forecast)\w*|\b(predict|forecast)\w*\b.*\bwhy\b")
+
+
+def _classify_specific(q: str, eager: bool = False) -> str | None:
+    if _ARTICLE_RE.search(q):  # "what does B1.6.2 say": an article number is unambiguous
         return "search_rules"
-    if any(p in q for p in ("how accurate", "track record", "how good is the model", "how reliable", "trust this",
-                             "margin of error", "is this any good")):
-        return "model_track_record"
-    if any(p in q for p in ("predicted for", "predicted before", "what did you predict", "called that race", "got that race right")):
-        return "past_race_prediction"
-    if any(p in q for p in ("timeline", "changed through the weekend", "moved through the weekend", "since practice",
-                             "since fp1", "since fp2", "since fp3")):
-        return "forecast_timeline"
-    if any(p in q for p in ("schedule", "calendar", "next race", "upcoming race", "when is the", "when's the")):
-        return "season_schedule"
-    # a question about the track itself gets the written guide verbatim, never
-    # the local model: a real "is overtaking hard at Singapore" answer from it
-    # invented a 300m elevation and corners that don't exist
-    if not _FORECAST_WORDS_RE.search(q) and any(w in q for w in CIRCUIT_TOPIC_WORDS) and _circuit_in(q):
-        return "circuit_guide"
-    if any(p in q for p in (" vs ", " versus ", "head to head", "head-to-head", "beat ", "ahead of", " against ")):
-        return "head_to_head"
-    if any(p in q for p in ("why", "explain", "reason", "what's pushing", "what is pushing", "what's driving",
-                             "what is driving", "break down", "breakdown")):
+    if _WHY_PREDICTED_RE.search(q):
         return "explain_prediction"
-    if any(p in q for p in ("what's", "what is", "tell me about", "circuit guide", "track guide", "layout", "like at")) and _circuit_in(q):
-        return "circuit_guide"
-    if any(p in q for p in ("history", "results at", "how has", "how did", "past results", "previous results")):
-        return "driver_history"
-    if any(p in q for p in ("win", "favourite", "favorite", "podium", "who wins", "pole", "qualify", "quali",
-                             "grid", "forecast", "predict", "finish", "chance", "odds")):
-        return "race_forecast"
-    return None
+    intent = _learned_intent(q, eager)
+    return None if intent == "general" else intent
 
 
-def classify_intent(messages: list[dict]) -> str:
+def classify_intent(messages: list[dict], eager: bool = False) -> str:
     """The intent for the latest message, falling back to the previous
     user turn's intent for an explicit continuation ("and what about...") --
     a real discourse signal, not just "nothing else matched"."""
     question = (messages[-1].get("content") or "").lower().strip()
-    specific = _classify_specific(question)
+    specific = _classify_specific(question, eager)
     if specific:
         return specific
     if question.startswith(CONTINUATION) and len(messages) > 1:
         prev = next((m["content"] for m in reversed(messages[:-1]) if m.get("role") == "user"), None)
         if prev:
-            inherited = _classify_specific(prev.lower().strip())
+            inherited = _classify_specific(prev.lower().strip(), eager)
             if inherited:
                 return inherited
     return "general"
@@ -209,21 +208,18 @@ def _handle_race_forecast(question: str, ctx: dict) -> dict:
 
 def _handle_explain_prediction(question: str, ctx: dict) -> dict:
     season, round_ = ctx.get("season"), ctx.get("round")
-    data = t.forecast(season, round_)
-    pool = [d["driver"] for d in data["drivers"]]
-    found = _codes_in(question)
-    code = next((c for c in found if c in pool), None) or ctx.get("driver")
+    code = next(iter(t.drivers_in(question, _field(ctx))), None) or ctx.get("driver")
     if not code:
-        raise ValueError('Tell me which driver -- e.g. "why is NOR predicted there?"')
+        raise ValueError('Tell me which driver -- e.g. "why is Norris predicted there?"')
     exp = t.explain_prediction(code, target=_target_in(question.lower()), season=season, round=round_)
     return {"tool": "explain_prediction", "llm": True, "llm_payload": exp, "sources": None}
 
 
 def _handle_head_to_head(question: str, ctx: dict) -> dict:
     season, round_ = ctx.get("season"), ctx.get("round")
-    codes = _codes_in(question)
+    codes = t.drivers_in(question, _field(ctx))
     if len(codes) < 2:
-        raise ValueError('Name two drivers by their 3-letter codes -- e.g. "NOR vs VER".')
+        raise ValueError('Name two drivers in this race -- e.g. "Norris vs Verstappen" or "NOR vs VER".')
     a, b = codes[0], codes[1]
     h = t.head_to_head(a, b, season, round_)
     text = (f"**{a}** finishes ahead of **{b}** in {_pctfmt(h['a_ahead_of_b'])} of 10,000 simulated races. "
@@ -242,7 +238,7 @@ def _handle_constructor_standings(question: str, ctx: dict) -> dict:
 def _handle_driver_standings(question: str, ctx: dict) -> dict:
     data = t.championship(kind="drivers")
     drivers = data["drivers"]
-    named = _by_name_or_code(drivers, question)
+    named = _named(drivers, question)
     if named:
         lead = (f"**{named['name']}** ({named['team']}) is P{named['position']} with {named['points']:.0f} points and "
                 f"{named['wins']} win{'s' if named['wins'] != 1 else ''}. Title chance: {_pctfmt(named['title_chance'])}.")
@@ -254,7 +250,7 @@ def _handle_driver_standings(question: str, ctx: dict) -> dict:
 
 def _handle_title_scenario(question: str, ctx: dict) -> dict:
     data = t.championship(kind="drivers")
-    named = _by_name_or_code(data["drivers"], question)
+    named = _named(data["drivers"], question)
     driver = named["driver"] if named else data["drivers"][0]["driver"]  # no one named: default to the leader
     s = t.title_scenario_for(driver)
     if not s["still_mathematically_in_contention"]:
@@ -293,9 +289,7 @@ def _handle_race_strategy(question: str, ctx: dict) -> dict:
 
 def _handle_forecast_timeline(question: str, ctx: dict) -> dict:
     season, round_ = ctx.get("season"), ctx.get("round")
-    data = t.forecast(season, round_)
-    pool = [d["driver"] for d in data["drivers"]]
-    code = next((c for c in _codes_in(question) if c in pool), None) or ctx.get("driver")
+    code = next(iter(t.drivers_in(question, _field(ctx))), None) or ctx.get("driver")
     timeline = t.forecast_timeline(code, season, round_)
     if not timeline:
         raise ValueError("No timeline recorded for this race yet.")
@@ -332,23 +326,6 @@ def _handle_circuit_guide(question: str, ctx: dict) -> dict:
     if not text:
         raise ValueError(f"No write-up for {circuit} yet.")
     return {"tool": "circuit_guide", "text": text, "sources": None}
-
-
-def _handle_driver_history(question: str, ctx: dict) -> dict:
-    codes = _codes_in(question)
-    code = codes[0] if codes else ctx.get("driver")
-    if not code:
-        raise ValueError("Tell me which driver (3-letter code) to look up.")
-    circuit = _circuit_in(question.lower())
-    results = t.driver_history(code, circuit)
-    if not results:
-        raise ValueError(f"No results found for {code}{' at ' + circuit if circuit else ''}.")
-    def _pos(v):
-        return None if v is None else int(v)
-
-    rows = [{"Race": f"{r['season']} R{r['round']} {r['location']}", "Grid": _pos(r.get("grid_position")),
-             "Finish": _pos(r.get("finish_position")), "Status": r.get("status")} for r in results]
-    return {"tool": "driver_history", "text": f"**{code}**'s last {len(results)} result(s){' at ' + circuit if circuit else ''}:\n\n{_md_table(rows)}", "sources": None}
 
 
 def _handle_past_race_prediction(question: str, ctx: dict) -> dict:
@@ -389,6 +366,23 @@ def _handle_season_schedule(question: str, ctx: dict) -> dict:
     return {"tool": "season_schedule", "text": f"{lead}\n\n{_md_table(rows)}", "sources": None}
 
 
+def _handle_driver_ratings(question: str, ctx: dict) -> dict:
+    r = t.driver_ratings()
+    rows = r["drivers"]
+    me = _named(rows, question)
+    fmt = lambda x: f"{x:+.2f}%"  # noqa: E731
+    if me:
+        mate = next((d for d in rows if d["team"] == me["team"] and d["driver"] != me["driver"]), None)
+        text = (f"**{me['name'] or me['driver']}** ranks **{me['rank']}** of {len(rows)} on qualifying pace with the car taken out: "
+                f"{fmt(me['rating_pct'])} of a lap against an average driver"
+                + (f", {fmt(me['vs_teammate_pct'])} against {mate['name'] or mate['driver']}." if mate else "."))
+    else:
+        table = _md_table([{"Rank": d["rank"], "Driver": d["driver"], "Team": d["team"], "Rating": fmt(d["rating_pct"]),
+                            "vs teammate": fmt(d["vs_teammate_pct"])} for d in rows[:10]])
+        text = f"**{rows[0]['name'] or rows[0]['driver']}** is the fastest qualifier once the car is taken out.\n\n{table}"
+    return {"tool": "driver_ratings", "text": f"{text}\n\n_Negative is faster. {r['method'].capitalize()}._", "sources": None}
+
+
 def _handle_general(question: str, ctx: dict) -> dict:
     """Facts handed to the local model for an unmatched question. The current
     race's own circuit guide is always included, not just when the question
@@ -421,10 +415,10 @@ DISPATCH: dict[str, Callable[[str, dict], dict]] = {
     "forecast_timeline": _handle_forecast_timeline,
     "search_rules": _handle_search_rules,
     "circuit_guide": _handle_circuit_guide,
-    "driver_history": _handle_driver_history,
     "past_race_prediction": _handle_past_race_prediction,
     "model_track_record": _handle_model_track_record,
     "season_schedule": _handle_season_schedule,
+    "driver_ratings": _handle_driver_ratings,
     "general": _handle_general,
 }
 
@@ -455,12 +449,13 @@ def dispatch(intent: str, question: str, context: dict | None = None) -> dict:
 class RouteState(TypedDict):
     messages: list[dict]
     context: dict
+    eager: bool
     intent: str | None
     result: dict | None
 
 
 def _classify_node(state: RouteState) -> dict:
-    return {"intent": classify_intent(state["messages"])}
+    return {"intent": classify_intent(state["messages"], state.get("eager", False))}
 
 
 def _dispatch_node(state: RouteState) -> dict:
@@ -479,9 +474,9 @@ def _graph():
     return g.compile()
 
 
-def route(messages: list[dict], context: dict | None = None) -> dict:
+def route(messages: list[dict], context: dict | None = None, eager: bool = False) -> dict:
     """The one entry point chat.py calls: classify the latest message and
     run its handler. Returns {tool, ok, sources, and either text (ready to
     show) or llm=True + llm_payload (for chat.py to hand to the local model)}."""
-    out = _graph().invoke({"messages": messages, "context": context or {}, "intent": None, "result": None})
+    out = _graph().invoke({"messages": messages, "context": context or {}, "eager": eager, "intent": None, "result": None})
     return out["result"]

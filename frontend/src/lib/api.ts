@@ -47,7 +47,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 const q = encodeURIComponent
 
 export const api = {
-  health: () => request<{ status: string }>('/health'),
+  health: () => request<{ status: string; chat_model?: boolean }>('/health'),
   races: (season: number) => request<RaceSummary[]>(`/races?season=${season}`),
   predictionsLatest: () => request<PredictionPayload>('/predictions/latest'),
   predictionsForRace: (season: number, round: number) => request<PredictionPayload>(`/predictions/${season}/${round}`),

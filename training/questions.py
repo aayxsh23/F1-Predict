@@ -129,7 +129,8 @@ def _gp_phrase(rng: random.Random, gp: str) -> str:
 PLAN = {"winner": 9, "podium": 4, "finish_of": 4, "career": 12, "driver_at_circuit": 7, "circuit_leaders": 7, "team_at_circuit": 3, "era": 6,
         "champion": 6, "team": 7, "team_drivers": 3, "season_count": 3,
         "forecast": 5, "forecast_driver": 5, "explain": 6, "h2h": 3, "standings": 4, "title_maths": 3, "strategy": 3, "schedule": 3, "timeline": 2,
-        "last_race_model": 2, "track_record": 2, "rules": 5}
+        "last_race_model": 2, "track_record": 2, "rules": 5, "ratings": 3}
+NO_SNAPSHOT = {"ratings"}  # published for the live weekend only (tools.driver_ratings)
 
 
 def _snapshot_drivers(snap: dict | None) -> list[dict]:
@@ -146,6 +147,7 @@ def templated(n: int, rng: random.Random, snapshots: list[dict] | None = None, p
     weights = [s["weight"] for s in snapshots] if snapshots else [1]
     field = {json.dumps(s, sort_keys=True): _snapshot_drivers(s) for s in snaps}
     kinds = [k for k, w in PLAN.items() for _ in range(w) if not only or k in only]
+    live = _snapshot_drivers(None) if NO_SNAPSHOT & set(kinds) else []
     out = []
     for i in range(n):
         kind = rng.choice(kinds)
@@ -260,12 +262,20 @@ def templated(n: int, rng: random.Random, snapshots: list[dict] | None = None, p
         elif kind == "track_record":
             q = rng.choice(["How accurate are your predictions?", "Can I trust the forecast?", "How good is the model at picking winners?"])
             gold = [("model_track_record", {})]
+        elif kind == "ratings":
+            x = rng.choice(live)
+            n_ = x["name"].split()[-1] if rng.random() < 0.6 else x["name"]
+            q, args = rng.choice([("Who's the best qualifier on the grid right now?", {}), ("Rank the drivers on pure pace, car aside.", {}),
+                                  ("Who is the fastest driver if you take the car out of it?", {}), ("How does {n} compare to his teammate in qualifying?", {"driver": n_}),
+                                  ("How good is {n} really, car aside?", {"driver": n_}), ("What's {n}'s driver rating?", {"driver": n_})])
+            q = q.format(n=n_)
+            gold = [("driver_ratings", args)]
         else:
             topic = rng.choice(RULE_TOPICS)
             q = rng.choice(["What do the regulations say about {t}?", "What's the rule on {t}?", "Explain {t} according to the rules."]).format(t=topic)
             gold = [("search_knowledge", {"query": topic, "only": "rules"})]
         out.append({"id": f"{prefix}{i:05d}", "category": f"tpl_{kind}", "question": _casual(rng, q),
-                    "gold": [{"name": n_, "arguments": a_} for n_, a_ in gold], **({"snapshot": _plain_snap(snap)} if snap else {})})
+                    "gold": [{"name": n_, "arguments": a_} for n_, a_ in gold], **({"snapshot": _plain_snap(snap)} if snap and kind not in NO_SNAPSHOT else {})})
     return out
 
 

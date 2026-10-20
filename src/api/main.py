@@ -19,24 +19,26 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
 from src.api.cache import get_json
-from src.api.enrich import with_probabilities
+from src.api.enrich import with_circuit, with_probabilities
 from src.api.schemas import ChatRequest, ExplainRequest
 from src.models.catalog import CANONICAL_PRED_COLS, FEATURE_LABELS, MODEL_DIR
 from src.rag import corpus
 
 app = FastAPI(title="Pit Wall F1 API")
+# Deployed, the app calls the API on its own origin (/api), which needs no CORS
+# at all; only the Vite dev server on localhost, or a FRONTEND_ORIGIN set on
+# purpose, may call it from another origin. (Was "*": any website could use the chat.)
+_origins = os.environ.get("FRONTEND_ORIGIN")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.environ.get("FRONTEND_ORIGIN", "*").split(","),
+    allow_origins=_origins.split(",") if _origins else [],
+    allow_origin_regex=None if _origins else r"http://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_methods=["GET", "POST"],
-    allow_headers=["*"],
+    allow_headers=["Content-Type"],
 )
 
-TARGET_DIRECTION = {  # what a positive contribution means, per target
-    "finish_position": "towards a worse finish", "qualifying": "further from pole",
-    "quali_delta": "towards gaining more places", "race_time": "further behind the winner",
-}
 LLM_LIMIT, LLM_WINDOW_S = 20, 600
+GLOBAL_LIMIT = 300  # per instance and window, all clients together: a bound even if IPs rotate
 # GET responses only change when a scheduled job publishes new files, so a CDN
 # (Vercel's edge) may serve them for a minute and keep serving a stale copy
 # for ten while it refetches: most reads never wake the serverless function
@@ -53,15 +55,21 @@ _calls: dict[str, deque] = defaultdict(deque)
 
 
 def _limit(request: Request) -> None:
-    """20 LLM calls per 10 minutes per client IP."""
-    # ponytail: per-instance memory, so each serverless instance counts separately; use Upstash/Vercel KV if abused
-    ip = (request.headers.get("x-forwarded-for") or (request.client.host if request.client else "?")).split(",")[0].strip()
-    q, now = _calls[ip], time.monotonic()
-    while q and now - q[0] > LLM_WINDOW_S:
-        q.popleft()
-    if len(q) >= LLM_LIMIT:
-        raise HTTPException(429, "Too many questions in a short time. Try again in a few minutes.")
-    q.append(now)
+    """20 chat/explain calls per 10 minutes per client IP, and GLOBAL_LIMIT for everyone."""
+    # ponytail: per-instance memory. Exact where the local model runs (one process on the owner's PC); on Vercel
+    # each serverless instance counts separately, acceptable while that tier has no model; use Upstash/Vercel KV if abused
+    # Vercel sets x-real-ip itself; anywhere else a client could forge it, so the socket address is used
+    ip = request.headers.get("x-real-ip") if os.environ.get("VERCEL") else None
+    ip = ip or (request.client.host if request.client else "?")
+    now = time.monotonic()
+    for key, cap in ((ip, LLM_LIMIT), ("*", GLOBAL_LIMIT)):
+        q = _calls[key]
+        while q and now - q[0] > LLM_WINDOW_S:
+            q.popleft()
+        if len(q) >= cap:
+            raise HTTPException(429, "Too many questions in a short time. Try again in a few minutes.")
+    _calls[ip].append(now)
+    _calls["*"].append(now)
 
 
 def _json(path: str, missing: str):
@@ -97,7 +105,10 @@ def health():
     except FileNotFoundError:
         generated = None
     age = None if generated is None else (datetime.now(timezone.utc) - datetime.fromisoformat(generated)).total_seconds() / 3600
-    return {"status": "ok", "latest_forecast_at": generated, "latest_forecast_age_hours": None if age is None else round(age, 1)}
+    from src.rag.llm import is_available
+
+    return {"status": "ok", "latest_forecast_at": generated, "latest_forecast_age_hours": None if age is None else round(age, 1),
+            "chat_model": is_available()}  # the local model answers open questions here (never on the serverless API)
 
 
 @app.get("/races")
@@ -107,12 +118,12 @@ def races(season: int):
 
 @app.get("/predictions/latest")
 def predictions_latest():
-    return with_probabilities(_json("latest.json", "No forecasts yet -- run src.models.refresh_job."))
+    return with_circuit(with_probabilities(_json("latest.json", "No forecasts yet -- run src.models.refresh_job.")))
 
 
 @app.get("/predictions/{season}/{round}")
 def predictions_for_race(season: int, round: int):
-    return with_probabilities(_forecast(season, round))
+    return with_circuit(with_probabilities(_forecast(season, round)))
 
 
 @app.get("/predictions/{season}/{round}/explain")
@@ -222,34 +233,19 @@ def championship():
 
 @app.post("/explain")
 def explain_endpoint(req: ExplainRequest, request: Request):
-    """A plain-English paragraph on why the model predicts what it does: the
-    SHAP breakdown is the query into the corpus, and the local model writes from both."""
+    """A plain-English paragraph on why the model predicts what it does,
+    written by the local model from the stored SHAP breakdown (503 where the
+    model isn't running, e.g. the serverless API)."""
     from src.agent.chat import ExplainerUnavailable, explain_text
 
     _limit(request)
-    payload = _forecast(req.season, req.round)
-    d = _driver(payload, req.driver)
+    d = _driver(_forecast(req.season, req.round), req.driver)
     exp = stored_explanation(d, req.target)
-    top = exp["top_contributions"][:5]
-    labels = [c["label"] for c in top]
-    circuit = payload["location"]
-    query = f"{circuit} " + " ".join(labels)
-    hits = corpus.search(query, k=3, circuit=circuit)
-    lines = [f"- {lab}: value {c['value']}, effect {c['shap']:+.2f} ({'pushes ' + TARGET_DIRECTION[req.target] if c['shap'] > 0 else 'pulls the other way'})"
-             for lab, c in zip(labels, top)]
-    facts = (f"Driver {d['driver']} ({d['team']}) at {circuit}, {payload['season']} round {payload['round']}.\n"
-             f"Prediction ({req.target.replace('_', ' ')}): {exp['predicted_value']:.2f}; an average driver here: {exp['base_value']:.2f}.\n"
-             "Inputs that moved it most:\n" + "\n".join(lines) + "\n\nContext:\n"
-             + "\n\n".join(f"[{h['source']}{' art. ' + h['article'] if h['article'] else ''}]\n{h['text'][:1200]}" for h in hits))
     try:
-        text = explain_text(facts)
+        text, sources = explain_text(req.season, req.round, d["driver"], req.target)
     except ExplainerUnavailable as exc:
         raise HTTPException(503, str(exc))
-    return {
-        "prediction": exp["predicted_value"], "target": req.target, "circuit": circuit,
-        "top_features": [{"feature": c["feature"], "shap_value": c["shap"], "phrase": lab} for c, lab in zip(top, labels)],
-        "retrieval_query": query, "sources": [h["source"] for h in hits], "explanation": text,
-    }
+    return {"prediction": exp["predicted_value"], "target": req.target, "explanation": text, "sources": sources}
 
 
 @app.post("/chat")

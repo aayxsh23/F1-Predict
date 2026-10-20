@@ -15,11 +15,8 @@ def forecast(season: int | None = None, round: int | None = None, driver: str | 
     full = tools.forecast(season, round)
     head = {k: v for k, v in full.items() if k != "drivers"}
     if driver:
-        code = driver.strip().upper()
-        match = next((d for d in full["drivers"] if d["driver"] == code or (d.get("name") or "").lower().endswith(driver.strip().lower())), None)
-        if not match:
-            raise ValueError(f"no driver '{driver}' in this forecast; drivers: {', '.join(d['driver'] for d in full['drivers'])}")
-        return {**head, "field_size": len(full["drivers"]), "driver": match}
+        code = tools.driver_code(full, driver)
+        return {**head, "field_size": len(full["drivers"]), "driver": next(d for d in full["drivers"] if d["driver"] == code)}
     return {**head, "field_size": len(full["drivers"]),
             "top10": [{k: d.get(k) for k in _COMPACT_KEYS} for d in full["drivers"][:10]],
             "rest_of_field": [d["driver"] for d in full["drivers"][10:]],

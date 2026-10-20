@@ -1,78 +1,56 @@
-"""The chat assistant: dispatches every question to src/agent/router.py,
-which answers almost everything deterministically (no model involved, so no
-hallucination risk) and hands exactly two intents to the local, fine-tuned
-Llama adapter to turn into prose: explain_prediction and general. See
-router.py's own docstring for why, and LEARNING.md for the fuller story of
-why this replaced an LLM that chose its own tools.
+"""The chat assistant. Two tiers:
+
+1. The keyword router (src/agent/router.py) answers most questions
+   deterministically: no model, nothing to invent.
+2. What it can't answer (`general`) and the written "why" behind a prediction
+   (`explain_prediction`) go to the local fine-tuned model (src/rag/llm.py,
+   Ollama) when this machine runs it: the model picks lookups from the
+   toolbelt (src/agent/toolspec.py), Python runs them, the model writes the
+   answer from the results. Every answer then passes the grounding check: a
+   number or name no lookup returned replaces it with the plain data answer.
+   Without the model (the serverless API) both intents degrade to
+   deterministic answers, never an error.
 
 Stateless on purpose: the app sends the recent conversation with every
 message, so any server instance can answer, and nothing about a user is
 stored.
 
 `stream_chat` yields the events the app renders:
-  {"type": "token", "text"}                  answer text as it's generated
+  {"type": "token", "text"}                  answer text
   {"type": "tool_start", "id", "name", "args"}  a lookup started
   {"type": "tool_end", "id", "name", "ok"}   ...and finished
-  {"type": "sources", "items"}               rules/rulings a lookup cited
+  {"type": "sources", "items"}               rules/rulings/articles a lookup cited
   {"type": "done"} or {"type": "error", "message"}
 """
+import logging
 import re
 from collections.abc import Iterator
+from functools import lru_cache
 
+from src.agent import context as clock
+from src.agent import toolspec
 from src.agent.grounding import ungrounded  # noqa: F401  (also re-exported for tests)
+from src.agent.prompts import system_prompt
 from src.agent.router import route
-from src.rag.shap_query import EXPLAIN_SYSTEM_PROMPT, build_retrieval_query, build_user_prompt, format_context, retrieve_context
 
-GENERAL_SYSTEM_PROMPT = (
-    "You are the F1 Predict app's assistant. Answer the user's question using ONLY the facts given "
-    "below. Do not invent drivers, numbers, or facts that aren't given to you. If the facts don't "
-    "cover what's asked, say so plainly and suggest asking about a forecast, strategy, standings, a "
-    "circuit, or the rules instead. Keep it to 2-4 sentences."
-)
+MAX_LOOKUP_ROUNDS = 4  # then one more turn with NUDGE; the eval's unfinished answers all hit this limit refining searches
+NUDGE = "Answer now with what you have. Do not call any more tools."  # the words the teacher got (training/episodes.py)
+HISTORY_MESSAGES = 6
 GENERAL_FALLBACK = (
-    "I can answer questions about forecasts, qualifying, strategy, standings, the title fight, past "
+    "I can answer questions about forecasts, qualifying, strategy, standings, the title fight, driver ratings, past "
     'results, model accuracy, the calendar, and FIA rules directly. Try one of those, or ask "why is '
     '<driver> predicted there?" for a prediction breakdown.'
 )
-
-
-class ExplainerUnavailable(RuntimeError):
-    pass
-
-
-def _as_shap_features(contributions: list[dict]) -> list[dict]:
-    return [{"feature": c["feature"], "shap_value": c["effect"], "phrase": c["input"]} for c in contributions]
-
-
-def _explain_prompt(exp: dict) -> tuple[str, list[dict]]:
-    """The exact prompt shape the LoRA adapter was fine-tuned on (shared with
-    rag/explain.py and build_finetune_dataset.py via shap_query.py), built
-    from an already-computed SHAP breakdown -- no pandas/XGBoost needed here."""
-    features = _as_shap_features(exp["contributions"])
-    query = build_retrieval_query(exp["circuit"], exp["predicted"], exp["target"], features)
-    hits = retrieve_context(exp["circuit"], query)
-    return build_user_prompt(exp["predicted"], exp["target"], exp["circuit"], features, format_context(hits)), hits
+log = logging.getLogger("f1.chat")
+_TOPIC_WORDS = re.compile(r"[a-z]+")
 
 
 def _explain_fallback_text(exp: dict) -> str:
-    """What explain_prediction shows when the local model isn't installed:
-    the same real numbers, as a plain list instead of a written paragraph."""
+    """explain_prediction without the model: the same real numbers as a list."""
     lines = [f"**{exp['driver']}** ({exp['team']}) -- predicted {exp['prediction_of']}: "
              f"{exp['predicted']:.2f} (an average driver here: {exp['average_prediction']:.2f})."]
     for c in exp["contributions"][:5]:
         lines.append(f"- {c['input']}: {c['value']} (effect {c['effect']:+.2f})")
-    return "\n".join(lines)
-
-
-def _general_prompt(facts: dict) -> str:
-    lines = [f"Question: {facts['question']}"]
-    if "race" in facts:
-        lines.append(f"\nCurrent race: {facts['race']}")
-        top = facts.get("current_forecast_top3") or []
-        if top:
-            lines.append("Top of the forecast: " + ", ".join(f"{d['driver']} ({d['team']})" for d in top))
-    if "circuit_guide" in facts:
-        lines.append(f"\nCircuit notes:\n{facts['circuit_guide'][:1500]}")
     return "\n".join(lines)
 
 
@@ -84,22 +62,86 @@ def _general_fallback(facts: dict) -> str:
     return f"{facts['race']}: the forecast has {front} at the front.\n\n{GENERAL_FALLBACK}"
 
 
-def _llm_source_items(hits: list[dict]) -> list[dict]:
-    return [{"filename": h["source"], "title": h["title"], "article": h["article"], "doc_type": h["doc_type"]} for h in hits]
+@lru_cache(maxsize=1)
+def _vocab() -> frozenset[str]:
+    text = " ".join(f"{s['function']['name']} {s['function']['description']}" for s in toolspec.schemas())
+    return frozenset(w for w in _TOPIC_WORDS.findall(text.replace("_", " ").lower()) if len(w) > 3)
+
+
+def _count_unanswered(question: str) -> None:
+    """Which F1 topics fall through to the catch-all, to pick the next router
+    intents. Logs only words from the app's own tool descriptions (never the
+    question itself), so nothing a user typed is stored."""
+    words = sorted({w for w in _TOPIC_WORDS.findall(question.lower()) if w in _vocab()})
+    log.info("chat_unmatched topics=%s", ",".join(words) or "-")
+
+
+def _sources(name: str, res: dict) -> list[dict]:
+    if name != "search_knowledge" or not res.get("ok"):
+        return []
+    return [{"filename": h["source"], "title": h["title"], "article": h.get("article"), "doc_type": h["doc_type"]}
+            for h in res["result"]["hits"]]
+
+
+def agent_answer(history: list[dict], first_calls: list[dict] | None = None) -> Iterator[dict]:
+    """The model's lookup loop for the latest question. `first_calls` are
+    lookups already known to be right (the router resolved them), played as
+    the model's first turn, as in the training data's templated questions.
+    Yields tool/source events, then exactly one {"type": "answer", "text",
+    "grounded"}."""
+    from src.rag import llm
+    from src.rag.qwen_format import parse_reply, render
+
+    tools = toolspec.schemas()
+    system = system_prompt(clock.today())
+    msgs = [{"role": "system", "content": system}] + [
+        {"role": m["role"], "content": m.get("content") or ""} for m in history[-HISTORY_MESSAGES:] if m.get("role") in ("user", "assistant")]
+    evidence = [system] + [m["content"] for m in msgs[1:]]
+    n = 0
+
+    def run(calls: list[dict], text: str = "") -> Iterator[dict]:
+        nonlocal n
+        msgs.append({"role": "assistant", "content": text, "tool_calls": [{"type": "function", "function": c} for c in calls]})
+        for c in calls:
+            n += 1
+            yield {"type": "tool_start", "id": f"a{n}", "name": c["name"], "args": c["arguments"]}
+            res = toolspec.call_tool(c["name"], c["arguments"])
+            body = toolspec.format_result(res)
+            evidence.append(body)
+            msgs.append({"role": "tool", "name": c["name"], "content": body})
+            yield {"type": "tool_end", "id": f"a{n}", "name": c["name"], "ok": res["ok"]}
+            if items := _sources(c["name"], res):
+                yield {"type": "sources", "items": items}
+
+    if first_calls:
+        yield from run(first_calls)
+    for round_no in range(MAX_LOOKUP_ROUNDS + 1):
+        last = round_no == MAX_LOOKUP_ROUNDS
+        # out of lookups: told to answer, as the teacher was when the training data was written
+        text, calls = parse_reply(llm.generate(render(msgs + [{"role": "user", "content": NUDGE}] if last else msgs, tools)), tools)
+        if not calls or last:
+            bad = ungrounded(text, "\n".join(evidence)) if text else ["(empty)"]
+            if bad:
+                log.info("chat_ungrounded %s", bad[:4])
+            yield {"type": "answer", "text": text, "grounded": not bad}
+            return
+        yield from run(calls, text)
 
 
 def stream_chat(history: list[dict], context: dict | None = None) -> Iterator[dict]:
+    from src.rag import llm
+
+    available = llm.is_available()
     try:
-        result = route(history, context)
+        result = route(history, context, eager=not available)
     except Exception as exc:
         yield {"type": "error", "message": f"The assistant hit a problem: {type(exc).__name__}"}
         return
 
-    tool, call_id = result["tool"], "r1"
-    yield {"type": "tool_start", "id": call_id, "name": tool, "args": {}}
-    yield {"type": "tool_end", "id": call_id, "name": tool, "ok": result.get("ok", True)}
-
+    tool = result["tool"]
     if not result.get("llm"):
+        yield {"type": "tool_start", "id": "r1", "name": tool, "args": {}}
+        yield {"type": "tool_end", "id": "r1", "name": tool, "ok": result.get("ok", True)}
         if result.get("sources"):
             yield {"type": "sources", "items": result["sources"]}
         if result.get("text"):
@@ -107,47 +149,48 @@ def stream_chat(history: list[dict], context: dict | None = None) -> Iterator[di
         yield {"type": "done"}
         return
 
+    payload = result["llm_payload"]
+    fallback = _explain_fallback_text(payload) if tool == "explain_prediction" else _general_fallback(payload)
+    if tool == "general":
+        _count_unanswered(history[-1].get("content") or "")
     try:
-        from src.rag.llm import generate_stream, is_available
-
-        if tool == "explain_prediction":
-            system_prompt, (user_prompt, hits) = EXPLAIN_SYSTEM_PROMPT, _explain_prompt(result["llm_payload"])
-            if hits:
-                yield {"type": "sources", "items": _llm_source_items(hits)}
-        else:
-            system_prompt, user_prompt = GENERAL_SYSTEM_PROMPT, _general_prompt(result["llm_payload"])
-
-        if not is_available():
-            fallback = _explain_fallback_text(result["llm_payload"]) if tool == "explain_prediction" else _general_fallback(result["llm_payload"])
+        if not available:
+            yield {"type": "tool_start", "id": "r1", "name": tool, "args": {}}
+            yield {"type": "tool_end", "id": "r1", "name": tool, "ok": True}
             yield {"type": "token", "text": fallback}
             yield {"type": "done"}
             return
-
-        if tool == "general":
-            # short (2-4 sentences), so check it whole before showing it; the
-            # explain path rewords its numbers (-4.1479 -> "about 4 places") and
-            # streams, its grounding is pinned by the prompt shape instead
-            answer = "".join(generate_stream(system_prompt, user_prompt))
-            invented = ungrounded(answer, system_prompt + "\n" + user_prompt)
-            yield {"type": "token", "text": _general_fallback(result["llm_payload"]) if invented else answer}
-            yield {"type": "done"}
-            return
-
-        for chunk in generate_stream(system_prompt, user_prompt):
-            if chunk:
-                yield {"type": "token", "text": chunk}
+        first = None
+        if tool == "explain_prediction":
+            first = [{"name": "explain_prediction", "arguments": {"driver": payload["driver"], "target": payload["target"],
+                                                                 "season": payload["season"], "round": payload["round"]}}]
+        for event in agent_answer(history, first):
+            if event["type"] == "answer":
+                yield {"type": "token", "text": event["text"] if event["grounded"] else fallback}
+            else:
+                yield event
         yield {"type": "done"}
     except Exception as exc:
         yield {"type": "error", "message": f"The local model hit a problem: {type(exc).__name__}"}
 
 
-def explain_text(prediction_facts: str) -> str:
-    """One short paragraph explaining a prediction (the POST /explain route)."""
-    from src.rag.llm import generate, is_available
+class ExplainerUnavailable(RuntimeError):
+    pass
 
-    if not is_available():
-        raise ExplainerUnavailable(
-            "The written-explanation feature needs the local model installed on this server "
-            "(pip install -r requirements-llm.txt)."
-        )
-    return generate(EXPLAIN_SYSTEM_PROMPT, prediction_facts).strip()
+
+def explain_text(season: int, round: int, driver: str, target: str) -> tuple[str, list[str]]:
+    """One short paragraph on why the model predicts what it does for a
+    driver (POST /explain), written by the local model from the stored SHAP
+    breakdown, and the documents it searched; raises ExplainerUnavailable
+    where the model isn't running."""
+    from src.rag import llm
+
+    if not llm.is_available():
+        raise ExplainerUnavailable("Written explanations need the local model (Ollama with f1-analyst) running on this server.")
+    question = [{"role": "user", "content": f"Why is {driver} predicted where he is ({target.replace('_', ' ')})?"}]
+    first = [{"name": "explain_prediction", "arguments": {"driver": driver, "target": target, "season": season, "round": round}}]
+    events = list(agent_answer(question, first))
+    answer = events[-1]
+    if not answer["grounded"]:
+        raise ExplainerUnavailable("The written explanation didn't pass the fact check; the breakdown above is exact.")
+    return answer["text"], [s["filename"] for e in events if e["type"] == "sources" for s in e["items"]]

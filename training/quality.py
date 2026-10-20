@@ -12,7 +12,10 @@ from src.agent.prompts import AGENT_SYSTEM_PROMPT
 from training.bedrock import Bedrock
 
 # questions whose answer must come from a lookup; the rest (not F1, news, opinions) may be answered without one
-NO_LOOKUP_NEEDED = {"out_of_scope", "unanswerable_news", "opinion"}
+NO_LOOKUP_NEEDED = {"out_of_scope", "unanswerable_news", "opinion",
+                    # the same kinds in the held-out evaluation set (training/evalset.py): until 2026-10-20 their
+                    # correct refusals were scored "answered without a lookup", in every model's results
+                    "trap_off_topic", "trap_news", "trap_future", "trap_opinion"}
 TOOL_TALK = re.compile(r"\b(tool|tools|function|json|api|search results?|driver_career|history_results|search_knowledge)\b", re.I)
 
 JUDGE_PROMPT = """You are grading one assistant answer for an F1 chat assistant. The assistant may only state facts that appear in the tool results below.

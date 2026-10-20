@@ -68,14 +68,14 @@ def _pick_snapshot(rng: random.Random, snaps: list[dict], question: str) -> dict
     return rng.choices(pool, weights=[s["weight"] for s in pool])[0]
 
 
-def _dedupe_bank(items: list[dict], eval_items: list[dict]) -> list[dict]:
-    current = [x for x in items if x["category"] in CURRENT]
-    other = [x for x in items if x["category"] not in CURRENT]
+def _dedupe_bank(items: list[dict], eval_items: list[dict], earlier: list[dict] = ()) -> list[dict]:
+    """`earlier`: the banks of previous runs (a top-up must not repeat them)."""
+    is_current = lambda x: x["category"] in CURRENT  # noqa: E731
     # "who wins this weekend?" is a different conversation on each weekend, so the weekend is part of its identity
     weekend = lambda x: "w{season}{round}{variant}".format(**{"variant": "", **x.get("snapshot", {"season": 0, "round": 0})})  # noqa: E731
-    tagged = [{**x, "question": f"{x['question']} {weekend(x)}", "_orig": x["question"]} for x in current]
-    kept_current = [{k: v for k, v in x.items() if k != "_orig"} | {"question": x["_orig"]} for x in questions.dedupe(tagged)]
-    return kept_current + questions.dedupe(other, against=eval_items)
+    tag = lambda xs: [{**x, "question": f"{x['question']} {weekend(x)}", "_orig": x["question"]} for x in xs if is_current(x)]  # noqa: E731
+    kept_current = [{k: v for k, v in x.items() if k != "_orig"} | {"question": x["_orig"]} for x in questions.dedupe(tag(items), against=tag(earlier))]
+    return kept_current + questions.dedupe([x for x in items if not is_current(x)], against=list(eval_items) + [x for x in earlier if not is_current(x)])
 
 
 def balance_from(run: str | None) -> dict[str, float]:
@@ -90,16 +90,17 @@ def balance_from(run: str | None) -> dict[str, float]:
     return {c: min(2.5, max(1.0, mean / max(r, 0.05))) for c, r in rates.items()}
 
 
-def build_bank(n_single: int, rng: random.Random, bedrock: Bedrock, snaps: list[dict], boost: dict[str, float] | None = None) -> list[dict]:
+def build_bank(n_single: int, rng: random.Random, bedrock: Bedrock, snaps: list[dict], boost: dict[str, float] | None = None,
+               earlier: list[dict] = (), prefix: str = "") -> list[dict]:
     eval_items = evalset.load()
     n_tpl = round(n_single * TEMPLATED_SHARE)
-    tpl = _dedupe_bank(questions.templated(int(n_tpl * 1.25), rng, snaps, prefix="t"), eval_items)
+    tpl = _dedupe_bank(questions.templated(int(n_tpl * 1.25), rng, snaps, prefix=f"{prefix}t"), eval_items, earlier)
     rng.shuffle(tpl)  # shuffle BEFORE trimming: the lists come out grouped by category, and trimming the tail dropped whole categories
     tpl = tpl[:n_tpl]
-    free = questions.free_form(int((n_single - n_tpl) * 1.15), bedrock.converse, rng, QUESTIONER, prefix="f", boost=boost, workers=16)
+    free = questions.free_form(int((n_single - n_tpl) * 1.15), bedrock.converse, rng, QUESTIONER, prefix=f"{prefix}f", boost=boost, workers=16)
     for x in free:
         x["snapshot"] = _snap_fields(_pick_snapshot(rng, snaps, x["question"]))
-    free = _dedupe_bank(free, eval_items)
+    free = _dedupe_bank(free, eval_items, earlier)
     rng.shuffle(free)
     free = free[: n_single - n_tpl]
     bank = tpl + free
@@ -233,6 +234,7 @@ def main() -> None:
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--seed", type=int, default=11)
     ap.add_argument("--balance-from", help="a previous run whose per-category pass rates set how many of each free-form category to ask for")
+    ap.add_argument("--exclude-from", nargs="*", default=[], help="previous runs whose questions this one must not repeat (a top-up)")
     ap.add_argument("--reassign-weekends", action="store_true", help="spread the unplayed weekend questions over all built snapshots")
     ap.add_argument("--retry-errors", action="store_true", help="re-play conversations that crashed")
     ap.add_argument("--recheck", action="store_true", help="re-apply the code checks to saved rejections (judging any that now pass)")
@@ -251,7 +253,8 @@ def main() -> None:
         boost = balance_from(args.balance_from)
         if boost:
             print("free-form boost from", args.balance_from, json.dumps({k: round(v, 2) for k, v in boost.items()}), flush=True)
-        bank = build_bank(args.n - n_follow, rng, bedrock, snaps, boost)
+        earlier = [json.loads(line) for run in args.exclude_from for line in (DATA / run / "questions.jsonl").read_text(encoding="utf-8").splitlines()]
+        bank = build_bank(args.n - n_follow, rng, bedrock, snaps, boost, earlier, prefix=args.name[:2])
         qpath.write_text("\n".join(json.dumps(x, ensure_ascii=False) for x in bank) + "\n", encoding="utf-8")
     print(f"{len(bank)} questions over {len(snaps)} weekends: {', '.join(s['label'] for s in snaps)}  (spent ${bedrock.ledger.spent:.2f})", flush=True)
 
