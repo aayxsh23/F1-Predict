@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 
 import fastf1
-from fastf1.exceptions import RateLimitExceededError
+from fastf1.exceptions import DataNotLoadedError, RateLimitExceededError
 
 CACHE_DIR = Path(__file__).resolve().parents[2] / "data" / "raw" / "fastf1_cache"
 # FastF1's own limiter (fastf1/req.py, 500 calls/h) records a refused call
@@ -30,18 +30,34 @@ def load_session(season: int, round_number: int, session_code: str, laps: bool =
                  messages: bool = False):
     """Load a session with telemetry off; race-control messages only on request
     (they mark deleted laps and let FastF1 classify a session Ergast lacks).
-    Retries with a fixed backoff on FastF1's own rate limit instead of failing the race."""
+    Retries with a fixed backoff on FastF1's own rate limit instead of failing the race.
+
+    F1's live-timing archive has refused every request (401) since 2026-10-19,
+    so FastF1 only loads sessions already in its cache. Any other session
+    comes from OpenF1 (src/data/openf1.py), shaped the same way."""
     enable_cache()
     session = fastf1.get_session(season, round_number, session_code)
     max_attempts = 36  # cap the retry loop at ~3h so a genuinely stuck race doesn't hang forever
     for attempt in range(max_attempts):
         try:
             session.load(laps=laps, telemetry=False, weather=weather, messages=messages)
+            if laps and not _has_laps(session):
+                from src.data import openf1
+
+                return openf1.load_session(season, round_number, session_code) or session
             return session
         except RateLimitExceededError:
             log.warning("rate limited, waiting %ss (attempt %d/%d)", RATE_LIMIT_WAIT_S, attempt + 1, max_attempts)
             time.sleep(RATE_LIMIT_WAIT_S)
     raise RateLimitExceededError("gave up after repeated rate limiting")
+
+
+def _has_laps(session) -> bool:
+    try:
+        session.laps
+        return True
+    except DataNotLoadedError:
+        return False
 
 
 def event_schedule(season: int):

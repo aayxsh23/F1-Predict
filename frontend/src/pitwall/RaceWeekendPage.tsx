@@ -172,7 +172,8 @@ function Weekend({ view }: { view: RaceView }) {
   const [p1, p2, p3] = view.drivers
   const names = useDriverNames()
   const row = p1?.featureRow ?? null
-  const specs = circuitSpecs(row)
+  const circuit = view.race?.circuit
+  const specs = circuitSpecs(row, circuit)
   const href = (d: RaceDriver) => driverHref(view.season, view.round, d.code)
   const preWeekend = !!view.knownSessions && weekendPhase(view.knownSessions).count === 0
 
@@ -203,6 +204,14 @@ function Weekend({ view }: { view: RaceView }) {
               </div>
             ))}
           </dl>
+        )}
+        {specs.length > 0 && (
+          <p className="-mt-3 text-[11px] leading-snug text-ink-3">
+            From F1 data
+            {circuit?.measured_from && <>: flat-out and braking from the five fastest laps of {circuit.measured_from} (OpenF1)</>}
+            {!circuit?.measured_from && ':'}
+            {circuit?.pit_loss_s != null && ', pit stop loss from MultiViewer'}, safety cars and retirements from earlier races here (the all-circuit rate where there are few).
+          </p>
         )}
 
         {view.knownSessions ? (

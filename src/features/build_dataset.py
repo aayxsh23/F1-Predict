@@ -6,7 +6,7 @@ import pandas as pd
 
 from src.features import (circuit_history, circuit_reference, driver_features, ratings, relative_features, strategy_features,
                           team_features)
-from src.models.catalog import LOCATION_ALIASES, TEAM_LINEAGE
+from src.models.catalog import EVENT_VENUES, LOCATION_ALIASES, TEAM_LINEAGE
 
 RAW_DIR = Path(__file__).resolve().parents[2] / "data" / "raw" / "races"
 UPGRADES_DIR = RAW_DIR.parent / "upgrades"  # src/data/fia.py
@@ -52,6 +52,8 @@ def load_raw() -> pd.DataFrame:
     raw = _load_dir(RAW_DIR)
     if raw.empty:
         raise FileNotFoundError(f"No raw race data in {RAW_DIR} — run `python -m src.data.ingest` first.")
+    for (season, rnd), venue in EVENT_VENUES.items():
+        raw.loc[(raw["season"] == season) & (raw["round"] == rnd), "location"] = venue
     return raw[raw["season"] >= FIRST_SEASON].reset_index(drop=True)
 
 

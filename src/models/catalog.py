@@ -22,6 +22,11 @@ LOCATION_ALIASES = {
     "Miami Gardens": "Miami",
     "Yas Marina": "Yas Island",
 }
+# The other way round: one name, two tracks. The 2020 Sakhir Grand Prix ran
+# Bahrain's 3.5 km outer loop, a week after the Bahrain Grand Prix on the
+# full circuit; FastF1 calls both "Sakhir". build_dataset.load_raw renames it,
+# so its 55-second laps and results stay out of Bahrain's history.
+EVENT_VENUES = {(2020, 16): "Sakhir Outer"}
 
 # Constructors that changed name (or owner) but kept the same factory, staff
 # and car lineage: form carries across the rename. The app still shows the

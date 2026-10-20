@@ -7,7 +7,8 @@ Fit (`python -m src.strategy.model`), per circuit, from real race laps
     trend x lap + compound offset + compound degradation x tyre age,
     least squares with a separate baseline per driver per race, so a slow
     car on hards doesn't make hards look slow
-  - pit loss: in-lap + out-lap minus two normal laps, median over real stops
+  - pit loss: in-lap + out-lap minus two normal laps, median over real
+    green-flag stops from dry tyres to dry tyres
   - longest realistic stint per compound: 90th percentile of real stints
   - safety-car chance: share of past races here with a safety car or VSC
 Each circuit's tyre numbers are shrunk toward the all-circuit fit in
@@ -105,9 +106,12 @@ def _max_stints(laps) -> dict:
 
 def _pit_loss(laps) -> float:
     base = _green(laps).groupby(["race", "driver"])["lap_time_s"].median()
-    nxt = laps.assign(lap=laps["lap"] - 1)[["race", "driver", "lap", "lap_time_s", "track_status", "pit_out"]]
+    nxt = laps.assign(lap=laps["lap"] - 1)[["race", "driver", "lap", "lap_time_s", "track_status", "pit_out", "compound"]]
     stops = laps[laps["pit_in"] & (laps["track_status"] == "1")].merge(nxt, on=["race", "driver", "lap"], suffixes=("", "_out"))
-    stops = stops[stops["pit_out_out"] & (stops["track_status_out"] == "1")]
+    # dry tyres both sides: a wet in-lap or a crossover to slicks is slow for the weather, not the pit lane
+    # (Silverstone read 29.9 s with its wet 2024 and 2025 races, 21.2 s without; MultiViewer has 20.9)
+    stops = stops[stops["pit_out_out"] & (stops["track_status_out"] == "1")
+                  & stops["compound"].isin(DRY) & stops["compound_out"].isin(DRY)]
     loss = stops["lap_time_s"] + stops["lap_time_s_out"] - 2 * stops.set_index(["race", "driver"]).index.map(base)
     loss = loss[(loss > 5) & (loss < 60)]  # drop drive-throughs, damage, penalties
     return float(loss.median()) if len(loss) else np.nan

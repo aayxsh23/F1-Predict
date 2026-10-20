@@ -22,7 +22,7 @@
       "MEDIUM": 31,
       "HARD": 42
     },
-    "pit_loss_s": 23.208000000000027,
+    "pit_loss_s": 22.900999999999996,
     "sc_probability": 0.7513227513227513
   },
   "Austin": {
@@ -132,7 +132,7 @@
       "MEDIUM": 31,
       "HARD": 39
     },
-    "pit_loss_s": 21.926000000000002,
+    "pit_loss_s": 21.879000000000005,
     "sc_probability": 0.5002405002405003,
     "races": 5,
     "green_laps": 6023
@@ -160,7 +160,7 @@
       "MEDIUM": 44,
       "HARD": 39
     },
-    "pit_loss_s": 29.30449999999999,
+    "pit_loss_s": 28.25200000000001,
     "sc_probability": 0.7860922146636432,
     "races": 3,
     "green_laps": 2825
@@ -216,7 +216,7 @@
       "MEDIUM": 31,
       "HARD": 42
     },
-    "pit_loss_s": 26.64099999999999,
+    "pit_loss_s": 26.730999999999995,
     "sc_probability": 0.8342151675485008,
     "races": 1,
     "green_laps": 488
@@ -356,7 +356,7 @@
       "MEDIUM": 35,
       "HARD": 42
     },
-    "pit_loss_s": 25.719499999999996,
+    "pit_loss_s": 25.655,
     "sc_probability": 0.7225161669606114,
     "races": 5,
     "green_laps": 4339
@@ -468,7 +468,7 @@
       "MEDIUM": 50,
       "HARD": 57
     },
-    "pit_loss_s": 20.415999999999983,
+    "pit_loss_s": 19.70199999999997,
     "sc_probability": 0.7502645502645502,
     "races": 5,
     "green_laps": 4879
@@ -496,7 +496,7 @@
       "MEDIUM": 31,
       "HARD": 47
     },
-    "pit_loss_s": 20.942999999999984,
+    "pit_loss_s": 20.216000000000008,
     "sc_probability": 0.8336272780717224,
     "races": 5,
     "green_laps": 4372
@@ -553,7 +553,7 @@
       "HARD": 26
     },
     "pit_loss_s": 24.816499999999976,
-    "sc_probability": 0.8638768638768639,
+    "sc_probability": 0.8502645502645503,
     "races": 4,
     "green_laps": 3725
   },
@@ -608,7 +608,7 @@
       "MEDIUM": 31,
       "HARD": 26
     },
-    "pit_loss_s": 29.87700000000001,
+    "pit_loss_s": 21.208,
     "sc_probability": 0.7918871252204586,
     "races": 5,
     "green_laps": 3026
@@ -636,7 +636,7 @@
       "MEDIUM": 31,
       "HARD": 29
     },
-    "pit_loss_s": 19.802500000000023,
+    "pit_loss_s": 19.604,
     "sc_probability": 0.682058682058682,
     "races": 5,
     "green_laps": 3250
@@ -664,7 +664,7 @@
       "MEDIUM": 28,
       "HARD": 32
     },
-    "pit_loss_s": 21.493999999999986,
+    "pit_loss_s": 21.484999999999985,
     "sc_probability": 0.807895807895808,
     "races": 5,
     "green_laps": 5389
@@ -776,7 +776,7 @@
       "MEDIUM": 30,
       "HARD": 44
     },
-    "pit_loss_s": 23.134000000000015,
+    "pit_loss_s": 22.276999999999987,
     "sc_probability": 0.6878306878306878,
     "races": 5,
     "green_laps": 5252
@@ -946,6 +946,34 @@
     },
     "pit_loss_s": 22.0,
     "sc_probability": 0.6256613756613756,
+    "races": 0,
+    "green_laps": 0
+  },
+  "Sakhir Outer": {
+    "compounds": {
+      "SOFT": {
+        "offset_s": -0.30083518951759397,
+        "deg_s_per_lap": 0.050457240425465726,
+        "laps": 13003
+      },
+      "MEDIUM": {
+        "offset_s": 0.0,
+        "deg_s_per_lap": 0.035099093926340225,
+        "laps": 36354
+      },
+      "HARD": {
+        "offset_s": 0.017081683122865576,
+        "deg_s_per_lap": 0.03026622767161237,
+        "laps": 45496
+      }
+    },
+    "max_stint": {
+      "SOFT": 25,
+      "MEDIUM": 31,
+      "HARD": 42
+    },
+    "pit_loss_s": 21.0,
+    "sc_probability": 0.8342151675485008,
     "races": 0,
     "green_laps": 0
   }

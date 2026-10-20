@@ -1,6 +1,7 @@
 <#
-Race-weekend jobs that have to run from a home connection: F1's live-timing
-server refuses GitHub's runners, so FastF1 can't load a session there.
+Race-weekend jobs that run from a home connection: F1's live-timing server
+refused GitHub's runners, and since 2026-10-19 it refuses everyone, so new
+sessions load from OpenF1 (src/data/openf1.py).
 
   refresh_local.ps1 -Python <python.exe>            refresh the forecast (no-op outside a race weekend)
   refresh_local.ps1 -Python <python.exe> -Ingest    ingest finished races, pre-season testing pace and

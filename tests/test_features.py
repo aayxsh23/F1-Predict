@@ -84,6 +84,29 @@ def test_circuit_reference_resolves_configuration_era():
     assert resolved.loc[2, "location"] == "Sakhir"
 
 
+def test_lap_facts_treat_the_lap_as_a_loop():
+    from src.features.circuit_telemetry import lap_facts
+
+    t = np.arange(100.0)  # one sample a second at 50 m/s: the lap integrates to 4,950 m
+    flat = (t < 20) | (t >= 80) | ((t >= 30) & (t < 60))  # 1,900 m across the line, 1,450 m mid-lap
+    brake = np.zeros(100)
+    brake[[0, 50, 99]] = 100  # a braking zone across the line counts once
+    facts = lap_facts(t, np.full(100, 180.0), np.where(flat, 100, 40), np.zeros(100), track_m=5000)
+    assert facts["flat_out_m"] == 1920, facts  # 1,900 m scaled to the official 5,000
+    assert abs(facts["lap_m"] - 4950) < 1e-6
+    assert lap_facts(t, np.full(100, 180.0), np.full(100, 40), brake, track_m=5000)["braking_zones"] == 2
+
+
+def test_served_circuit_facts_follow_the_layout_era():
+    from src.api.enrich import circuit_facts
+
+    assert circuit_facts("Monte Carlo", 2026)["braking_zones"], "FastF1's venue names map to the circuit's row"
+    assert circuit_facts("Marina Bay", 2022)["braking_zones"] != circuit_facts("Marina Bay", 2026)["braking_zones"], \
+        "Singapore before 2023 is the old layout, measured on its own laps"
+    assert circuit_facts("Yas Marina", 2020)["flat_out_m"] is None, "a layout gone before 2021 has no telemetry to measure"
+    assert circuit_facts("Nowhere", 2026) == {}
+
+
 def test_processed_dataset_if_built():
     path = Path(__file__).resolve().parents[1] / "data" / "processed" / "model_matrix.parquet"
     if not path.exists():

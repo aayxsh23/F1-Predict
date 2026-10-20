@@ -4,12 +4,21 @@ until qualifying has happened, pole / Q3 / out-in-Q1 odds.
 
 Done at read time rather than in refresh_job.py so every forecast already in
 data/predictions/ picks up a recalibration without a CI re-run. ~30 ms per
-race, memoised per (season, round, generated_at)."""
+race, memoised per (season, round, generated_at).
+
+Circuit facts measured from F1 data (features/circuit_telemetry.py) are added
+the same way, so every stored forecast shows them."""
+import csv
+from functools import lru_cache
+from pathlib import Path
+
 import numpy as np
 
+from src.models.catalog import LOCATION_ALIASES
 from src.models.probabilities import quali_probabilities, race_probabilities
 
 _cache: dict[tuple, dict] = {}
+CIRCUITS_CSV = Path(__file__).resolve().parents[1] / "features" / "circuit_reference.csv"
 
 
 def stage_of_payload(payload: dict) -> str:
@@ -63,6 +72,27 @@ def with_probabilities(payload: dict) -> dict:
             extra["quali_odds"] = {k: round(float(quali[k][i]), 4) for k in ("pole", "q3", "q1_out")}
         out.append({**d, **extra})
     return {**payload, "drivers": out}
+
+
+@lru_cache(maxsize=1)
+def _circuit_rows() -> tuple[dict, ...]:
+    with open(CIRCUITS_CSV, encoding="utf-8", newline="") as f:
+        return tuple(csv.DictReader(f))
+
+
+def circuit_facts(location: str, season: int) -> dict:
+    """The measured facts of the layout raced at `location` that season; {} if unmapped."""
+    loc = LOCATION_ALIASES.get(location, location)
+    for r in _circuit_rows():
+        if r["location"] == loc and float(r["valid_from_year"]) <= season <= float(r["valid_to_year"] or 9999):
+            return {**{k: float(r[f"measured_{k}"]) if r.get(f"measured_{k}") else None
+                       for k in ("flat_out_m", "braking_zones", "pit_loss_s")},
+                    "measured_from": r.get("measured_from") or None}
+    return {}
+
+
+def with_circuit(payload: dict) -> dict:
+    return {**payload, "race": {**(payload.get("race") or {}), "circuit": circuit_facts(payload["location"], payload["season"])}}
 
 
 def head_to_head(payload: dict, a: str, b: str) -> float | None:

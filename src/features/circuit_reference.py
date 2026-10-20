@@ -46,7 +46,8 @@ def resolve(df: pd.DataFrame, circuits: pd.DataFrame | None = None) -> pd.DataFr
         if mask.any():
             rows = df.loc[mask].copy()
             for col in circuits.columns:
-                if col not in ("location", "valid_from_year", "valid_to_year"):
+                # measured_* are for people to read (circuit_telemetry.py), not model rows
+                if col not in ("location", "valid_from_year", "valid_to_year") and not col.startswith("measured_"):
                     rows[col] = era[col]
             matched.append(rows)
 

@@ -13,10 +13,12 @@ Nothing is rewritten when the forecast hasn't changed, so a quiet run makes no
 commit.
 
 A session that has run but can't be loaded fails the job instead of being
-treated as "not run yet": F1's live-timing server refuses GitHub's runners,
-and a forecast silently stuck at "Before practice" is worse than a red run.
-Live weekends are refreshed from a home connection (scripts/refresh_local.ps1,
-`--weekend-only`); GitHub only rolls the forecast over between weekends.
+treated as "not run yet": a forecast silently stuck at "Before practice" is
+worse than a red run. Sessions load through FastF1, or OpenF1 for any session
+FastF1 hasn't cached (F1's live-timing archive has refused every request since
+2026-10-19; src/data/openf1.py). Live weekends are refreshed from a home
+connection (scripts/refresh_local.ps1, `--weekend-only`); GitHub only rolls
+the forecast over between weekends.
 """
 import argparse
 import json
@@ -266,9 +268,8 @@ def main():
         return
     payload = build_prediction_payload(season, round_number)
     if overdue := overdue_sessions(event, payload["sessions"], now):
-        raise SystemExit(f"{', '.join(overdue)} should have data by now but FastF1 couldn't load it. Not publishing a "
-                         "forecast that ignores it. (F1 live timing refuses GitHub's runners: race weekends are "
-                         "refreshed by scripts/refresh_local.ps1 from a home connection.)")
+        raise SystemExit(f"{', '.join(overdue)} should have data by now but neither FastF1 nor OpenF1 could load it. "
+                         "Not publishing a forecast that ignores it.")
     changed = write_payload(payload)
     if _last_rows is not None and write_ratings(payload, _last_rows):
         print("driver ratings updated")

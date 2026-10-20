@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import { useChampionship } from '@/lib/queries'
 import type { RaceDriver } from '@/lib/raceView'
-import { TARGET_HIGHER_IS_BETTER, TARGETS, type KnownSessions, type Target } from '@/lib/types'
+import { TARGET_HIGHER_IS_BETTER, TARGETS, type KnownSessions, type RaceInfo, type Target } from '@/lib/types'
 
 /** "+2.53" / "−0.92": a real minus sign so signed columns line up. */
 export const signed = (v: number, decimals: number) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(decimals)
@@ -110,20 +110,25 @@ export function weekendPhase(known: KnownSessions) {
   return { nodes, count, next, title, copy }
 }
 
-// --- circuit facts, straight from the forecast's feature row ---
+// --- circuit facts: the official length, then what F1's own data measured ---
+// Not the hand-typed circuit columns the models read: those were rough (Austin's
+// "30% safety cars" was 72% in the races run there).
 
 const num = (row: Record<string, number | string | null>, key: string) => (typeof row[key] === 'number' ? (row[key] as number) : null)
 
-export function circuitSpecs(row: Record<string, number | string | null> | null) {
+export function circuitSpecs(row: Record<string, number | string | null> | null, circuit?: RaceInfo['circuit']) {
   if (!row) return []
   const specs: Array<{ k: string; v: string; u: string }> = []
-  const add = (k: string, v: number | null, fmt: (v: number) => string, u: string) => v !== null && specs.push({ k, v: fmt(v), u })
+  const add = (k: string, v: number | null | undefined, fmt: (v: number) => string, u: string) => v != null && specs.push({ k, v: fmt(v), u })
+  const pct = (v: number) => String(Math.round(v * 100))
   add('Track', num(row, 'track_length_km'), (v) => v.toFixed(3), 'km')
-  add('Longest straight', num(row, 'longest_straight_m'), (v) => Math.round(v).toLocaleString('en'), 'm')
-  add('Safety car', num(row, 'safety_car_frequency'), (v) => String(Math.round(v * 100)), '%')
-  add('DNF rate', num(row, 'dnf_rate'), (v) => String(Math.round(v * 100)), '%')
-  add('Pit lane loss', num(row, 'pit_lane_loss_time'), (v) => v.toFixed(1), 's')
-  add('Braking zones', num(row, 'braking_zone_count'), (v) => String(Math.round(v)), '')
+  // a non-breaking hyphen, so the label wraps before "flat", not inside "flat-out"
+  add('Longest flat‑out', circuit?.flat_out_m, (v) => Math.round(v).toLocaleString('en'), 'm')
+  // share of earlier races here (src/features/circuit_history.py)
+  add('Safety car / VSC', num(row, 'circuit_sc_share'), pct, '%')
+  add('DNF rate', num(row, 'circuit_dnf_share'), pct, '%')
+  add('Pit stop loss', circuit?.pit_loss_s, (v) => v.toFixed(1), 's')
+  add('Braking zones', circuit?.braking_zones, (v) => String(Math.round(v)), '')
   return specs
 }
 

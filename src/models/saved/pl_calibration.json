@@ -4,34 +4,34 @@
   "nolap_prior": 0.034266283023803294,
   "race": {
     "post_practice": {
-      "tau_top": 1.4782049047934707,
-      "tau_field": 2.3628951879861035,
-      "tau_band": 1.914602743995869
+      "tau_top": 1.3458376549595814,
+      "tau_field": 2.1513075138651394,
+      "tau_band": 1.86889588051424
     },
     "post_quali": {
-      "tau_top": 1.1156006217298273,
-      "tau_field": 2.1513075138651394,
-      "tau_band": 1.7995403733838948
+      "tau_top": 1.0157031137913146,
+      "tau_field": 2.3628951879861035,
+      "tau_band": 1.809380067655863
     },
     "post_sprint": {
-      "tau_top": 1.2253233551272587,
+      "tau_top": 1.1156006217298273,
       "tau_field": 2.8505481771635637,
-      "tau_band": 1.844296319409463
+      "tau_band": 1.8138839767966584
     },
     "post_sprint_quali": {
-      "tau_top": 1.2253233551272587,
-      "tau_field": 2.595293157033005,
-      "tau_band": 1.8741742258759584
+      "tau_top": 1.1156006217298273,
+      "tau_field": 2.8505481771635637,
+      "tau_band": 1.9778461717526485
     },
     "pre_weekend": {
-      "tau_top": 1.4782049047934707,
+      "tau_top": 1.3458376549595814,
       "tau_field": 2.3628951879861035,
-      "tau_band": 1.8904892140012843
+      "tau_band": 1.925563439447953
     },
     "race_day": {
       "tau_top": 1.0157031137913146,
       "tau_field": 2.1513075138651394,
-      "tau_band": 1.7601224952306773
+      "tau_band": 1.7770871516510498
     }
   },
   "qualifying": {
@@ -62,9 +62,197 @@
     "race_post_practice": {
       "held_out_races": 53,
       "brier": {
-        "win": 0.0389,
-        "podium": 0.0839,
-        "top10": 0.1671
+        "win": 0.0391,
+        "podium": 0.085,
+        "top10": 0.1677
+      },
+      "brier_if_guessing_evenly": {
+        "win": 0.0461,
+        "podium": 0.1243,
+        "top10": 0.2498
+      },
+      "range_p10_p90_coverage_finishers": 0.784,
+      "retirement_brier_field_rate": 0.1305,
+      "win_reliability": [
+        {
+          "stated": "0%-5%",
+          "n": 801,
+          "mean_stated": 0.004,
+          "happened": 0.002
+        },
+        {
+          "stated": "5%-10%",
+          "n": 85,
+          "mean_stated": 0.073,
+          "happened": 0.118
+        },
+        {
+          "stated": "10%-20%",
+          "n": 105,
+          "mean_stated": 0.148,
+          "happened": 0.105
+        },
+        {
+          "stated": "20%-40%",
+          "n": 98,
+          "mean_stated": 0.271,
+          "happened": 0.306
+        },
+        {
+          "stated": "40%-100%",
+          "n": 4,
+          "mean_stated": 0.421,
+          "happened": 0.0
+        }
+      ]
+    },
+    "race_post_quali": {
+      "held_out_races": 53,
+      "brier": {
+        "win": 0.0272,
+        "podium": 0.066,
+        "top10": 0.1468
+      },
+      "brier_if_guessing_evenly": {
+        "win": 0.0461,
+        "podium": 0.1243,
+        "top10": 0.2498
+      },
+      "range_p10_p90_coverage_finishers": 0.829,
+      "retirement_brier_field_rate": 0.1305,
+      "win_reliability": [
+        {
+          "stated": "0%-5%",
+          "n": 887,
+          "mean_stated": 0.003,
+          "happened": 0.002
+        },
+        {
+          "stated": "5%-10%",
+          "n": 58,
+          "mean_stated": 0.073,
+          "happened": 0.052
+        },
+        {
+          "stated": "10%-20%",
+          "n": 44,
+          "mean_stated": 0.142,
+          "happened": 0.068
+        },
+        {
+          "stated": "20%-40%",
+          "n": 58,
+          "mean_stated": 0.285,
+          "happened": 0.276
+        },
+        {
+          "stated": "40%-100%",
+          "n": 46,
+          "mean_stated": 0.501,
+          "happened": 0.63
+        }
+      ]
+    },
+    "race_post_sprint": {
+      "held_out_races": 15,
+      "brier": {
+        "win": 0.0364,
+        "podium": 0.084,
+        "top10": 0.1735
+      },
+      "brier_if_guessing_evenly": {
+        "win": 0.0458,
+        "podium": 0.1234,
+        "top10": 0.2496
+      },
+      "range_p10_p90_coverage_finishers": 0.769,
+      "retirement_brier_field_rate": 0.1522,
+      "win_reliability": [
+        {
+          "stated": "0%-5%",
+          "n": 239,
+          "mean_stated": 0.003,
+          "happened": 0.004
+        },
+        {
+          "stated": "5%-10%",
+          "n": 19,
+          "mean_stated": 0.07,
+          "happened": 0.158
+        },
+        {
+          "stated": "10%-20%",
+          "n": 26,
+          "mean_stated": 0.157,
+          "happened": 0.077
+        },
+        {
+          "stated": "20%-40%",
+          "n": 24,
+          "mean_stated": 0.292,
+          "happened": 0.25
+        },
+        {
+          "stated": "40%-100%",
+          "n": 4,
+          "mean_stated": 0.453,
+          "happened": 0.75
+        }
+      ]
+    },
+    "race_post_sprint_quali": {
+      "held_out_races": 15,
+      "brier": {
+        "win": 0.0384,
+        "podium": 0.0921,
+        "top10": 0.1762
+      },
+      "brier_if_guessing_evenly": {
+        "win": 0.0458,
+        "podium": 0.1234,
+        "top10": 0.2496
+      },
+      "range_p10_p90_coverage_finishers": 0.761,
+      "retirement_brier_field_rate": 0.1522,
+      "win_reliability": [
+        {
+          "stated": "0%-5%",
+          "n": 236,
+          "mean_stated": 0.003,
+          "happened": 0.004
+        },
+        {
+          "stated": "5%-10%",
+          "n": 18,
+          "mean_stated": 0.073,
+          "happened": 0.222
+        },
+        {
+          "stated": "10%-20%",
+          "n": 28,
+          "mean_stated": 0.15,
+          "happened": 0.071
+        },
+        {
+          "stated": "20%-40%",
+          "n": 27,
+          "mean_stated": 0.274,
+          "happened": 0.222
+        },
+        {
+          "stated": "40%-100%",
+          "n": 3,
+          "mean_stated": 0.425,
+          "happened": 0.667
+        }
+      ]
+    },
+    "race_pre_weekend": {
+      "held_out_races": 53,
+      "brier": {
+        "win": 0.0394,
+        "podium": 0.086,
+        "top10": 0.168
       },
       "brier_if_guessing_evenly": {
         "win": 0.0461,
@@ -76,220 +264,32 @@
       "win_reliability": [
         {
           "stated": "0%-5%",
-          "n": 792,
+          "n": 797,
           "mean_stated": 0.004,
-          "happened": 0.001
+          "happened": 0.003
         },
         {
           "stated": "5%-10%",
-          "n": 90,
-          "mean_stated": 0.074,
-          "happened": 0.111
-        },
-        {
-          "stated": "10%-20%",
-          "n": 111,
-          "mean_stated": 0.148,
-          "happened": 0.126
-        },
-        {
-          "stated": "20%-40%",
-          "n": 98,
-          "mean_stated": 0.264,
-          "happened": 0.286
-        },
-        {
-          "stated": "40%-100%",
-          "n": 2,
-          "mean_stated": 0.429,
-          "happened": 0.0
-        }
-      ]
-    },
-    "race_post_quali": {
-      "held_out_races": 53,
-      "brier": {
-        "win": 0.0276,
-        "podium": 0.0655,
-        "top10": 0.1474
-      },
-      "brier_if_guessing_evenly": {
-        "win": 0.0461,
-        "podium": 0.1243,
-        "top10": 0.2498
-      },
-      "range_p10_p90_coverage_finishers": 0.827,
-      "retirement_brier_field_rate": 0.1305,
-      "win_reliability": [
-        {
-          "stated": "0%-5%",
-          "n": 876,
-          "mean_stated": 0.004,
-          "happened": 0.002
-        },
-        {
-          "stated": "5%-10%",
-          "n": 56,
-          "mean_stated": 0.071,
-          "happened": 0.036
-        },
-        {
-          "stated": "10%-20%",
-          "n": 58,
-          "mean_stated": 0.139,
-          "happened": 0.069
-        },
-        {
-          "stated": "20%-40%",
-          "n": 62,
-          "mean_stated": 0.29,
-          "happened": 0.29
-        },
-        {
-          "stated": "40%-100%",
-          "n": 41,
-          "mean_stated": 0.484,
-          "happened": 0.659
-        }
-      ]
-    },
-    "race_post_sprint": {
-      "held_out_races": 15,
-      "brier": {
-        "win": 0.0367,
-        "podium": 0.0847,
-        "top10": 0.1737
-      },
-      "brier_if_guessing_evenly": {
-        "win": 0.0458,
-        "podium": 0.1234,
-        "top10": 0.2496
-      },
-      "range_p10_p90_coverage_finishers": 0.757,
-      "retirement_brier_field_rate": 0.1522,
-      "win_reliability": [
-        {
-          "stated": "0%-5%",
-          "n": 236,
-          "mean_stated": 0.004,
-          "happened": 0.004
-        },
-        {
-          "stated": "5%-10%",
-          "n": 18,
-          "mean_stated": 0.07,
-          "happened": 0.167
-        },
-        {
-          "stated": "10%-20%",
-          "n": 29,
-          "mean_stated": 0.153,
-          "happened": 0.069
-        },
-        {
-          "stated": "20%-40%",
-          "n": 26,
-          "mean_stated": 0.273,
-          "happened": 0.269
-        },
-        {
-          "stated": "40%-100%",
-          "n": 3,
-          "mean_stated": 0.43,
-          "happened": 0.667
-        }
-      ]
-    },
-    "race_post_sprint_quali": {
-      "held_out_races": 15,
-      "brier": {
-        "win": 0.0384,
-        "podium": 0.0913,
-        "top10": 0.1769
-      },
-      "brier_if_guessing_evenly": {
-        "win": 0.0458,
-        "podium": 0.1234,
-        "top10": 0.2496
-      },
-      "range_p10_p90_coverage_finishers": 0.737,
-      "retirement_brier_field_rate": 0.1522,
-      "win_reliability": [
-        {
-          "stated": "0%-5%",
-          "n": 231,
-          "mean_stated": 0.003,
-          "happened": 0.004
-        },
-        {
-          "stated": "5%-10%",
-          "n": 19,
-          "mean_stated": 0.068,
-          "happened": 0.158
-        },
-        {
-          "stated": "10%-20%",
-          "n": 32,
-          "mean_stated": 0.145,
-          "happened": 0.125
-        },
-        {
-          "stated": "20%-40%",
-          "n": 28,
-          "mean_stated": 0.268,
-          "happened": 0.179
-        },
-        {
-          "stated": "40%-100%",
-          "n": 2,
-          "mean_stated": 0.423,
-          "happened": 1.0
-        }
-      ]
-    },
-    "race_pre_weekend": {
-      "held_out_races": 53,
-      "brier": {
-        "win": 0.0394,
-        "podium": 0.0851,
-        "top10": 0.1682
-      },
-      "brier_if_guessing_evenly": {
-        "win": 0.0461,
-        "podium": 0.1243,
-        "top10": 0.2498
-      },
-      "range_p10_p90_coverage_finishers": 0.791,
-      "retirement_brier_field_rate": 0.1305,
-      "win_reliability": [
-        {
-          "stated": "0%-5%",
-          "n": 785,
-          "mean_stated": 0.004,
-          "happened": 0.001
-        },
-        {
-          "stated": "5%-10%",
-          "n": 96,
+          "n": 88,
           "mean_stated": 0.075,
-          "happened": 0.083
+          "happened": 0.114
         },
         {
           "stated": "10%-20%",
-          "n": 112,
-          "mean_stated": 0.15,
-          "happened": 0.179
+          "n": 102,
+          "mean_stated": 0.148,
+          "happened": 0.137
         },
         {
           "stated": "20%-40%",
-          "n": 98,
-          "mean_stated": 0.255,
-          "happened": 0.245
+          "n": 104,
+          "mean_stated": 0.264,
+          "happened": 0.26
         },
         {
           "stated": "40%-100%",
           "n": 2,
-          "mean_stated": 0.432,
+          "mean_stated": 0.442,
           "happened": 0.0
         }
       ]
@@ -297,8 +297,8 @@
     "race_race_day": {
       "held_out_races": 53,
       "brier": {
-        "win": 0.0271,
-        "podium": 0.0659,
+        "win": 0.0272,
+        "podium": 0.0662,
         "top10": 0.1482
       },
       "brier_if_guessing_evenly": {
@@ -306,75 +306,75 @@
         "podium": 0.1243,
         "top10": 0.2498
       },
-      "range_p10_p90_coverage_finishers": 0.811,
+      "range_p10_p90_coverage_finishers": 0.818,
       "retirement_brier_field_rate": 0.1305,
       "win_reliability": [
         {
           "stated": "0%-5%",
-          "n": 890,
+          "n": 888,
           "mean_stated": 0.003,
           "happened": 0.002
         },
         {
           "stated": "5%-10%",
-          "n": 50,
+          "n": 55,
           "mean_stated": 0.071,
-          "happened": 0.04
+          "happened": 0.036
         },
         {
           "stated": "10%-20%",
-          "n": 48,
-          "mean_stated": 0.144,
-          "happened": 0.083
+          "n": 45,
+          "mean_stated": 0.147,
+          "happened": 0.089
         },
         {
           "stated": "20%-40%",
-          "n": 60,
-          "mean_stated": 0.284,
-          "happened": 0.25
+          "n": 61,
+          "mean_stated": 0.287,
+          "happened": 0.262
         },
         {
           "stated": "40%-100%",
-          "n": 45,
-          "mean_stated": 0.5,
-          "happened": 0.667
+          "n": 44,
+          "mean_stated": 0.502,
+          "happened": 0.659
         }
       ]
     },
     "qualifying_post_practice": {
       "brier": {
-        "pole": 0.0387,
-        "q3": 0.13
+        "pole": 0.0386,
+        "q3": 0.1295
       },
       "pole_reliability": [
         {
           "stated": "0%-5%",
-          "n": 1032,
+          "n": 1033,
           "mean_stated": 0.01,
           "happened": 0.002
         },
         {
           "stated": "5%-10%",
-          "n": 201,
+          "n": 202,
           "mean_stated": 0.076,
-          "happened": 0.045
+          "happened": 0.04
         },
         {
           "stated": "10%-20%",
-          "n": 229,
+          "n": 226,
           "mean_stated": 0.14,
-          "happened": 0.144
+          "happened": 0.15
         },
         {
           "stated": "20%-40%",
-          "n": 68,
+          "n": 69,
           "mean_stated": 0.262,
-          "happened": 0.471
+          "happened": 0.464
         },
         {
           "stated": "40%-100%",
           "n": 1,
-          "mean_stated": 0.426,
+          "mean_stated": 0.412,
           "happened": 0.0
         }
       ]
@@ -382,64 +382,64 @@
     "qualifying_post_sprint": {
       "brier": {
         "pole": 0.0376,
-        "q3": 0.1201
+        "q3": 0.1183
       },
       "pole_reliability": [
         {
           "stated": "0%-5%",
-          "n": 292,
-          "mean_stated": 0.013,
-          "happened": 0.003
-        },
-        {
-          "stated": "5%-10%",
-          "n": 50,
-          "mean_stated": 0.073,
+          "n": 290,
+          "mean_stated": 0.012,
           "happened": 0.0
         },
         {
+          "stated": "5%-10%",
+          "n": 52,
+          "mean_stated": 0.073,
+          "happened": 0.019
+        },
+        {
           "stated": "10%-20%",
-          "n": 73,
-          "mean_stated": 0.138,
-          "happened": 0.192
+          "n": 74,
+          "mean_stated": 0.139,
+          "happened": 0.203
         },
         {
           "stated": "20%-40%",
-          "n": 13,
-          "mean_stated": 0.271,
-          "happened": 0.462
+          "n": 12,
+          "mean_stated": 0.274,
+          "happened": 0.417
         }
       ]
     },
     "qualifying_post_sprint_quali": {
       "brier": {
         "pole": 0.0376,
-        "q3": 0.1201
+        "q3": 0.1183
       },
       "pole_reliability": [
         {
           "stated": "0%-5%",
-          "n": 292,
-          "mean_stated": 0.013,
-          "happened": 0.003
-        },
-        {
-          "stated": "5%-10%",
-          "n": 50,
-          "mean_stated": 0.073,
+          "n": 290,
+          "mean_stated": 0.012,
           "happened": 0.0
         },
         {
+          "stated": "5%-10%",
+          "n": 52,
+          "mean_stated": 0.073,
+          "happened": 0.019
+        },
+        {
           "stated": "10%-20%",
-          "n": 73,
-          "mean_stated": 0.138,
-          "happened": 0.192
+          "n": 74,
+          "mean_stated": 0.139,
+          "happened": 0.203
         },
         {
           "stated": "20%-40%",
-          "n": 13,
-          "mean_stated": 0.271,
-          "happened": 0.462
+          "n": 12,
+          "mean_stated": 0.274,
+          "happened": 0.417
         }
       ]
     },
@@ -457,26 +457,26 @@
         },
         {
           "stated": "5%-10%",
-          "n": 210,
+          "n": 214,
           "mean_stated": 0.077,
-          "happened": 0.052
+          "happened": 0.056
         },
         {
           "stated": "10%-20%",
-          "n": 290,
+          "n": 281,
           "mean_stated": 0.134,
-          "happened": 0.166
+          "happened": 0.164
         },
         {
           "stated": "20%-40%",
-          "n": 34,
-          "mean_stated": 0.22,
-          "happened": 0.441
+          "n": 39,
+          "mean_stated": 0.218,
+          "happened": 0.41
         }
       ]
     }
   },
   "dnf_grid_slope": 0.0475,
   "method": "temperatures per weekend stage chosen on tuning-window walk-forward predictions for the Brier score of what they produce (tau_top: win + podium; tau_field: top 10; qualifying: pole + Q3), tau_band for 80% range coverage; retirements: the field rate over the last DNF_WINDOW races; checks on held-out races",
-  "fitted_at": "2026-10-16T10:28:46+00:00"
+  "fitted_at": "2026-10-20T14:37:51+00:00"
 }
