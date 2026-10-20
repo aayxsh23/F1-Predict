@@ -67,6 +67,7 @@ export interface DriverPrediction {
   // added by the API when served (src/api/enrich.py)
   probabilities?: { win: number; podium: number; top10: number }
   position_band?: [number, number]
+  finish_distribution?: number[] // chance of each finishing place, P1 first
   expected_position?: number
   retire_risk?: number
   beats_teammate?: number | null
@@ -180,7 +181,32 @@ export interface ModelCardEntry {
   top_features: Array<{ feature: string; label: string; weight: number }>
 }
 
-export type ModelCard = Record<Target, ModelCardEntry>
+export interface OddsCheck {
+  held_out_races: number
+  win_reliability: Array<{ stated: string; n: number; mean_stated: number; happened: number }>
+  ranked_probability_score?: number
+  ranked_probability_score_if_guessing_evenly?: number
+  calibration_error?: { win: number; podium: number; top10: number }
+}
+
+export type ModelCard = Record<Target, ModelCardEntry> & { odds?: Partial<Record<string, OddsCheck>> }
+
+export interface WhatIfOdds {
+  win: number
+  podium: number
+  points: number
+  expected_position: number
+}
+
+export interface WhatIfResult {
+  driver: string
+  grid: number
+  current_grid: number | null
+  current: WhatIfOdds
+  what_if: WhatIfOdds
+  predicted_finish: { current: number; what_if: number }
+  note: string | null
+}
 
 export interface LiveSnapshotScore {
   label: string

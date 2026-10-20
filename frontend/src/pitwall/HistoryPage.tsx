@@ -8,6 +8,7 @@ import { spring } from '@/lib/motion'
 import { useBacktestForRace, useBacktestRaces, useLiveRecord } from '@/lib/queries'
 import type { BacktestDriverEntry, LiveRecord, Target } from '@/lib/types'
 
+import { OddsCalibration } from './Chances'
 import { useChrome, useChromeApi } from './chrome'
 import { lensOf, signed, useLens } from './data'
 import { LensTabs, Mega, Notice, Offline, PAGE, Skeleton } from './parts'
@@ -53,6 +54,7 @@ export function HistoryPage() {
       </div>
 
       <LiveTrackRecord />
+      <OddsCalibration />
 
       <div role="tablist" aria-label="Season" className="flex gap-[clamp(14px,3vw,36px)] overflow-x-auto border-b border-white/10 [scrollbar-width:none]">
         {seasons.map((y) => {

@@ -7,6 +7,7 @@ import type {
   ExplainResult,
   LiveRecord,
   Ratings,
+  WhatIfResult,
   ModelCard,
   PredictionPayload,
   RaceSummary,
@@ -62,6 +63,8 @@ export const api = {
     request<StrategyResult>(`/strategy/${season}/${round}${scLap === null ? '' : `?sc_lap=${scLap}`}`),
   championship: () => request<Championship>('/championship'),
   ratings: () => request<Ratings>('/ratings'),
+  whatIf: (season: number, round: number, driver: string, grid: number) =>
+    request<WhatIfResult>(`/whatif/${season}/${round}?driver=${q(driver)}&grid=${grid}`),
   explain: (season: number, round: number, driver: string, target: Target) =>
     request<ExplainResult>('/explain', { method: 'POST', body: JSON.stringify({ season, round, driver, target }) }),
   regulationsList: () => request<RegulationDocument[]>('/regulations'),

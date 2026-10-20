@@ -11,6 +11,7 @@ import { useRaceView, type RaceDriver, type RaceView } from '@/lib/raceView'
 import { TARGET_HIGHER_IS_BETTER, type ExplainResult, type ShapContribution, type ShapExplanation, type Target } from '@/lib/types'
 
 import { betterWord, driverHref, lensOf, orDash, raceHref, signed, useDriverNames, useLens, type Lens } from './data'
+import { FinishChances, WhatIf } from './Chances'
 import { useChrome, useChromeApi } from './chrome'
 import { LensTabs, Notice, Offline, PAGE, Skeleton } from './parts'
 
@@ -317,6 +318,11 @@ function Why({ view, me }: { view: RaceView; me: RaceDriver }) {
       ) : (
         <ForceLedger key={`${me.code}-${lens.id}`} exp={shap.data} lens={lens} focus={focus} setFocus={setFocus} />
       )}
+
+      <div className="flex flex-wrap items-start gap-5">
+        <FinishChances me={me} />
+        <WhatIf key={me.code} view={view} me={me} />
+      </div>
 
       <div className="flex flex-wrap items-start gap-x-8 gap-y-6">
         <div className="flex min-w-0 flex-[1_1_480px] flex-col items-start gap-5">

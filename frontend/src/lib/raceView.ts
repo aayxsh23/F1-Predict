@@ -37,6 +37,7 @@ export interface RaceDriver {
   podium: number | null
   top10: number | null
   band: [number, number] | null
+  finishChances: number[] | null // chance of each finishing place, P1 first
   expected: number | null
   retireRisk: number | null
   beatsTeammate: number | null
@@ -125,6 +126,7 @@ function fromForecast(p: PredictionPayload, isLatest: boolean, actuals: Map<stri
       podium: d.probabilities?.podium ?? null,
       top10: d.probabilities?.top10 ?? null,
       band: d.position_band ?? null,
+      finishChances: d.finish_distribution ?? null,
       expected: d.expected_position ?? null,
       retireRisk: d.retire_risk ?? null,
       beatsTeammate: d.beats_teammate ?? null,
@@ -187,6 +189,7 @@ function fromBacktest(b: BacktestRacePayload): RaceView {
       podium: null,
       top10: null,
       band: null,
+      finishChances: null,
       expected: null,
       retireRisk: null,
       beatsTeammate: null,
