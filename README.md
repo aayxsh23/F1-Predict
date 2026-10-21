@@ -152,7 +152,7 @@ No wiring needed: the backend finds it (`src/rag/llm.py`, `is_available()`), `/h
 | Score every forecast the app published against the results | `python -m src.models.live_record` |
 | Rebuild the regulations index | `python -m src.rag.corpus` |
 | Chat in the terminal | `python -m src.agent.cli` |
-| Refit the chat's question classifier (after new training conversations) | `python -m experiments.router_classifier --export` |
+| Refit the chat's question classifier (after new training conversations; includes the reworded questions) | `python -m experiments.router_paraphrases --export` |
 | Score a chat model on the held-out questions | `python -m training.eval_chat --models f1-analyst` |
 | Tests | `python -m src.features.build_dataset` once, then `pytest` · `npm run lint && npm run build` in `frontend/` |
 

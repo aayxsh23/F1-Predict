@@ -266,10 +266,25 @@ Two notes on fairness:
 - **The "answer now" turn:** the untuned model ran without it; it was added after the fine-tuned model's first run, in which 31 of 200 answers stopped at 4 lookups, still refining searches.
 - **A scoring fix:** until 2026-10-20 the code checks also failed correct refusals ("I only cover F1") of the evaluation set's off-topic, news and future questions, for every model. Both columns are re-scored with the fix.
 
+**All 571 held-out questions** (2026-10-21, f1-analyst only, judge $0.26). The 200 above were the first 200 of the set: every trick question and most of the fixed-kind ones (97 of 172), but only 63 of the 359 open ones. The full set is mostly open questions, which are harder, so it scores lower:
+
+| | First 200 | Other 371 | All 571 |
+|---|---|---|---|
+| Passed the code checks and the judge | 145 (72.5%) | 241 (65.0%) | **386 (67.6%)** |
+| Shown as written (passed the app's fact check) | 179 | 325 | **504 (88.3%)** |
+| An invented number or name | 20 | 42 | 62 (10.9%) |
+| Answered without a lookup | 1 | 6 | 7 |
+| No answer | 2 | 3 | 5 |
+
+- **By kind:** right first lookup on 170 of 172 fixed-kind questions; passed 141/172 fixed (82%), 32/40 tricks (80%), 213/359 open (59%).
+- **Weakest open kinds** all lean on the knowledge search: technical explanations 6/26 (downforce, ground effect, the hybrid unit; the corpus has race, driver and team pages but few engineering ones, so the model fills in from memory and the judge fails it as unsourced, sometimes wrong), team histories 8/26 (lineage like Brawn → Mercedes isn't in the team lookup, so a correct "Mercedes" fails the fact check), rules explained 13/29, comparisons and biographies 50%.
+- **Time:** median 20.9 s (16.8 s on the first 200; the PC was also running builds and tests during the other 371).
+
 - **Limits:**
   - Style: it sometimes cites sources in the teacher's bracket style ("【source: ...】"); since 2026-10-21 the app rewrites those as plain words.
   - Trick questions: 8 of 40 still go wrong. Two each are a statistic the data doesn't hold, a question about the future, and a rules question; one is a false premise answered rather than corrected; one needs arithmetic.
-  - Fact check: about 1 answer in 10 contains a number or name the lookups didn't return. The app catches these and shows the plain data answer.
+  - Fact check: about 1 answer in 9 contains a number or name the lookups didn't return. The app catches these and shows the plain data answer.
+  - Knowledge questions: open questions pass 59% of the time, technical explanations 23% (see "All 571" above).
   - Freshness: it knows only what the tools return. News, rumours and anything after the last data refresh get "I don't have that".
 
 ## Earlier changes (2026-09-28)
