@@ -1,0 +1,23 @@
+- generic [ref=f1e4]:
+  - banner [ref=f1e5]:
+    - link "PW Pit Wall" [ref=f1e6] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f1e7]: PW
+      - generic [ref=f1e8]: Pit Wall
+    - generic [ref=f1e9]:
+      - generic [ref=f1e10]: Sync
+      - button "Search" [ref=f1e12] [cursor=pointer]
+  - main [ref=f1e16]:
+    - status [ref=f1e17]:
+      - generic [ref=f1e23]: Loading the latest snapshot…
+  - button "Open Pit Radio" [ref=f1e24] [cursor=pointer]
+  - navigation "Pit wall" [ref=f1e31]:
+    - link "Predictions" [ref=f1e32] [cursor=pointer]:
+      - /url: /
+    - link "Title" [ref=f1e37] [cursor=pointer]:
+      - /url: /season
+    - link "History" [ref=f1e45] [cursor=pointer]:
+      - /url: /history
+    - link "Rules" [ref=f1e51] [cursor=pointer]:
+      - /url: /regulations
+    - button "Settings" [ref=f1e57] [cursor=pointer]
