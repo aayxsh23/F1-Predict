@@ -111,48 +111,41 @@
     },
     {
       "rank": 16,
-      "driver": "PER",
-      "team": "Cadillac",
-      "rating_pct": 0.0132,
-      "vs_teammate_pct": -0.0451
-    },
-    {
-      "rank": 17,
       "driver": "ANT",
       "team": "Mercedes",
       "rating_pct": 0.024,
       "vs_teammate_pct": 0.1508
     },
     {
-      "rank": 18,
+      "rank": 17,
       "driver": "PIA",
       "team": "McLaren",
       "rating_pct": 0.026,
       "vs_teammate_pct": 0.1357
     },
     {
-      "rank": 19,
+      "rank": 18,
       "driver": "ALB",
       "team": "Williams",
       "rating_pct": 0.0289,
       "vs_teammate_pct": 0.2539
     },
     {
-      "rank": 20,
+      "rank": 19,
       "driver": "BOT",
       "team": "Cadillac",
       "rating_pct": 0.0583,
-      "vs_teammate_pct": 0.0451
+      "vs_teammate_pct": null
     },
     {
-      "rank": 21,
+      "rank": 20,
       "driver": "COL",
       "team": "Alpine",
       "rating_pct": 0.1786,
       "vs_teammate_pct": 0.3628
     },
     {
-      "rank": 22,
+      "rank": 21,
       "driver": "STR",
       "team": "Aston Martin",
       "rating_pct": 0.2019,
