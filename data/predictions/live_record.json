@@ -1,7 +1,39 @@
 {
   "method": "every forecast snapshot the app published (data/predictions/timeline), scored against the race result",
-  "generated_at": "2026-10-12T09:32:43+00:00",
+  "generated_at": "2026-10-29T14:34:41+00:00",
   "races": [
+    {
+      "season": 2026,
+      "round": 18,
+      "location": "Austin",
+      "snapshots": [
+        {
+          "label": "Before practice",
+          "stage": "pre_weekend",
+          "generated_at": "2026-10-21T11:20:11.660124+00:00",
+          "cars": 22,
+          "finish_mae": 2.123,
+          "finish_mae_finishers": 1.298,
+          "order_agreement": 0.958,
+          "winner_called": false,
+          "podium_called": 3,
+          "quali_mae": 0.401,
+          "pole_called": false
+        },
+        {
+          "label": "Official grid",
+          "stage": "race_day",
+          "generated_at": "2026-10-25T17:21:37.060838+00:00",
+          "cars": 21,
+          "finish_mae": 1.849,
+          "finish_mae_finishers": 1.161,
+          "order_agreement": 0.955,
+          "winner_called": true,
+          "podium_called": 2,
+          "grid_baseline_mae": 1.905
+        }
+      ]
+    },
     {
       "season": 2026,
       "round": 17,
@@ -83,11 +115,11 @@
   "by_stage": [
     {
       "label": "Before practice",
-      "races": 2,
-      "finish_mae": 3.263,
-      "finish_mae_finishers": 2.467,
+      "races": 3,
+      "finish_mae": 2.883,
+      "finish_mae_finishers": 2.077,
       "winner_called_share": 0.0,
-      "quali_mae": 0.483
+      "quali_mae": 0.455
     },
     {
       "label": "After the Sprint",
@@ -107,11 +139,11 @@
     },
     {
       "label": "Official grid",
-      "races": 1,
-      "finish_mae": 2.274,
-      "finish_mae_finishers": 1.47,
+      "races": 2,
+      "finish_mae": 2.062,
+      "finish_mae_finishers": 1.316,
       "winner_called_share": 1.0,
-      "grid_baseline_mae": 3.0
+      "grid_baseline_mae": 2.453
     }
   ]
 }
