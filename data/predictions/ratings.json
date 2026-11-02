@@ -1,7 +1,7 @@
 {
   "season": 2026,
-  "round": 18,
-  "event_name": "United States Grand Prix",
+  "round": 19,
+  "event_name": "Mexico City Grand Prix",
   "method": "teammate qualifying gaps (last session both ran), every past race fitted at once, recent races weighted more; negative = faster than an average driver, in % of a lap",
   "drivers": [
     {
@@ -111,41 +111,48 @@
     },
     {
       "rank": 16,
+      "driver": "PER",
+      "team": "Cadillac",
+      "rating_pct": 0.0132,
+      "vs_teammate_pct": -0.0451
+    },
+    {
+      "rank": 17,
       "driver": "ANT",
       "team": "Mercedes",
       "rating_pct": 0.024,
       "vs_teammate_pct": 0.1508
     },
     {
-      "rank": 17,
+      "rank": 18,
       "driver": "PIA",
       "team": "McLaren",
       "rating_pct": 0.026,
       "vs_teammate_pct": 0.1357
     },
     {
-      "rank": 18,
+      "rank": 19,
       "driver": "ALB",
       "team": "Williams",
       "rating_pct": 0.0289,
       "vs_teammate_pct": 0.2539
     },
     {
-      "rank": 19,
+      "rank": 20,
       "driver": "BOT",
       "team": "Cadillac",
       "rating_pct": 0.0583,
-      "vs_teammate_pct": null
+      "vs_teammate_pct": 0.0451
     },
     {
-      "rank": 20,
+      "rank": 21,
       "driver": "COL",
       "team": "Alpine",
       "rating_pct": 0.1786,
       "vs_teammate_pct": 0.3628
     },
     {
-      "rank": 21,
+      "rank": 22,
       "driver": "STR",
       "team": "Aston Martin",
       "rating_pct": 0.2019,

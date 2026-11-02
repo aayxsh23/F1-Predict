@@ -94,10 +94,10 @@ Every number below is from races the model had never seen: each was predicted by
 |---|---|---|---|
 | Finishing position *(after quali)* | **3.03** places | 3.28 · finish where you qualified | 53 races, Jul 2024 → Oct 2026 |
 | Qualifying gap *(after practice)* | **0.72%** of a lap | 0.79% · team's recent gap | 76 races, Jul 2023 → Oct 2026 |
-| Gap to winner *(after quali)* | **0.64%** of race time | 0.86% · typical past gap | 44 races, Nov 2024 → Oct 2026 |
+| Gap to winner *(after quali)* | **0.65%** of race time | 0.86% · typical past gap | 44 races, Nov 2024 → Oct 2026 |
 | Win odds *(Brier, after quali)* | **0.027** | 0.046 · everyone equal | 53 races |
 
-_Models trained 2026-10-20 on data through 2026-10-11. Lower is better for every number._
+_Models trained 2026-10-27 on data through 2026-10-11. Lower is better for every number._
 
 <!-- ACCURACY:END -->
 
