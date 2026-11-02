@@ -75,7 +75,7 @@
       "given_name": "Oscar",
       "family_name": "Piastri",
       "team": "McLaren",
-      "points": 144.0,
+      "points": 150.0,
       "wins": 0,
       "position": 7,
       "title_chance": 0.0,
@@ -108,7 +108,7 @@
       "given_name": "Pierre",
       "family_name": "Gasly",
       "team": "Alpine F1 Team",
-      "points": 42.0,
+      "points": 43.0,
       "wins": 0,
       "position": 10,
       "title_chance": 0.0,
@@ -130,7 +130,7 @@
       "given_name": "Franco",
       "family_name": "Colapinto",
       "team": "Alpine F1 Team",
-      "points": 27.0,
+      "points": 31.0,
       "wins": 0,
       "position": 12,
       "title_chance": 0.0,
@@ -211,7 +211,7 @@
       "wins": 0,
       "position": 19,
       "title_chance": 0.0,
-      "expected_points": 6.5
+      "expected_points": 6.0
     },
     {
       "code": "TSU",
@@ -222,7 +222,7 @@
       "wins": 0,
       "position": 20,
       "title_chance": 0.0,
-      "expected_points": 1.5
+      "expected_points": 1.4
     },
     {
       "code": "HIR",
@@ -275,14 +275,14 @@
       "points": 630.0,
       "wins": 12,
       "position": 1,
-      "title_chance": 1.0
+      "title_chance": 0.9998
     },
     {
       "name": "Ferrari",
       "points": 504.0,
       "wins": 2,
       "position": 2,
-      "title_chance": 0.0
+      "title_chance": 0.0002
     },
     {
       "name": "Red Bull",
@@ -307,7 +307,7 @@
     },
     {
       "name": "Alpine F1 Team",
-      "points": 69.0,
+      "points": 74.0,
       "wins": 0,
       "position": 6,
       "title_chance": 0.0
