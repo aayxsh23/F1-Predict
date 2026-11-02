@@ -93,7 +93,7 @@ function Step([string]$exe) {
     if ($LASTEXITCODE) { Fail $LASTEXITCODE }
 }
 
-Step git pull --rebase --quiet
+Step git pull --rebase --autostash --quiet
 if ($Ingest) {
     $year = (Get-Date).ToUniversalTime().Year
     Step $Python -m src.data.ingest --seasons $year
@@ -112,7 +112,7 @@ Step git add @paths
 git diff --cached --quiet
 if ($LASTEXITCODE) {
     Step git commit --quiet -m $message
-    Step git pull --rebase --quiet
+    Step git pull --rebase --autostash --quiet
     Step git push --quiet
 }
 if ([int](Read-State)[$job] -gt 0) {

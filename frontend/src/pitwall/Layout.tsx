@@ -10,6 +10,7 @@ import { useHealth } from '@/lib/queries'
 
 import { ChromeContext, type Chrome, type ChromeApi, type Section } from './chrome'
 import { driverHref, snapshotLabel } from './data'
+import { RefreshButton } from './RefreshButton'
 // overlays opened on demand: their code loads the first time they open
 const Palette = lazy(() => import('./Palette').then((m) => ({ default: m.Palette })))
 const PitRadio = lazy(() => import('./PitRadio').then((m) => ({ default: m.PitRadio })))
@@ -265,6 +266,7 @@ export function PitWallLayout() {
                     <span style={{ color: api.color }}>{api.label}</span>
                   </span>
                   <span className="hidden min-[1240px]:inline">XGBoost · 4 targets</span>
+                  <RefreshButton />
                 </div>
               </header>
 
@@ -278,6 +280,7 @@ export function PitWallLayout() {
                     <span className="size-1.5 rounded-full" style={{ background: api.dot }} aria-hidden />
                     {api.short}
                   </span>
+                  <RefreshButton compact />
                   <button type="button" onClick={() => setPalette(true)} aria-label="Search" className="grid size-11 place-items-center text-ink-2">
                     <Search className="size-5" aria-hidden />
                   </button>

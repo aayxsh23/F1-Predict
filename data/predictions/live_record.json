@@ -1,7 +1,27 @@
 {
   "method": "every forecast snapshot the app published (data/predictions/timeline), scored against the race result",
-  "generated_at": "2026-10-29T14:34:41+00:00",
+  "generated_at": "2026-11-02T21:27:18+00:00",
   "races": [
+    {
+      "season": 2026,
+      "round": 19,
+      "location": "Mexico City",
+      "snapshots": [
+        {
+          "label": "Before practice",
+          "stage": "pre_weekend",
+          "generated_at": "2026-10-27T11:44:47.696160+00:00",
+          "cars": 21,
+          "finish_mae": 3.514,
+          "finish_mae_finishers": 2.682,
+          "order_agreement": 0.809,
+          "winner_called": true,
+          "podium_called": 2,
+          "quali_mae": 0.483,
+          "pole_called": false
+        }
+      ]
+    },
     {
       "season": 2026,
       "round": 18,
@@ -115,11 +135,11 @@
   "by_stage": [
     {
       "label": "Before practice",
-      "races": 3,
-      "finish_mae": 2.883,
-      "finish_mae_finishers": 2.077,
-      "winner_called_share": 0.0,
-      "quali_mae": 0.455
+      "races": 4,
+      "finish_mae": 3.04,
+      "finish_mae_finishers": 2.228,
+      "winner_called_share": 0.25,
+      "quali_mae": 0.462
     },
     {
       "label": "After the Sprint",

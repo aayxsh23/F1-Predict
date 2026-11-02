@@ -92,12 +92,12 @@ Every number below is from races the model had never seen: each was predicted by
 
 | Prediction | Model | Simple guess | Races it never saw |
 |---|---|---|---|
-| Finishing position *(after quali)* | **3.03** places | 3.28 · finish where you qualified | 53 races, Jul 2024 → Oct 2026 |
-| Qualifying gap *(after practice)* | **0.72%** of a lap | 0.79% · team's recent gap | 76 races, Jul 2023 → Oct 2026 |
-| Gap to winner *(after quali)* | **0.65%** of race time | 0.86% · typical past gap | 44 races, Nov 2024 → Oct 2026 |
-| Win odds *(Brier, after quali)* | **0.027** | 0.046 · everyone equal | 53 races |
+| Finishing position *(after quali)* | **3.03** places | 3.29 · finish where you qualified | 54 races, Jul 2024 → Nov 2026 |
+| Qualifying gap *(after practice)* | **0.71%** of a lap | 0.78% · team's recent gap | 77 races, Jul 2023 → Nov 2026 |
+| Gap to winner *(after quali)* | **0.65%** of race time | 0.87% · typical past gap | 45 races, Dec 2024 → Nov 2026 |
+| Win odds *(Brier, after quali)* | **0.027** | 0.046 · everyone equal | 54 races |
 
-_Models trained 2026-10-27 on data through 2026-10-11. Lower is better for every number._
+_Models trained 2026-11-02 on data through 2026-11-01. Lower is better for every number._
 
 <!-- ACCURACY:END -->
 
@@ -188,6 +188,7 @@ The API needs no model, no API key and no GPU to serve every fixed chat question
 | `GET /regulations` · `/regulations/search?query=` · `/regulations/{file}` | FIA regulations and steward decisions |
 | `GET /ratings` | Drivers ranked by qualifying pace with the car taken out |
 | `GET /health` | Status, the forecast's age, and whether the local chat model is running (`chat_model`) |
+| `GET /refresh/status` · `POST /refresh` | The top-right Refresh button *(local install only)*: pulls new races and history, retrains, republishes the forecast; progress while it runs |
 | `POST /explain` | A written explanation of one prediction *(local model; 503 if absent)* |
 | `POST /chat` | Pit Radio, streamed as server-sent events: fixed questions from data, open ones through the local model |
 

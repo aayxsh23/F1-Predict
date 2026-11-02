@@ -213,3 +213,30 @@ def test_what_if_moves_one_driver_and_keeps_the_rest():
     assert front["what_if"]["win"] > back["what_if"]["win"], "starting first beats starting last"
     assert front["current"] == back["current"], "the current odds don't depend on the what-if"
     assert c.get(f"/whatif/{payload['season']}/{payload['round']}", params={"driver": code, "grid": n + 1}).status_code == 422
+
+
+def test_refresh_runs_only_locally_and_only_from_the_app():
+    local = TestClient(main.app, client=("127.0.0.1", 50000))
+    main._refresh = None
+    json_post = {"content": "{}", "headers": {"content-type": "application/json"}}
+    with patch.dict("os.environ", {"VERCEL": "1"}):
+        assert local.get("/refresh/status").json() == {"available": False}
+        assert local.post("/refresh", **json_post).status_code == 403, "the deployed API never runs the pipeline"
+    assert local.post("/refresh", content="{}", headers={"content-type": "text/plain"}).status_code == 403, "a cross-site form post"
+    assert TestClient(main.app).post("/refresh", **json_post).status_code == 403, "not from this machine"
+    assert main._refresh is None
+
+
+def test_refresh_starts_once_and_forgets_cached_files_when_done():
+    local = TestClient(main.app, client=("127.0.0.1", 50000))
+    job = type("Job", (), {"code": None, "poll": lambda self: self.code})()
+    with patch.object(main.subprocess, "Popen", return_value=job) as popen, patch.object(main, "REFRESH_STATUS", Path(tempfile.mkdtemp()) / "none.json"):
+        started = local.post("/refresh", content="{}", headers={"content-type": "application/json"})
+        assert started.json()["state"] == "running"
+        assert local.post("/refresh", content="{}", headers={"content-type": "application/json"}).status_code == 409
+        assert popen.call_count == 1
+        cache._cache["latest.json"] = (0.0, {"stale": True})
+        job.code = 0
+        assert local.get("/refresh/status").json()["state"] == "idle", "no status file, nothing running"
+        assert "latest.json" not in cache._cache, "the next read must see the new files"
+    main._refresh = None

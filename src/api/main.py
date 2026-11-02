@@ -10,15 +10,19 @@ Run locally: `uvicorn src.api.main:app --reload`.
 import builtins
 import json
 import os
+import subprocess
+import sys
 import time
 from collections import defaultdict, deque
 from datetime import datetime, timezone
 from functools import lru_cache
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
+from src.api import cache
 from src.api.cache import get_json
 from src.api.enrich import with_circuit, with_probabilities
 from src.api.schemas import ChatRequest, ExplainRequest
@@ -110,6 +114,72 @@ def health():
 
     return {"status": "ok", "latest_forecast_at": generated, "latest_forecast_age_hours": None if age is None else round(age, 1),
             "chat_model": is_available()}  # the local model answers open questions here (never on the serverless API)
+
+
+ROOT = Path(__file__).resolve().parents[2]
+REFRESH_STATUS = ROOT / "data" / "processed" / "refresh_status.json"
+_refresh: subprocess.Popen | None = None
+_was_running = False
+REFRESH_QUIET_S = 900  # the slowest step (training) writes nothing for about five minutes
+
+
+def _can_refresh() -> bool:
+    """Only an install that owns the data and the pipeline's packages: not the serverless API, not one fed from GitHub."""
+    return not (os.environ.get("VERCEL") or cache.REMOTE_BASE_URL)
+
+
+def _drop_caches() -> None:
+    """Forget what was read before the refresh, so the next request sees the new files."""
+    cache._cache.clear()
+    for name, mod in list(sys.modules.items()):
+        if name.startswith("src.") and not name.startswith("src.rag"):
+            for obj in list(vars(mod).values()):
+                if callable(getattr(obj, "cache_clear", None)):
+                    obj.cache_clear()
+
+
+def _refresh_file() -> dict:
+    try:
+        status = json.loads(REFRESH_STATUS.read_text(encoding="utf-8"))
+    except (FileNotFoundError, ValueError):
+        return {"state": "idle"}
+    # the script rewrites this file at every step; a "running" one that has gone quiet died with its machine or server
+    quiet_s = (datetime.now(timezone.utc) - datetime.fromisoformat(status["updated_at"])).total_seconds()
+    if status["state"] == "running" and quiet_s > REFRESH_QUIET_S:
+        status["state"] = "interrupted"
+    return status
+
+
+@app.get("/refresh/status")
+def refresh_status():
+    """Progress of scripts/refresh_all.py, or {"available": false} where it can't run (the deployed app)."""
+    global _refresh, _was_running
+    if not _can_refresh():
+        return {"available": False}
+    if _refresh is not None and _refresh.poll() is not None:
+        _refresh = None
+    status = _refresh_file()
+    if _refresh is not None:
+        status["state"] = "running"  # the script's own file lags a moment behind the start
+    running = status["state"] == "running"
+    if _was_running and not running:
+        _drop_caches()  # whoever ran the script, what this server read before it is old now
+    _was_running = running
+    return {"available": True, **status}
+
+
+@app.post("/refresh")
+def refresh_start(request: Request):
+    """Start scripts/refresh_all.py in the background: new races, history, a retrain, a fresh forecast."""
+    global _refresh
+    # a JSON content type can't be sent cross-site without a CORS preflight, which this server only grants localhost
+    if not _can_refresh() or not (request.client and request.client.host in ("127.0.0.1", "::1", "localhost"))             or "application/json" not in request.headers.get("content-type", ""):
+        raise HTTPException(403, "Refresh runs only from the app on the machine that holds the data.")
+    if refresh_status()["state"] == "running":
+        raise HTTPException(409, "A refresh is already running.")
+    _refresh = subprocess.Popen([sys.executable, str(ROOT / "scripts" / "refresh_all.py")], cwd=ROOT,
+                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return refresh_status()
 
 
 @app.get("/races")

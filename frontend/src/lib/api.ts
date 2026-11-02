@@ -11,6 +11,7 @@ import type {
   ModelCard,
   PredictionPayload,
   RaceSummary,
+  RefreshStatus,
   RegulationDetail,
   RegulationDocument,
   RegulationSearchHit,
@@ -49,6 +50,8 @@ const q = encodeURIComponent
 
 export const api = {
   health: () => request<{ status: string; chat_model?: boolean }>('/health'),
+  refreshStatus: () => request<RefreshStatus>('/refresh/status'),
+  refreshStart: () => request<RefreshStatus>('/refresh', { method: 'POST', body: '{}' }),
   races: (season: number) => request<RaceSummary[]>(`/races?season=${season}`),
   predictionsLatest: () => request<PredictionPayload>('/predictions/latest'),
   predictionsForRace: (season: number, round: number) => request<PredictionPayload>(`/predictions/${season}/${round}`),

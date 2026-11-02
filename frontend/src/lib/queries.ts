@@ -1,4 +1,5 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useRef } from 'react'
 
 import { api } from './api'
 import type { Target } from './types'
@@ -92,4 +93,23 @@ export function useRegulationsSearch(query: string) {
     queryFn: () => api.regulationsSearch(query),
     enabled: query.trim().length > 0,
   })
+}
+
+/** The local Refresh button: starts scripts/refresh_all.py and follows it. Every answer on screen is re-read when a run ends. */
+export function useRefresh() {
+  const qc = useQueryClient()
+  const status = useQuery({
+    queryKey: ['refresh'],
+    queryFn: api.refreshStatus,
+    retry: false,
+    refetchInterval: (q) => (q.state.data?.state === 'running' ? 2000 : false),
+  })
+  const start = useMutation({ mutationFn: api.refreshStart, onSuccess: (data) => qc.setQueryData(['refresh'], data) })
+  const state = status.data?.state
+  const was = useRef(state)
+  useEffect(() => {
+    if (was.current === 'running' && state !== 'running') void qc.invalidateQueries({ predicate: (q) => q.queryKey[0] !== 'refresh' })
+    was.current = state
+  }, [state, qc])
+  return { status: status.data, start: start.mutate, starting: start.isPending, startError: start.error }
 }

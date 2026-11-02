@@ -388,3 +388,15 @@ export interface RegulationSearchHit {
   article: string | null
   snippet: string
 }
+
+/** scripts/refresh_all.py as the local API reports it; `available` is false on the deployed app. */
+export interface RefreshStatus {
+  available: boolean
+  state?: 'idle' | 'running' | 'done' | 'error' | 'interrupted'
+  step?: string
+  done?: number
+  total?: number
+  warnings?: string[]
+  error?: string
+  finished_at?: string
+}
