@@ -16,7 +16,7 @@
       "driver": "BEA",
       "team": "Haas F1 Team",
       "rating_pct": -0.2634,
-      "vs_teammate_pct": -0.2208
+      "vs_teammate_pct": -0.4729
     },
     {
       "rank": 3,
@@ -90,73 +90,73 @@
     },
     {
       "rank": 13,
-      "driver": "OCO",
-      "team": "Haas F1 Team",
-      "rating_pct": -0.0426,
-      "vs_teammate_pct": 0.2208
-    },
-    {
-      "rank": 14,
       "driver": "BOR",
       "team": "Audi",
       "rating_pct": -0.0324,
       "vs_teammate_pct": 0.0665
     },
     {
-      "rank": 15,
+      "rank": 14,
       "driver": "LIN",
       "team": "Racing Bulls",
       "rating_pct": -0.0294,
       "vs_teammate_pct": 0.0181
     },
     {
-      "rank": 16,
+      "rank": 15,
       "driver": "PER",
       "team": "Cadillac",
       "rating_pct": -0.0112,
       "vs_teammate_pct": -0.0971
     },
     {
-      "rank": 17,
+      "rank": 16,
       "driver": "ANT",
       "team": "Mercedes",
       "rating_pct": 0.0098,
       "vs_teammate_pct": 0.1307
     },
     {
-      "rank": 18,
+      "rank": 17,
       "driver": "ALB",
       "team": "Williams",
       "rating_pct": 0.0282,
       "vs_teammate_pct": 0.2448
     },
     {
-      "rank": 19,
+      "rank": 18,
       "driver": "PIA",
       "team": "McLaren",
       "rating_pct": 0.0394,
       "vs_teammate_pct": 0.1563
     },
     {
-      "rank": 20,
+      "rank": 19,
       "driver": "BOT",
       "team": "Cadillac",
       "rating_pct": 0.0858,
       "vs_teammate_pct": 0.0971
     },
     {
-      "rank": 21,
+      "rank": 20,
       "driver": "COL",
       "team": "Alpine",
       "rating_pct": 0.1739,
       "vs_teammate_pct": 0.3805
     },
     {
-      "rank": 22,
+      "rank": 21,
       "driver": "STR",
       "team": "Aston Martin",
       "rating_pct": 0.1906,
       "vs_teammate_pct": 0.4133
+    },
+    {
+      "rank": 22,
+      "driver": "HIR",
+      "team": "Haas F1 Team",
+      "rating_pct": 0.2094,
+      "vs_teammate_pct": 0.4729
     }
   ]
 }
