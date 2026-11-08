@@ -1,6 +1,6 @@
 {
   "remaining": {
-    "races": 4,
+    "races": 3,
     "sprints": 0
   },
   "drivers": [
@@ -13,7 +13,7 @@
       "wins": 9,
       "position": 1,
       "title_chance": 1.0,
-      "expected_points": 433.1
+      "expected_points": 420.0
     },
     {
       "code": "VER",
@@ -24,7 +24,7 @@
       "wins": 3,
       "position": 2,
       "title_chance": 0.0,
-      "expected_points": 311.3
+      "expected_points": 298.4
     },
     {
       "code": "HAM",
@@ -35,7 +35,7 @@
       "wins": 1,
       "position": 3,
       "title_chance": 0.0,
-      "expected_points": 306.4
+      "expected_points": 294.4
     },
     {
       "code": "RUS",
@@ -46,7 +46,7 @@
       "wins": 3,
       "position": 4,
       "title_chance": 0.0,
-      "expected_points": 286.2
+      "expected_points": 277.1
     },
     {
       "code": "LEC",
@@ -57,7 +57,7 @@
       "wins": 1,
       "position": 5,
       "title_chance": 0.0,
-      "expected_points": 294.4
+      "expected_points": 281.4
     },
     {
       "code": "NOR",
@@ -68,7 +68,7 @@
       "wins": 2,
       "position": 6,
       "title_chance": 0.0,
-      "expected_points": 258.3
+      "expected_points": 249.0
     },
     {
       "code": "PIA",
@@ -79,7 +79,7 @@
       "wins": 0,
       "position": 7,
       "title_chance": 0.0,
-      "expected_points": 176.4
+      "expected_points": 168.2
     },
     {
       "code": "HAD",
@@ -90,7 +90,7 @@
       "wins": 0,
       "position": 8,
       "title_chance": 0.0,
-      "expected_points": 139.9
+      "expected_points": 131.4
     },
     {
       "code": "LAW",
@@ -101,7 +101,7 @@
       "wins": 0,
       "position": 9,
       "title_chance": 0.0,
-      "expected_points": 100.4
+      "expected_points": 96.0
     },
     {
       "code": "GAS",
@@ -112,7 +112,7 @@
       "wins": 0,
       "position": 10,
       "title_chance": 0.0,
-      "expected_points": 49.4
+      "expected_points": 47.7
     },
     {
       "code": "LIN",
@@ -123,7 +123,7 @@
       "wins": 0,
       "position": 11,
       "title_chance": 0.0,
-      "expected_points": 45.2
+      "expected_points": 43.6
     },
     {
       "code": "COL",
@@ -134,7 +134,7 @@
       "wins": 0,
       "position": 12,
       "title_chance": 0.0,
-      "expected_points": 30.2
+      "expected_points": 29.4
     },
     {
       "code": "BEA",
@@ -145,7 +145,7 @@
       "wins": 0,
       "position": 13,
       "title_chance": 0.0,
-      "expected_points": 25.6
+      "expected_points": 24.9
     },
     {
       "code": "BOR",
@@ -156,7 +156,7 @@
       "wins": 0,
       "position": 14,
       "title_chance": 0.0,
-      "expected_points": 19.8
+      "expected_points": 18.4
     },
     {
       "code": "HUL",
@@ -167,7 +167,7 @@
       "wins": 0,
       "position": 15,
       "title_chance": 0.0,
-      "expected_points": 20.1
+      "expected_points": 18.4
     },
     {
       "code": "OCO",
@@ -189,7 +189,7 @@
       "wins": 0,
       "position": 17,
       "title_chance": 0.0,
-      "expected_points": 8.1
+      "expected_points": 7.9
     },
     {
       "code": "SAI",
@@ -200,7 +200,7 @@
       "wins": 0,
       "position": 18,
       "title_chance": 0.0,
-      "expected_points": 8.5
+      "expected_points": 8.2
     },
     {
       "code": "ALB",
@@ -211,7 +211,7 @@
       "wins": 0,
       "position": 19,
       "title_chance": 0.0,
-      "expected_points": 6.4
+      "expected_points": 6.1
     },
     {
       "code": "TSU",
@@ -222,7 +222,7 @@
       "wins": 0,
       "position": 20,
       "title_chance": 0.0,
-      "expected_points": 1.5
+      "expected_points": 1.4
     },
     {
       "code": "HIR",
@@ -233,7 +233,7 @@
       "wins": 0,
       "position": 21,
       "title_chance": 0.0,
-      "expected_points": 7.0
+      "expected_points": 5.6
     },
     {
       "code": "STR",
@@ -244,7 +244,7 @@
       "wins": 0,
       "position": 22,
       "title_chance": 0.0,
-      "expected_points": 1.0
+      "expected_points": 0.8
     },
     {
       "code": "BOT",
@@ -255,7 +255,7 @@
       "wins": 0,
       "position": 23,
       "title_chance": 0.0,
-      "expected_points": 1.1
+      "expected_points": 0.9
     },
     {
       "code": "PER",
@@ -266,7 +266,18 @@
       "wins": 0,
       "position": 24,
       "title_chance": 0.0,
-      "expected_points": 1.2
+      "expected_points": 1.0
+    },
+    {
+      "code": "CAM",
+      "given_name": "Rafael",
+      "family_name": "Camara",
+      "team": "Haas F1 Team",
+      "points": 0.0,
+      "wins": 0,
+      "position": 25,
+      "title_chance": 0.0,
+      "expected_points": 0.4
     }
   ],
   "constructors": [
@@ -348,5 +359,5 @@
       "title_chance": 0.0
     }
   ],
-  "generated_at": "2026-11-06T20:31:58.655006+00:00"
+  "generated_at": "2026-11-08T14:24:05.265050+00:00"
 }
