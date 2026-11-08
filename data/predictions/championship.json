@@ -9,99 +9,99 @@
       "given_name": "Andrea Kimi",
       "family_name": "Antonelli",
       "team": "Mercedes",
-      "points": 380.0,
+      "points": 390.0,
       "wins": 9,
       "position": 1,
       "title_chance": 1.0,
-      "expected_points": 420.0
+      "expected_points": 430.0
     },
     {
       "code": "VER",
       "given_name": "Max",
       "family_name": "Verstappen",
       "team": "Red Bull",
-      "points": 261.0,
+      "points": 279.0,
       "wins": 3,
       "position": 2,
       "title_chance": 0.0,
-      "expected_points": 298.4
-    },
-    {
-      "code": "HAM",
-      "given_name": "Lewis",
-      "family_name": "Hamilton",
-      "team": "Ferrari",
-      "points": 259.0,
-      "wins": 1,
-      "position": 3,
-      "title_chance": 0.0,
-      "expected_points": 294.4
+      "expected_points": 316.5
     },
     {
       "code": "RUS",
       "given_name": "George",
       "family_name": "Russell",
       "team": "Mercedes",
-      "points": 250.0,
+      "points": 262.0,
       "wins": 3,
+      "position": 3,
+      "title_chance": 0.0,
+      "expected_points": 289.7
+    },
+    {
+      "code": "HAM",
+      "given_name": "Lewis",
+      "family_name": "Hamilton",
+      "team": "Ferrari",
+      "points": 261.0,
+      "wins": 1,
       "position": 4,
       "title_chance": 0.0,
-      "expected_points": 277.1
+      "expected_points": 295.8
     },
     {
       "code": "LEC",
       "given_name": "Charles",
       "family_name": "Leclerc",
       "team": "Ferrari",
-      "points": 245.0,
+      "points": 251.0,
       "wins": 1,
       "position": 5,
       "title_chance": 0.0,
-      "expected_points": 281.4
+      "expected_points": 287.4
     },
     {
       "code": "NOR",
       "given_name": "Lando",
       "family_name": "Norris",
       "team": "McLaren",
-      "points": 221.0,
-      "wins": 2,
+      "points": 246.0,
+      "wins": 3,
       "position": 6,
       "title_chance": 0.0,
-      "expected_points": 249.0
+      "expected_points": 274.0
     },
     {
       "code": "PIA",
       "given_name": "Oscar",
       "family_name": "Piastri",
       "team": "McLaren",
-      "points": 144.0,
+      "points": 152.0,
       "wins": 0,
       "position": 7,
       "title_chance": 0.0,
-      "expected_points": 168.2
+      "expected_points": 176.2
     },
     {
       "code": "HAD",
       "given_name": "Isack",
       "family_name": "Hadjar",
       "team": "Red Bull",
-      "points": 107.0,
+      "points": 122.0,
       "wins": 0,
       "position": 8,
       "title_chance": 0.0,
-      "expected_points": 131.4
+      "expected_points": 146.4
     },
     {
       "code": "LAW",
       "given_name": "Liam",
       "family_name": "Lawson",
       "team": "Red Bull",
-      "points": 83.0,
+      "points": 87.0,
       "wins": 0,
       "position": 9,
       "title_chance": 0.0,
-      "expected_points": 96.0
+      "expected_points": 100.0
     },
     {
       "code": "GAS",
@@ -112,7 +112,7 @@
       "wins": 0,
       "position": 10,
       "title_chance": 0.0,
-      "expected_points": 47.7
+      "expected_points": 47.6
     },
     {
       "code": "LIN",
@@ -163,11 +163,11 @@
       "given_name": "Nico",
       "family_name": "H\u00fclkenberg",
       "team": "Audi",
-      "points": 13.0,
+      "points": 14.0,
       "wins": 0,
       "position": 15,
       "title_chance": 0.0,
-      "expected_points": 18.4
+      "expected_points": 19.3
     },
     {
       "code": "OCO",
@@ -283,35 +283,35 @@
   "constructors": [
     {
       "name": "Mercedes",
-      "points": 630.0,
+      "points": 652.0,
       "wins": 12,
       "position": 1,
       "title_chance": 1.0
     },
     {
       "name": "Ferrari",
-      "points": 504.0,
+      "points": 512.0,
       "wins": 2,
       "position": 2,
       "title_chance": 0.0
     },
     {
       "name": "Red Bull",
-      "points": 382.0,
+      "points": 415.0,
       "wins": 3,
       "position": 3,
       "title_chance": 0.0
     },
     {
       "name": "McLaren",
-      "points": 365.0,
-      "wins": 2,
+      "points": 398.0,
+      "wins": 3,
       "position": 4,
       "title_chance": 0.0
     },
     {
       "name": "RB F1 Team",
-      "points": 108.0,
+      "points": 112.0,
       "wins": 0,
       "position": 5,
       "title_chance": 0.0
@@ -332,7 +332,7 @@
     },
     {
       "name": "Audi",
-      "points": 27.0,
+      "points": 28.0,
       "wins": 0,
       "position": 8,
       "title_chance": 0.0
@@ -359,5 +359,5 @@
       "title_chance": 0.0
     }
   ],
-  "generated_at": "2026-11-08T14:24:05.265050+00:00"
+  "generated_at": "2026-11-08T19:32:27.131275+00:00"
 }
