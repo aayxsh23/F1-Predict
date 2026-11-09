@@ -1,7 +1,52 @@
 {
   "method": "every forecast snapshot the app published (data/predictions/timeline), scored against the race result",
-  "generated_at": "2026-11-02T21:27:18+00:00",
+  "generated_at": "2026-11-09T09:33:59+00:00",
   "races": [
+    {
+      "season": 2026,
+      "round": 20,
+      "location": "S\u00e3o Paulo",
+      "snapshots": [
+        {
+          "label": "Before practice",
+          "stage": "pre_weekend",
+          "generated_at": "2026-11-04T13:55:05.315655+00:00",
+          "cars": 21,
+          "finish_mae": 2.747,
+          "finish_mae_finishers": 2.405,
+          "order_agreement": 0.819,
+          "winner_called": false,
+          "podium_called": 1,
+          "quali_mae": 1.656,
+          "pole_called": false
+        },
+        {
+          "label": "After FP2",
+          "stage": "post_practice",
+          "generated_at": "2026-11-07T08:15:47.714918+00:00",
+          "cars": 21,
+          "finish_mae": 2.744,
+          "finish_mae_finishers": 2.43,
+          "order_agreement": 0.814,
+          "winner_called": false,
+          "podium_called": 1,
+          "quali_mae": 1.665,
+          "pole_called": false
+        },
+        {
+          "label": "Official grid",
+          "stage": "race_day",
+          "generated_at": "2026-11-08T19:32:22.975871+00:00",
+          "cars": 21,
+          "finish_mae": 3.127,
+          "finish_mae_finishers": 2.836,
+          "order_agreement": 0.772,
+          "winner_called": false,
+          "podium_called": 1,
+          "grid_baseline_mae": 5.286
+        }
+      ]
+    },
     {
       "season": 2026,
       "round": 19,
@@ -135,11 +180,19 @@
   "by_stage": [
     {
       "label": "Before practice",
-      "races": 4,
-      "finish_mae": 3.04,
-      "finish_mae_finishers": 2.228,
-      "winner_called_share": 0.25,
-      "quali_mae": 0.462
+      "races": 5,
+      "finish_mae": 2.982,
+      "finish_mae_finishers": 2.264,
+      "winner_called_share": 0.2,
+      "quali_mae": 0.701
+    },
+    {
+      "label": "After FP2",
+      "races": 1,
+      "finish_mae": 2.744,
+      "finish_mae_finishers": 2.43,
+      "winner_called_share": 0.0,
+      "quali_mae": 1.665
     },
     {
       "label": "After the Sprint",
@@ -159,11 +212,11 @@
     },
     {
       "label": "Official grid",
-      "races": 2,
-      "finish_mae": 2.062,
-      "finish_mae_finishers": 1.316,
-      "winner_called_share": 1.0,
-      "grid_baseline_mae": 2.453
+      "races": 3,
+      "finish_mae": 2.417,
+      "finish_mae_finishers": 1.822,
+      "winner_called_share": 0.667,
+      "grid_baseline_mae": 3.397
     }
   ]
 }
