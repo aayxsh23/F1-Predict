@@ -2,18 +2,18 @@
   "global": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.28600698654458817,
-        "deg_s_per_lap": 0.04961194884762661,
-        "laps": 14158
+        "offset_s": -0.21011959167737507,
+        "deg_s_per_lap": 0.04329629967738369,
+        "laps": 14928
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.03484760912445366,
+        "deg_s_per_lap": 0.03486834805343573,
         "laps": 36763
       },
       "HARD": {
-        "offset_s": 0.010383623904566139,
-        "deg_s_per_lap": 0.030076893087644656,
+        "offset_s": 0.012354744403877205,
+        "deg_s_per_lap": 0.030151957883148908,
         "laps": 45924
       }
     },
@@ -22,24 +22,24 @@
       "MEDIUM": 31,
       "HARD": 42
     },
-    "pit_loss_s": 22.895999999999987,
-    "sc_probability": 0.7539267015706806
+    "pit_loss_s": 22.9165,
+    "sc_probability": 0.75
   },
   "Austin": {
     "compounds": {
       "SOFT": {
-        "offset_s": 0.012021176831110758,
-        "deg_s_per_lap": 0.05611136629107262,
+        "offset_s": 0.037877188710910975,
+        "deg_s_per_lap": 0.0539595267100699,
         "laps": 774
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.051672619431611354,
+        "deg_s_per_lap": 0.051676388432789384,
         "laps": 1801
       },
       "HARD": {
-        "offset_s": 0.2694697315778837,
-        "deg_s_per_lap": 0.043823385526064976,
+        "offset_s": 0.2698206208523491,
+        "deg_s_per_lap": 0.04383674819549169,
         "laps": 1847
       }
     },
@@ -49,25 +49,25 @@
       "HARD": 36
     },
     "pit_loss_s": 21.644999999999982,
-    "sc_probability": 0.7507853403141361,
+    "sc_probability": 0.75,
     "races": 5,
     "green_laps": 4422
   },
   "Baku": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.12902778923811092,
-        "deg_s_per_lap": 0.028824805793125022,
+        "offset_s": -0.08850047555735623,
+        "deg_s_per_lap": 0.025451962444530674,
         "laps": 349
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.02269961737112398,
+        "deg_s_per_lap": 0.022704935045221936,
         "laps": 1160
       },
       "HARD": {
-        "offset_s": 0.13401229354126906,
-        "deg_s_per_lap": 0.020202641593277344,
+        "offset_s": 0.13429631666797093,
+        "deg_s_per_lap": 0.020213457846231835,
         "laps": 2376
       }
     },
@@ -77,25 +77,25 @@
       "HARD": 43
     },
     "pit_loss_s": 22.563000000000017,
-    "sc_probability": 0.9507853403141361,
+    "sc_probability": 0.95,
     "races": 5,
     "green_laps": 3885
   },
   "Barcelona": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.21208871621278386,
-        "deg_s_per_lap": 0.08972301467626552,
+        "offset_s": -0.19928071707907843,
+        "deg_s_per_lap": 0.0886570823268576,
         "laps": 1970
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.07750886924921921,
+        "deg_s_per_lap": 0.07751240228652452,
         "laps": 1948
       },
       "HARD": {
-        "offset_s": 0.011925443116786056,
-        "deg_s_per_lap": 0.07161579982933647,
+        "offset_s": 0.01232956828322597,
+        "deg_s_per_lap": 0.07163118984379148,
         "laps": 1551
       }
     },
@@ -105,25 +105,25 @@
       "HARD": 30
     },
     "pit_loss_s": 23.585000000000008,
-    "sc_probability": 0.5916230366492147,
+    "sc_probability": 0.5909090909090909,
     "races": 5,
     "green_laps": 5469
   },
   "Budapest": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.15798265882418827,
-        "deg_s_per_lap": 0.06516413714130251,
+        "offset_s": -0.12997993009089878,
+        "deg_s_per_lap": 0.06283363929250432,
         "laps": 684
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.056126727168017664,
+        "deg_s_per_lap": 0.056129819069468595,
         "laps": 2283
       },
       "HARD": {
-        "offset_s": 0.041434340622404336,
-        "deg_s_per_lap": 0.0578859722471532,
+        "offset_s": 0.041662479569083866,
+        "deg_s_per_lap": 0.05789466030218842,
         "laps": 3056
       }
     },
@@ -133,25 +133,25 @@
       "HARD": 39
     },
     "pit_loss_s": 21.879000000000005,
-    "sc_probability": 0.5007139457401237,
+    "sc_probability": 0.5,
     "races": 5,
     "green_laps": 6023
   },
   "Imola": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.39234741957821495,
-        "deg_s_per_lap": 0.054104377741805196,
+        "offset_s": -0.32533868238862285,
+        "deg_s_per_lap": 0.048527645582650304,
         "laps": 53
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.012806958866789186,
+        "deg_s_per_lap": 0.012811491966019856,
         "laps": 1430
       },
       "HARD": {
-        "offset_s": -0.42924851842406864,
-        "deg_s_per_lap": 0.047677834580072145,
+        "offset_s": -0.4287959075172229,
+        "deg_s_per_lap": 0.04769507104287428,
         "laps": 1342
       }
     },
@@ -161,25 +161,25 @@
       "HARD": 39
     },
     "pit_loss_s": 28.25200000000001,
-    "sc_probability": 0.7868362004487659,
+    "sc_probability": 0.7857142857142857,
     "races": 3,
     "green_laps": 2825
   },
   "Jeddah": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.32088821084388847,
-        "deg_s_per_lap": 0.04934799028377433,
+        "offset_s": -0.25764871512121107,
+        "deg_s_per_lap": 0.0440849493085719,
         "laps": 80
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.021851356786815185,
+        "deg_s_per_lap": 0.021857492564620593,
         "laps": 952
       },
       "HARD": {
-        "offset_s": 0.12715112303782675,
-        "deg_s_per_lap": 0.009866176067565013,
+        "offset_s": 0.1274795062946881,
+        "deg_s_per_lap": 0.009878681656153826,
         "laps": 2001
       }
     },
@@ -189,25 +189,25 @@
       "HARD": 43
     },
     "pit_loss_s": 21.666999999999987,
-    "sc_probability": 0.9296933433059087,
+    "sc_probability": 0.9285714285714286,
     "races": 4,
     "green_laps": 3033
   },
   "Kuala Lumpur": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.09475264067355386,
-        "deg_s_per_lap": 0.0501454548578686,
+        "offset_s": -0.0442452231246596,
+        "deg_s_per_lap": 0.04594202778948725,
         "laps": 201
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.04147195132660686,
+        "deg_s_per_lap": 0.04148912642307233,
         "laps": 83
       },
       "HARD": {
-        "offset_s": -0.065539392355459,
-        "deg_s_per_lap": 0.05904666001822295,
+        "offset_s": -0.0642340145413457,
+        "deg_s_per_lap": 0.05909637180332508,
         "laps": 204
       }
     },
@@ -217,25 +217,25 @@
       "HARD": 42
     },
     "pit_loss_s": 26.730999999999995,
-    "sc_probability": 0.8359511343804537,
+    "sc_probability": 0.8333333333333334,
     "races": 1,
     "green_laps": 488
   },
   "Las Vegas": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.283388299813903,
-        "deg_s_per_lap": 0.051964114698065826,
+        "offset_s": -0.20917079872127414,
+        "deg_s_per_lap": 0.04578744069293828,
         "laps": 9
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.047218679933916104,
+        "deg_s_per_lap": 0.04722738462603871,
         "laps": 553
       },
       "HARD": {
-        "offset_s": 0.15689550505366184,
-        "deg_s_per_lap": 0.034917847380131366,
+        "offset_s": 0.15727438453454828,
+        "deg_s_per_lap": 0.034932275980901054,
         "laps": 1681
       }
     },
@@ -245,25 +245,25 @@
       "HARD": 33
     },
     "pit_loss_s": 23.589999999999975,
-    "sc_probability": 0.7015706806282722,
+    "sc_probability": 0.7,
     "races": 3,
     "green_laps": 2243
   },
   "Le Castellet": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.28600698654458817,
-        "deg_s_per_lap": 0.04961194884762661,
+        "offset_s": -0.21011959167737507,
+        "deg_s_per_lap": 0.04329629967738369,
         "laps": 0
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.051077218409935995,
+        "deg_s_per_lap": 0.05108900189231212,
         "laps": 304
       },
       "HARD": {
-        "offset_s": 0.27914863628709247,
-        "deg_s_per_lap": 0.04682195590730184,
+        "offset_s": 0.28003853267504325,
+        "deg_s_per_lap": 0.04685584520549785,
         "laps": 486
       }
     },
@@ -273,25 +273,25 @@
       "HARD": 42
     },
     "pit_loss_s": 29.164,
-    "sc_probability": 0.7513089005235601,
+    "sc_probability": 0.75,
     "races": 1,
     "green_laps": 790
   },
   "Lusail": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.18363515375182005,
-        "deg_s_per_lap": 0.05678466532934867,
+        "offset_s": -0.12168625998266644,
+        "deg_s_per_lap": 0.05162903335364019,
         "laps": 90
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.01135731823737032,
+        "deg_s_per_lap": 0.011361735474640196,
         "laps": 1478
       },
       "HARD": {
-        "offset_s": -0.37230524092268247,
-        "deg_s_per_lap": 0.03617084903348776,
+        "offset_s": -0.37166836838655626,
+        "deg_s_per_lap": 0.036195102602309834,
         "laps": 838
       }
     },
@@ -301,25 +301,25 @@
       "HARD": 25
     },
     "pit_loss_s": 28.420500000000004,
-    "sc_probability": 0.9179755671902269,
+    "sc_probability": 0.9166666666666666,
     "races": 3,
     "green_laps": 2406
   },
   "Madrid": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.1603054202446979,
-        "deg_s_per_lap": 0.043933118758108014,
+        "offset_s": -0.09585752651458063,
+        "deg_s_per_lap": 0.03856951012095903,
         "laps": 71
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.03903860908419002,
+        "deg_s_per_lap": 0.039053830316470445,
         "laps": 145
       },
       "HARD": {
-        "offset_s": 0.025691544854600127,
-        "deg_s_per_lap": 0.015196427161847745,
+        "offset_s": 0.026368905850927,
+        "deg_s_per_lap": 0.015222222624220329,
         "laps": 764
       }
     },
@@ -329,25 +329,25 @@
       "HARD": 42
     },
     "pit_loss_s": 25.86099999999999,
-    "sc_probability": 0.8359511343804537,
+    "sc_probability": 0.8333333333333334,
     "races": 1,
     "green_laps": 980
   },
   "Marina Bay": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.4515986868468149,
-        "deg_s_per_lap": 0.04948095606656545,
+        "offset_s": -0.4297919641838221,
+        "deg_s_per_lap": 0.04766611435097834,
         "laps": 992
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.032567479152401976,
+        "deg_s_per_lap": 0.03257111118900117,
         "laps": 1884
       },
       "HARD": {
-        "offset_s": 0.0713097558957565,
-        "deg_s_per_lap": 0.044721364009740916,
+        "offset_s": 0.07173297017365445,
+        "deg_s_per_lap": 0.044737480981400346,
         "laps": 1463
       }
     },
@@ -357,25 +357,25 @@
       "HARD": 42
     },
     "pit_loss_s": 25.655,
-    "sc_probability": 0.7230948225712623,
+    "sc_probability": 0.7222222222222222,
     "races": 5,
     "green_laps": 4339
   },
   "Melbourne": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.2988312369913152,
-        "deg_s_per_lap": 0.055421601724169905,
+        "offset_s": -0.2416655911403074,
+        "deg_s_per_lap": 0.05066405056014513,
         "laps": 131
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.036970542404700574,
+        "deg_s_per_lap": 0.0369782092915701,
         "laps": 682
       },
       "HARD": {
-        "offset_s": 0.21926858285671427,
-        "deg_s_per_lap": 0.010439721842348374,
+        "offset_s": 0.21954698970689954,
+        "deg_s_per_lap": 0.010450324214594724,
         "laps": 2432
       }
     },
@@ -385,25 +385,25 @@
       "HARD": 46
     },
     "pit_loss_s": 21.59349999999999,
-    "sc_probability": 0.8342059336823735,
+    "sc_probability": 0.8333333333333334,
     "races": 5,
     "green_laps": 3245
   },
   "Mexico City": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.2569215986148117,
-        "deg_s_per_lap": 0.043474710134874375,
+        "offset_s": -0.24325435055227837,
+        "deg_s_per_lap": 0.042337267690886436,
         "laps": 1821
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.037653487020640655,
+        "deg_s_per_lap": 0.0376565123932128,
         "laps": 2342
       },
       "HARD": {
-        "offset_s": 0.1822469821128917,
-        "deg_s_per_lap": 0.030464391736661083,
+        "offset_s": 0.1826854961283112,
+        "deg_s_per_lap": 0.030481091357462957,
         "laps": 1398
       }
     },
@@ -413,25 +413,25 @@
       "HARD": 43
     },
     "pit_loss_s": 23.345,
-    "sc_probability": 0.9507853403141361,
+    "sc_probability": 0.95,
     "races": 5,
     "green_laps": 5561
   },
   "Miami": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.24048387039732108,
-        "deg_s_per_lap": 0.042329994571152066,
+        "offset_s": -0.181542204481039,
+        "deg_s_per_lap": 0.03742463599232262,
         "laps": 115
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.022254959568600935,
+        "deg_s_per_lap": 0.02225907035729908,
         "laps": 1618
       },
       "HARD": {
-        "offset_s": -0.0038036163540090965,
-        "deg_s_per_lap": 0.022144866127036672,
+        "offset_s": -0.0035246184064774166,
+        "deg_s_per_lap": 0.02215549100962751,
         "laps": 2426
       }
     },
@@ -441,25 +441,25 @@
       "HARD": 42
     },
     "pit_loss_s": 20.602000000000004,
-    "sc_probability": 0.7868362004487659,
+    "sc_probability": 0.7857142857142857,
     "races": 5,
     "green_laps": 4159
   },
   "Monaco": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.28637321535901206,
-        "deg_s_per_lap": 0.05074742912566492,
+        "offset_s": -0.24573739481432105,
+        "deg_s_per_lap": 0.04736555540665935,
         "laps": 347
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.01804035820477088,
+        "deg_s_per_lap": 0.01804387775147972,
         "laps": 1957
       },
       "HARD": {
-        "offset_s": 0.11603602218530057,
-        "deg_s_per_lap": 0.013677188384490151,
+        "offset_s": 0.11630104679025005,
+        "deg_s_per_lap": 0.013687281130104154,
         "laps": 2575
       }
     },
@@ -469,25 +469,25 @@
       "HARD": 57
     },
     "pit_loss_s": 19.70199999999997,
-    "sc_probability": 0.7507853403141361,
+    "sc_probability": 0.75,
     "races": 5,
     "green_laps": 4879
   },
   "Montréal": {
     "compounds": {
       "SOFT": {
-        "offset_s": 0.010593893775706409,
-        "deg_s_per_lap": 0.027588328530443858,
+        "offset_s": 0.049017891176826825,
+        "deg_s_per_lap": 0.02439053148221959,
         "laps": 390
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.011398201312851804,
+        "deg_s_per_lap": 0.011402646956792224,
         "laps": 1466
       },
       "HARD": {
-        "offset_s": -0.25010130630871175,
-        "deg_s_per_lap": 0.023798594491318385,
+        "offset_s": -0.24983091940894336,
+        "deg_s_per_lap": 0.023808891445434202,
         "laps": 2516
       }
     },
@@ -497,25 +497,25 @@
       "HARD": 47
     },
     "pit_loss_s": 20.216000000000008,
-    "sc_probability": 0.8342059336823735,
+    "sc_probability": 0.8333333333333334,
     "races": 5,
     "green_laps": 4372
   },
   "Monza": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.3088712877331543,
-        "deg_s_per_lap": 0.04769243415467003,
+        "offset_s": -0.2615156591108684,
+        "deg_s_per_lap": 0.04375131142752933,
         "laps": 241
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.027758154600134463,
+        "deg_s_per_lap": 0.02776200226784912,
         "laps": 1756
       },
       "HARD": {
-        "offset_s": -0.03178983826493939,
-        "deg_s_per_lap": 0.030095836558820758,
+        "offset_s": -0.03150239816296198,
+        "deg_s_per_lap": 0.030106782938041206,
         "laps": 2343
       }
     },
@@ -525,25 +525,25 @@
       "HARD": 47
     },
     "pit_loss_s": 25.72199999999998,
-    "sc_probability": 0.6507853403141362,
+    "sc_probability": 0.65,
     "races": 5,
     "green_laps": 4340
   },
   "Sakhir": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.2356793629117025,
-        "deg_s_per_lap": 0.1250438373260296,
+        "offset_s": -0.21858760731097893,
+        "deg_s_per_lap": 0.12362139381921806,
         "laps": 1376
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.09618281420984792,
+        "deg_s_per_lap": 0.09619000898139413,
         "laps": 753
       },
       "HARD": {
-        "offset_s": 0.0687662332236977,
-        "deg_s_per_lap": 0.10369264807946188,
+        "offset_s": 0.06916124735181627,
+        "deg_s_per_lap": 0.10370769112465313,
         "laps": 1596
       }
     },
@@ -553,25 +553,25 @@
       "HARD": 26
     },
     "pit_loss_s": 24.816499999999976,
-    "sc_probability": 0.8507853403141361,
+    "sc_probability": 0.85,
     "races": 4,
     "green_laps": 3725
   },
   "Shanghai": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.23822723153073871,
-        "deg_s_per_lap": 0.054767881082293884,
+        "offset_s": -0.17364221462247229,
+        "deg_s_per_lap": 0.0493928605118744,
         "laps": 70
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.0754986624097476,
+        "deg_s_per_lap": 0.07550677940739225,
         "laps": 622
       },
       "HARD": {
-        "offset_s": 0.3676360397968314,
-        "deg_s_per_lap": 0.03652271616432543,
+        "offset_s": 0.3680055094311915,
+        "deg_s_per_lap": 0.03653678641652866,
         "laps": 1734
       }
     },
@@ -581,25 +581,25 @@
       "HARD": 46
     },
     "pit_loss_s": 24.56149999999998,
-    "sc_probability": 0.7868362004487659,
+    "sc_probability": 0.7857142857142857,
     "races": 3,
     "green_laps": 2426
   },
   "Silverstone": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.08477890624330192,
-        "deg_s_per_lap": 0.051637292364505025,
+        "offset_s": -0.054574967987694525,
+        "deg_s_per_lap": 0.04912360115246803,
         "laps": 605
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.04746473559931041,
+        "deg_s_per_lap": 0.04746861747651811,
         "laps": 1737
       },
       "HARD": {
-        "offset_s": 0.047560265347310726,
-        "deg_s_per_lap": 0.044572366090927545,
+        "offset_s": 0.04828761608506391,
+        "deg_s_per_lap": 0.044600065277460514,
         "laps": 684
       }
     },
@@ -609,25 +609,25 @@
       "HARD": 26
     },
     "pit_loss_s": 21.208,
-    "sc_probability": 0.7923211169284468,
+    "sc_probability": 0.7916666666666666,
     "races": 5,
     "green_laps": 3026
   },
   "Spa-Francorchamps": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.5819983052929029,
-        "deg_s_per_lap": 0.08044191205429069,
+        "offset_s": -0.5479298900887665,
+        "deg_s_per_lap": 0.07760660378482126,
         "laps": 491
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.05333526371523659,
+        "deg_s_per_lap": 0.05333935221774673,
         "laps": 1629
       },
       "HARD": {
-        "offset_s": -0.14494244712176643,
-        "deg_s_per_lap": 0.06217098533316861,
+        "offset_s": -0.14442712150103165,
+        "deg_s_per_lap": 0.062190610116307124,
         "laps": 1130
       }
     },
@@ -637,25 +637,25 @@
       "HARD": 29
     },
     "pit_loss_s": 19.604,
-    "sc_probability": 0.6825321275583055,
+    "sc_probability": 0.6818181818181818,
     "races": 5,
     "green_laps": 3250
   },
   "Spielberg": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.16126808570548304,
-        "deg_s_per_lap": 0.05178512496655795,
+        "offset_s": -0.1099928189033125,
+        "deg_s_per_lap": 0.047517794446123585,
         "laps": 192
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.061491338538079574,
+        "deg_s_per_lap": 0.061494286502398264,
         "laps": 2414
       },
       "HARD": {
-        "offset_s": 0.05342228306805525,
-        "deg_s_per_lap": 0.05923643366763128,
+        "offset_s": 0.05366998906859697,
+        "deg_s_per_lap": 0.059245866881015415,
         "laps": 2783
       }
     },
@@ -665,25 +665,25 @@
       "HARD": 32
     },
     "pit_loss_s": 21.484999999999985,
-    "sc_probability": 0.8082964156262585,
+    "sc_probability": 0.8076923076923077,
     "races": 5,
     "green_laps": 5389
   },
   "Suzuka": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.3011542045947948,
-        "deg_s_per_lap": 0.065427298103726,
+        "offset_s": -0.24752353684411432,
+        "deg_s_per_lap": 0.060963941799667375,
         "laps": 166
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.061509285561162495,
+        "deg_s_per_lap": 0.061514214599542136,
         "laps": 1283
       },
       "HARD": {
-        "offset_s": 0.08700333578276048,
-        "deg_s_per_lap": 0.057575905722110944,
+        "offset_s": 0.08734465534974081,
+        "deg_s_per_lap": 0.05758890395509876,
         "laps": 1910
       }
     },
@@ -693,53 +693,53 @@
       "HARD": 32
     },
     "pit_loss_s": 23.779500000000013,
-    "sc_probability": 0.6119837114601512,
+    "sc_probability": 0.6111111111111112,
     "races": 5,
     "green_laps": 3359
   },
   "São Paulo": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.08276099752972176,
-        "deg_s_per_lap": 0.04659895133042018,
-        "laps": 1257
+        "offset_s": 0.447854961197882,
+        "deg_s_per_lap": 0.012805973166285487,
+        "laps": 2027
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.05399003289633584,
+        "deg_s_per_lap": 0.05612524290248965,
         "laps": 1604
       },
       "HARD": {
-        "offset_s": -0.02280502209112105,
-        "deg_s_per_lap": 0.035960290472653464,
+        "offset_s": -0.026248035122072185,
+        "deg_s_per_lap": 0.035997176177514,
         "laps": 54
       }
     },
     "max_stint": {
-      "SOFT": 25,
+      "SOFT": 29,
       "MEDIUM": 32,
       "HARD": 28
     },
-    "pit_loss_s": 22.338499999999996,
-    "sc_probability": 0.8342059336823735,
-    "races": 4,
-    "green_laps": 2915
+    "pit_loss_s": 22.72,
+    "sc_probability": 0.75,
+    "races": 5,
+    "green_laps": 3685
   },
   "Yas Island": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.2386237963565202,
-        "deg_s_per_lap": 0.06578063153956396,
+        "offset_s": -0.17590694109436056,
+        "deg_s_per_lap": 0.060561086770768116,
         "laps": 84
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.07978038881958553,
+        "deg_s_per_lap": 0.07978526569882886,
         "laps": 1301
       },
       "HARD": {
-        "offset_s": 0.2790629373052498,
-        "deg_s_per_lap": 0.050359892729240574,
+        "offset_s": 0.27932068434667656,
+        "deg_s_per_lap": 0.050369708328521966,
         "laps": 2659
       }
     },
@@ -749,25 +749,25 @@
       "HARD": 41
     },
     "pit_loss_s": 23.327999999999975,
-    "sc_probability": 0.5507853403141361,
+    "sc_probability": 0.55,
     "races": 4,
     "green_laps": 4044
   },
   "Zandvoort": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.03032849079281657,
-        "deg_s_per_lap": 0.03370089091932617,
+        "offset_s": -0.015143419283618967,
+        "deg_s_per_lap": 0.032437129204420115,
         "laps": 1599
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.04548951848188565,
+        "deg_s_per_lap": 0.04549371240079002,
         "laps": 1578
       },
       "HARD": {
-        "offset_s": 0.012876802565348948,
-        "deg_s_per_lap": 0.03494339869951922,
+        "offset_s": 0.013195367494530524,
+        "deg_s_per_lap": 0.03495553038364114,
         "laps": 2075
       }
     },
@@ -777,25 +777,25 @@
       "HARD": 44
     },
     "pit_loss_s": 22.276999999999987,
-    "sc_probability": 0.6884816753926701,
+    "sc_probability": 0.6875,
     "races": 5,
     "green_laps": 5252
   },
   "Hockenheim": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.28600698654458817,
-        "deg_s_per_lap": 0.04961194884762661,
-        "laps": 14158
+        "offset_s": -0.21011959167737507,
+        "deg_s_per_lap": 0.04329629967738369,
+        "laps": 14928
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.03484760912445366,
+        "deg_s_per_lap": 0.03486834805343573,
         "laps": 36763
       },
       "HARD": {
-        "offset_s": 0.010383623904566139,
-        "deg_s_per_lap": 0.030076893087644656,
+        "offset_s": 0.012354744403877205,
+        "deg_s_per_lap": 0.030151957883148908,
         "laps": 45924
       }
     },
@@ -805,25 +805,25 @@
       "HARD": 42
     },
     "pit_loss_s": 17.0,
-    "sc_probability": 0.8769633507853403,
+    "sc_probability": 0.875,
     "races": 0,
     "green_laps": 0
   },
   "Sochi": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.28600698654458817,
-        "deg_s_per_lap": 0.04961194884762661,
-        "laps": 14158
+        "offset_s": -0.21011959167737507,
+        "deg_s_per_lap": 0.04329629967738369,
+        "laps": 14928
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.03484760912445366,
+        "deg_s_per_lap": 0.03486834805343573,
         "laps": 36763
       },
       "HARD": {
-        "offset_s": 0.010383623904566139,
-        "deg_s_per_lap": 0.030076893087644656,
+        "offset_s": 0.012354744403877205,
+        "deg_s_per_lap": 0.030151957883148908,
         "laps": 45924
       }
     },
@@ -833,25 +833,25 @@
       "HARD": 42
     },
     "pit_loss_s": 25.0,
-    "sc_probability": 0.5846422338568935,
+    "sc_probability": 0.5833333333333334,
     "races": 0,
     "green_laps": 0
   },
   "Mugello": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.28600698654458817,
-        "deg_s_per_lap": 0.04961194884762661,
-        "laps": 14158
+        "offset_s": -0.21011959167737507,
+        "deg_s_per_lap": 0.04329629967738369,
+        "laps": 14928
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.03484760912445366,
+        "deg_s_per_lap": 0.03486834805343573,
         "laps": 36763
       },
       "HARD": {
-        "offset_s": 0.010383623904566139,
-        "deg_s_per_lap": 0.030076893087644656,
+        "offset_s": 0.012354744403877205,
+        "deg_s_per_lap": 0.030151957883148908,
         "laps": 45924
       }
     },
@@ -861,25 +861,25 @@
       "HARD": 42
     },
     "pit_loss_s": 22.0,
-    "sc_probability": 0.8359511343804537,
+    "sc_probability": 0.8333333333333334,
     "races": 0,
     "green_laps": 0
   },
   "Nürburgring": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.28600698654458817,
-        "deg_s_per_lap": 0.04961194884762661,
-        "laps": 14158
+        "offset_s": -0.21011959167737507,
+        "deg_s_per_lap": 0.04329629967738369,
+        "laps": 14928
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.03484760912445366,
+        "deg_s_per_lap": 0.03486834805343573,
         "laps": 36763
       },
       "HARD": {
-        "offset_s": 0.010383623904566139,
-        "deg_s_per_lap": 0.030076893087644656,
+        "offset_s": 0.012354744403877205,
+        "deg_s_per_lap": 0.030151957883148908,
         "laps": 45924
       }
     },
@@ -889,25 +889,25 @@
       "HARD": 42
     },
     "pit_loss_s": 21.0,
-    "sc_probability": 0.8359511343804537,
+    "sc_probability": 0.8333333333333334,
     "races": 0,
     "green_laps": 0
   },
   "Portimão": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.28600698654458817,
-        "deg_s_per_lap": 0.04961194884762661,
-        "laps": 14158
+        "offset_s": -0.21011959167737507,
+        "deg_s_per_lap": 0.04329629967738369,
+        "laps": 14928
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.03484760912445366,
+        "deg_s_per_lap": 0.03486834805343573,
         "laps": 36763
       },
       "HARD": {
-        "offset_s": 0.010383623904566139,
-        "deg_s_per_lap": 0.030076893087644656,
+        "offset_s": 0.012354744403877205,
+        "deg_s_per_lap": 0.030151957883148908,
         "laps": 45924
       }
     },
@@ -917,25 +917,25 @@
       "HARD": 42
     },
     "pit_loss_s": 20.0,
-    "sc_probability": 0.6269633507853403,
+    "sc_probability": 0.625,
     "races": 0,
     "green_laps": 0
   },
   "Istanbul": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.28600698654458817,
-        "deg_s_per_lap": 0.04961194884762661,
-        "laps": 14158
+        "offset_s": -0.21011959167737507,
+        "deg_s_per_lap": 0.04329629967738369,
+        "laps": 14928
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.03484760912445366,
+        "deg_s_per_lap": 0.03486834805343573,
         "laps": 36763
       },
       "HARD": {
-        "offset_s": 0.010383623904566139,
-        "deg_s_per_lap": 0.030076893087644656,
+        "offset_s": 0.012354744403877205,
+        "deg_s_per_lap": 0.030151957883148908,
         "laps": 45924
       }
     },
@@ -945,25 +945,25 @@
       "HARD": 42
     },
     "pit_loss_s": 22.0,
-    "sc_probability": 0.6269633507853403,
+    "sc_probability": 0.625,
     "races": 0,
     "green_laps": 0
   },
   "Sakhir Outer": {
     "compounds": {
       "SOFT": {
-        "offset_s": -0.28600698654458817,
-        "deg_s_per_lap": 0.04961194884762661,
-        "laps": 14158
+        "offset_s": -0.21011959167737507,
+        "deg_s_per_lap": 0.04329629967738369,
+        "laps": 14928
       },
       "MEDIUM": {
         "offset_s": 0.0,
-        "deg_s_per_lap": 0.03484760912445366,
+        "deg_s_per_lap": 0.03486834805343573,
         "laps": 36763
       },
       "HARD": {
-        "offset_s": 0.010383623904566139,
-        "deg_s_per_lap": 0.030076893087644656,
+        "offset_s": 0.012354744403877205,
+        "deg_s_per_lap": 0.030151957883148908,
         "laps": 45924
       }
     },
@@ -973,7 +973,7 @@
       "HARD": 42
     },
     "pit_loss_s": 21.0,
-    "sc_probability": 0.8359511343804537,
+    "sc_probability": 0.8333333333333334,
     "races": 0,
     "green_laps": 0
   }

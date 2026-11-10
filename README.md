@@ -92,12 +92,12 @@ Every number below is from races the model had never seen: each was predicted by
 
 | Prediction | Model | Simple guess | Races it never saw |
 |---|---|---|---|
-| Finishing position *(after quali)* | **3.03** places | 3.29 · finish where you qualified | 54 races, Jul 2024 → Nov 2026 |
-| Qualifying gap *(after practice)* | **0.71%** of a lap | 0.78% · team's recent gap | 77 races, Jul 2023 → Nov 2026 |
-| Gap to winner *(after quali)* | **0.65%** of race time | 0.87% · typical past gap | 45 races, Dec 2024 → Nov 2026 |
-| Win odds *(Brier, after quali)* | **0.027** | 0.046 · everyone equal | 54 races |
+| Finishing position *(after quali)* | **3.06** places | 3.32 · finish where you qualified | 54 races, Aug 2024 → Nov 2026 |
+| Qualifying gap *(after practice)* | **0.69%** of a lap | 0.76% · team's recent gap | 77 races, Aug 2023 → Nov 2026 |
+| Gap to winner *(after quali)* | **0.67%** of race time | 0.88% · typical past gap | 45 races, Dec 2024 → Nov 2026 |
+| Win odds *(Brier, after quali)* | **0.028** | 0.046 · everyone equal | 54 races |
 
-_Models trained 2026-11-03 on data through 2026-11-01. Lower is better for every number._
+_Models trained 2026-11-10 on data through 2026-11-08. Lower is better for every number._
 
 <!-- ACCURACY:END -->
 
