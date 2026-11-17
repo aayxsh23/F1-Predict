@@ -6,37 +6,37 @@
     "by_season": {
       "2021": {
         "races": 12,
-        "mae": 3.216,
+        "mae": 3.219,
         "baseline_mae": 3.456,
         "called_the_winner": 0.583
       },
       "2022": {
         "races": 22,
-        "mae": 3.218,
+        "mae": 3.22,
         "baseline_mae": 3.686,
         "called_the_winner": 0.318
       },
       "2023": {
         "races": 22,
-        "mae": 3.166,
+        "mae": 3.169,
         "baseline_mae": 3.688,
         "called_the_winner": 0.818
       },
       "2024": {
         "races": 24,
-        "mae": 2.737,
+        "mae": 2.749,
         "baseline_mae": 2.827,
         "called_the_winner": 0.5
       },
       "2025": {
         "races": 24,
-        "mae": 3.051,
+        "mae": 3.053,
         "baseline_mae": 3.349,
         "called_the_winner": 0.625
       },
       "2026": {
         "races": 20,
-        "mae": 3.153,
+        "mae": 3.157,
         "baseline_mae": 3.356,
         "called_the_winner": 0.65
       }
@@ -116,9 +116,9 @@
       },
       "2023": {
         "races": 22,
-        "mae": 1.268,
+        "mae": 1.267,
         "baseline_mae": 1.344,
-        "called_pole": 0.5
+        "called_pole": 0.545
       },
       "2024": {
         "races": 24,
