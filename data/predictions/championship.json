@@ -13,7 +13,7 @@
       "wins": 9,
       "position": 1,
       "title_chance": 1.0,
-      "expected_points": 432.8
+      "expected_points": 432.6
     },
     {
       "code": "VER",
@@ -24,7 +24,7 @@
       "wins": 3,
       "position": 2,
       "title_chance": 0.0,
-      "expected_points": 318.1
+      "expected_points": 317.9
     },
     {
       "code": "RUS",
@@ -35,7 +35,7 @@
       "wins": 3,
       "position": 3,
       "title_chance": 0.0,
-      "expected_points": 294.6
+      "expected_points": 294.5
     },
     {
       "code": "HAM",
@@ -57,7 +57,7 @@
       "wins": 1,
       "position": 5,
       "title_chance": 0.0,
-      "expected_points": 287.6
+      "expected_points": 287.4
     },
     {
       "code": "NOR",
@@ -68,7 +68,7 @@
       "wins": 3,
       "position": 6,
       "title_chance": 0.0,
-      "expected_points": 278.6
+      "expected_points": 278.4
     },
     {
       "code": "PIA",
@@ -90,7 +90,7 @@
       "wins": 0,
       "position": 8,
       "title_chance": 0.0,
-      "expected_points": 151.1
+      "expected_points": 151.0
     },
     {
       "code": "LAW",
@@ -101,7 +101,7 @@
       "wins": 0,
       "position": 9,
       "title_chance": 0.0,
-      "expected_points": 105.5
+      "expected_points": 105.6
     },
     {
       "code": "GAS",
@@ -112,7 +112,7 @@
       "wins": 0,
       "position": 10,
       "title_chance": 0.0,
-      "expected_points": 49.3
+      "expected_points": 49.4
     },
     {
       "code": "LIN",
@@ -123,7 +123,7 @@
       "wins": 0,
       "position": 11,
       "title_chance": 0.0,
-      "expected_points": 45.2
+      "expected_points": 45.3
     },
     {
       "code": "COL",
@@ -134,7 +134,7 @@
       "wins": 0,
       "position": 12,
       "title_chance": 0.0,
-      "expected_points": 31.7
+      "expected_points": 31.8
     },
     {
       "code": "BEA",
@@ -145,7 +145,7 @@
       "wins": 0,
       "position": 13,
       "title_chance": 0.0,
-      "expected_points": 23.4
+      "expected_points": 23.5
     },
     {
       "code": "BOR",
@@ -156,7 +156,7 @@
       "wins": 0,
       "position": 14,
       "title_chance": 0.0,
-      "expected_points": 19.4
+      "expected_points": 19.5
     },
     {
       "code": "HUL",
@@ -167,7 +167,7 @@
       "wins": 0,
       "position": 15,
       "title_chance": 0.0,
-      "expected_points": 22.4
+      "expected_points": 22.6
     },
     {
       "code": "OCO",
@@ -200,7 +200,7 @@
       "wins": 0,
       "position": 18,
       "title_chance": 0.0,
-      "expected_points": 8.7
+      "expected_points": 8.8
     },
     {
       "code": "ALB",
@@ -233,7 +233,7 @@
       "wins": 0,
       "position": 21,
       "title_chance": 0.0,
-      "expected_points": 1.4
+      "expected_points": 1.5
     },
     {
       "code": "STR",
@@ -266,7 +266,7 @@
       "wins": 0,
       "position": 24,
       "title_chance": 0.0,
-      "expected_points": 1.4
+      "expected_points": 1.5
     },
     {
       "code": "CAM",
@@ -277,7 +277,7 @@
       "wins": 0,
       "position": 25,
       "title_chance": 0.0,
-      "expected_points": 4.3
+      "expected_points": 4.4
     }
   ],
   "constructors": [
@@ -359,5 +359,5 @@
       "title_chance": 0.0
     }
   ],
-  "generated_at": "2026-11-20T02:43:45.990424+00:00"
+  "generated_at": "2026-11-21T08:31:14.154124+00:00"
 }
