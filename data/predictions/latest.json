@@ -5,12 +5,13 @@
   "event_name": "Qatar Grand Prix",
   "country": "Qatar",
   "race_start_utc": "2026-11-29T16:00:00",
-  "generated_at": "2026-11-27T15:01:47.543738+00:00",
+  "generated_at": "2026-11-27T18:31:50.857779+00:00",
   "stage": "post_practice",
   "sessions": [
-    "FP1"
+    "FP1",
+    "FP2"
   ],
-  "session_label": "After FP1",
+  "session_label": "After FP2",
   "sprint_weekend": false,
   "known_sessions": {
     "practice": true,
@@ -23,8 +24,8 @@
   ],
   "race": {
     "laps": 57,
-    "expected_duration_s": 5173.2281,
-    "pole_time_estimate_s": 81.6771,
+    "expected_duration_s": 5164.5249,
+    "pole_time_estimate_s": 81.5396,
     "safety_car_probability": 0.9167
   },
   "drivers": [
@@ -36,14 +37,14 @@
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
       "practice_pace": 0.0,
-      "practice_long_run_pace": 0.3002,
-      "predicted_qualifying_gap_pct": 0.2345,
-      "predicted_qualifying_gap": 0.0,
-      "predicted_quali_lap_s": 81.6771,
+      "practice_long_run_pace": 0.0,
+      "predicted_qualifying_gap_pct": 0.2011,
+      "predicted_qualifying_gap": 0.0201,
+      "predicted_quali_lap_s": 81.5598,
       "predicted_finish_position": 2.8978,
       "predicted_quali_to_race_delta": 0.757,
       "predicted_race_gap_pct": 0.198,
-      "predicted_race_time_gap": 2.1934,
+      "predicted_race_time_gap": 3.0161,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -88,38 +89,38 @@
       "season_strength": 3.1979,
       "explanations": {
         "qualifying": {
-          "predicted_value": 0.234,
+          "predicted_value": 0.201,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "driver_quali_form",
               "value": 0.59,
-              "shap": -0.5298
+              "shap": -0.5337
             },
             {
               "feature": "team_quali_pace",
               "value": 0.4807,
-              "shap": -0.3596
+              "shap": -0.362
             },
             {
               "feature": "practice_pace",
               "value": 0.0,
-              "shap": -0.2358
+              "shap": -0.261
             },
             {
               "feature": "driver_recent_form",
               "value": 3.2754,
-              "shap": -0.1182
+              "shap": -0.1198
             },
             {
               "feature": "team_recent_form",
               "value": 5.2043,
-              "shap": -0.0719
+              "shap": -0.0721
             },
             {
               "feature": "driver_track_form",
               "value": 5.0,
-              "shap": -0.026
+              "shap": -0.0257
             },
             {
               "feature": "driver_quali_rating",
@@ -129,7 +130,7 @@
             {
               "feature": "team_track_type_form",
               "value": 5.1586,
-              "shap": -0.0244
+              "shap": -0.0242
             },
             {
               "feature": "pit_lane_loss_time",
@@ -139,7 +140,7 @@
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0131
+              "shap": -0.0129
             }
           ]
         },
@@ -320,14 +321,14 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 1.1007,
-      "practice_long_run_pace": 1.9768,
-      "predicted_qualifying_gap_pct": 0.7554,
-      "predicted_qualifying_gap": 0.4255,
-      "predicted_quali_lap_s": 82.1025,
-      "predicted_finish_position": 3.5113,
-      "predicted_quali_to_race_delta": 0.996,
-      "predicted_race_gap_pct": 0.1556,
+      "practice_pace": 0.6006,
+      "practice_long_run_pace": 0.5258,
+      "predicted_qualifying_gap_pct": 0.6323,
+      "predicted_qualifying_gap": 0.3717,
+      "predicted_quali_lap_s": 81.9114,
+      "predicted_finish_position": 3.478,
+      "predicted_quali_to_race_delta": 0.979,
+      "predicted_race_gap_pct": 0.1396,
       "predicted_race_time_gap": 0.0,
       "feature_row": {
         "is_street_circuit": 0.0,
@@ -345,7 +346,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 1.1007,
+        "practice_pace": 0.6006,
         "driver_recent_form": 3.8101,
         "driver_track_form": 1.0988,
         "driver_positions_gained_form": 2.8495,
@@ -373,38 +374,38 @@
       "season_strength": 3.4397,
       "explanations": {
         "qualifying": {
-          "predicted_value": 0.755,
+          "predicted_value": 0.632,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "team_quali_pace",
               "value": 1.0789,
-              "shap": -0.2741
+              "shap": -0.2793
             },
             {
               "feature": "driver_quali_form",
               "value": 1.1106,
-              "shap": -0.2291
+              "shap": -0.2367
+            },
+            {
+              "feature": "practice_pace",
+              "value": 0.6006,
+              "shap": -0.179
             },
             {
               "feature": "team_recent_form",
               "value": 4.5273,
-              "shap": -0.073
-            },
-            {
-              "feature": "practice_pace",
-              "value": 1.1007,
-              "shap": -0.0652
+              "shap": -0.0725
             },
             {
               "feature": "driver_recent_form",
               "value": 3.8101,
-              "shap": -0.0611
+              "shap": -0.0598
             },
             {
               "feature": "driver_track_form",
               "value": 1.0988,
-              "shap": -0.0443
+              "shap": -0.0417
             },
             {
               "feature": "driver_quali_rating",
@@ -414,48 +415,48 @@
             {
               "feature": "team_track_type_form",
               "value": 5.2916,
-              "shap": -0.0328
+              "shap": -0.0323
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0159
+              "shap": -0.0155
             },
             {
               "feature": "teammate_race_pace_gap",
               "value": -0.8691,
-              "shap": -0.0142
+              "shap": -0.0147
             }
           ]
         },
         "finish_position": {
-          "predicted_value": 3.511,
+          "predicted_value": 3.478,
           "base_value": 9.001,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 3.8101,
-              "shap": -3.4335
+              "shap": -3.3958
             },
             {
               "feature": "team_recent_form",
               "value": 4.5273,
-              "shap": -0.988
+              "shap": -0.9747
             },
             {
               "feature": "driver_track_form",
               "value": 1.0988,
-              "shap": -0.7671
+              "shap": -0.77
             },
             {
               "feature": "team_track_type_form",
               "value": 5.2916,
-              "shap": -0.299
+              "shap": -0.3035
             },
             {
               "feature": "driver_positions_gained_form",
               "value": 2.8495,
-              "shap": 0.117
+              "shap": 0.116
             },
             {
               "feature": "team_upgrades_recent",
@@ -468,6 +469,11 @@
               "shap": -0.0938
             },
             {
+              "feature": "practice_pace",
+              "value": 0.6006,
+              "shap": -0.0728
+            },
+            {
               "feature": "grid_vs_expected_position",
               "value": null,
               "shap": -0.0669
@@ -475,23 +481,23 @@
             {
               "feature": "circuit_sc_share",
               "value": 0.9167,
-              "shap": -0.0602
-            },
-            {
-              "feature": "grid_position",
-              "value": null,
-              "shap": -0.0539
+              "shap": -0.0619
             }
           ]
         },
         "quali_delta": {
-          "predicted_value": 0.996,
+          "predicted_value": 0.979,
           "base_value": 0.985,
           "top_contributions": [
             {
               "feature": "circuit_sc_share",
               "value": 0.9167,
               "shap": 0.0835
+            },
+            {
+              "feature": "grid_vs_expected_position",
+              "value": null,
+              "shap": -0.0635
             },
             {
               "feature": "grid_position",
@@ -502,11 +508,6 @@
               "feature": "driver_positions_gained_form",
               "value": 2.8495,
               "shap": 0.0621
-            },
-            {
-              "feature": "grid_vs_expected_position",
-              "value": null,
-              "shap": -0.0573
             },
             {
               "feature": "teammate_race_pace_gap",
@@ -524,6 +525,11 @@
               "shap": 0.0411
             },
             {
+              "feature": "practice_pace",
+              "value": 0.6006,
+              "shap": -0.0317
+            },
+            {
               "feature": "teammate_quali_gap",
               "value": null,
               "shap": 0.0256
@@ -532,52 +538,47 @@
               "feature": "team_quali_pace",
               "value": 1.0789,
               "shap": 0.0243
-            },
-            {
-              "feature": "practice_pace",
-              "value": 1.1007,
-              "shap": -0.0208
             }
           ]
         },
         "race_time": {
-          "predicted_value": 0.156,
-          "base_value": 0.71,
+          "predicted_value": 0.14,
+          "base_value": 0.704,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 3.8101,
-              "shap": -0.2566
+              "shap": -0.256
             },
             {
               "feature": "driver_track_form",
               "value": 1.0988,
-              "shap": -0.0856
+              "shap": -0.0858
             },
             {
               "feature": "team_track_type_form",
               "value": 5.2916,
-              "shap": -0.0542
+              "shap": -0.0556
             },
             {
               "feature": "team_race_pace",
               "value": 4.7013,
-              "shap": -0.0506
+              "shap": -0.0513
             },
             {
               "feature": "driver_positions_gained_form",
               "value": 2.8495,
-              "shap": 0.0427
+              "shap": 0.0428
+            },
+            {
+              "feature": "team_quali_pace",
+              "value": 1.0789,
+              "shap": 0.04
             },
             {
               "feature": "team_reliability",
               "value": 0.9583,
-              "shap": -0.0394
-            },
-            {
-              "feature": "tyre_degradation_level",
-              "value": 4.0,
-              "shap": -0.0381
+              "shap": -0.0395
             },
             {
               "feature": "longest_straight_m",
@@ -585,14 +586,14 @@
               "shap": -0.038
             },
             {
-              "feature": "expected_stops",
-              "value": 2.0946,
-              "shap": -0.0378
+              "feature": "tyre_degradation_level",
+              "value": 4.0,
+              "shap": -0.0377
             },
             {
-              "feature": "team_quali_pace",
-              "value": 1.0789,
-              "shap": 0.037
+              "feature": "team_recent_form",
+              "value": 4.5273,
+              "shap": -0.037
             }
           ]
         }
@@ -605,15 +606,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 1.5093,
-      "practice_long_run_pace": 2.1683,
-      "predicted_qualifying_gap_pct": 0.6842,
-      "predicted_qualifying_gap": 0.3673,
-      "predicted_quali_lap_s": 82.0444,
-      "predicted_finish_position": 3.9265,
+      "practice_pace": 1.2302,
+      "practice_long_run_pace": null,
+      "predicted_qualifying_gap_pct": 0.6334,
+      "predicted_qualifying_gap": 0.3726,
+      "predicted_quali_lap_s": 81.9123,
+      "predicted_finish_position": 3.6701,
       "predicted_quali_to_race_delta": 0.9158,
-      "predicted_race_gap_pct": 0.3163,
-      "predicted_race_time_gap": 8.3134,
+      "predicted_race_gap_pct": 0.3029,
+      "predicted_race_time_gap": 8.4337,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -630,7 +631,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 1.5093,
+        "practice_pace": 1.2302,
         "driver_recent_form": 5.5495,
         "driver_track_form": 5.6668,
         "driver_positions_gained_form": -0.3681,
@@ -658,43 +659,33 @@
       "season_strength": 3.7009,
       "explanations": {
         "qualifying": {
-          "predicted_value": 0.684,
+          "predicted_value": 0.633,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "driver_quali_form",
               "value": 0.5294,
-              "shap": -0.4902
+              "shap": -0.4676
             },
             {
               "feature": "team_quali_pace",
               "value": 0.9608,
-              "shap": -0.2843
-            },
-            {
-              "feature": "practice_pace",
-              "value": 1.5093,
-              "shap": 0.0749
+              "shap": -0.2757
             },
             {
               "feature": "team_recent_form",
               "value": 5.723,
-              "shap": -0.0656
+              "shap": -0.0616
             },
             {
               "feature": "driver_recent_form",
               "value": 5.5495,
-              "shap": -0.0504
+              "shap": -0.0483
             },
             {
               "feature": "team_track_type_form",
               "value": 5.8651,
-              "shap": -0.0275
-            },
-            {
-              "feature": "is_sprint_weekend",
-              "value": 0.0,
-              "shap": 0.0191
+              "shap": -0.0261
             },
             {
               "feature": "driver_quali_rating",
@@ -702,35 +693,45 @@
               "shap": -0.0189
             },
             {
-              "feature": "expected_stops",
-              "value": 2.0946,
-              "shap": -0.0157
+              "feature": "is_sprint_weekend",
+              "value": 0.0,
+              "shap": 0.0157
             },
             {
               "feature": "driver_track_form",
               "value": 5.6668,
-              "shap": -0.0154
+              "shap": -0.0156
+            },
+            {
+              "feature": "expected_stops",
+              "value": 2.0946,
+              "shap": -0.0148
+            },
+            {
+              "feature": "driver_quali_vs_teammate_form",
+              "value": -0.3417,
+              "shap": -0.0127
             }
           ]
         },
         "finish_position": {
-          "predicted_value": 3.927,
+          "predicted_value": 3.67,
           "base_value": 9.001,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 5.5495,
-              "shap": -3.1084
+              "shap": -3.146
             },
             {
               "feature": "team_recent_form",
               "value": 5.723,
-              "shap": -1.0717
+              "shap": -1.0742
             },
             {
               "feature": "team_quali_pace",
               "value": 0.9608,
-              "shap": -0.5873
+              "shap": -0.5994
             },
             {
               "feature": "team_track_type_form",
@@ -738,24 +739,19 @@
               "shap": -0.2228
             },
             {
-              "feature": "practice_pace",
-              "value": 1.5093,
-              "shap": 0.2014
-            },
-            {
               "feature": "teammate_race_pace_gap",
               "value": -0.185,
-              "shap": -0.1303
-            },
-            {
-              "feature": "driver_track_form",
-              "value": 5.6668,
-              "shap": -0.1017
+              "shap": -0.1107
             },
             {
               "feature": "team_upgrades_recent",
               "value": 1.0,
-              "shap": 0.0952
+              "shap": 0.1034
+            },
+            {
+              "feature": "driver_track_form",
+              "value": 5.6668,
+              "shap": -0.1022
             },
             {
               "feature": "circuit_sc_share",
@@ -766,6 +762,11 @@
               "feature": "expected_stops",
               "value": 2.0946,
               "shap": -0.0575
+            },
+            {
+              "feature": "driver_positions_gained_form",
+              "value": -0.3681,
+              "shap": -0.0555
             }
           ]
         },
@@ -784,14 +785,14 @@
               "shap": -0.0711
             },
             {
+              "feature": "grid_vs_expected_position",
+              "value": null,
+              "shap": -0.0661
+            },
+            {
               "feature": "grid_x_circuit_grid_order",
               "value": null,
               "shap": -0.0652
-            },
-            {
-              "feature": "grid_vs_expected_position",
-              "value": null,
-              "shap": -0.0651
             },
             {
               "feature": "team_quali_pace",
@@ -820,64 +821,64 @@
             },
             {
               "feature": "practice_pace",
-              "value": 1.5093,
-              "shap": -0.0234
+              "value": 1.2302,
+              "shap": -0.0224
             }
           ]
         },
         "race_time": {
-          "predicted_value": 0.316,
-          "base_value": 0.719,
+          "predicted_value": 0.303,
+          "base_value": 0.713,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 5.5495,
-              "shap": -0.2102
+              "shap": -0.2109
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0501
+              "shap": -0.0505
             },
             {
               "feature": "team_race_pace",
               "value": 4.8703,
-              "shap": -0.0459
+              "shap": -0.0461
             },
             {
               "feature": "tyre_degradation_level",
               "value": 4.0,
-              "shap": -0.0447
+              "shap": -0.0438
             },
             {
               "feature": "team_recent_form",
               "value": 5.723,
-              "shap": -0.0337
+              "shap": -0.0354
             },
             {
               "feature": "team_track_type_form",
               "value": 5.8651,
-              "shap": -0.0302
+              "shap": -0.0316
             },
             {
               "feature": "team_quali_pace",
               "value": 0.9608,
-              "shap": -0.0282
-            },
-            {
-              "feature": "practice_pace",
-              "value": 1.5093,
-              "shap": 0.0248
+              "shap": -0.028
             },
             {
               "feature": "driver_track_form",
               "value": 5.6668,
-              "shap": 0.0226
+              "shap": 0.0221
+            },
+            {
+              "feature": "practice_pace",
+              "value": 1.2302,
+              "shap": 0.0198
             },
             {
               "feature": "longest_straight_m",
               "value": 1000.0,
-              "shap": -0.0182
+              "shap": -0.0181
             }
           ]
         }
@@ -890,15 +891,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 1.6319,
+      "practice_pace": 1.371,
       "practice_long_run_pace": null,
-      "predicted_qualifying_gap_pct": 0.9315,
-      "predicted_qualifying_gap": 0.5693,
-      "predicted_quali_lap_s": 82.2463,
-      "predicted_finish_position": 4.5366,
-      "predicted_quali_to_race_delta": 1.0067,
-      "predicted_race_gap_pct": 0.4449,
-      "predicted_race_time_gap": 14.9661,
+      "predicted_qualifying_gap_pct": 0.8328,
+      "predicted_qualifying_gap": 0.5352,
+      "predicted_quali_lap_s": 82.0749,
+      "predicted_finish_position": 4.4609,
+      "predicted_quali_to_race_delta": 0.9908,
+      "predicted_race_gap_pct": 0.4311,
+      "predicted_race_time_gap": 15.0546,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -915,7 +916,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 1.6319,
+        "practice_pace": 1.371,
         "driver_recent_form": 5.8877,
         "driver_track_form": 12.3246,
         "driver_positions_gained_form": 0.3029,
@@ -943,43 +944,33 @@
       "season_strength": 4.2894,
       "explanations": {
         "qualifying": {
-          "predicted_value": 0.931,
+          "predicted_value": 0.833,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "driver_quali_form",
               "value": 0.8694,
-              "shap": -0.3841
+              "shap": -0.3909
             },
             {
               "feature": "team_quali_pace",
               "value": 0.9608,
-              "shap": -0.2772
-            },
-            {
-              "feature": "practice_pace",
-              "value": 1.6319,
-              "shap": 0.1042
+              "shap": -0.2699
             },
             {
               "feature": "team_recent_form",
               "value": 5.723,
-              "shap": -0.0729
+              "shap": -0.0723
             },
             {
               "feature": "driver_recent_form",
               "value": 5.8877,
-              "shap": -0.0523
+              "shap": -0.0556
             },
             {
               "feature": "team_track_type_form",
               "value": 5.8651,
-              "shap": -0.0309
-            },
-            {
-              "feature": "is_sprint_weekend",
-              "value": 0.0,
-              "shap": 0.0202
+              "shap": -0.0294
             },
             {
               "feature": "driver_quali_rating",
@@ -987,25 +978,35 @@
               "shap": 0.0189
             },
             {
+              "feature": "is_sprint_weekend",
+              "value": 0.0,
+              "shap": 0.0161
+            },
+            {
               "feature": "driver_track_form",
               "value": 12.3246,
               "shap": 0.0151
             },
             {
+              "feature": "teammate_race_pace_gap",
+              "value": 0.185,
+              "shap": 0.0136
+            },
+            {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0144
+              "shap": -0.0136
             }
           ]
         },
         "finish_position": {
-          "predicted_value": 4.537,
+          "predicted_value": 4.461,
           "base_value": 9.001,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 5.8877,
-              "shap": -3.1309
+              "shap": -3.1554
             },
             {
               "feature": "team_recent_form",
@@ -1015,7 +1016,7 @@
             {
               "feature": "team_quali_pace",
               "value": 0.9608,
-              "shap": -0.5868
+              "shap": -0.6002
             },
             {
               "feature": "team_track_type_form",
@@ -1023,14 +1024,19 @@
               "shap": -0.2148
             },
             {
-              "feature": "practice_pace",
-              "value": 1.6319,
-              "shap": 0.2134
-            },
-            {
               "feature": "team_upgrades_recent",
               "value": 1.0,
-              "shap": 0.138
+              "shap": 0.1511
+            },
+            {
+              "feature": "practice_pace",
+              "value": 1.371,
+              "shap": 0.1392
+            },
+            {
+              "feature": "teammate_race_pace_gap",
+              "value": 0.185,
+              "shap": 0.1076
             },
             {
               "feature": "driver_positions_gained_form",
@@ -1043,11 +1049,6 @@
               "shap": 0.0907
             },
             {
-              "feature": "teammate_race_pace_gap",
-              "value": 0.185,
-              "shap": 0.0855
-            },
-            {
               "feature": "expected_stops",
               "value": 2.0946,
               "shap": -0.0755
@@ -1055,7 +1056,7 @@
           ]
         },
         "quali_delta": {
-          "predicted_value": 1.007,
+          "predicted_value": 0.991,
           "base_value": 0.985,
           "top_contributions": [
             {
@@ -1076,7 +1077,7 @@
             {
               "feature": "grid_vs_expected_position",
               "value": null,
-              "shap": -0.0636
+              "shap": -0.0645
             },
             {
               "feature": "team_quali_pace",
@@ -1104,350 +1105,65 @@
               "shap": 0.0256
             },
             {
-              "feature": "team_track_type_form",
-              "value": 5.8651,
-              "shap": 0.0187
+              "feature": "practice_pace",
+              "value": 1.371,
+              "shap": -0.0234
             }
           ]
         },
         "race_time": {
-          "predicted_value": 0.445,
-          "base_value": 0.748,
+          "predicted_value": 0.431,
+          "base_value": 0.737,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 5.8877,
-              "shap": -0.2069
+              "shap": -0.2083
             },
             {
               "feature": "tyre_degradation_level",
               "value": 4.0,
-              "shap": -0.0453
+              "shap": -0.0447
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0435
+              "shap": -0.044
             },
             {
               "feature": "team_race_pace",
               "value": 4.8703,
-              "shap": -0.0394
-            },
-            {
-              "feature": "team_track_type_form",
-              "value": 5.8651,
-              "shap": -0.0306
-            },
-            {
-              "feature": "team_recent_form",
-              "value": 5.723,
-              "shap": -0.0304
-            },
-            {
-              "feature": "driver_track_form",
-              "value": 12.3246,
-              "shap": 0.0302
-            },
-            {
-              "feature": "practice_pace",
-              "value": 1.6319,
-              "shap": 0.0221
-            },
-            {
-              "feature": "team_quali_pace",
-              "value": 0.9608,
-              "shap": -0.0213
-            },
-            {
-              "feature": "rain_race_frequency",
-              "value": 0.0,
-              "shap": 0.0183
-            }
-          ]
-        }
-      }
-    },
-    {
-      "driver": "NOR",
-      "team": "McLaren",
-      "driver_number": 1,
-      "grid_position": null,
-      "quali_gap_to_pole": null,
-      "quali_gap_pct": null,
-      "practice_pace": 1.0214,
-      "practice_long_run_pace": 0.3534,
-      "predicted_qualifying_gap_pct": 0.6421,
-      "predicted_qualifying_gap": 0.3329,
-      "predicted_quali_lap_s": 82.01,
-      "predicted_finish_position": 4.589,
-      "predicted_quali_to_race_delta": 0.9021,
-      "predicted_race_gap_pct": 0.3838,
-      "predicted_race_time_gap": 11.8053,
-      "feature_row": {
-        "is_street_circuit": 0.0,
-        "pit_lane_loss_time": 20.0,
-        "longest_straight_m": 1000.0,
-        "braking_zone_count": 5.0,
-        "tyre_degradation_level": 4.0,
-        "rain_race_frequency": 0.0,
-        "track_length_km": 5.419,
-        "circuit_sc_share": 0.9167,
-        "circuit_dnf_share": 0.1681,
-        "circuit_grid_order": 0.7554,
-        "air_temp_forecast": 24.0,
-        "rain_mm_forecast": 0.0,
-        "wind_kph_forecast": 5.0,
-        "grid_position": null,
-        "quali_gap_pct": null,
-        "practice_pace": 1.0214,
-        "driver_recent_form": 5.6254,
-        "driver_track_form": 6.0207,
-        "driver_positions_gained_form": -0.8885,
-        "driver_dnf_rate": 0.1339,
-        "team_recent_form": 6.5974,
-        "team_quali_pace": 1.2223,
-        "team_race_pace": 4.8812,
-        "team_reliability": 0.9334,
-        "team_track_type_form": 6.276,
-        "team_upgrades_recent": 7.0,
-        "team_performance_upgrades": 0.0,
-        "teammate_quali_gap": null,
-        "teammate_race_pace_gap": -0.2081,
-        "grid_vs_expected_position": null,
-        "expected_stops": 2.0946,
-        "is_sprint_weekend": 0.0,
-        "sprint_quali_gap_pct": null,
-        "sprint_finish_position": null,
-        "sprint_race_pace_pct": null,
-        "overtaking_difficulty": 0.55,
-        "safety_car_frequency": 0.3,
-        "dnf_rate": 0.1
-      },
-      "quali_nolap_rate": 0.0002,
-      "season_strength": 4.6384,
-      "explanations": {
-        "qualifying": {
-          "predicted_value": 0.642,
-          "base_value": 1.596,
-          "top_contributions": [
-            {
-              "feature": "driver_quali_form",
-              "value": 0.5116,
-              "shap": -0.4233
-            },
-            {
-              "feature": "team_quali_pace",
-              "value": 1.2223,
-              "shap": -0.2348
-            },
-            {
-              "feature": "team_recent_form",
-              "value": 6.5974,
-              "shap": -0.0662
-            },
-            {
-              "feature": "practice_pace",
-              "value": 1.0214,
-              "shap": -0.0579
-            },
-            {
-              "feature": "driver_recent_form",
-              "value": 5.6254,
-              "shap": -0.0478
-            },
-            {
-              "feature": "driver_quali_rating",
-              "value": -0.1301,
-              "shap": -0.0335
-            },
-            {
-              "feature": "driver_track_form",
-              "value": 6.0207,
-              "shap": -0.0215
-            },
-            {
-              "feature": "team_track_type_form",
-              "value": 6.276,
-              "shap": -0.0177
-            },
-            {
-              "feature": "driver_quali_vs_teammate_form",
-              "value": -0.7157,
-              "shap": -0.0153
-            },
-            {
-              "feature": "expected_stops",
-              "value": 2.0946,
-              "shap": -0.0152
-            }
-          ]
-        },
-        "finish_position": {
-          "predicted_value": 4.589,
-          "base_value": 9.001,
-          "top_contributions": [
-            {
-              "feature": "driver_recent_form",
-              "value": 5.6254,
-              "shap": -3.1086
-            },
-            {
-              "feature": "team_recent_form",
-              "value": 6.5974,
-              "shap": -0.8588
-            },
-            {
-              "feature": "team_track_type_form",
-              "value": 6.276,
-              "shap": -0.1726
-            },
-            {
-              "feature": "driver_track_form",
-              "value": 6.0207,
-              "shap": -0.1302
-            },
-            {
-              "feature": "team_quali_pace",
-              "value": 1.2223,
-              "shap": 0.0791
-            },
-            {
-              "feature": "expected_stops",
-              "value": 2.0946,
-              "shap": -0.0587
-            },
-            {
-              "feature": "circuit_sc_share",
-              "value": 0.9167,
-              "shap": -0.0586
-            },
-            {
-              "feature": "teammate_race_pace_gap",
-              "value": -0.2081,
-              "shap": -0.0581
-            },
-            {
-              "feature": "grid_vs_expected_position",
-              "value": null,
-              "shap": -0.0556
-            },
-            {
-              "feature": "grid_position",
-              "value": null,
-              "shap": -0.0482
-            }
-          ]
-        },
-        "quali_delta": {
-          "predicted_value": 0.902,
-          "base_value": 0.985,
-          "top_contributions": [
-            {
-              "feature": "circuit_sc_share",
-              "value": 0.9167,
-              "shap": 0.0835
-            },
-            {
-              "feature": "grid_vs_expected_position",
-              "value": null,
-              "shap": -0.0614
-            },
-            {
-              "feature": "grid_position",
-              "value": null,
-              "shap": -0.0529
-            },
-            {
-              "feature": "grid_x_circuit_grid_order",
-              "value": null,
-              "shap": -0.0526
-            },
-            {
-              "feature": "driver_recent_form",
-              "value": 5.6254,
-              "shap": 0.0464
-            },
-            {
-              "feature": "teammate_race_pace_gap",
-              "value": -0.2081,
-              "shap": -0.0395
-            },
-            {
-              "feature": "driver_positions_gained_form",
-              "value": -0.8885,
-              "shap": -0.031
-            },
-            {
-              "feature": "teammate_quali_gap",
-              "value": null,
-              "shap": 0.0256
-            },
-            {
-              "feature": "practice_pace",
-              "value": 1.0214,
-              "shap": -0.0224
-            },
-            {
-              "feature": "team_track_type_form",
-              "value": 6.276,
-              "shap": 0.0187
-            }
-          ]
-        },
-        "race_time": {
-          "predicted_value": 0.384,
-          "base_value": 0.707,
-          "top_contributions": [
-            {
-              "feature": "driver_recent_form",
-              "value": 5.6254,
-              "shap": -0.1872
-            },
-            {
-              "feature": "team_quali_pace",
-              "value": 1.2223,
-              "shap": 0.0762
-            },
-            {
-              "feature": "expected_stops",
-              "value": 2.0946,
-              "shap": -0.0527
-            },
-            {
-              "feature": "team_race_pace",
-              "value": 4.8812,
-              "shap": -0.0463
-            },
-            {
-              "feature": "driver_positions_gained_form",
-              "value": -0.8885,
-              "shap": -0.0458
-            },
-            {
-              "feature": "tyre_degradation_level",
-              "value": 4.0,
               "shap": -0.0397
             },
             {
               "feature": "team_track_type_form",
-              "value": 6.276,
-              "shap": -0.0346
+              "value": 5.8651,
+              "shap": -0.0317
             },
             {
-              "feature": "longest_straight_m",
-              "value": 1000.0,
-              "shap": -0.0343
+              "feature": "team_recent_form",
+              "value": 5.723,
+              "shap": -0.0305
             },
             {
-              "feature": "team_upgrades_recent",
-              "value": 7.0,
-              "shap": -0.0303
+              "feature": "driver_track_form",
+              "value": 12.3246,
+              "shap": 0.0305
+            },
+            {
+              "feature": "team_quali_pace",
+              "value": 0.9608,
+              "shap": -0.021
             },
             {
               "feature": "practice_pace",
-              "value": 1.0214,
-              "shap": 0.023
+              "value": 1.371,
+              "shap": 0.0196
+            },
+            {
+              "feature": "rain_race_frequency",
+              "value": 0.0,
+              "shap": 0.0184
             }
           ]
         }
@@ -1460,15 +1176,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 0.6093,
-      "practice_long_run_pace": null,
-      "predicted_qualifying_gap_pct": 0.3337,
-      "predicted_qualifying_gap": 0.081,
-      "predicted_quali_lap_s": 81.7581,
-      "predicted_finish_position": 4.9259,
+      "practice_pace": 0.1529,
+      "practice_long_run_pace": 0.32,
+      "predicted_qualifying_gap_pct": 0.1764,
+      "predicted_qualifying_gap": 0.0,
+      "predicted_quali_lap_s": 81.5396,
+      "predicted_finish_position": 4.5249,
       "predicted_quali_to_race_delta": 0.88,
-      "predicted_race_gap_pct": 0.4238,
-      "predicted_race_time_gap": 13.8746,
+      "predicted_race_gap_pct": 0.3653,
+      "predicted_race_time_gap": 11.6563,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -1485,7 +1201,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 0.6093,
+        "practice_pace": 0.1529,
         "driver_recent_form": 6.997,
         "driver_track_form": 6.1074,
         "driver_positions_gained_form": -1.3042,
@@ -1513,43 +1229,38 @@
       "season_strength": 5.001,
       "explanations": {
         "qualifying": {
-          "predicted_value": 0.334,
+          "predicted_value": 0.176,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "driver_quali_form",
               "value": 0.2394,
-              "shap": -0.5525
+              "shap": -0.5712
             },
             {
               "feature": "team_quali_pace",
               "value": 0.4807,
-              "shap": -0.346
+              "shap": -0.3572
             },
             {
               "feature": "practice_pace",
-              "value": 0.6093,
-              "shap": -0.1487
+              "value": 0.1529,
+              "shap": -0.2673
             },
             {
               "feature": "team_recent_form",
               "value": 5.2043,
-              "shap": -0.0672
+              "shap": -0.0679
             },
             {
               "feature": "driver_recent_form",
               "value": 6.997,
-              "shap": -0.0502
+              "shap": -0.0575
             },
             {
               "feature": "team_track_type_form",
               "value": 5.1586,
-              "shap": -0.0277
-            },
-            {
-              "feature": "driver_track_form",
-              "value": 6.1074,
-              "shap": -0.0262
+              "shap": -0.0267
             },
             {
               "feature": "driver_quali_rating",
@@ -1557,30 +1268,35 @@
               "shap": -0.0252
             },
             {
+              "feature": "driver_track_form",
+              "value": 6.1074,
+              "shap": -0.0245
+            },
+            {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0134
+              "shap": -0.0124
             },
             {
               "feature": "pit_lane_loss_time",
               "value": 20.0,
-              "shap": -0.0117
+              "shap": -0.0119
             }
           ]
         },
         "finish_position": {
-          "predicted_value": 4.926,
+          "predicted_value": 4.525,
           "base_value": 9.001,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 6.997,
-              "shap": -2.01
+              "shap": -2.0538
             },
             {
               "feature": "team_recent_form",
               "value": 5.2043,
-              "shap": -1.0219
+              "shap": -1.0291
             },
             {
               "feature": "team_quali_pace",
@@ -1588,34 +1304,34 @@
               "shap": -0.7162
             },
             {
+              "feature": "practice_pace",
+              "value": 0.1529,
+              "shap": -0.4635
+            },
+            {
               "feature": "team_track_type_form",
               "value": 5.1586,
-              "shap": -0.3186
+              "shap": -0.3114
             },
             {
               "feature": "teammate_race_pace_gap",
               "value": 0.5293,
-              "shap": 0.1795
+              "shap": 0.1754
             },
             {
               "feature": "team_upgrades_recent",
               "value": 0.0,
-              "shap": 0.1719
-            },
-            {
-              "feature": "practice_pace",
-              "value": 0.6093,
-              "shap": -0.1032
+              "shap": 0.1677
             },
             {
               "feature": "driver_track_form",
               "value": 6.1074,
-              "shap": -0.0982
+              "shap": -0.0819
             },
             {
               "feature": "circuit_sc_share",
               "value": 0.9167,
-              "shap": -0.0753
+              "shap": -0.0599
             },
             {
               "feature": "expected_stops",
@@ -1665,7 +1381,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 0.6093,
+              "value": 0.1529,
               "shap": -0.0333
             },
             {
@@ -1681,79 +1397,79 @@
           ]
         },
         "race_time": {
-          "predicted_value": 0.424,
-          "base_value": 0.705,
+          "predicted_value": 0.365,
+          "base_value": 0.699,
           "top_contributions": [
             {
               "feature": "team_quali_pace",
               "value": 0.4807,
-              "shap": -0.0712
+              "shap": -0.0763
             },
             {
               "feature": "team_track_type_form",
               "value": 5.1586,
-              "shap": -0.0536
+              "shap": -0.0555
             },
             {
               "feature": "team_race_pace",
               "value": 4.6478,
-              "shap": -0.0519
+              "shap": -0.0521
             },
             {
               "feature": "driver_positions_gained_form",
               "value": -1.3042,
-              "shap": -0.0475
-            },
-            {
-              "feature": "driver_recent_form",
-              "value": 6.997,
-              "shap": -0.0429
+              "shap": -0.0477
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0427
+              "shap": -0.0423
+            },
+            {
+              "feature": "driver_recent_form",
+              "value": 6.997,
+              "shap": -0.0402
             },
             {
               "feature": "tyre_degradation_level",
               "value": 4.0,
-              "shap": -0.0379
+              "shap": -0.0382
             },
             {
               "feature": "team_upgrades_recent",
               "value": 0.0,
-              "shap": 0.0317
+              "shap": 0.0318
+            },
+            {
+              "feature": "practice_pace",
+              "value": 0.1529,
+              "shap": -0.0315
             },
             {
               "feature": "overtaking_difficulty",
               "value": 0.55,
-              "shap": 0.0189
-            },
-            {
-              "feature": "team_recent_form",
-              "value": 5.2043,
-              "shap": -0.0175
+              "shap": 0.0191
             }
           ]
         }
       }
     },
     {
-      "driver": "PIA",
+      "driver": "NOR",
       "team": "McLaren",
-      "driver_number": 81,
+      "driver_number": 1,
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 1.0334,
-      "practice_long_run_pace": 0.0,
-      "predicted_qualifying_gap_pct": 1.0397,
-      "predicted_qualifying_gap": 0.6577,
-      "predicted_quali_lap_s": 82.3347,
-      "predicted_finish_position": 5.3956,
-      "predicted_quali_to_race_delta": 0.9908,
-      "predicted_race_gap_pct": 0.4426,
-      "predicted_race_time_gap": 14.8472,
+      "practice_pace": 0.5356,
+      "practice_long_run_pace": 0.9136,
+      "predicted_qualifying_gap_pct": 0.5246,
+      "predicted_qualifying_gap": 0.2839,
+      "predicted_quali_lap_s": 81.8236,
+      "predicted_finish_position": 4.5557,
+      "predicted_quali_to_race_delta": 0.885,
+      "predicted_race_gap_pct": 0.3715,
+      "predicted_race_time_gap": 11.9765,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -1770,7 +1486,292 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 1.0334,
+        "practice_pace": 0.5356,
+        "driver_recent_form": 5.6254,
+        "driver_track_form": 6.0207,
+        "driver_positions_gained_form": -0.8885,
+        "driver_dnf_rate": 0.1339,
+        "team_recent_form": 6.5974,
+        "team_quali_pace": 1.2223,
+        "team_race_pace": 4.8812,
+        "team_reliability": 0.9334,
+        "team_track_type_form": 6.276,
+        "team_upgrades_recent": 7.0,
+        "team_performance_upgrades": 0.0,
+        "teammate_quali_gap": null,
+        "teammate_race_pace_gap": -0.2081,
+        "grid_vs_expected_position": null,
+        "expected_stops": 2.0946,
+        "is_sprint_weekend": 0.0,
+        "sprint_quali_gap_pct": null,
+        "sprint_finish_position": null,
+        "sprint_race_pace_pct": null,
+        "overtaking_difficulty": 0.55,
+        "safety_car_frequency": 0.3,
+        "dnf_rate": 0.1
+      },
+      "quali_nolap_rate": 0.0002,
+      "season_strength": 4.6384,
+      "explanations": {
+        "qualifying": {
+          "predicted_value": 0.525,
+          "base_value": 1.596,
+          "top_contributions": [
+            {
+              "feature": "driver_quali_form",
+              "value": 0.5116,
+              "shap": -0.4167
+            },
+            {
+              "feature": "team_quali_pace",
+              "value": 1.2223,
+              "shap": -0.2386
+            },
+            {
+              "feature": "practice_pace",
+              "value": 0.5356,
+              "shap": -0.1822
+            },
+            {
+              "feature": "team_recent_form",
+              "value": 6.5974,
+              "shap": -0.0647
+            },
+            {
+              "feature": "driver_recent_form",
+              "value": 5.6254,
+              "shap": -0.0474
+            },
+            {
+              "feature": "driver_quali_rating",
+              "value": -0.1301,
+              "shap": -0.0335
+            },
+            {
+              "feature": "driver_track_form",
+              "value": 6.0207,
+              "shap": -0.0228
+            },
+            {
+              "feature": "team_track_type_form",
+              "value": 6.276,
+              "shap": -0.0181
+            },
+            {
+              "feature": "expected_stops",
+              "value": 2.0946,
+              "shap": -0.0152
+            },
+            {
+              "feature": "driver_quali_vs_teammate_form",
+              "value": -0.7157,
+              "shap": -0.0129
+            }
+          ]
+        },
+        "finish_position": {
+          "predicted_value": 4.556,
+          "base_value": 9.001,
+          "top_contributions": [
+            {
+              "feature": "driver_recent_form",
+              "value": 5.6254,
+              "shap": -3.0709
+            },
+            {
+              "feature": "team_recent_form",
+              "value": 6.5974,
+              "shap": -0.8455
+            },
+            {
+              "feature": "team_track_type_form",
+              "value": 6.276,
+              "shap": -0.1771
+            },
+            {
+              "feature": "driver_track_form",
+              "value": 6.0207,
+              "shap": -0.1332
+            },
+            {
+              "feature": "practice_pace",
+              "value": 0.5356,
+              "shap": -0.0985
+            },
+            {
+              "feature": "team_quali_pace",
+              "value": 1.2223,
+              "shap": 0.0791
+            },
+            {
+              "feature": "circuit_sc_share",
+              "value": 0.9167,
+              "shap": -0.0603
+            },
+            {
+              "feature": "expected_stops",
+              "value": 2.0946,
+              "shap": -0.0587
+            },
+            {
+              "feature": "teammate_race_pace_gap",
+              "value": -0.2081,
+              "shap": -0.0581
+            },
+            {
+              "feature": "grid_vs_expected_position",
+              "value": null,
+              "shap": -0.0556
+            }
+          ]
+        },
+        "quali_delta": {
+          "predicted_value": 0.885,
+          "base_value": 0.985,
+          "top_contributions": [
+            {
+              "feature": "circuit_sc_share",
+              "value": 0.9167,
+              "shap": 0.0835
+            },
+            {
+              "feature": "grid_vs_expected_position",
+              "value": null,
+              "shap": -0.0676
+            },
+            {
+              "feature": "grid_position",
+              "value": null,
+              "shap": -0.0529
+            },
+            {
+              "feature": "grid_x_circuit_grid_order",
+              "value": null,
+              "shap": -0.0526
+            },
+            {
+              "feature": "driver_recent_form",
+              "value": 5.6254,
+              "shap": 0.0464
+            },
+            {
+              "feature": "teammate_race_pace_gap",
+              "value": -0.2081,
+              "shap": -0.0395
+            },
+            {
+              "feature": "practice_pace",
+              "value": 0.5356,
+              "shap": -0.0333
+            },
+            {
+              "feature": "driver_positions_gained_form",
+              "value": -0.8885,
+              "shap": -0.031
+            },
+            {
+              "feature": "teammate_quali_gap",
+              "value": null,
+              "shap": 0.0256
+            },
+            {
+              "feature": "team_track_type_form",
+              "value": 6.276,
+              "shap": 0.0187
+            }
+          ]
+        },
+        "race_time": {
+          "predicted_value": 0.371,
+          "base_value": 0.703,
+          "top_contributions": [
+            {
+              "feature": "driver_recent_form",
+              "value": 5.6254,
+              "shap": -0.1878
+            },
+            {
+              "feature": "team_quali_pace",
+              "value": 1.2223,
+              "shap": 0.0793
+            },
+            {
+              "feature": "expected_stops",
+              "value": 2.0946,
+              "shap": -0.0498
+            },
+            {
+              "feature": "team_race_pace",
+              "value": 4.8812,
+              "shap": -0.0462
+            },
+            {
+              "feature": "driver_positions_gained_form",
+              "value": -0.8885,
+              "shap": -0.0458
+            },
+            {
+              "feature": "tyre_degradation_level",
+              "value": 4.0,
+              "shap": -0.0399
+            },
+            {
+              "feature": "team_track_type_form",
+              "value": 6.276,
+              "shap": -0.0357
+            },
+            {
+              "feature": "longest_straight_m",
+              "value": 1000.0,
+              "shap": -0.0343
+            },
+            {
+              "feature": "team_upgrades_recent",
+              "value": 7.0,
+              "shap": -0.0301
+            },
+            {
+              "feature": "driver_track_form",
+              "value": 6.0207,
+              "shap": 0.0199
+            }
+          ]
+        }
+      }
+    },
+    {
+      "driver": "PIA",
+      "team": "McLaren",
+      "driver_number": 81,
+      "grid_position": null,
+      "quali_gap_to_pole": null,
+      "quali_gap_pct": null,
+      "practice_pace": 0.5681,
+      "practice_long_run_pace": 1.2228,
+      "predicted_qualifying_gap_pct": 0.8884,
+      "predicted_qualifying_gap": 0.5806,
+      "predicted_quali_lap_s": 82.1202,
+      "predicted_finish_position": 5.3624,
+      "predicted_quali_to_race_delta": 0.9738,
+      "predicted_race_gap_pct": 0.4293,
+      "predicted_race_time_gap": 14.9616,
+      "feature_row": {
+        "is_street_circuit": 0.0,
+        "pit_lane_loss_time": 20.0,
+        "longest_straight_m": 1000.0,
+        "braking_zone_count": 5.0,
+        "tyre_degradation_level": 4.0,
+        "rain_race_frequency": 0.0,
+        "track_length_km": 5.419,
+        "circuit_sc_share": 0.9167,
+        "circuit_dnf_share": 0.1681,
+        "circuit_grid_order": 0.7554,
+        "air_temp_forecast": 24.0,
+        "rain_mm_forecast": 0.0,
+        "wind_kph_forecast": 5.0,
+        "grid_position": null,
+        "quali_gap_pct": null,
+        "practice_pace": 0.5681,
         "driver_recent_form": 8.2079,
         "driver_track_form": 2.3196,
         "driver_positions_gained_form": -0.9831,
@@ -1798,38 +1799,38 @@
       "season_strength": 5.4385,
       "explanations": {
         "qualifying": {
-          "predicted_value": 1.04,
+          "predicted_value": 0.888,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "team_quali_pace",
               "value": 1.2223,
-              "shap": -0.2186
+              "shap": -0.2282
+            },
+            {
+              "feature": "practice_pace",
+              "value": 0.5681,
+              "shap": -0.2268
             },
             {
               "feature": "driver_quali_form",
               "value": 1.2805,
-              "shap": -0.1543
-            },
-            {
-              "feature": "practice_pace",
-              "value": 1.0334,
-              "shap": -0.0853
+              "shap": -0.1542
             },
             {
               "feature": "team_recent_form",
               "value": 6.5974,
-              "shap": -0.0785
+              "shap": -0.0772
             },
             {
               "feature": "driver_quali_vs_teammate_form",
               "value": 0.7157,
-              "shap": 0.0543
+              "shap": 0.0565
             },
             {
               "feature": "driver_recent_form",
               "value": 8.2079,
-              "shap": -0.0401
+              "shap": -0.0448
             },
             {
               "feature": "driver_quali_rating",
@@ -1839,48 +1840,53 @@
             {
               "feature": "driver_track_form",
               "value": 2.3196,
-              "shap": -0.0309
+              "shap": -0.0314
             },
             {
               "feature": "team_track_type_form",
               "value": 6.276,
-              "shap": -0.0268
+              "shap": -0.027
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0224
+              "shap": -0.0222
             }
           ]
         },
         "finish_position": {
-          "predicted_value": 5.396,
+          "predicted_value": 5.362,
           "base_value": 9.001,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 8.2079,
-              "shap": -1.7442
+              "shap": -1.7065
             },
             {
               "feature": "team_recent_form",
               "value": 6.5974,
-              "shap": -0.8583
+              "shap": -0.845
             },
             {
               "feature": "driver_track_form",
               "value": 2.3196,
-              "shap": -0.7351
+              "shap": -0.738
             },
             {
               "feature": "team_track_type_form",
               "value": 6.276,
-              "shap": -0.1816
+              "shap": -0.1862
+            },
+            {
+              "feature": "practice_pace",
+              "value": 0.5681,
+              "shap": -0.1008
             },
             {
               "feature": "circuit_sc_share",
               "value": 0.9167,
-              "shap": -0.0818
+              "shap": -0.0834
             },
             {
               "feature": "expected_stops",
@@ -1895,22 +1901,17 @@
             {
               "feature": "grid_position",
               "value": null,
-              "shap": -0.0576
+              "shap": -0.0564
             },
             {
               "feature": "grid_vs_expected_position",
               "value": null,
               "shap": -0.0524
-            },
-            {
-              "feature": "grid_x_circuit_grid_order",
-              "value": null,
-              "shap": 0.0392
             }
           ]
         },
         "quali_delta": {
-          "predicted_value": 0.991,
+          "predicted_value": 0.974,
           "base_value": 0.985,
           "top_contributions": [
             {
@@ -1921,7 +1922,7 @@
             {
               "feature": "grid_vs_expected_position",
               "value": null,
-              "shap": -0.0596
+              "shap": -0.0658
             },
             {
               "feature": "grid_position",
@@ -1932,6 +1933,11 @@
               "feature": "teammate_race_pace_gap",
               "value": 0.2081,
               "shap": 0.0393
+            },
+            {
+              "feature": "practice_pace",
+              "value": 0.5681,
+              "shap": -0.0333
             },
             {
               "feature": "driver_positions_gained_form",
@@ -1949,11 +1955,6 @@
               "shap": -0.0239
             },
             {
-              "feature": "practice_pace",
-              "value": 1.0334,
-              "shap": -0.0224
-            },
-            {
               "feature": "team_track_type_form",
               "value": 6.276,
               "shap": 0.0187
@@ -1966,18 +1967,18 @@
           ]
         },
         "race_time": {
-          "predicted_value": 0.443,
-          "base_value": 0.71,
+          "predicted_value": 0.429,
+          "base_value": 0.704,
           "top_contributions": [
             {
               "feature": "driver_track_form",
               "value": 2.3196,
-              "shap": -0.0803
+              "shap": -0.0805
             },
             {
               "feature": "team_quali_pace",
               "value": 1.2223,
-              "shap": 0.0534
+              "shap": 0.0565
             },
             {
               "feature": "team_race_pace",
@@ -1992,17 +1993,17 @@
             {
               "feature": "team_track_type_form",
               "value": 6.276,
-              "shap": -0.0432
+              "shap": -0.0445
             },
             {
               "feature": "tyre_degradation_level",
               "value": 4.0,
-              "shap": -0.043
+              "shap": -0.0432
             },
             {
               "feature": "driver_positions_gained_form",
               "value": -0.9831,
-              "shap": -0.038
+              "shap": -0.0381
             },
             {
               "feature": "driver_recent_form",
@@ -2010,14 +2011,14 @@
               "shap": -0.0324
             },
             {
-              "feature": "expected_stops",
-              "value": 2.0946,
-              "shap": -0.0306
-            },
-            {
               "feature": "team_upgrades_recent",
               "value": 7.0,
-              "shap": -0.0299
+              "shap": -0.0297
+            },
+            {
+              "feature": "rain_race_frequency",
+              "value": 0.0,
+              "shap": 0.0295
             }
           ]
         }
@@ -2030,15 +2031,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 0.7943,
-      "practice_long_run_pace": null,
-      "predicted_qualifying_gap_pct": 0.6966,
-      "predicted_qualifying_gap": 0.3774,
-      "predicted_quali_lap_s": 82.0545,
-      "predicted_finish_position": 5.6275,
+      "practice_pace": 0.6091,
+      "practice_long_run_pace": 0.8621,
+      "predicted_qualifying_gap_pct": 0.6536,
+      "predicted_qualifying_gap": 0.3891,
+      "predicted_quali_lap_s": 81.9288,
+      "predicted_finish_position": 5.5942,
       "predicted_quali_to_race_delta": 1.0888,
-      "predicted_race_gap_pct": 0.4361,
-      "predicted_race_time_gap": 14.5109,
+      "predicted_race_gap_pct": 0.4282,
+      "predicted_race_time_gap": 14.9048,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -2055,7 +2056,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 0.7943,
+        "practice_pace": 0.6091,
         "driver_recent_form": 6.5199,
         "driver_track_form": 18.0,
         "driver_positions_gained_form": 1.9776,
@@ -2083,28 +2084,28 @@
       "season_strength": 5.6693,
       "explanations": {
         "qualifying": {
-          "predicted_value": 0.697,
+          "predicted_value": 0.654,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "driver_quali_form",
               "value": 0.6406,
-              "shap": -0.43
+              "shap": -0.4257
             },
             {
               "feature": "team_quali_pace",
               "value": 1.0789,
-              "shap": -0.2763
+              "shap": -0.2736
             },
             {
               "feature": "practice_pace",
-              "value": 0.7943,
-              "shap": -0.0919
+              "value": 0.6091,
+              "shap": -0.1473
             },
             {
               "feature": "team_recent_form",
               "value": 4.5273,
-              "shap": -0.0656
+              "shap": -0.0646
             },
             {
               "feature": "driver_quali_rating",
@@ -2114,58 +2115,58 @@
             {
               "feature": "driver_recent_form",
               "value": 6.5199,
-              "shap": -0.035
+              "shap": -0.0353
             },
             {
               "feature": "team_track_type_form",
               "value": 5.2916,
-              "shap": -0.0251
+              "shap": -0.025
             },
             {
               "feature": "driver_track_form",
               "value": 18.0,
-              "shap": 0.0201
+              "shap": 0.0208
             },
             {
               "feature": "driver_quali_vs_teammate_form",
               "value": -0.3838,
-              "shap": -0.0189
+              "shap": -0.019
             },
             {
               "feature": "teammate_race_pace_gap",
               "value": 0.8691,
-              "shap": -0.0135
+              "shap": -0.0129
             }
           ]
         },
         "finish_position": {
-          "predicted_value": 5.627,
+          "predicted_value": 5.594,
           "base_value": 9.001,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 6.5199,
-              "shap": -2.5612
+              "shap": -2.5369
             },
             {
               "feature": "team_recent_form",
               "value": 4.5273,
-              "shap": -1.0393
+              "shap": -1.0368
             },
             {
               "feature": "team_track_type_form",
               "value": 5.2916,
-              "shap": -0.2924
-            },
-            {
-              "feature": "driver_positions_gained_form",
-              "value": 1.9776,
-              "shap": 0.1476
+              "shap": -0.297
             },
             {
               "feature": "driver_track_form",
               "value": 18.0,
-              "shap": 0.1461
+              "shap": 0.1486
+            },
+            {
+              "feature": "driver_positions_gained_form",
+              "value": 1.9776,
+              "shap": 0.1468
             },
             {
               "feature": "teammate_race_pace_gap",
@@ -2183,14 +2184,14 @@
               "shap": 0.0977
             },
             {
+              "feature": "practice_pace",
+              "value": 0.6091,
+              "shap": -0.0972
+            },
+            {
               "feature": "circuit_sc_share",
               "value": 0.9167,
               "shap": -0.0782
-            },
-            {
-              "feature": "expected_stops",
-              "value": 2.0946,
-              "shap": -0.0705
             }
           ]
         },
@@ -2209,14 +2210,14 @@
               "shap": -0.0628
             },
             {
+              "feature": "grid_vs_expected_position",
+              "value": null,
+              "shap": -0.0595
+            },
+            {
               "feature": "driver_positions_gained_form",
               "value": 1.9776,
               "shap": 0.057
-            },
-            {
-              "feature": "grid_vs_expected_position",
-              "value": null,
-              "shap": -0.0569
             },
             {
               "feature": "teammate_race_pace_gap",
@@ -2235,8 +2236,8 @@
             },
             {
               "feature": "practice_pace",
-              "value": 0.7943,
-              "shap": -0.0342
+              "value": 0.6091,
+              "shap": -0.0317
             },
             {
               "feature": "teammate_quali_gap",
@@ -2251,28 +2252,28 @@
           ]
         },
         "race_time": {
-          "predicted_value": 0.436,
+          "predicted_value": 0.428,
           "base_value": 0.723,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 6.5199,
-              "shap": -0.1788
+              "shap": -0.1772
             },
             {
               "feature": "team_quali_pace",
               "value": 1.0789,
-              "shap": 0.0673
+              "shap": 0.0699
             },
             {
               "feature": "team_race_pace",
               "value": 4.7013,
-              "shap": -0.0478
+              "shap": -0.0482
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0457
+              "shap": -0.0442
             },
             {
               "feature": "tyre_degradation_level",
@@ -2282,17 +2283,17 @@
             {
               "feature": "team_track_type_form",
               "value": 5.2916,
-              "shap": -0.0435
+              "shap": -0.0434
             },
             {
               "feature": "team_recent_form",
               "value": 4.5273,
-              "shap": -0.0397
+              "shap": -0.0409
             },
             {
               "feature": "team_reliability",
               "value": 0.9583,
-              "shap": -0.0393
+              "shap": -0.0395
             },
             {
               "feature": "longest_straight_m",
@@ -2300,9 +2301,9 @@
               "shap": -0.0368
             },
             {
-              "feature": "practice_pace",
-              "value": 0.7943,
-              "shap": 0.0231
+              "feature": "rain_race_frequency",
+              "value": 0.0,
+              "shap": 0.0217
             }
           ]
         }
@@ -2315,15 +2316,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 2.8552,
-      "practice_long_run_pace": 2.7375,
-      "predicted_qualifying_gap_pct": 1.5938,
-      "predicted_qualifying_gap": 1.1102,
-      "predicted_quali_lap_s": 82.7873,
-      "predicted_finish_position": 8.4351,
-      "predicted_quali_to_race_delta": 1.0721,
-      "predicted_race_gap_pct": 1.1219,
-      "predicted_race_time_gap": 49.9889,
+      "practice_pace": 1.6226,
+      "practice_long_run_pace": 1.6106,
+      "predicted_qualifying_gap_pct": 1.4164,
+      "predicted_qualifying_gap": 1.0111,
+      "predicted_quali_lap_s": 82.5507,
+      "predicted_finish_position": 8.3497,
+      "predicted_quali_to_race_delta": 1.0119,
+      "predicted_race_gap_pct": 1.032,
+      "predicted_race_time_gap": 46.0882,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -2340,7 +2341,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 2.8552,
+        "practice_pace": 1.6226,
         "driver_recent_form": 8.2889,
         "driver_track_form": 12.3881,
         "driver_positions_gained_form": 2.4981,
@@ -2368,79 +2369,79 @@
       "season_strength": 8.2582,
       "explanations": {
         "qualifying": {
-          "predicted_value": 1.594,
+          "predicted_value": 1.416,
           "base_value": 1.596,
           "top_contributions": [
             {
-              "feature": "practice_pace",
-              "value": 2.8552,
-              "shap": 0.2734
-            },
-            {
               "feature": "driver_quali_form",
               "value": 1.1512,
-              "shap": -0.1735
+              "shap": -0.1189
             },
             {
-              "feature": "is_sprint_weekend",
-              "value": 0.0,
-              "shap": 0.0243
+              "feature": "practice_pace",
+              "value": 1.6226,
+              "shap": 0.0597
             },
             {
               "feature": "team_upgrades_recent",
               "value": 4.0,
-              "shap": -0.0238
+              "shap": -0.0239
             },
             {
-              "feature": "driver_recent_form",
-              "value": 8.2889,
-              "shap": -0.0237
+              "feature": "is_sprint_weekend",
+              "value": 0.0,
+              "shap": 0.0237
             },
             {
               "feature": "driver_quali_vs_teammate_form",
               "value": -0.4694,
-              "shap": -0.0192
+              "shap": -0.0228
+            },
+            {
+              "feature": "driver_recent_form",
+              "value": 8.2889,
+              "shap": -0.0216
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0185
-            },
-            {
-              "feature": "teammate_race_pace_gap",
-              "value": -0.5453,
-              "shap": -0.0131
+              "shap": -0.0175
             },
             {
               "feature": "team_track_type_form",
               "value": 10.1794,
-              "shap": -0.0126
+              "shap": -0.0155
             },
             {
-              "feature": "driver_track_form",
-              "value": 12.3881,
-              "shap": 0.0122
+              "feature": "teammate_race_pace_gap",
+              "value": -0.5453,
+              "shap": -0.0151
+            },
+            {
+              "feature": "team_quali_pace",
+              "value": 1.8727,
+              "shap": -0.0136
             }
           ]
         },
         "finish_position": {
-          "predicted_value": 8.435,
+          "predicted_value": 8.35,
           "base_value": 9.001,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 8.2889,
-              "shap": -1.6885
+              "shap": -1.6859
             },
             {
               "feature": "team_quali_pace",
               "value": 1.8727,
-              "shap": 0.4955
+              "shap": 0.4926
             },
             {
-              "feature": "practice_pace",
-              "value": 2.8552,
-              "shap": 0.2387
+              "feature": "team_recent_form",
+              "value": 10.5088,
+              "shap": 0.1843
             },
             {
               "feature": "driver_positions_gained_form",
@@ -2448,9 +2449,9 @@
               "shap": 0.1811
             },
             {
-              "feature": "team_recent_form",
-              "value": 10.5088,
-              "shap": 0.1803
+              "feature": "practice_pace",
+              "value": 1.6226,
+              "shap": 0.1511
             },
             {
               "feature": "team_track_type_form",
@@ -2460,17 +2461,17 @@
             {
               "feature": "driver_track_form",
               "value": 12.3881,
-              "shap": 0.0942
+              "shap": 0.0976
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0873
+              "shap": -0.0744
             },
             {
-              "feature": "team_race_pace",
-              "value": 5.9923,
-              "shap": 0.0628
+              "feature": "grid_x_circuit_grid_order",
+              "value": null,
+              "shap": 0.0602
             },
             {
               "feature": "circuit_sc_share",
@@ -2480,7 +2481,7 @@
           ]
         },
         "quali_delta": {
-          "predicted_value": 1.072,
+          "predicted_value": 1.012,
           "base_value": 0.985,
           "top_contributions": [
             {
@@ -2489,14 +2490,9 @@
               "shap": 0.0869
             },
             {
-              "feature": "practice_pace",
-              "value": 2.8552,
-              "shap": 0.0568
-            },
-            {
               "feature": "driver_positions_gained_form",
               "value": 2.4981,
-              "shap": 0.0537
+              "shap": 0.0621
             },
             {
               "feature": "teammate_race_pace_gap",
@@ -2511,7 +2507,7 @@
             {
               "feature": "grid_vs_expected_position",
               "value": null,
-              "shap": -0.0369
+              "shap": -0.0419
             },
             {
               "feature": "teammate_quali_gap",
@@ -2529,6 +2525,11 @@
               "shap": -0.0073
             },
             {
+              "feature": "practice_pace",
+              "value": 1.6226,
+              "shap": -0.0068
+            },
+            {
               "feature": "team_reliability",
               "value": 0.9099,
               "shap": -0.0063
@@ -2536,58 +2537,58 @@
           ]
         },
         "race_time": {
-          "predicted_value": 1.122,
-          "base_value": 0.951,
+          "predicted_value": 1.032,
+          "base_value": 0.929,
           "top_contributions": [
-            {
-              "feature": "practice_pace",
-              "value": 2.8552,
-              "shap": 0.0553
-            },
             {
               "feature": "team_quali_pace",
               "value": 1.8727,
-              "shap": 0.0513
+              "shap": 0.0579
             },
             {
               "feature": "tyre_degradation_level",
               "value": 4.0,
-              "shap": -0.0445
-            },
-            {
-              "feature": "team_track_type_form",
-              "value": 10.1794,
-              "shap": 0.0368
+              "shap": -0.0447
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0276
+              "shap": -0.0383
             },
             {
-              "feature": "rain_race_frequency",
-              "value": 0.0,
-              "shap": 0.0254
+              "feature": "team_track_type_form",
+              "value": 10.1794,
+              "shap": 0.0371
             },
             {
               "feature": "team_race_pace",
               "value": 5.9923,
-              "shap": 0.0254
+              "shap": 0.0248
             },
             {
               "feature": "driver_track_form",
               "value": 12.3881,
-              "shap": 0.0248
+              "shap": 0.0247
+            },
+            {
+              "feature": "rain_race_frequency",
+              "value": 0.0,
+              "shap": 0.0231
             },
             {
               "feature": "driver_positions_gained_form",
               "value": 2.4981,
-              "shap": 0.0241
+              "shap": 0.0229
             },
             {
               "feature": "driver_dnf_rate",
               "value": 0.0228,
-              "shap": 0.0221
+              "shap": 0.0208
+            },
+            {
+              "feature": "longest_straight_m",
+              "value": 1000.0,
+              "shap": -0.0205
             }
           ]
         }
@@ -2600,15 +2601,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 2.6677,
-      "practice_long_run_pace": null,
-      "predicted_qualifying_gap_pct": 1.9612,
-      "predicted_qualifying_gap": 1.4103,
-      "predicted_quali_lap_s": 83.0874,
-      "predicted_finish_position": 10.7727,
+      "practice_pace": 2.1594,
+      "practice_long_run_pace": 2.9329,
+      "predicted_qualifying_gap_pct": 1.8517,
+      "predicted_qualifying_gap": 1.366,
+      "predicted_quali_lap_s": 82.9057,
+      "predicted_finish_position": 10.6873,
       "predicted_quali_to_race_delta": 0.9861,
-      "predicted_race_gap_pct": 1.2593,
-      "predicted_race_time_gap": 57.0969,
+      "predicted_race_gap_pct": 1.1218,
+      "predicted_race_time_gap": 50.726,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -2625,7 +2626,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 2.6677,
+        "practice_pace": 2.1594,
         "driver_recent_form": 11.5084,
         "driver_track_form": 17.8265,
         "driver_positions_gained_form": -0.7824,
@@ -2653,99 +2654,94 @@
       "season_strength": 10.6573,
       "explanations": {
         "qualifying": {
-          "predicted_value": 1.961,
+          "predicted_value": 1.852,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "practice_pace",
-              "value": 2.6677,
-              "shap": 0.3369
+              "value": 2.1594,
+              "shap": 0.2047
             },
             {
               "feature": "driver_quali_form",
               "value": 1.8189,
-              "shap": 0.1216
-            },
-            {
-              "feature": "team_quali_pace",
-              "value": 1.7761,
-              "shap": -0.055
+              "shap": 0.1256
             },
             {
               "feature": "driver_recent_form",
               "value": 11.5084,
-              "shap": 0.0371
+              "shap": 0.0354
             },
             {
               "feature": "team_upgrades_recent",
               "value": 4.0,
-              "shap": -0.0325
+              "shap": -0.0321
+            },
+            {
+              "feature": "team_quali_pace",
+              "value": 1.7761,
+              "shap": -0.0319
             },
             {
               "feature": "is_sprint_weekend",
               "value": 0.0,
-              "shap": 0.0299
+              "shap": 0.0317
             },
             {
               "feature": "teammate_race_pace_gap",
               "value": -0.7144,
-              "shap": -0.0272
+              "shap": -0.0264
             },
             {
               "feature": "driver_track_form",
               "value": 17.8265,
-              "shap": 0.0244
+              "shap": 0.0251
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.019
+              "shap": -0.0178
             },
             {
               "feature": "team_track_type_form",
               "value": 12.5122,
-              "shap": -0.0154
+              "shap": -0.017
             }
           ]
         },
         "finish_position": {
-          "predicted_value": 10.773,
+          "predicted_value": 10.687,
           "base_value": 9.001,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 11.5084,
-              "shap": 1.0737
+              "shap": 1.0716
             },
             {
               "feature": "team_quali_pace",
               "value": 1.7761,
-              "shap": 0.3715
-            },
-            {
-              "feature": "practice_pace",
-              "value": 2.6677,
-              "shap": 0.2047
+              "shap": 0.3686
             },
             {
               "feature": "driver_track_form",
               "value": 17.8265,
-              "shap": 0.149
+              "shap": 0.1526
             },
             {
               "feature": "team_recent_form",
               "value": 12.8103,
-              "shap": 0.1386
+              "shap": 0.1426
+            },
+            {
+              "feature": "practice_pace",
+              "value": 2.1594,
+              "shap": 0.115
             },
             {
               "feature": "team_track_type_form",
               "value": 12.5122,
               "shap": -0.0981
-            },
-            {
-              "feature": "expected_stops",
-              "value": 2.0946,
-              "shap": -0.098
             },
             {
               "feature": "circuit_sc_share",
@@ -2758,9 +2754,14 @@
               "shap": -0.0804
             },
             {
+              "feature": "expected_stops",
+              "value": 2.0946,
+              "shap": -0.0767
+            },
+            {
               "feature": "grid_x_circuit_grid_order",
               "value": null,
-              "shap": 0.0706
+              "shap": 0.0718
             }
           ]
         },
@@ -2775,7 +2776,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 2.6677,
+              "value": 2.1594,
               "shap": 0.0661
             },
             {
@@ -2821,58 +2822,58 @@
           ]
         },
         "race_time": {
-          "predicted_value": 1.259,
-          "base_value": 1.185,
+          "predicted_value": 1.122,
+          "base_value": 1.169,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 11.5084,
-              "shap": 0.0894
-            },
-            {
-              "feature": "practice_pace",
-              "value": 2.6677,
-              "shap": 0.0852
-            },
-            {
-              "feature": "tyre_degradation_level",
-              "value": 4.0,
-              "shap": -0.0632
-            },
-            {
-              "feature": "longest_straight_m",
-              "value": 1000.0,
-              "shap": -0.0617
-            },
-            {
-              "feature": "driver_positions_gained_form",
-              "value": -0.7824,
-              "shap": -0.0527
+              "shap": 0.0889
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0467
+              "shap": -0.063
+            },
+            {
+              "feature": "tyre_degradation_level",
+              "value": 4.0,
+              "shap": -0.0628
+            },
+            {
+              "feature": "longest_straight_m",
+              "value": 1000.0,
+              "shap": -0.0593
+            },
+            {
+              "feature": "driver_positions_gained_form",
+              "value": -0.7824,
+              "shap": -0.0502
             },
             {
               "feature": "team_quali_pace",
               "value": 1.7761,
-              "shap": 0.0341
+              "shap": 0.0461
             },
             {
               "feature": "driver_track_form",
               "value": 17.8265,
-              "shap": 0.0262
+              "shap": 0.0264
             },
             {
               "feature": "team_race_pace",
               "value": 6.5449,
-              "shap": 0.0249
+              "shap": 0.0204
             },
             {
               "feature": "rain_race_frequency",
               "value": 0.0,
-              "shap": 0.0236
+              "shap": 0.019
+            },
+            {
+              "feature": "team_upgrades_recent",
+              "value": 4.0,
+              "shap": -0.0164
             }
           ]
         }
@@ -2885,15 +2886,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 1.9912,
-      "practice_long_run_pace": 3.6619,
-      "predicted_qualifying_gap_pct": 1.6824,
-      "predicted_qualifying_gap": 1.1826,
-      "predicted_quali_lap_s": 82.8597,
+      "practice_pace": 2.0306,
+      "practice_long_run_pace": null,
+      "predicted_qualifying_gap_pct": 1.6909,
+      "predicted_qualifying_gap": 1.2349,
+      "predicted_quali_lap_s": 82.7746,
       "predicted_finish_position": 10.808,
       "predicted_quali_to_race_delta": 0.9861,
       "predicted_race_gap_pct": 1.2547,
-      "predicted_race_time_gap": 56.8589,
+      "predicted_race_time_gap": 57.5896,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -2910,7 +2911,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 1.9912,
+        "practice_pace": 2.0306,
         "driver_recent_form": 12.7714,
         "driver_track_form": 11.5308,
         "driver_positions_gained_form": -2.5565,
@@ -2938,18 +2939,18 @@
       "season_strength": 10.791,
       "explanations": {
         "qualifying": {
-          "predicted_value": 1.682,
+          "predicted_value": 1.691,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "practice_pace",
-              "value": 1.9912,
-              "shap": 0.182
+              "value": 2.0306,
+              "shap": 0.1924
             },
             {
               "feature": "team_quali_pace",
               "value": 1.4729,
-              "shap": -0.0868
+              "shap": -0.0887
             },
             {
               "feature": "driver_quali_rating",
@@ -2964,32 +2965,32 @@
             {
               "feature": "driver_recent_form",
               "value": 12.7714,
-              "shap": 0.0459
+              "shap": 0.0461
             },
             {
               "feature": "team_track_type_form",
               "value": 13.8008,
-              "shap": 0.0354
+              "shap": 0.035
             },
             {
               "feature": "team_upgrades_recent",
               "value": 2.0,
-              "shap": -0.0321
+              "shap": -0.0325
             },
             {
               "feature": "driver_quali_vs_teammate_form",
               "value": -0.4377,
-              "shap": -0.03
+              "shap": -0.0299
             },
             {
               "feature": "is_sprint_weekend",
               "value": 0.0,
-              "shap": 0.0266
+              "shap": 0.0262
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0158
+              "shap": -0.016
             }
           ]
         },
@@ -3024,7 +3025,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 1.9912,
+              "value": 2.0306,
               "shap": 0.1036
             },
             {
@@ -3060,7 +3061,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 1.9912,
+              "value": 2.0306,
               "shap": 0.0661
             },
             {
@@ -3142,7 +3143,7 @@
             {
               "feature": "team_track_type_form",
               "value": 13.8008,
-              "shap": 0.0277
+              "shap": 0.0276
             },
             {
               "feature": "rain_race_frequency",
@@ -3170,15 +3171,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 1.6631,
-      "practice_long_run_pace": 3.9072,
-      "predicted_qualifying_gap_pct": 1.6945,
-      "predicted_qualifying_gap": 1.1925,
-      "predicted_quali_lap_s": 82.8695,
+      "practice_pace": 1.7694,
+      "practice_long_run_pace": 1.4597,
+      "predicted_qualifying_gap_pct": 1.7201,
+      "predicted_qualifying_gap": 1.2587,
+      "predicted_quali_lap_s": 82.7984,
       "predicted_finish_position": 10.9115,
-      "predicted_quali_to_race_delta": 1.0273,
-      "predicted_race_gap_pct": 1.1193,
-      "predicted_race_time_gap": 49.8544,
+      "predicted_quali_to_race_delta": 1.0424,
+      "predicted_race_gap_pct": 1.1217,
+      "predicted_race_time_gap": 50.7208,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -3195,7 +3196,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 1.6631,
+        "practice_pace": 1.7694,
         "driver_recent_form": 11.7,
         "driver_track_form": null,
         "driver_positions_gained_form": 0.9472,
@@ -3223,58 +3224,58 @@
       "season_strength": 10.8945,
       "explanations": {
         "qualifying": {
-          "predicted_value": 1.695,
+          "predicted_value": 1.72,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "driver_quali_form",
               "value": 2.1054,
-              "shap": 0.0921
+              "shap": 0.1124
             },
             {
               "feature": "practice_pace",
-              "value": 1.6631,
-              "shap": 0.0559
+              "value": 1.7694,
+              "shap": 0.0601
             },
             {
               "feature": "team_quali_pace",
               "value": 1.8727,
-              "shap": -0.0441
+              "shap": -0.0394
             },
             {
               "feature": "is_sprint_weekend",
               "value": 0.0,
-              "shap": 0.0253
+              "shap": 0.0264
             },
             {
               "feature": "team_upgrades_recent",
               "value": 4.0,
-              "shap": -0.0244
+              "shap": -0.0262
             },
             {
               "feature": "driver_recent_form",
               "value": 11.7,
-              "shap": 0.0225
+              "shap": 0.0242
             },
             {
               "feature": "teammate_race_pace_gap",
               "value": 0.5453,
-              "shap": 0.0184
+              "shap": 0.018
             },
             {
               "feature": "driver_quali_vs_teammate_form",
               "value": 0.3644,
-              "shap": 0.0181
+              "shap": 0.0174
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0167
+              "shap": -0.0161
             },
             {
-              "feature": "team_recent_form",
-              "value": 10.5088,
-              "shap": -0.0128
+              "feature": "team_track_type_form",
+              "value": 10.1794,
+              "shap": -0.0131
             }
           ]
         },
@@ -3305,7 +3306,7 @@
             {
               "feature": "driver_track_form",
               "value": null,
-              "shap": 0.1347
+              "shap": 0.1349
             },
             {
               "feature": "circuit_sc_share",
@@ -3314,8 +3315,8 @@
             },
             {
               "feature": "practice_pace",
-              "value": 1.6631,
-              "shap": 0.1126
+              "value": 1.7694,
+              "shap": 0.1153
             },
             {
               "feature": "team_recent_form",
@@ -3335,7 +3336,7 @@
           ]
         },
         "quali_delta": {
-          "predicted_value": 1.027,
+          "predicted_value": 1.042,
           "base_value": 0.985,
           "top_contributions": [
             {
@@ -3351,7 +3352,7 @@
             {
               "feature": "grid_vs_expected_position",
               "value": null,
-              "shap": -0.0448
+              "shap": -0.044
             },
             {
               "feature": "grid_position",
@@ -3369,11 +3370,6 @@
               "shap": 0.0256
             },
             {
-              "feature": "practice_pace",
-              "value": 1.6631,
-              "shap": -0.0084
-            },
-            {
               "feature": "quali_gap_pct",
               "value": null,
               "shap": 0.0073
@@ -3387,22 +3383,27 @@
               "feature": "team_reliability",
               "value": 0.9099,
               "shap": -0.0063
+            },
+            {
+              "feature": "practice_pace",
+              "value": 1.7694,
+              "shap": 0.0059
             }
           ]
         },
         "race_time": {
-          "predicted_value": 1.119,
+          "predicted_value": 1.122,
           "base_value": 1.167,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 11.7,
-              "shap": 0.0915
+              "shap": 0.0914
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0646
+              "shap": -0.0644
             },
             {
               "feature": "tyre_degradation_level",
@@ -3422,7 +3423,7 @@
             {
               "feature": "team_quali_pace",
               "value": 1.8727,
-              "shap": 0.0282
+              "shap": 0.0283
             },
             {
               "feature": "driver_dnf_rate",
@@ -3437,7 +3438,7 @@
             {
               "feature": "team_track_type_form",
               "value": 10.1794,
-              "shap": 0.0197
+              "shap": 0.0201
             },
             {
               "feature": "team_recent_form",
@@ -3455,15 +3456,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 2.2063,
-      "practice_long_run_pace": null,
-      "predicted_qualifying_gap_pct": 2.0204,
-      "predicted_qualifying_gap": 1.4587,
-      "predicted_quali_lap_s": 83.1357,
+      "practice_pace": 1.8501,
+      "practice_long_run_pace": 1.7666,
+      "predicted_qualifying_gap_pct": 1.9132,
+      "predicted_qualifying_gap": 1.4162,
+      "predicted_quali_lap_s": 82.9558,
       "predicted_finish_position": 11.4884,
-      "predicted_quali_to_race_delta": 1.1091,
-      "predicted_race_gap_pct": 1.3015,
-      "predicted_race_time_gap": 59.28,
+      "predicted_quali_to_race_delta": 1.0424,
+      "predicted_race_gap_pct": 1.3023,
+      "predicted_race_time_gap": 60.0479,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -3480,7 +3481,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 2.2063,
+        "practice_pace": 1.8501,
         "driver_recent_form": 13.6699,
         "driver_track_form": 13.0,
         "driver_positions_gained_form": 0.9227,
@@ -3508,58 +3509,58 @@
       "season_strength": 11.4825,
       "explanations": {
         "qualifying": {
-          "predicted_value": 2.02,
+          "predicted_value": 1.913,
           "base_value": 1.596,
           "top_contributions": [
             {
-              "feature": "practice_pace",
-              "value": 2.2063,
-              "shap": 0.2392
-            },
-            {
               "feature": "driver_quali_form",
               "value": 1.945,
-              "shap": 0.1677
+              "shap": 0.1634
+            },
+            {
+              "feature": "practice_pace",
+              "value": 1.8501,
+              "shap": 0.1337
             },
             {
               "feature": "driver_quali_vs_teammate_form",
               "value": 0.56,
-              "shap": 0.0482
-            },
-            {
-              "feature": "team_quali_pace",
-              "value": 1.7761,
-              "shap": -0.0437
+              "shap": 0.0489
             },
             {
               "feature": "driver_recent_form",
               "value": 13.6699,
-              "shap": 0.0434
+              "shap": 0.0421
+            },
+            {
+              "feature": "team_quali_pace",
+              "value": 1.7761,
+              "shap": -0.0394
             },
             {
               "feature": "team_upgrades_recent",
               "value": 4.0,
-              "shap": -0.0335
+              "shap": -0.0313
             },
             {
               "feature": "is_sprint_weekend",
               "value": 0.0,
-              "shap": 0.0317
+              "shap": 0.03
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0185
+              "shap": -0.0186
             },
             {
-              "feature": "team_recent_form",
-              "value": 12.8103,
-              "shap": 0.0146
+              "feature": "team_track_type_form",
+              "value": 12.5122,
+              "shap": -0.0153
             },
             {
               "feature": "driver_track_form",
               "value": 13.0,
-              "shap": 0.0144
+              "shap": 0.0145
             }
           ]
         },
@@ -3594,7 +3595,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 2.2063,
+              "value": 1.8501,
               "shap": 0.112
             },
             {
@@ -3620,18 +3621,13 @@
           ]
         },
         "quali_delta": {
-          "predicted_value": 1.109,
+          "predicted_value": 1.042,
           "base_value": 0.985,
           "top_contributions": [
             {
               "feature": "circuit_sc_share",
               "value": 0.9167,
               "shap": 0.0997
-            },
-            {
-              "feature": "practice_pace",
-              "value": 2.2063,
-              "shap": 0.0661
             },
             {
               "feature": "teammate_race_pace_gap",
@@ -3641,7 +3637,7 @@
             {
               "feature": "grid_vs_expected_position",
               "value": null,
-              "shap": -0.0398
+              "shap": -0.044
             },
             {
               "feature": "grid_position",
@@ -3651,7 +3647,7 @@
             {
               "feature": "driver_positions_gained_form",
               "value": 0.9227,
-              "shap": -0.0304
+              "shap": -0.0327
             },
             {
               "feature": "teammate_quali_gap",
@@ -3672,22 +3668,27 @@
               "feature": "team_reliability",
               "value": 0.9216,
               "shap": -0.0063
+            },
+            {
+              "feature": "practice_pace",
+              "value": 1.8501,
+              "shap": 0.0059
             }
           ]
         },
         "race_time": {
-          "predicted_value": 1.301,
+          "predicted_value": 1.302,
           "base_value": 1.309,
           "top_contributions": [
             {
               "feature": "driver_recent_form",
               "value": 13.6699,
-              "shap": 0.0841
+              "shap": 0.084
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0572
+              "shap": -0.0574
             },
             {
               "feature": "tyre_degradation_level",
@@ -3702,17 +3703,17 @@
             {
               "feature": "driver_positions_gained_form",
               "value": 0.9227,
-              "shap": 0.0323
+              "shap": 0.0324
             },
             {
               "feature": "team_quali_pace",
               "value": 1.7761,
-              "shap": 0.0261
+              "shap": 0.0251
             },
             {
               "feature": "team_recent_form",
               "value": 12.8103,
-              "shap": -0.0188
+              "shap": -0.0195
             },
             {
               "feature": "rain_race_frequency",
@@ -3722,7 +3723,7 @@
             {
               "feature": "driver_track_form",
               "value": 13.0,
-              "shap": 0.013
+              "shap": 0.0122
             },
             {
               "feature": "team_performance_upgrades",
@@ -3740,15 +3741,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 2.6341,
-      "practice_long_run_pace": 4.1026,
-      "predicted_qualifying_gap_pct": 2.0844,
-      "predicted_qualifying_gap": 1.5109,
-      "predicted_quali_lap_s": 83.188,
+      "practice_pace": 2.807,
+      "practice_long_run_pace": 3.2879,
+      "predicted_qualifying_gap_pct": 2.1249,
+      "predicted_qualifying_gap": 1.5888,
+      "predicted_quali_lap_s": 83.1284,
       "predicted_finish_position": 12.1807,
       "predicted_quali_to_race_delta": 1.1091,
-      "predicted_race_gap_pct": 1.6293,
-      "predicted_race_time_gap": 76.2379,
+      "predicted_race_gap_pct": 1.8377,
+      "predicted_race_time_gap": 87.6988,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -3765,7 +3766,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 2.6341,
+        "practice_pace": 2.807,
         "driver_recent_form": 14.4337,
         "driver_track_form": 16.0588,
         "driver_positions_gained_form": -0.5983,
@@ -3793,23 +3794,23 @@
       "season_strength": 12.0551,
       "explanations": {
         "qualifying": {
-          "predicted_value": 2.084,
+          "predicted_value": 2.125,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "practice_pace",
-              "value": 2.6341,
-              "shap": 0.2796
+              "value": 2.807,
+              "shap": 0.3268
             },
             {
               "feature": "driver_quali_form",
               "value": 1.8766,
-              "shap": 0.1375
+              "shap": 0.1397
             },
             {
               "feature": "team_quali_pace",
               "value": 1.4729,
-              "shap": -0.1166
+              "shap": -0.1243
             },
             {
               "feature": "driver_quali_rating",
@@ -3824,27 +3825,27 @@
             {
               "feature": "driver_recent_form",
               "value": 14.4337,
-              "shap": 0.0544
+              "shap": 0.0551
             },
             {
               "feature": "team_upgrades_recent",
               "value": 2.0,
-              "shap": -0.0302
+              "shap": -0.0322
             },
             {
               "feature": "is_sprint_weekend",
               "value": 0.0,
-              "shap": 0.0297
+              "shap": 0.028
             },
             {
               "feature": "team_track_type_form",
               "value": 13.8008,
-              "shap": 0.0266
+              "shap": 0.0251
             },
             {
               "feature": "driver_quali_vs_teammate_form",
               "value": 0.4377,
-              "shap": 0.0216
+              "shap": 0.022
             }
           ]
         },
@@ -3869,7 +3870,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 2.6341,
+              "value": 2.807,
               "shap": 0.2133
             },
             {
@@ -3915,7 +3916,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 2.6341,
+              "value": 2.807,
               "shap": 0.0661
             },
             {
@@ -3961,28 +3962,28 @@
           ]
         },
         "race_time": {
-          "predicted_value": 1.629,
+          "predicted_value": 1.838,
           "base_value": 1.659,
           "top_contributions": [
             {
+              "feature": "practice_pace",
+              "value": 2.807,
+              "shap": 0.178
+            },
+            {
               "feature": "driver_positions_gained_form",
               "value": -0.5983,
-              "shap": -0.0632
+              "shap": -0.0635
             },
             {
               "feature": "driver_recent_form",
               "value": 14.4337,
-              "shap": 0.0441
-            },
-            {
-              "feature": "practice_pace",
-              "value": 2.6341,
-              "shap": 0.0422
+              "shap": 0.0449
             },
             {
               "feature": "longest_straight_m",
               "value": 1000.0,
-              "shap": -0.0329
+              "shap": -0.0394
             },
             {
               "feature": "tyre_degradation_level",
@@ -3990,29 +3991,29 @@
               "shap": -0.0315
             },
             {
+              "feature": "air_temp_forecast",
+              "value": 24.0,
+              "shap": 0.028
+            },
+            {
+              "feature": "rain_race_frequency",
+              "value": 0.0,
+              "shap": 0.0279
+            },
+            {
+              "feature": "team_reliability",
+              "value": 0.809,
+              "shap": 0.0257
+            },
+            {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0288
+              "shap": -0.0149
             },
             {
               "feature": "team_track_type_form",
               "value": 13.8008,
               "shap": 0.0127
-            },
-            {
-              "feature": "pit_lane_loss_time",
-              "value": 20.0,
-              "shap": 0.0105
-            },
-            {
-              "feature": "rain_race_frequency",
-              "value": 0.0,
-              "shap": 0.0102
-            },
-            {
-              "feature": "team_reliability",
-              "value": 0.809,
-              "shap": 0.0099
             }
           ]
         }
@@ -4025,15 +4026,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 3.0631,
-      "practice_long_run_pace": null,
-      "predicted_qualifying_gap_pct": 2.9914,
-      "predicted_qualifying_gap": 2.2518,
-      "predicted_quali_lap_s": 83.9288,
+      "practice_pace": 3.2368,
+      "practice_long_run_pace": 3.2455,
+      "predicted_qualifying_gap_pct": 3.0307,
+      "predicted_qualifying_gap": 2.3274,
+      "predicted_quali_lap_s": 83.867,
       "predicted_finish_position": 13.5741,
-      "predicted_quali_to_race_delta": 1.0652,
-      "predicted_race_gap_pct": 2.2792,
-      "predicted_race_time_gap": 109.8587,
+      "predicted_quali_to_race_delta": 1.1113,
+      "predicted_race_gap_pct": 2.2779,
+      "predicted_race_time_gap": 110.433,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -4050,7 +4051,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 3.0631,
+        "practice_pace": 3.2368,
         "driver_recent_form": 16.087,
         "driver_track_form": 19.0,
         "driver_positions_gained_form": -3.1225,
@@ -4078,13 +4079,13 @@
       "season_strength": 13.4485,
       "explanations": {
         "qualifying": {
-          "predicted_value": 2.991,
+          "predicted_value": 3.031,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "team_quali_pace",
               "value": 2.9741,
-              "shap": 0.5366
+              "shap": 0.5477
             },
             {
               "feature": "driver_quali_form",
@@ -4093,13 +4094,13 @@
             },
             {
               "feature": "practice_pace",
-              "value": 3.0631,
-              "shap": 0.3513
+              "value": 3.2368,
+              "shap": 0.3784
             },
             {
               "feature": "team_track_type_form",
               "value": 16.7687,
-              "shap": 0.086
+              "shap": 0.0859
             },
             {
               "feature": "driver_recent_form",
@@ -4129,7 +4130,7 @@
             {
               "feature": "is_sprint_weekend",
               "value": 0.0,
-              "shap": 0.0198
+              "shap": 0.0195
             }
           ]
         },
@@ -4140,7 +4141,7 @@
             {
               "feature": "driver_recent_form",
               "value": 16.087,
-              "shap": 2.8311
+              "shap": 2.8312
             },
             {
               "feature": "driver_positions_gained_form",
@@ -4160,17 +4161,17 @@
             {
               "feature": "team_track_type_form",
               "value": 16.7687,
-              "shap": 0.7265
+              "shap": 0.7269
             },
             {
               "feature": "circuit_sc_share",
               "value": 0.9167,
-              "shap": -0.2327
+              "shap": -0.2316
             },
             {
               "feature": "practice_pace",
-              "value": 3.0631,
-              "shap": 0.2028
+              "value": 3.2368,
+              "shap": 0.2189
             },
             {
               "feature": "driver_dnf_rate",
@@ -4180,28 +4181,28 @@
             {
               "feature": "driver_track_form",
               "value": 19.0,
-              "shap": 0.1461
+              "shap": 0.1462
             },
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": -0.0981
+              "shap": -0.1157
             }
           ]
         },
         "quali_delta": {
-          "predicted_value": 1.065,
+          "predicted_value": 1.111,
           "base_value": 0.985,
           "top_contributions": [
             {
               "feature": "practice_pace",
-              "value": 3.0631,
-              "shap": 0.1098
+              "value": 3.2368,
+              "shap": 0.1532
             },
             {
               "feature": "grid_vs_expected_position",
               "value": null,
-              "shap": -0.0735
+              "shap": -0.0708
             },
             {
               "feature": "circuit_sc_share",
@@ -4246,13 +4247,13 @@
           ]
         },
         "race_time": {
-          "predicted_value": 2.279,
+          "predicted_value": 2.278,
           "base_value": 1.796,
           "top_contributions": [
             {
               "feature": "practice_pace",
-              "value": 3.0631,
-              "shap": 0.1913
+              "value": 3.2368,
+              "shap": 0.1914
             },
             {
               "feature": "team_quali_pace",
@@ -4282,12 +4283,12 @@
             {
               "feature": "teammate_race_pace_gap",
               "value": -5.3634,
-              "shap": 0.0345
+              "shap": 0.0343
             },
             {
               "feature": "rain_race_frequency",
               "value": 0.0,
-              "shap": 0.0319
+              "shap": 0.0303
             },
             {
               "feature": "tyre_degradation_level",
@@ -4310,15 +4311,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 2.9657,
-      "practice_long_run_pace": null,
-      "predicted_qualifying_gap_pct": 3.6146,
-      "predicted_qualifying_gap": 2.7608,
-      "predicted_quali_lap_s": 84.4378,
+      "practice_pace": 3.1393,
+      "practice_long_run_pace": 3.8221,
+      "predicted_qualifying_gap_pct": 3.6535,
+      "predicted_qualifying_gap": 2.8352,
+      "predicted_quali_lap_s": 84.3749,
       "predicted_finish_position": 13.6934,
-      "predicted_quali_to_race_delta": 1.0881,
+      "predicted_quali_to_race_delta": 1.1342,
       "predicted_race_gap_pct": 2.0494,
-      "predicted_race_time_gap": 97.9706,
+      "predicted_race_time_gap": 98.6321,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -4335,7 +4336,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 2.9657,
+        "practice_pace": 3.1393,
         "driver_recent_form": 20.0,
         "driver_track_form": null,
         "driver_positions_gained_form": -9.0,
@@ -4363,28 +4364,28 @@
       "season_strength": 13.5395,
       "explanations": {
         "qualifying": {
-          "predicted_value": 3.615,
+          "predicted_value": 3.654,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "driver_quali_form",
               "value": 5.4989,
-              "shap": 0.811
+              "shap": 0.8151
             },
             {
               "feature": "team_quali_pace",
               "value": 2.9741,
-              "shap": 0.5819
+              "shap": 0.587
             },
             {
               "feature": "practice_pace",
-              "value": 2.9657,
-              "shap": 0.2786
+              "value": 3.1393,
+              "shap": 0.3072
             },
             {
               "feature": "team_track_type_form",
               "value": 16.7687,
-              "shap": 0.1165
+              "shap": 0.1159
             },
             {
               "feature": "driver_recent_form",
@@ -4409,7 +4410,7 @@
             {
               "feature": "is_sprint_weekend",
               "value": 0.0,
-              "shap": 0.0164
+              "shap": 0.0162
             },
             {
               "feature": "driver_track_form",
@@ -4425,7 +4426,7 @@
             {
               "feature": "driver_recent_form",
               "value": 20.0,
-              "shap": 2.7425
+              "shap": 2.7426
             },
             {
               "feature": "driver_positions_gained_form",
@@ -4450,12 +4451,12 @@
             {
               "feature": "circuit_sc_share",
               "value": 0.9167,
-              "shap": -0.2426
+              "shap": -0.2415
             },
             {
               "feature": "practice_pace",
-              "value": 2.9657,
-              "shap": 0.2146
+              "value": 3.1393,
+              "shap": 0.222
             },
             {
               "feature": "driver_dnf_rate",
@@ -4475,9 +4476,14 @@
           ]
         },
         "quali_delta": {
-          "predicted_value": 1.088,
+          "predicted_value": 1.134,
           "base_value": 0.985,
           "top_contributions": [
+            {
+              "feature": "practice_pace",
+              "value": 3.1393,
+              "shap": 0.1096
+            },
             {
               "feature": "circuit_sc_share",
               "value": 0.9167,
@@ -4487,11 +4493,6 @@
               "feature": "grid_vs_expected_position",
               "value": null,
               "shap": -0.0717
-            },
-            {
-              "feature": "practice_pace",
-              "value": 2.9657,
-              "shap": 0.0661
             },
             {
               "feature": "teammate_race_pace_gap",
@@ -4536,7 +4537,7 @@
           "top_contributions": [
             {
               "feature": "practice_pace",
-              "value": 2.9657,
+              "value": 3.1393,
               "shap": 0.1876
             },
             {
@@ -4595,15 +4596,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 3.3347,
-      "practice_long_run_pace": 2.6248,
-      "predicted_qualifying_gap_pct": 3.3023,
-      "predicted_qualifying_gap": 2.5057,
-      "predicted_quali_lap_s": 84.1827,
+      "practice_pace": 3.3246,
+      "practice_long_run_pace": 3.1805,
+      "predicted_qualifying_gap_pct": 3.2934,
+      "predicted_qualifying_gap": 2.5416,
+      "predicted_quali_lap_s": 84.0812,
       "predicted_finish_position": 14.8978,
       "predicted_quali_to_race_delta": 1.1136,
       "predicted_race_gap_pct": 2.4645,
-      "predicted_race_time_gap": 119.4447,
+      "predicted_race_time_gap": 120.07,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -4620,7 +4621,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 3.3347,
+        "practice_pace": 3.3246,
         "driver_recent_form": 15.5049,
         "driver_track_form": 7.6872,
         "driver_positions_gained_form": -0.644,
@@ -4648,23 +4649,23 @@
       "season_strength": 14.7394,
       "explanations": {
         "qualifying": {
-          "predicted_value": 3.302,
+          "predicted_value": 3.293,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "team_quali_pace",
               "value": 3.2805,
-              "shap": 0.6546
+              "shap": 0.6526
             },
             {
               "feature": "driver_quali_form",
               "value": 3.2046,
-              "shap": 0.5811
+              "shap": 0.5802
             },
             {
               "feature": "practice_pace",
-              "value": 3.3347,
-              "shap": 0.3521
+              "value": 3.3246,
+              "shap": 0.3469
             },
             {
               "feature": "team_track_type_form",
@@ -4674,7 +4675,7 @@
             {
               "feature": "driver_recent_form",
               "value": 15.5049,
-              "shap": 0.0657
+              "shap": 0.0655
             },
             {
               "feature": "team_recent_form",
@@ -4729,7 +4730,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 3.3347,
+              "value": 3.3246,
               "shap": 0.2343
             },
             {
@@ -4765,7 +4766,7 @@
           "top_contributions": [
             {
               "feature": "practice_pace",
-              "value": 3.3347,
+              "value": 3.3246,
               "shap": 0.153
             },
             {
@@ -4821,7 +4822,7 @@
           "top_contributions": [
             {
               "feature": "practice_pace",
-              "value": 3.3347,
+              "value": 3.3246,
               "shap": 0.2527
             },
             {
@@ -4880,15 +4881,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 2.9742,
-      "practice_long_run_pace": null,
-      "predicted_qualifying_gap_pct": 3.2512,
-      "predicted_qualifying_gap": 2.464,
-      "predicted_quali_lap_s": 84.141,
+      "practice_pace": 2.6469,
+      "practice_long_run_pace": 3.2941,
+      "predicted_qualifying_gap_pct": 3.2093,
+      "predicted_qualifying_gap": 2.473,
+      "predicted_quali_lap_s": 84.0127,
       "predicted_finish_position": 15.0419,
       "predicted_quali_to_race_delta": 1.0755,
-      "predicted_race_gap_pct": 2.5201,
-      "predicted_race_time_gap": 122.321,
+      "predicted_race_gap_pct": 2.4498,
+      "predicted_race_time_gap": 119.3109,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -4905,7 +4906,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 2.9742,
+        "practice_pace": 2.6469,
         "driver_recent_form": 16.3157,
         "driver_track_form": 12.726,
         "driver_positions_gained_form": -0.9493,
@@ -4933,33 +4934,33 @@
       "season_strength": 14.9163,
       "explanations": {
         "qualifying": {
-          "predicted_value": 3.251,
+          "predicted_value": 3.209,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "team_quali_pace",
               "value": 3.2805,
-              "shap": 0.6366
+              "shap": 0.6272
             },
             {
               "feature": "driver_quali_form",
               "value": 3.0221,
-              "shap": 0.4712
+              "shap": 0.4668
             },
             {
               "feature": "practice_pace",
-              "value": 2.9742,
-              "shap": 0.3361
+              "value": 2.6469,
+              "shap": 0.3114
             },
             {
               "feature": "team_track_type_form",
               "value": 16.1565,
-              "shap": 0.0849
+              "shap": 0.0846
             },
             {
               "feature": "driver_recent_form",
               "value": 16.3157,
-              "shap": 0.0826
+              "shap": 0.0817
             },
             {
               "feature": "team_recent_form",
@@ -4979,12 +4980,12 @@
             {
               "feature": "team_upgrades_recent",
               "value": 0.0,
-              "shap": -0.0122
+              "shap": -0.0126
             },
             {
-              "feature": "pit_lane_loss_time",
-              "value": 20.0,
-              "shap": -0.0109
+              "feature": "longest_straight_m",
+              "value": 1000.0,
+              "shap": -0.0119
             }
           ]
         },
@@ -5014,7 +5015,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 2.9742,
+              "value": 2.6469,
               "shap": 0.2168
             },
             {
@@ -5055,7 +5056,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 2.9742,
+              "value": 2.6469,
               "shap": 0.0662
             },
             {
@@ -5101,58 +5102,58 @@
           ]
         },
         "race_time": {
-          "predicted_value": 2.52,
-          "base_value": 2.008,
+          "predicted_value": 2.45,
+          "base_value": 1.955,
           "top_contributions": [
             {
               "feature": "practice_pace",
-              "value": 2.9742,
-              "shap": 0.24
+              "value": 2.6469,
+              "shap": 0.2326
             },
             {
               "feature": "team_quali_pace",
               "value": 3.2805,
-              "shap": 0.1142
+              "shap": 0.1106
             },
             {
               "feature": "team_recent_form",
               "value": 15.9406,
-              "shap": 0.0842
-            },
-            {
-              "feature": "team_track_type_form",
-              "value": 16.1565,
-              "shap": 0.0567
+              "shap": 0.0818
             },
             {
               "feature": "driver_recent_form",
               "value": 16.3157,
-              "shap": 0.0556
+              "shap": 0.0612
+            },
+            {
+              "feature": "team_track_type_form",
+              "value": 16.1565,
+              "shap": 0.0559
             },
             {
               "feature": "rain_race_frequency",
               "value": 0.0,
-              "shap": 0.0351
+              "shap": 0.0345
             },
             {
               "feature": "driver_positions_gained_form",
               "value": -0.9493,
-              "shap": -0.0329
+              "shap": -0.0335
             },
             {
               "feature": "team_reliability",
               "value": 0.7896,
-              "shap": 0.0214
+              "shap": 0.0216
             },
             {
               "feature": "track_length_km",
               "value": 5.419,
-              "shap": -0.0214
+              "shap": -0.0208
             },
             {
               "feature": "teammate_race_pace_gap",
               "value": 0.0075,
-              "shap": -0.0208
+              "shap": -0.0205
             }
           ]
         }
@@ -5165,15 +5166,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 4.4366,
-      "practice_long_run_pace": 6.6764,
-      "predicted_qualifying_gap_pct": 4.7526,
-      "predicted_qualifying_gap": 3.6903,
-      "predicted_quali_lap_s": 85.3673,
+      "practice_pace": 4.6126,
+      "practice_long_run_pace": 5.1122,
+      "predicted_qualifying_gap_pct": 4.7812,
+      "predicted_qualifying_gap": 3.7547,
+      "predicted_quali_lap_s": 85.2944,
       "predicted_finish_position": 15.2722,
-      "predicted_quali_to_race_delta": 1.6766,
+      "predicted_quali_to_race_delta": 1.7262,
       "predicted_race_gap_pct": 2.6768,
-      "predicted_race_time_gap": 130.4274,
+      "predicted_race_time_gap": 131.0343,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -5190,7 +5191,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 4.4366,
+        "practice_pace": 4.6126,
         "driver_recent_form": 19.6651,
         "driver_track_form": 11.4831,
         "driver_positions_gained_form": -0.6996,
@@ -5218,48 +5219,48 @@
       "season_strength": 15.1019,
       "explanations": {
         "qualifying": {
-          "predicted_value": 4.753,
+          "predicted_value": 4.781,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "team_quali_pace",
               "value": 4.1344,
-              "shap": 1.0805
+              "shap": 1.0836
             },
             {
               "feature": "driver_quali_form",
               "value": 4.4445,
-              "shap": 0.968
+              "shap": 0.9666
             },
             {
               "feature": "practice_pace",
-              "value": 4.4366,
-              "shap": 0.7196
+              "value": 4.6126,
+              "shap": 0.7477
             },
             {
               "feature": "team_track_type_form",
               "value": 19.2169,
-              "shap": 0.1134
+              "shap": 0.1135
             },
             {
               "feature": "driver_recent_form",
               "value": 19.6651,
-              "shap": 0.1025
+              "shap": 0.1029
             },
             {
               "feature": "team_recent_form",
               "value": 18.9935,
-              "shap": 0.0804
+              "shap": 0.0835
             },
             {
               "feature": "team_reliability",
               "value": 0.5484,
-              "shap": 0.0481
+              "shap": 0.0498
             },
             {
               "feature": "team_race_pace",
               "value": 9.9156,
-              "shap": 0.0367
+              "shap": 0.0366
             },
             {
               "feature": "driver_quali_vs_teammate_form",
@@ -5269,7 +5270,7 @@
             {
               "feature": "expected_stops",
               "value": 2.0946,
-              "shap": 0.0226
+              "shap": 0.0216
             }
           ]
         },
@@ -5299,7 +5300,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 4.4366,
+              "value": 4.6126,
               "shap": 0.249
             },
             {
@@ -5330,13 +5331,13 @@
           ]
         },
         "quali_delta": {
-          "predicted_value": 1.677,
+          "predicted_value": 1.726,
           "base_value": 0.985,
           "top_contributions": [
             {
               "feature": "practice_pace",
-              "value": 4.4366,
-              "shap": 0.2094
+              "value": 4.6126,
+              "shap": 0.2583
             },
             {
               "feature": "team_reliability",
@@ -5396,7 +5397,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 4.4366,
+              "value": 4.6126,
               "shap": 0.2137
             },
             {
@@ -5450,15 +5451,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 3.8442,
+      "practice_pace": 4.0192,
       "practice_long_run_pace": null,
-      "predicted_qualifying_gap_pct": 4.0061,
-      "predicted_qualifying_gap": 3.0805,
-      "predicted_quali_lap_s": 84.7576,
+      "predicted_qualifying_gap_pct": 4.3022,
+      "predicted_qualifying_gap": 3.3642,
+      "predicted_quali_lap_s": 84.9038,
       "predicted_finish_position": 15.6162,
       "predicted_quali_to_race_delta": 1.3196,
-      "predicted_race_gap_pct": 2.8235,
-      "predicted_race_time_gap": 138.0165,
+      "predicted_race_gap_pct": 2.8268,
+      "predicted_race_time_gap": 138.7811,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -5475,7 +5476,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 3.8442,
+        "practice_pace": 4.0192,
         "driver_recent_form": 18.8245,
         "driver_track_form": 14.9914,
         "driver_positions_gained_form": -0.1973,
@@ -5503,58 +5504,58 @@
       "season_strength": 15.4786,
       "explanations": {
         "qualifying": {
-          "predicted_value": 4.006,
+          "predicted_value": 4.302,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "driver_quali_form",
               "value": 3.8981,
-              "shap": 0.8683
+              "shap": 0.8758
             },
             {
               "feature": "team_quali_pace",
               "value": 3.1851,
-              "shap": 0.6562
+              "shap": 0.7503
             },
             {
               "feature": "practice_pace",
-              "value": 3.8442,
-              "shap": 0.4686
+              "value": 4.0192,
+              "shap": 0.6552
             },
             {
               "feature": "team_track_type_form",
               "value": 17.1184,
-              "shap": 0.1153
+              "shap": 0.1152
             },
             {
               "feature": "driver_recent_form",
               "value": 18.8245,
-              "shap": 0.1051
+              "shap": 0.1004
             },
             {
               "feature": "driver_quali_vs_teammate_form",
               "value": 0.9295,
-              "shap": 0.0794
+              "shap": 0.0767
             },
             {
               "feature": "team_recent_form",
               "value": 17.6653,
-              "shap": 0.062
+              "shap": 0.0678
             },
             {
               "feature": "team_reliability",
               "value": 0.4784,
-              "shap": 0.046
+              "shap": 0.0434
             },
             {
               "feature": "team_race_pace",
               "value": 9.124,
-              "shap": 0.0372
+              "shap": 0.0391
             },
             {
               "feature": "teammate_race_pace_gap",
               "value": null,
-              "shap": -0.0209
+              "shap": -0.0208
             }
           ]
         },
@@ -5589,7 +5590,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 3.8442,
+              "value": 4.0192,
               "shap": 0.2318
             },
             {
@@ -5625,7 +5626,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 3.8442,
+              "value": 4.0192,
               "shap": 0.1532
             },
             {
@@ -5671,13 +5672,13 @@
           ]
         },
         "race_time": {
-          "predicted_value": 2.823,
+          "predicted_value": 2.827,
           "base_value": 2.12,
           "top_contributions": [
             {
               "feature": "practice_pace",
-              "value": 3.8442,
-              "shap": 0.2372
+              "value": 4.0192,
+              "shap": 0.249
             },
             {
               "feature": "team_recent_form",
@@ -5687,7 +5688,7 @@
             {
               "feature": "team_quali_pace",
               "value": 3.1851,
-              "shap": 0.1354
+              "shap": 0.1378
             },
             {
               "feature": "teammate_race_pace_gap",
@@ -5707,7 +5708,7 @@
             {
               "feature": "track_length_km",
               "value": 5.419,
-              "shap": -0.0865
+              "shap": -0.0858
             },
             {
               "feature": "safety_car_frequency",
@@ -5715,14 +5716,14 @@
               "shap": -0.0238
             },
             {
-              "feature": "rain_race_frequency",
-              "value": 0.0,
-              "shap": 0.0205
-            },
-            {
               "feature": "driver_dnf_rate",
               "value": 0.6865,
-              "shap": -0.0183
+              "shap": -0.0207
+            },
+            {
+              "feature": "rain_race_frequency",
+              "value": 0.0,
+              "shap": 0.0204
             }
           ]
         }
@@ -5735,15 +5736,15 @@
       "grid_position": null,
       "quali_gap_to_pole": null,
       "quali_gap_pct": null,
-      "practice_pace": 4.1686,
+      "practice_pace": 4.3442,
       "practice_long_run_pace": null,
-      "predicted_qualifying_gap_pct": 4.6057,
-      "predicted_qualifying_gap": 3.5703,
-      "predicted_quali_lap_s": 85.2473,
+      "predicted_qualifying_gap_pct": 4.6689,
+      "predicted_qualifying_gap": 3.6632,
+      "predicted_quali_lap_s": 85.2028,
       "predicted_finish_position": 15.7535,
       "predicted_quali_to_race_delta": 1.7021,
       "predicted_race_gap_pct": 2.7039,
-      "predicted_race_time_gap": 131.8294,
+      "predicted_race_time_gap": 132.4339,
       "feature_row": {
         "is_street_circuit": 0.0,
         "pit_lane_loss_time": 20.0,
@@ -5760,7 +5761,7 @@
         "wind_kph_forecast": 5.0,
         "grid_position": null,
         "quali_gap_pct": null,
-        "practice_pace": 4.1686,
+        "practice_pace": 4.3442,
         "driver_recent_form": 17.4803,
         "driver_track_form": 12.419,
         "driver_positions_gained_form": 2.1354,
@@ -5788,58 +5789,58 @@
       "season_strength": 15.616,
       "explanations": {
         "qualifying": {
-          "predicted_value": 4.606,
+          "predicted_value": 4.669,
           "base_value": 1.596,
           "top_contributions": [
             {
               "feature": "team_quali_pace",
               "value": 4.1344,
-              "shap": 1.0711
+              "shap": 1.0854
             },
             {
               "feature": "driver_quali_form",
               "value": 3.955,
-              "shap": 0.9481
+              "shap": 0.9415
             },
             {
               "feature": "practice_pace",
-              "value": 4.1686,
-              "shap": 0.6526
+              "value": 4.3442,
+              "shap": 0.7348
             },
             {
               "feature": "team_track_type_form",
               "value": 19.2169,
-              "shap": 0.1023
+              "shap": 0.1037
             },
             {
               "feature": "driver_recent_form",
               "value": 17.4803,
-              "shap": 0.0984
+              "shap": 0.1005
             },
             {
               "feature": "team_recent_form",
               "value": 18.9935,
-              "shap": 0.0843
+              "shap": 0.0791
             },
             {
               "feature": "team_reliability",
               "value": 0.5484,
-              "shap": 0.0456
+              "shap": 0.0535
             },
             {
               "feature": "team_race_pace",
               "value": 9.9156,
-              "shap": 0.0334
+              "shap": 0.0332
             },
             {
-              "feature": "expected_stops",
-              "value": 2.0946,
-              "shap": 0.0236
+              "feature": "teammate_race_pace_gap",
+              "value": -5.5722,
+              "shap": -0.0304
             },
             {
-              "feature": "is_sprint_weekend",
-              "value": 0.0,
-              "shap": 0.0175
+              "feature": "track_length_km",
+              "value": 5.419,
+              "shap": -0.0204
             }
           ]
         },
@@ -5874,7 +5875,7 @@
             },
             {
               "feature": "practice_pace",
-              "value": 4.1686,
+              "value": 4.3442,
               "shap": 0.227
             },
             {
@@ -5905,7 +5906,7 @@
           "top_contributions": [
             {
               "feature": "practice_pace",
-              "value": 4.1686,
+              "value": 4.3442,
               "shap": 0.207
             },
             {
@@ -5966,8 +5967,8 @@
             },
             {
               "feature": "practice_pace",
-              "value": 4.1686,
-              "shap": 0.217
+              "value": 4.3442,
+              "shap": 0.2168
             },
             {
               "feature": "team_recent_form",
@@ -6016,188 +6017,188 @@
   ],
   "whatif_grid": {
     "PIA": [
-      2.183,
-      2.942,
-      3.56,
-      4.29,
-      4.87,
-      5.542,
-      6.043,
-      6.702,
-      7.068,
-      7.806,
-      8.123,
-      8.399,
-      8.872,
-      9.256,
-      8.747,
-      9.236,
-      9.698,
-      9.774,
-      9.755,
-      10.141,
-      10.61
+      2.185,
+      2.944,
+      3.562,
+      4.28,
+      4.859,
+      5.531,
+      6.032,
+      6.691,
+      7.058,
+      7.795,
+      8.113,
+      8.356,
+      8.762,
+      9.11,
+      8.601,
+      9.084,
+      9.54,
+      9.616,
+      9.596,
+      9.983,
+      10.452
     ],
     "NOR": [
-      1.865,
-      2.595,
-      3.169,
-      3.542,
-      4.149,
-      4.838,
-      5.502,
-      5.775,
-      5.855,
-      6.616,
-      7.306,
-      7.215,
-      7.292,
-      7.755,
-      7.853,
-      7.523,
-      7.907,
-      8.251,
-      8.675,
-      9.062,
-      9.533
+      1.867,
+      2.597,
+      3.171,
+      3.531,
+      4.138,
+      4.828,
+      5.491,
+      5.765,
+      5.844,
+      6.565,
+      7.228,
+      7.101,
+      7.179,
+      7.641,
+      7.739,
+      7.402,
+      7.781,
+      8.126,
+      8.549,
+      8.936,
+      9.407
     ],
     "RUS": [
-      1.873,
-      2.643,
-      3.534,
-      4.129,
-      4.671,
-      5.218,
-      5.687,
-      6.295,
-      6.481,
-      6.888,
-      7.356,
-      7.792,
-      8.127,
-      7.689,
-      7.684,
-      8.079,
-      8.151,
-      8.029,
-      8.453,
-      8.839,
-      9.311
+      1.789,
+      2.547,
+      3.438,
+      3.934,
+      4.476,
+      5.019,
+      5.476,
+      6.07,
+      6.256,
+      6.663,
+      7.167,
+      7.603,
+      7.937,
+      7.491,
+      7.476,
+      7.871,
+      7.943,
+      7.821,
+      8.245,
+      8.632,
+      9.103
     ],
     "ANT": [
-      1.24,
-      1.723,
-      2.592,
-      2.997,
-      3.466,
-      3.671,
-      3.918,
-      4.304,
-      4.588,
-      4.585,
-      5.338,
-      5.806,
-      5.89,
-      5.812,
-      5.796,
-      6.146,
-      6.535,
-      6.868,
-      7.292,
-      7.678,
-      8.15
+      1.243,
+      1.726,
+      2.596,
+      3.022,
+      3.491,
+      3.696,
+      3.944,
+      4.329,
+      4.613,
+      4.611,
+      5.363,
+      5.831,
+      5.915,
+      5.837,
+      5.832,
+      6.181,
+      6.57,
+      6.904,
+      7.328,
+      7.714,
+      8.185
     ],
     "VER": [
-      1.477,
-      1.927,
-      2.624,
-      3.234,
-      3.811,
-      4.253,
-      4.382,
-      4.793,
-      5.162,
-      5.514,
-      5.9,
-      6.368,
-      6.77,
-      6.467,
-      6.51,
-      6.955,
-      7.349,
-      7.697,
-      8.126,
-      8.513,
-      8.981
+      1.472,
+      1.923,
+      2.62,
+      3.213,
+      3.789,
+      4.231,
+      4.361,
+      4.731,
+      5.074,
+      5.39,
+      5.775,
+      6.243,
+      6.646,
+      6.343,
+      6.385,
+      6.824,
+      7.212,
+      7.561,
+      7.99,
+      8.376,
+      8.842
     ],
     "HAD": [
-      1.988,
-      2.796,
-      3.483,
-      4.215,
-      4.677,
-      5.403,
-      5.925,
-      6.484,
-      6.558,
-      7.105,
-      7.666,
-      8.037,
-      7.768,
-      8.064,
-      8.097,
-      8.544,
-      8.213,
-      8.562,
-      9.007,
-      9.393,
-      9.864
+      1.962,
+      2.771,
+      3.457,
+      4.186,
+      4.648,
+      5.374,
+      5.897,
+      6.456,
+      6.53,
+      7.076,
+      7.604,
+      7.976,
+      7.706,
+      8.002,
+      8.045,
+      8.486,
+      8.149,
+      8.498,
+      8.943,
+      9.33,
+      9.801
     ],
     "LEC": [
-      1.781,
-      2.504,
-      3.109,
-      3.409,
-      4.022,
-      4.687,
-      5.275,
-      5.44,
-      5.477,
-      6.181,
-      6.873,
+      1.628,
+      2.354,
+      2.961,
+      3.24,
+      3.865,
+      4.54,
+      5.128,
+      5.293,
+      5.33,
+      6.034,
+      6.726,
+      6.489,
+      6.707,
+      7.093,
+      7.077,
       6.668,
-      6.904,
-      7.29,
-      7.25,
-      6.831,
-      7.215,
-      7.56,
-      7.984,
-      8.37,
-      8.841
+      7.062,
+      7.414,
+      7.838,
+      8.224,
+      8.696
     ],
     "HAM": [
-      1.771,
-      2.517,
-      3.277,
-      3.752,
-      4.327,
-      5.004,
-      5.644,
-      5.97,
-      5.885,
-      6.544,
-      7.29,
-      7.68,
-      7.261,
-      7.652,
-      7.647,
-      7.726,
-      7.672,
-      8.021,
-      8.466,
-      8.852,
-      9.323
+      1.747,
+      2.493,
+      3.273,
+      3.731,
+      4.278,
+      4.955,
+      5.595,
+      5.921,
+      5.829,
+      6.488,
+      7.234,
+      7.624,
+      7.205,
+      7.596,
+      7.591,
+      7.67,
+      7.616,
+      7.964,
+      8.409,
+      8.796,
+      9.267
     ],
     "ALB": [
       4.717,
@@ -6246,50 +6247,50 @@
       16.526
     ],
     "LIN": [
-      3.287,
-      4.072,
-      4.822,
-      6.294,
-      6.846,
-      7.232,
-      8.045,
-      8.922,
-      9.189,
-      9.619,
-      10.566,
-      11.06,
-      11.744,
-      12.169,
-      12.21,
-      12.696,
-      13.23,
-      13.076,
-      13.205,
-      13.592,
-      14.063
+      3.267,
+      4.053,
+      4.803,
+      6.271,
+      6.832,
+      7.218,
+      8.031,
+      8.921,
+      9.188,
+      9.618,
+      10.596,
+      11.089,
+      11.774,
+      12.199,
+      12.246,
+      12.733,
+      13.266,
+      13.185,
+      13.314,
+      13.701,
+      14.172
     ],
     "LAW": [
-      2.764,
-      3.553,
-      4.187,
-      5.444,
-      5.974,
-      6.677,
-      7.151,
-      8.011,
-      8.399,
-      8.933,
-      9.215,
-      9.492,
-      10.058,
-      10.563,
-      10.096,
-      10.635,
-      11.088,
-      11.159,
-      11.156,
-      11.542,
-      12.014
+      2.869,
+      3.658,
+      4.291,
+      5.483,
+      5.993,
+      6.697,
+      7.17,
+      8.046,
+      8.424,
+      8.947,
+      9.223,
+      9.5,
+      10.066,
+      10.572,
+      10.08,
+      10.61,
+      11.052,
+      11.116,
+      11.112,
+      11.499,
+      11.97
     ],
     "STR": [
       4.646,
@@ -6315,21 +6316,21 @@
       17.364
     ],
     "CAM": [
-      4.269,
-      5.045,
-      5.775,
-      7.911,
-      8.557,
-      9.014,
-      9.567,
-      10.2,
-      10.581,
-      11.262,
-      12.307,
-      12.764,
-      13.3,
-      13.544,
-      13.944,
+      4.237,
+      5.013,
+      5.742,
+      7.891,
+      8.537,
+      8.993,
+      9.546,
+      10.18,
+      10.56,
+      11.241,
+      12.287,
+      12.743,
+      13.28,
+      13.523,
+      13.923,
       14.53,
       14.94,
       15.272,
@@ -6338,73 +6339,73 @@
       16.372
     ],
     "BEA": [
-      4.403,
-      5.182,
-      5.89,
-      7.97,
-      8.587,
-      9.043,
-      9.596,
-      10.236,
-      10.622,
-      11.304,
-      12.138,
-      12.666,
-      13.139,
-      13.483,
-      13.738,
-      14.294,
-      14.597,
-      14.791,
+      4.371,
+      5.149,
+      5.858,
+      7.949,
+      8.566,
+      9.022,
+      9.576,
+      10.215,
+      10.601,
+      11.283,
+      12.117,
+      12.645,
+      13.119,
+      13.463,
+      13.717,
+      14.273,
+      14.576,
+      14.771,
       14.856,
       15.066,
       15.526
     ],
     "HUL": [
-      3.469,
-      4.253,
-      4.984,
-      6.48,
-      7.043,
-      7.345,
-      8.166,
-      8.918,
-      9.212,
-      9.66,
-      10.682,
-      11.185,
-      11.789,
-      12.087,
-      12.255,
-      12.761,
-      13.27,
-      13.037,
-      13.417,
-      13.826,
-      14.297
+      3.445,
+      4.23,
+      4.961,
+      6.437,
+      6.98,
+      7.282,
+      8.104,
+      8.871,
+      9.165,
+      9.613,
+      10.635,
+      11.139,
+      11.742,
+      12.04,
+      12.208,
+      12.713,
+      13.193,
+      12.96,
+      13.34,
+      13.749,
+      14.22
     ],
     "BOR": [
-      3.442,
-      4.219,
-      4.934,
-      6.514,
-      7.086,
-      7.555,
-      8.208,
-      8.891,
-      9.352,
-      10.147,
-      10.872,
-      11.16,
-      11.828,
-      12.368,
-      12.88,
-      13.341,
-      13.492,
-      13.826,
-      14.266,
-      14.236,
-      14.392
+      3.488,
+      4.265,
+      4.981,
+      6.544,
+      7.116,
+      7.585,
+      8.238,
+      8.921,
+      9.382,
+      10.177,
+      10.902,
+      11.19,
+      11.858,
+      12.388,
+      12.889,
+      13.35,
+      13.502,
+      13.836,
+      14.275,
+      14.246,
+      14.402
     ],
     "GAS": [
       3.628,
@@ -6476,27 +6477,27 @@
       16.809
     ],
     "BOT": [
-      4.286,
-      5.07,
-      5.778,
-      8.376,
-      9.022,
-      9.479,
-      10.032,
-      10.665,
-      11.045,
-      11.727,
-      12.772,
-      13.229,
-      13.777,
-      14.107,
-      14.602,
-      15.165,
-      15.484,
-      15.66,
-      16.249,
-      16.629,
-      17.105
+      4.251,
+      5.035,
+      5.743,
+      8.354,
+      9.0,
+      9.456,
+      10.009,
+      10.643,
+      11.023,
+      11.704,
+      12.75,
+      13.207,
+      13.754,
+      14.085,
+      14.58,
+      15.143,
+      15.461,
+      15.637,
+      16.226,
+      16.607,
+      17.082
     ]
   }
 }
